@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnapEnglish - Pronunciation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #D4B4CB; 
+            --bg-color: #FAF5F7;
+            --text-main: #5C4A52;
+            --white: #FFFFFF;
+            --success: #88B7B5; 
+            --danger: #E29587; 
+            --card-hover: #F2E3EE;
+        }
+
+        * { box-sizing: border-box; font-family: 'Quicksand', sans-serif; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--white);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 30px;
+            padding: 40px 30px;
+            box-shadow: 0 15px 35px rgba(212, 180, 203, 0.2);
+            position: relative;
+        }
+
+        h1 { text-align: center; color: var(--text-main); margin-bottom: 5px; font-size: 1.8rem; }
+        .subtitle { text-align: center; color: #999; margin-bottom: 30px; font-size: 0.9rem; }
+
+        /* --- MÀN HÌNH TRANG CHỦ --- */
+        #homeScreen { display: block; }
+
+        .lesson-list { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            max-height: 60vh; 
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Tùy chỉnh thanh cuộn */
+        .lesson-list::-webkit-scrollbar { width: 6px; }
+        .lesson-list::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        .lesson-list::-webkit-scrollbar-track { background: var(--bg-color); border-radius: 10px; }
+
+        .lesson-card {
+            background: var(--bg-color);
+            border-radius: 20px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-3px);
+            background: var(--card-hover);
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(212, 180, 203, 0.3);
+        }
+
+        .lesson-icon {
+            font-size: 1.8rem;
+            margin-right: 15px;
+            background: var(--white);
+            min-width: 50px; height: 50px;
+            border-radius: 15px;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .lesson-info h3 { margin: 0 0 5px 0; color: var(--text-main); font-size: 1rem; line-height: 1.3;}
+        .lesson-info p { margin: 0; font-size: 0.8rem; color: #777; }
+
+        /* --- MÀN HÌNH LUYỆN TẬP --- */
+        #lessonScreen { display: none; text-align: center; }
+        
+        .header-action { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;}
+        
+        .btn-back {
+            background: none; border: none; color: #999;
+            font-size: 1rem; font-weight: 600; cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-back:hover { color: var(--text-main); }
+
+        .ipa-card { background: var(--bg-color); border-radius: 20px; padding: 30px; margin-bottom: 20px; }
+        .sound-display { font-size: 3rem; font-weight: 700; color: var(--primary); margin: 0; line-height: 1.2; word-wrap: break-word;}
+        .word-display { font-size: 1.2rem; color: var(--text-main); margin-top: 10px; font-weight: 600; }
+
+        .btn {
+            background: var(--primary); color: var(--white); border: none;
+            padding: 12px 25px; border-radius: 50px; font-size: 1rem;
+            font-weight: 600; cursor: pointer; transition: 0.3s; margin: 5px;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212, 180, 203, 0.4); }
+        .btn:disabled { background: #ddd; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .btn-record {
+            background: var(--text-main); width: 60px; height: 60px;
+            border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            margin: 20px auto; font-size: 1.5rem;
+        }
+        .btn-record.recording { background: var(--danger); animation: pulse 1.5s infinite; }
+
+        .result-box { margin-top: 20px; padding: 15px; border-radius: 15px; display: none; }
+        .score-text { font-size: 2rem; font-weight: 700; margin: 0; }
+        .feedback-text { font-size: 0.95rem; margin-top: 10px; }
+
+        .btn-hint {
+            position: fixed; bottom: 30px; right: 30px; background: #FFD166;
+            color: #fff; width: 60px; height: 60px; border-radius: 50%;
+            border: none; font-size: 1.8rem; cursor: pointer;
+            box-shadow: 0 8px 20px rgba(255, 209, 102, 0.4); z-index: 1000; display: none;
+        }
+
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(92, 74, 82, 0.5); backdrop-filter: blur(5px);
+            z-index: 1001; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: var(--white); width: 85%; max-width: 400px;
+            border-radius: 20px; padding: 30px; position: relative; text-align: center;
+        }
+        .close-btn { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #999; }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(226, 149, 135, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(226, 149, 135, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(226, 149, 135, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div id="homeScreen">
+            <h1>Lộ Trình Tinh Tế</h1>
+            <p class="subtitle">Chọn bài học hôm nay của bạn nhé</p>
+            <div class="lesson-list" id="lessonListContainer">
+                </div>
+        </div>
+
+        <div id="lessonScreen">
+            <div class="header-action">
+                <button class="btn-back" onclick="goHome()">⬅️ Quay lại</button>
+                <div id="progressText" style="color: #999; font-size: 0.9rem;">1 / 40</div>
+            </div>
+            
+            <h2 id="lessonTitle" style="margin-top: 0; font-size: 1.4rem;">Tiêu đề bài học</h2>
+
+            <div class="ipa-card">
+                <h2 class="sound-display" id="ipaWord">word</h2>
+                <div class="word-display" id="ipaSubtitle">Luyện đọc từ vựng</div>
+            </div>
+
+            <button class="btn" onclick="playAudio()">🔊 Nghe Mẫu</button>
+            <button class="btn btn-record" id="recordBtn" onclick="toggleRecording()" title="Bấm để đọc">🎙️</button>
+            <p id="statusText">Bấm mic và đọc từ trên</p>
+
+            <div class="result-box" id="resultBox">
+                <p class="score-text" id="scoreValue">0%</p>
+                <p class="feedback-text" id="feedbackText"></p>
+            </div>
+
+            <button class="btn" id="nextBtn" onclick="nextSound()" style="margin-top: 20px; width: 100%;" disabled>Chuyển Tiếp ➔</button>
+        </div>
+
+    </div>
+
+    <button class="btn-hint" id="hintBtn" onclick="openModal()">💡</button>
+    <div class="modal" id="hintModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2 style="color: var(--primary); margin-top: 0;">Hướng Dẫn</h2>
+            <p><strong>Bí quyết:</strong> <span id="modalInstruction">...</span></p>
+            <p style="color: var(--danger);"><strong>Lỗi sai thường gặp:</strong> <span id="modalError">...</span></p>
+        </div>
+    </div>
+
+    <script>
+        // --- DỮ LIỆU BÀI HỌC ---
+        const lessonsData = {
+            vowel_i: { 
+                title: "Nguyên âm ngắn và dài ɪ - iː", icon: "🎯", 
+                inst: "Với âm /iː/, mở rộng miệng sang hai bên như mỉm cười, kéo dài âm. Với âm /ɪ/, mở miệng hẹp hơn, phát âm ngắn gọn dứt khoát.", 
+                err: "Đọc quá ngắn giống âm 'i' tiếng Việt hoặc không phân biệt được độ dài.",
+                words: "sheep,ship,sleep,slip,deep,dip,leap,lip,cheap,chip,seat,sit,beat,bit,heat,hit,meat,mitt,peak,pick,steal,still,feel,fill,peel,pill,heel,hill,seek,sick,reach,rich,leave,live,bean,bin,green,grin,teen,tin,feet,fit".split(",")
+            },
+            vowel_u: { 
+                title: "Nguyên âm ʊ - uː", icon: "🎯", 
+                inst: "Với /uː/ chu môi ra trước thật căng. Với /ʊ/ môi hơi tròn, thư giãn, âm ngắn.", 
+                err: "Đọc giống âm 'u' tiếng Việt, không tạo được độ vang.",
+                words: "pool,pull,fool,full,Luke,look,suit,soot,shoot,shook,boot,book,food,foot,cool,cook,tool,took,moon,good,root,wood,soup,sugar,group,woman,blue,put,true,push,shoe,bush,threw,wolf,flew,hook,drew,brook,grew,stood,wool".split(",")
+            },
+            vowel_e_a: { 
+                title: "Nguyên âm e - ə - ɜː", icon: "🎯", 
+                inst: "/e/ giống e tiếng Việt nhưng ngắn. /ə/ là âm lướt nhẹ nhàng. /ɜː/ cuộn lưỡi nhẹ, kéo dài.", 
+                err: "Hay nhấn mạnh vào âm schwa /ə/ thay vì lướt nhẹ.",
+                words: "pen,about,bird,ten,teacher,nurse,men,sofa,word,bed,doctor,girl,head,color,her,leg,famous,turn,pet,listen,learn,set,open,earth,bet,picture,first,dead,today,third,red,away,serve,said,arrive,shirt,met,suggest,skirt,gem,suppose,burn".split(",")
+            },
+            vowel_o: { 
+                title: "Nguyên âm ɒ - ɔː", icon: "🎯", 
+                inst: "/ɒ/ hạ cằm, miệng hơi tròn, âm dứt khoát. /ɔː/ tròn môi căng, kéo dài âm.", 
+                err: "Đọc thành chữ 'o' hay 'ô' bình thường của tiếng Việt.",
+                words: "pot,port,cot,caught,spot,sport,shot,short,not,naught,knot,snort,box,born,fox,form,dog,door,log,lord,frog,floor,top,torn,hop,horn,shop,shore,clock,cork,block,board,shock,store,mock,more,rock,roar,sock,soar".split(",")
+            },
+            vowel_ae_v_a: { 
+                title: "Nguyên âm æ - ʌ - ɑː", icon: "🎯", 
+                inst: "/æ/ mở to miệng hết cỡ, cằm hạ. /ʌ/ dứt khoát, gần giống 'ă'. /ɑː/ há to miệng, âm xuất phát từ họng.", 
+                err: "Khẩu hình miệng không đủ mở to đối với /æ/ và /ɑː/.",
+                words: "cat,cut,cart,hat,hut,heart,match,much,march,lack,luck,lark,pack,puck,park,stack,stuck,star,track,truck,tar,cap,cup,carp,bat,but,bar,pan,pun,part,ban,bun,barn,fan,fun,far,mad,mud,mar,sad,sun,smart".split(",")
+            },
+            diphthongs: { 
+                title: "8 Nguyên âm đôi eɪ - ɑɪ - əʊ - eə - ʊə - ɪə - ɑʊ - ɔɪ", icon: "🎯", 
+                inst: "Trượt từ âm thứ nhất sang âm thứ hai. Âm đầu chiếm 2/3 thời gian, âm sau chiếm 1/3.", 
+                err: "Đọc thành nguyên âm đơn (ví dụ /eɪ/ đọc thành /e/ hoặc /ê/).",
+                words: "say,high,boy,go,how,near,hair,pure,play,fly,toy,show,cow,hear,care,tour,day,my,coin,no,now,clear,dare,sure,way,sky,voice,so,town,fear,bare,cure,rain,time,noise,bone,loud,tear,share,lure,wait,drive".split(",")
+            },
+            p_b: { 
+                title: "Phụ âm p - b", icon: "🎵", 
+                inst: "/p/ là âm vô thanh, phải bật hơi mạnh. /b/ là âm hữu thanh, dây thanh quản rung.", 
+                err: "Đọc /p/ không có hơi bật ra, dễ nhầm thành /b/.",
+                words: "pat,bat,pack,back,peg,beg,pig,big,peach,beach,pear,bear,pill,bill,pie,buy,pet,bet,pull,bull,park,bark,pump,bump,pound,bound,path,bath,pride,bride,pest,best,push,bush,pad,bad,pin,bin,cap,cab".split(",")
+            },
+            t_d: { 
+                title: "Phụ âm t - d", icon: "🎵", 
+                inst: "/t/ vô thanh, đầu lưỡi chạm chân răng cửa trên bật mạnh. /d/ hữu thanh, dây thanh rung.", 
+                err: "Đọc /t/ thành chữ 't' tiếng Việt (không bật hơi).",
+                words: "tie,die,tear,dear,town,down,ten,den,tin,din,toe,doe,time,dime,tuck,duck,ton,done,tart,dart,toll,doll,train,drain,trunk,drunk,try,dry,trace,dress,bat,bad,hat,had,mat,mad,set,said,let,led".split(",")
+            },
+            ch_j: { 
+                title: "Phụ âm tʃ - dʒ", icon: "🎵", 
+                inst: "/tʃ/ chu môi bật hơi (giống 'ch' bật hơi). /dʒ/ chu môi, rung thanh quản (lai giữa 'd' và 'j').", 
+                err: "Phát âm thành 'ch' và 'gi' tiếng Việt một cách lỏng lẻo.",
+                words: "chin,gin,choke,joke,cheer,jeer,chain,Jane,chest,jest,chill,Jill,chunk,junk,cherry,Jerry,cheap,jeep,rich,ridge,search,surge,batch,badge,match,Madge,catch,cage,fetch,edge,ditch,bridge,pitch,pig,hutch,huge,etch,age".split(",")
+            },
+            k_g: { 
+                title: "Phụ âm k - g", icon: "🎵", 
+                inst: "/k/ vô thanh, bật từ cuống họng. /g/ hữu thanh, rung cổ họng.", 
+                err: "Không bật hơi /k/ khiến người nghe nhầm thành /g/.",
+                words: "curl,girl,card,guard,cold,gold,came,game,cap,gap,class,glass,clue,glue,crow,grow,crab,grab,cave,gave,coat,goat,back,bag,pick,pig,duck,dug,lock,log,lack,lag,mack,mag,hack,hag,sack,sag,snack,snag".split(",")
+            },
+            f_v: { 
+                title: "Phụ âm f - v", icon: "🎵", 
+                inst: "Răng trên chạm môi dưới. /f/ thổi hơi ra, /v/ rung thanh quản.", 
+                err: "Thay vì cắn môi lại dùng 2 môi như âm /p/.",
+                words: "fan,van,fast,vast,fat,vat,fault,vault,fear,veer,feel,veal,file,vile,fine,vine,ferry,very,safe,save,leaf,leave,half,halve,life,live,wife,wive,belief,believe,grief,grieve,calf,calve,fife,five,surf,serve".split(",")
+            },
+            th_th: { 
+                title: "Phụ âm ð - θ", icon: "🎵", 
+                inst: "Đặt lưỡi giữa hai hàm răng. /θ/ thổi hơi (think), /ð/ rung cổ họng (this).", 
+                err: "Đụt lưỡi vào trong, đọc thành 'th' hoặc 'd' tiếng Việt.",
+                words: "thin,then,think,this,thought,that,thumb,those,thick,these,third,they,thigh,them,thief,there,bath,bathe,breath,breathe,cloth,clothe,teeth,teethe,mouth,soothe,with,smooth,earth,father,math,mother,path,brother,south,either,north,neither,worth,weather".split(",")
+            },
+            s_z: { 
+                title: "Phụ âm s - z", icon: "🎵", 
+                inst: "Khép răng, xì hơi qua kẽ răng. /s/ xì mạnh vô thanh, /z/ kêu vo vo giống tiếng ong rung.", 
+                err: "Hay quên đuôi /z/ ở các danh từ số nhiều.",
+                words: "sue,zoo,sip,zip,seal,zeal,sink,zinc,bus,buzz,face,phase,race,raise,price,prize,ice,eyes,peace,peas,loose,lose,hiss,his,mace,maze,fuss,fuzz,lace,laze,grace,graze,base,baize,juice,Jews,spice,spies,rice,rise".split(",")
+            },
+            sh_zh: { 
+                title: "Phụ âm ʃ - ʒ", icon: "🎵", 
+                inst: "Chu môi ra phía trước, hai hàm răng sát nhau. /ʃ/ thổi gió mạnh, /ʒ/ rung cổ họng.", 
+                err: "Đọc thành chữ 's' bình thường.",
+                words: "she,casual,shoe,visual,shop,measure,ship,pleasure,shell,treasure,shirt,leisure,sharp,vision,shock,version,cash,usual,wash,collision,wish,decision,dish,massage,fish,mirage,flash,prestige,push,garage,rush,rouge,crash,beige,smash,barrage,hush".split(",")
+            },
+            m_n_ng: { 
+                title: "Phụ âm mũi m - n - ŋ", icon: "🎵", 
+                inst: "Hơi thoát ra bằng mũi. /m/ mím môi, /n/ đầu lưỡi chạm ngạc trên, /ŋ/ cuống lưỡi nâng lên.", 
+                err: "Thiếu độ ngân vang ở âm cuối.",
+                words: "map,nap,sing,mat,nat,ring,mad,nad,wing,mike,nike,king,mine,nine,thing,mole,noel,bang,moon,noon,hang,mouse,noun,long,sum,sun,sung,ram,ran,rang,clam,clan,clang,dim,din,ding,rum,run,rung,song".split(",")
+            },
+            h_l_r_w_j: { 
+                title: "Phụ âm h - l - r - w - j", icon: "🎵", 
+                inst: "/l/ cong lưỡi lên ngạc trên, /r/ thụt lưỡi vào trong không chạm ngạc, /w/ chu môi tròn, /j/ giống 'y' nhẹ.", 
+                err: "Lẫn lộn L/R hoặc đọc /j/ thành 'z'.",
+                words: "hat,lap,rat,wet,yet,hot,lot,rot,win,yes,hit,lit,rip,wait,you,hop,lip,red,wall,year,hide,light,ride,walk,your,he,lee,read,watch,yell,hill,lid,rid,wood,use,hook,look,rook,wool,youth".split(",")
+            },
+            consonants_24: { 
+                title: "Tổng hợp 24 phụ âm IPA", icon: "📚", 
+                inst: "Ôn tập hỗn hợp 24 phụ âm. Chú ý phân biệt vô thanh và hữu thanh.", 
+                err: "Quên bật hơi ở âm vô thanh cuối.",
+                words: "pen,boy,ten,dog,cat,go,fall,van,thin,then,so,zoo,she,vision,chin,joy,man,now,sing,hat,let,red,wet,yes,play,tree,stop,quick,black,green,small,snip,star,sweet,twin,fly,glass,brain,drop,frog".split(",")
+            },
+            clusters_46: { 
+                title: "Đánh vần 46 cụm IPA", icon: "📚", 
+                inst: "Nối các phụ âm lại với nhau thật nhanh và mượt, không chèn âm /ə/ vào giữa.", 
+                err: "Hay đọc tách rời ví dụ 'play' thành 'pờ-lay'.",
+                words: "splash,spring,street,scream,square,strap,split,sprout,strong,screen,squash,stream,straw,strike,scrape,spread,shrink,shrimp,thrill,thrive,thread,throw,throat,through,blind,clock,flag,glad,plum,slow,bring,crow,drop,frog,grass,pray,tree,twin,dwell,quick,swan,play,blue,clean,glass".split(",")
+            },
+            minimal_pairs: { 
+                title: "Phân biệt các cặp âm khó", icon: "💡", 
+                inst: "Tập trung tối đa vào sự khác biệt khẩu hình và độ dài của 2 âm.", 
+                err: "Bị chi phối bởi thói quen đọc tiếng Việt.",
+                words: "sheep,ship,bad,bed,cot,caught,heat,hit,sad,said,don,dawn,seat,sit,mat,met,knot,naught,peel,pill,pan,pen,wok,walk,leave,live,land,lend,stock,stalk,reach,rich,tan,ten,collar,caller,sleep,slip,flash,flesh,bot,bought".split(",")
+            },
+            ending_sounds: { 
+                title: "Tầm quan trọng Ending sounds", icon: "💡", 
+                inst: "Tuyệt đối không bỏ quên âm cuối, đây là chìa khóa để phân biệt từ vựng trong tiếng Anh.", 
+                err: "Nuốt âm cuối hoàn toàn.",
+                words: "cat,dog,bus,bed,map,rob,back,bag,half,save,math,smooth,match,bridge,breath,breathe,wash,rouge,kiss,buzz,line,time,ring,call,car,dark,fast,cold,left,hand,help,milk,fact,jump,bank,child,next,film,list,desk".split(",")
+            },
+            ed_endings: { 
+                title: "Cách phát âm đuôi -ed", icon: "💡", 
+                inst: "/ɪd/ sau t,d. /t/ sau phụ âm vô thanh (p, k, f, s, sh, ch). /d/ với các âm còn lại.", 
+                err: "Từ nào có đuôi ed cũng đọc là /ɪd/.",
+                words: "wanted,needed,played,cleaned,watched,washed,liked,stopped,laughed,kissed,fixed,decided,started,invited,ended,showed,tried,lived,loved,enjoyed,worked,helped,asked,missed,looked,typed,hoped,danced,waited,folded,painted,shouted,added,counted,visited,seemed,opened,happened,called,turned".split(",")
+            },
+            stress: { 
+                title: "Trọng âm (Stress)", icon: "⭐", 
+                inst: "Âm mang trọng âm đọc to hơn, dài hơn và cao hơn. Các âm khác lướt nhanh (thường biến thành âm /ə/).", 
+                err: "Đọc ngang ngang không có nhấn nhá.",
+                words: "record,present,export,import,object,subject,project,contract,desert,rebel,conduct,conflict,suspect,permit,transfer,insult,produce,perfect,abstract,combine,increase,decrease,update,upgrade,refund,discount,protest,invite,delay,decide,arrive,happen,listen,open,water,paper,pencil,guitar,machine,police".split(",")
+            },
+            intonation: { 
+                title: "Ngữ điệu (Intonation)", icon: "⭐", 
+                inst: "Câu hỏi Yes/No lên giọng ở cuối. Câu hỏi WH, câu trần thuật xuống giọng ở cuối.", 
+                err: "Đọc đều đều như cái máy rập khuôn.",
+                words: [
+                    "How are you?", "What is your name?", "Where do you live?", "Are you ready?", 
+                    "Do you like it?", "Is it raining?", "I bought apples, oranges, and bananas.", 
+                    "She is smart, kind, and beautiful.", "Yes.", "No.", "Maybe.", "I don't know.", 
+                    "That's amazing!", "Oh really?", "Watch out!", "Stop!", "Please sit down.", 
+                    "Could you help me?", "I am so happy today.", "Why did you do that?", 
+                    "Are you coming or not?", "Would you like tea or coffee?", "It's a nice day, isn't it?", 
+                    "You live here, don't you?", "He didn't go, did he?", "They are coming, aren't they?", 
+                    "Wow!", "Ouch!", "I see.", "Exactly.", "Go ahead.", "Hurry up!", "See you later.", 
+                    "Have a good day.", "Can you speak louder?", "What time is it?", "I love this game.",
+                    "Don't do that!", "Are we there yet?", "It is beautiful."
+                ]
+            }
+        };
+
+        // --- KHỞI TẠO BIẾN ---
+        let currentLessonKey = '';
+        let currentIndex = 0;
+        let isRecording = false;
+        let recognitionTimeout = null;
+
+        // --- KHỞI TẠO MÀN HÌNH CHÍNH ---
+        function renderHome() {
+            const listContainer = document.getElementById('lessonListContainer');
+            listContainer.innerHTML = '';
+            
+            for (const key in lessonsData) {
+                const lesson = lessonsData[key];
+                const card = document.createElement('div');
+                card.className = 'lesson-card';
+                card.onclick = () => openLesson(key);
+                
+                card.innerHTML = `
+                    <div class="lesson-icon">${lesson.icon}</div>
+                    <div class="lesson-info">
+                        <h3>${lesson.title}</h3>
+                        <p>${lesson.words.length} cụm từ luyện tập</p>
+                    </div>
+                `;
+                listContainer.appendChild(card);
+            }
+        }
+
+        // --- ĐIỀU HƯỚNG MÀN HÌNH ---
+        function openLesson(key) {
+            currentLessonKey = key;
+            currentIndex = 0;
+
+            document.getElementById('homeScreen').style.display = 'none';
+            document.getElementById('lessonScreen').style.display = 'block';
+            document.getElementById('hintBtn').style.display = 'flex';
+
+            document.getElementById('lessonTitle').innerText = lessonsData[key].title;
+            
+            document.getElementById('modalInstruction').innerText = lessonsData[key].inst;
+            document.getElementById('modalError').innerText = lessonsData[key].err;
+
+            loadWord();
+        }
+
+        function goHome() {
+            document.getElementById('homeScreen').style.display = 'block';
+            document.getElementById('lessonScreen').style.display = 'none';
+            document.getElementById('hintBtn').style.display = 'none';
+            if(isRecording && recognition) recognition.stop();
+        }
+
+        // --- CẤU HÌNH NHẬN DIỆN GIỌNG NÓI ---
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        let recognition = null;
+
+        if (SpeechRecognition) {
+            recognition = new SpeechRecognition();
+            recognition.lang = 'en-US';
+            recognition.interimResults = true; 
+            recognition.continuous = false;
+            recognition.maxAlternatives = 1;
+        }
+
+        const ui = {
+            wordDisplay: document.getElementById('ipaWord'),
+            subtitle: document.getElementById('ipaSubtitle'),
+            progress: document.getElementById('progressText'),
+            recordBtn: document.getElementById('recordBtn'),
+            statusText: document.getElementById('statusText'),
+            resultBox: document.getElementById('resultBox'),
+            scoreValue: document.getElementById('scoreValue'),
+            feedbackText: document.getElementById('feedbackText'),
+            nextBtn: document.getElementById('nextBtn')
+        };
+
+        // Hàm hỗ trợ reset giao diện Mic
+        function resetMicUI(message = 'Đã dừng mic. Bấm để thử lại!') {
+            isRecording = false;
+            ui.recordBtn.classList.remove('recording');
+            clearTimeout(recognitionTimeout); 
+            
+            if (ui.statusText.innerText.includes('Đang') || ui.statusText.innerText === '') {
+                ui.statusText.innerText = message;
+            }
+        }
+
+        // --- CÁC HÀM XỬ LÝ GIAO DIỆN ---
+        function loadWord() {
+            const currentLesson = lessonsData[currentLessonKey];
+            const currentWord = currentLesson.words[currentIndex];
+            
+            ui.wordDisplay.innerText = currentWord;
+            ui.subtitle.innerText = currentLessonKey === 'intonation' ? 'Đọc đúng ngữ điệu câu' : 'Phát âm chuẩn xác';
+            ui.progress.innerText = `${currentIndex + 1} / ${currentLesson.words.length}`;
+            
+            ui.resultBox.style.display = 'none';
+            ui.nextBtn.disabled = true;
+            ui.statusText.innerText = 'Bấm mic và đọc từ trên';
+            
+            if (isRecording && recognition) recognition.stop(); 
+        }
+
+        function playAudio() {
+            const wordToPlay = lessonsData[currentLessonKey].words[currentIndex];
+            const utterance = new SpeechSynthesisUtterance(wordToPlay);
+            utterance.lang = 'en-US'; 
+            utterance.rate = 0.85;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // --- ĐIỀU KHIỂN NÚT THU ÂM ---
+        function toggleRecording() {
+            if (!recognition) { alert("Trình duyệt không hỗ trợ. Hãy dùng Google Chrome hoặc Edge."); return; }
+            
+            if (isRecording) { 
+                recognition.stop(); 
+                resetMicUI('Bạn đã chủ động tắt mic.');
+                return; 
+            }
+            
+            try {
+                ui.resultBox.style.display = 'none'; 
+                recognition.start();
+            } catch (e) {
+                console.warn("Lỗi khởi động mic:", e);
+                recognition.stop();
+            }
+        }
+
+        // --- CÁC SỰ KIỆN VÒNG ĐỜI CỦA MIC ---
+        if (recognition) {
+            recognition.onstart = function() {
+                isRecording = true;
+                ui.recordBtn.classList.add('recording');
+                ui.statusText.innerText = 'Đang bật mic...';
+
+                clearTimeout(recognitionTimeout);
+                recognitionTimeout = setTimeout(() => {
+                    if (isRecording) {
+                        recognition.stop();
+                        resetMicUI('Hết thời gian chờ. Xin vui lòng đọc lớn và rõ hơn.');
+                    }
+                }, 6000);
+            };
+
+            recognition.onaudiostart = function() {
+                ui.statusText.innerText = 'Đang nghe... Hãy nói ngay!';
+            };
+
+            recognition.onresult = function(event) {
+                clearTimeout(recognitionTimeout); 
+
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript;
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+
+                if (interimTranscript) {
+                    ui.statusText.innerText = `Đang nghe: "${interimTranscript}..."`;
+                }
+
+                if (finalTranscript) {
+                    const spokenWord = finalTranscript.toLowerCase().trim();
+                    ui.statusText.innerText = `Bạn đã đọc: "${spokenWord}"`;
+                    calculateScore(spokenWord);
+                }
+            };
+
+            recognition.onend = function() {
+                resetMicUI('Không nhận diện được từ, bạn thử lại nhé!');
+            };
+
+            recognition.onerror = function(event) {
+                let errorMsg = 'Lỗi mic, vui lòng thử lại.';
+                switch(event.error) {
+                    case 'network': errorMsg = 'Lỗi mạng! Quá trình dịch giọng nói cần có Internet.'; break;
+                    case 'not-allowed': errorMsg = 'Trình duyệt đang chặn Micro. Vui lòng cấp quyền!'; break;
+                    case 'no-speech': errorMsg = 'Không nghe thấy âm thanh. Bấm mic và thử lại.'; break;
+                    case 'aborted': errorMsg = 'Đã hủy thu âm.'; break;
+                }
+                resetMicUI(errorMsg);
+            };
+        }
+
+        // --- TÍNH ĐIỂM ---
+        function calculateScore(spoken) {
+            let target = lessonsData[currentLessonKey].words[currentIndex].toLowerCase().replace(/[.,?!]/g, '');
+            let spokenClean = spoken.replace(/[.,?!]/g, '');
+            let score = 0;
+
+            if (spokenClean === target || spokenClean.includes(target) || target.includes(spokenClean)) {
+                score = Math.floor(Math.random() * (100 - 85 + 1) + 85);
+            } else if (spokenClean[0] === target[0]) {
+                score = Math.floor(Math.random() * (79 - 50 + 1) + 50);
+            } else {
+                score = Math.floor(Math.random() * 40);
+            }
+            showResult(score, spoken);
+        }
+
+        function showResult(score, spoken) {
+            ui.resultBox.style.display = 'block';
+            ui.scoreValue.innerText = `${score}%`;
+
+            if (score >= 80) {
+                ui.resultBox.style.backgroundColor = '#E8F3F2';
+                ui.scoreValue.style.color = 'var(--success)';
+                ui.feedbackText.innerText = "Tuyệt vời! Bạn phát âm rất chuẩn.";
+                ui.feedbackText.style.color = 'var(--success)';
+                ui.nextBtn.disabled = false;
+            } else {
+                ui.resultBox.style.backgroundColor = '#FCEBE8';
+                ui.scoreValue.style.color = 'var(--danger)';
+                ui.feedbackText.innerText = `Chưa đạt 80%. Bạn đọc thành "${spoken}".\n💡 Hãy bấm vào 💡 (Góc phải dưới) để xem lỗi sai thường gặp.`;
+                ui.feedbackText.style.color = 'var(--danger)';
+                ui.nextBtn.disabled = true;
+            }
+        }
+
+        function nextSound() {
+            const currentLesson = lessonsData[currentLessonKey];
+            if (currentIndex < currentLesson.words.length - 1) {
+                currentIndex++;
+                loadWord();
+            } else {
+                alert("Chúc mừng! Bạn đã hoàn thành toàn bộ chuyên đề này.");
+                goHome();
+            }
+        }
+
+        // --- MODAL ---
+        function openModal() { document.getElementById('hintModal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('hintModal').style.display = 'none'; }
+
+        // Khởi chạy App
+        window.onload = renderHome;
+    </script>
+</body>
+</html>
