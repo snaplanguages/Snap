@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dictation Pro: A morning briefing</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #A18CD1; 
+            --primary-hover: #8e75c0;
+            --secondary: #FBC2EB; 
+            --accent: #FFB347; 
+            --blue-pastel: #C2E9FB;
+            --blue-dark: #2c6a85;
+            --text-dark: #333333;
+            --text-light: #666666;
+            --bg-main: #F4F7F6;
+            --white: #FFFFFF;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Quicksand', sans-serif; }
+
+        body {
+            background: var(--bg-main);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .layout-container {
+            display: flex;
+            gap: 25px;
+            max-width: 1100px;
+            width: 100%;
+            height: 80vh;
+            min-height: 600px;
+        }
+
+        /* LEFT PANEL (1/3) */
+        .sidebar {
+            flex: 1;
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(161, 140, 209, 0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .progress-section { text-align: center; }
+        .progress-circle {
+            width: 150px; height: 150px; border-radius: 50%;
+            background: conic-gradient(var(--primary) 0%, #eee 0);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px; position: relative; transition: background 0.5s;
+        }
+        .progress-circle::after { content: ""; position: absolute; width: 120px; height: 120px; background: var(--white); border-radius: 50%; }
+        .progress-text { position: relative; z-index: 1; font-size: 28px; font-weight: 700; color: var(--primary); }
+
+        .instructions { background: var(--blue-pastel); padding: 20px; border-radius: 15px; color: var(--blue-dark); }
+        .instructions h3 { margin-bottom: 15px; font-size: 18px; }
+        .instructions ul { list-style: none; }
+        .instructions li { margin-bottom: 12px; font-size: 14.5px; line-height: 1.5; }
+        kbd { background: var(--white); border: 1px solid #ccc; border-radius: 4px; padding: 3px 8px; font-family: monospace; font-size: 13px; font-weight: bold; box-shadow: 0 2px 0 #ccc; }
+
+        /* RIGHT PANEL (2/3) */
+        .main-content {
+            flex: 2; background: var(--white); border-radius: 20px; padding: 35px;
+            box-shadow: 0 10px 30px rgba(161, 140, 209, 0.15); display: flex; flex-direction: column; position: relative;
+        }
+
+        .settings-bar { display: flex; justify-content: flex-end; gap: 15px; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px dashed #eee; }
+        .setting-group { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--text-light); }
+        select { padding: 6px 12px; border-radius: 8px; border: 1px solid #ddd; outline: none; cursor: pointer; font-family: 'Quicksand', sans-serif; font-weight: 600; }
+
+        .audio-section { text-align: center; margin-bottom: 20px; }
+        .btn-play { background: var(--primary); color: white; border: none; padding: 15px 35px; border-radius: 50px; font-size: 18px; cursor: pointer; transition: 0.3s; font-weight: 700; box-shadow: 0 4px 15px rgba(161, 140, 209, 0.4);}
+        .btn-play:hover { background: var(--primary-hover); transform: translateY(-2px); }
+
+        /* Speaker Badge */
+        .speaker-badge { display: inline-block; padding: 6px 20px; border-radius: 20px; font-weight: bold; font-size: 15px; margin-bottom: 15px; }
+        .speaker-male { background: #e3f2fd; color: #1565c0; border: 1px solid #bbdefb; }
+
+        .input-section { flex-grow: 1; display: flex; flex-direction: column; }
+        .message { text-align: center; font-weight: 600; margin-bottom: 15px; min-height: 24px; color: #e53935; }
+        
+        .proper-noun-box { font-size: 15px; color: #e65100; font-weight: 600; margin-bottom: 10px; background: #fff3e0; padding: 10px 15px; border-radius: 10px; display: inline-block; border-left: 4px solid #e65100; }
+
+        textarea { width: 100%; height: 120px; padding: 20px; border: 2px solid #e0e0e0; border-radius: 15px; font-size: 20px; outline: none; transition: 0.3s; resize: none; color: var(--text-dark); line-height: 1.6; }
+        textarea:focus { border-color: var(--primary); }
+
+        .actions { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-top: 20px; }
+        .btn { padding: 12px 25px; border: none; border-radius: 12px; font-size: 16px; cursor: pointer; font-weight: 700; transition: 0.3s; }
+        .btn-enter { background: var(--blue-dark); color: var(--white); }
+        .btn-enter:hover { background: #1f4a5e; }
+        .btn-hint { background: var(--secondary); color: #7a3b69; }
+        .btn-hint:hover { background: #e3a9d3; }
+
+        /* MODAL POPUP */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content {
+            background: white; width: 90%; max-width: 550px; padding: 35px;
+            border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: left; position: relative;
+        }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .modal-content h3 { color: #2e7d32; font-size: 22px; margin-bottom: 20px; text-align: center; }
+        .modal-script { font-size: 20px; font-weight: 700; color: var(--primary); margin-bottom: 10px; text-align: center; padding-bottom: 15px; border-bottom: 2px dashed #eee;}
+        .modal-content p { margin-bottom: 10px; line-height: 1.6; font-size: 16px; }
+        .vocab-list { list-style-type: none; padding-left: 0; margin-top: 10px;}
+        .vocab-list li { margin-bottom: 8px; background: #f9f9f9; padding: 8px 15px; border-radius: 8px;}
+        .vocab-list li strong { color: var(--accent); font-size: 16px;}
+        
+        .btn-next-modal { width: 100%; background: var(--primary); color: white; margin-top: 20px; padding: 15px; font-size: 18px; }
+        .btn-next-modal:hover { background: var(--primary-hover); }
+
+        /* END SCREEN */
+        .end-screen { display: none; text-align: center; padding-top: 20px;}
+        .transcript-box { text-align: left; background: #fafafa; padding: 25px; border-radius: 15px; height: 350px; overflow-y: auto; margin: 25px 0; border: 1px solid #eee; line-height: 1.8; font-size: 16px;}
+
+        @media (max-width: 850px) {
+            .layout-container { flex-direction: column; height: auto; }
+            .sidebar { flex: none; width: 100%; order: 2; }
+            .main-content { flex: none; width: 100%; order: 1; min-height: 600px;}
+        }
+    </style>
+</head>
+<body>
+
+<div class="layout-container" id="app">
+    <div class="sidebar">
+        <div class="progress-section">
+            <h2 style="color: var(--text-dark); margin-bottom: 25px; font-size: 22px;">Tiến độ bài học</h2>
+            <div class="progress-circle" id="progress-ring"><div class="progress-text"><span id="progress-percent">0</span>%</div></div>
+            <p style="color: var(--text-light); font-weight: 600; margin-top: 15px;">Câu: <span id="current-sentence-num">1</span> / <span id="total-sentences"></span></p>
+            <p style="font-size: 14px; color: #888; margin-top: 5px;">Số lần học bài này: <span id="study-count">0</span></p>
+        </div>
+        <div class="instructions">
+            <h3>⌨️ Hướng dẫn phím tắt</h3>
+            <ul>
+                <li><kbd>Ctrl</kbd> Lặp lại Audio.</li>
+                <li><kbd>Tab</kbd> Gợi ý từ tiếp theo.</li>
+                <li><kbd>Enter</kbd> Kiểm tra đáp án / Chuyển câu tiếp theo.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div id="learning-screen" style="display: flex; flex-direction: column; height: 100%;">
+            <div class="settings-bar">
+                <div class="setting-group">
+                    <label>Tốc độ:</label>
+                    <select id="speed-setting">
+                        <option value="0.7">0.7x</option>
+                        <option value="0.9" selected>0.9x</option>
+                        <option value="1.0">1.0x</option>
+                        <option value="1.2">1.2x</option>
+                    </select>
+                </div>
+                <div class="setting-group">
+                    <label>Lặp tự động:</label>
+                    <select id="repeat-setting">
+                        <option value="1" selected>1 lần</option>
+                        <option value="2">2 lần</option>
+                        <option value="3">3 lần</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="audio-section">
+                <div id="speaker-display" class="speaker-badge"></div><br>
+                <button class="btn-play" onclick="playAudio()">🔊 Nghe Audio</button>
+            </div>
+            
+            <div class="message" id="system-message"></div>
+
+            <div class="input-section">
+                <div id="proper-noun-container" style="display: none;">
+                    <span class="proper-noun-box">📌 Chú ý viết hoa: <span id="proper-noun-display"></span></span>
+                </div>
+
+                <textarea id="user-input" placeholder="Lắng nghe và gõ vào đây..." autofocus></textarea>
+                
+                <div class="actions">
+                    <button class="btn btn-enter" onclick="handleEnterAction()">Kiểm tra (Enter)</button>
+                    <button class="btn btn-hint" onclick="giveHint()">💡 Gợi ý (Tab)</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="end-screen" class="end-screen">
+            <h2 style="color: var(--primary); font-size: 28px;">Tuyệt vời! Hoàn thành 🏆</h2>
+            <div class="transcript-box" id="full-transcript"></div>
+            <div class="actions">
+                <button class="btn btn-play" onclick="playFullAudio()">🔊 Nghe lại toàn văn</button>
+                <button class="btn btn-enter" onclick="restartLesson()">🔄 Học lại từ đầu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="feedback-modal">
+    <div class="modal-content">
+        <h3>🎉 Chính xác!</h3>
+        <div class="modal-script" id="trans-en"></div>
+        <p><strong>🇻🇳 Nghĩa:</strong> <span id="trans-vi"></span></p>
+        <p><strong>📖 Ngữ pháp:</strong> <span id="trans-grammar"></span></p>
+        <ul class="vocab-list" id="trans-vocab"></ul>
+        <button class="btn btn-next-modal" onclick="nextSentence()">Qua câu tiếp theo (Enter) ➔</button>
+    </div>
+</div>
+
+<script>
+    const lessonData = [
+        { en: "Hi, everyone.", vi: "Chào mọi người.", grammar: "Lời chào chung thường dùng trong môi trường công sở.", vocab: ["Everyone (Mọi người)"], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "I know you're all busy so I'll keep this briefing quick.", vi: "Tôi biết tất cả các bạn đều bận rộn nên tôi sẽ giữ cho buổi họp tóm tắt này thật nhanh.", grammar: "keep sth + adj: Giữ cho cái gì như thế nào.", vocab: ["Busy (Bận rộn)", "Briefing (Buổi họp tóm tắt)", "Quick (Nhanh chóng)"], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "I have some important information about a change in the management team.", vi: "Tôi có vài thông tin quan trọng về sự thay đổi trong đội ngũ quản lý.", grammar: "information about sth: Thông tin về điều gì.", vocab: ["Important (Quan trọng)", "Change (Sự thay đổi)", "Management team (Đội ngũ quản lý)"], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "As you already know, our head of department, James Watson, is leaving his position at the end of this week.", vi: "Như các bạn đã biết, trưởng bộ phận của chúng ta, James Watson, sẽ rời vị trí của mình vào cuối tuần này.", grammar: "Thì hiện tại tiếp diễn (is leaving) diễn tả kế hoạch chắc chắn trong tương lai.", vocab: ["Head of department (Trưởng bộ phận)", "Position (Vị trí)"], nouns: ["James", "Watson"], speaker: "Manager", gender: "male" },
+        { en: "His replacement is starting at the end of the next month.", vi: "Người thay thế anh ấy sẽ bắt đầu vào cuối tháng sau.", grammar: "Tương tự câu trên, hiện tại tiếp diễn chỉ tương lai.", vocab: ["Replacement (Người thay thế)"], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "In the meantime, we'll continue with our projects as usual.", vi: "Trong lúc chờ đợi, chúng ta sẽ tiếp tục các dự án của mình như bình thường.", grammar: "In the meantime: Trong lúc đó. continue with: Tiếp tục với.", vocab: ["In the meantime (Trong lúc chờ đợi)", "Continue (Tiếp tục)", "As usual (Như bình thường)"], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "I have two more quick points.", vi: "Tôi còn hai điểm nhanh nữa.", grammar: "Số đếm + more + Noun: Thêm bao nhiêu cái gì nữa.", vocab: ["Points (Vấn đề/Điểm)"], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "Firstly, there will be some improvements made to the staff car park next month for a few weeks.", vi: "Đầu tiên, sẽ có một vài cải tạo được thực hiện đối với bãi đỗ xe của nhân viên vào tháng tới trong vài tuần.", grammar: "improvements made to: Sự cải tạo được áp dụng cho.", vocab: ["Improvements (Sự cải tạo)", "Staff car park (Bãi đỗ xe nhân viên)"], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "It will be closed during that time.", vi: "Nó sẽ bị đóng cửa trong thời gian đó.", grammar: "Bị động của thì tương lai đơn: will be + V3/ed.", vocab: ["Closed (Đóng cửa)", "During (Trong suốt)"], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "Don't worry, we've found a solution.", vi: "Đừng lo lắng, chúng tôi đã tìm ra giải pháp.", grammar: "Hiện tại hoàn thành (we have found) chỉ kết quả ở hiện tại.", vocab: ["Worry (Lo lắng)", "Solution (Giải pháp)"], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "We can use the local church car park until our own one is ready.", vi: "Chúng ta có thể sử dụng bãi đỗ xe của nhà thờ địa phương cho đến khi bãi đỗ xe của chúng ta sẵn sàng.", grammar: "Until + mệnh đề: Cho đến khi.", vocab: ["Local (Địa phương)", "Church (Nhà thờ)", "Ready (Sẵn sàng)"], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "If you arrive before 8.30 a.m., please use our small car park on Brown Street, and if you arrive after that, you should go directly to the church car park.", vi: "Nếu bạn đến trước 8:30 sáng, vui lòng sử dụng bãi đỗ xe nhỏ của chúng ta trên đường Brown, và nếu bạn đến sau đó, bạn nên đi thẳng đến bãi đỗ xe của nhà thờ.", grammar: "Câu điều kiện loại 1: If + Hiện tại đơn, Mệnh lệnh/Modal verb.", vocab: ["Arrive (Đến)", "Directly (Trực tiếp/Đi thẳng)"], nouns: ["Brown", "Street"], speaker: "Manager", gender: "male" },
+        { en: "It's only a five-minute walk away.", vi: "Nó chỉ cách năm phút đi bộ.", grammar: "A five-minute walk: Cụm danh từ ghép chỉ thời gian đi bộ.", vocab: [], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "But they need it in the evenings, so you have to leave before 6 p.m.", vi: "Nhưng họ cần nó vào buổi tối, nên bạn phải rời đi trước 6 giờ chiều.", grammar: "Have to + V-inf: Bắt buộc phải làm gì (do hoàn cảnh).", vocab: ["Leave (Rời đi)", "Evenings (Buổi tối)"], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "Sorry about that – I know how much you all love working late!", vi: "Xin lỗi về điều đó – tôi biết tất cả các bạn thích làm việc muộn đến mức nào!", grammar: "How much + mệnh đề: Đến mức nào. love + V-ing: Thích làm gì.", vocab: ["Working late (Làm việc muộn/Tăng ca)"], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "The other thing I wanted to tell you about is that the canteen has now introduced a cashless payment system.", vi: "Một điều khác tôi muốn thông báo là căng tin hiện đã áp dụng hệ thống thanh toán không dùng tiền mặt.", grammar: "The other thing... is that: Một điều khác là.", vocab: ["Canteen (Căng tin)", "Introduce (Áp dụng/Giới thiệu)", "Cashless payment system (Hệ thống thanh toán không tiền mặt)"], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "So, you can't use cash for payments any more.", vi: "Vì vậy, bạn không thể sử dụng tiền mặt để thanh toán nữa.", grammar: "Not... any more: Không còn nữa.", vocab: ["Cash (Tiền mặt)", "Payments (Thanh toán)"], nouns: [], speaker: "Manager", gender: "male" },
+        { en: "You can pay directly with your smartphone or you can pay using your company ID card.", vi: "Bạn có thể thanh toán trực tiếp bằng điện thoại thông minh hoặc thanh toán bằng thẻ ID của công ty.", grammar: "Pay with/using sth: Thanh toán bằng (phương tiện gì).", vocab: ["Smartphone (Điện thoại thông minh)", "Company ID card (Thẻ nhân viên)"], nouns: ["ID"], speaker: "Manager", gender: "male" },
+        { en: "The total amount put on your company ID card comes off your salary at the end of each month.", vi: "Tổng số tiền được tính vào thẻ ID công ty của bạn sẽ được khấu trừ vào lương của bạn vào cuối mỗi tháng.", grammar: "Mệnh đề quan hệ rút gọn (put on...). comes off: Được trừ đi.", vocab: ["Total amount (Tổng số tiền)", "Salary (Tiền lương)"], nouns: ["ID"], speaker: "Manager", gender: "male" },
+        { en: "OK. That's it? Are there any questions?", vi: "Được rồi. Vậy thôi nhé? Có câu hỏi nào không?", grammar: "That's it: Chỉ vậy thôi / Kết thúc.", vocab: ["Questions (Câu hỏi)"], nouns: [], speaker: "Manager", gender: "male" }
+    ];
+
+    let currentIndex = 0;
+    let currentPlayCount = 0;
+    let playTimeout;
+    const synth = window.speechSynthesis;
+    let maleVoice = null;
+
+    const msgBox = document.getElementById("system-message");
+    const inputField = document.getElementById("user-input");
+    const modalOverlay = document.getElementById("feedback-modal");
+    const speakerDisplay = document.getElementById("speaker-display");
+
+    function loadVoices() {
+        let voices = synth.getVoices();
+        if(voices.length === 0) return;
+        maleVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Guy') || v.name.includes('Daniel') || v.name.includes('Google UK English Male'))) || voices.find(v => v.lang.startsWith('en'));
+    }
+
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = loadVoices;
+    }
+
+    window.onload = () => {
+        loadVoices();
+        let count = localStorage.getItem('morning_briefing_count') || 0;
+        document.getElementById('study-count').innerText = count;
+        document.getElementById('total-sentences').innerText = lessonData.length;
+        
+        let savedIndex = parseInt(localStorage.getItem('morning_briefing_progress'));
+        if (!isNaN(savedIndex) && savedIndex < lessonData.length) {
+            currentIndex = savedIndex;
+        }
+
+        updateUI();
+    };
+
+    function updateUI() {
+        updateProgress();
+        document.getElementById('current-sentence-num').innerText = currentIndex + 1;
+        
+        const data = lessonData[currentIndex];
+        
+        speakerDisplay.innerText = `🎙️ ${data.speaker} đang thông báo`;
+        speakerDisplay.className = 'speaker-badge speaker-male';
+
+        const nounContainer = document.getElementById("proper-noun-container");
+        if (data.nouns && data.nouns.length > 0) {
+            nounContainer.style.display = "block";
+            document.getElementById("proper-noun-display").innerText = data.nouns.join(", ");
+        } else {
+            nounContainer.style.display = "none";
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Control') {
+            e.preventDefault();
+            playAudio();
+        } else if (e.key === 'Tab') {
+            e.preventDefault();
+            giveHint();
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            handleEnterAction();
+        }
+    });
+
+    function handleEnterAction() {
+        if (modalOverlay.style.display === "flex") {
+            nextSentence();
+        } else {
+            checkAnswer();
+        }
+    }
+
+    function playAudio() {
+        currentPlayCount = 0;
+        clearTimeout(playTimeout);
+        triggerAudioLoop();
+    }
+
+    function triggerAudioLoop() {
+        if (synth.speaking) synth.cancel();
+        
+        const data = lessonData[currentIndex];
+        const utterThis = new SpeechSynthesisUtterance(data.en);
+        utterThis.lang = 'en-US';
+        utterThis.rate = parseFloat(document.getElementById('speed-setting').value);
+        
+        if (maleVoice) utterThis.voice = maleVoice;
+        
+        utterThis.onend = () => {
+            currentPlayCount++;
+            const maxRepeat = parseInt(document.getElementById('repeat-setting').value);
+            if (currentPlayCount < maxRepeat) {
+                playTimeout = setTimeout(triggerAudioLoop, 500);
+            }
+        };
+        
+        synth.speak(utterThis);
+        if (modalOverlay.style.display !== "flex") inputField.focus();
+    }
+
+    function normalizeText(text) { return text.toLowerCase().replace(/[.,?!–-]/g, '').trim(); }
+
+    function checkAnswer() {
+        const userInput = normalizeText(inputField.value);
+        const targetText = normalizeText(lessonData[currentIndex].en);
+        
+        if (userInput === targetText) {
+            msgBox.innerText = "";
+            showModal();
+        } else {
+            const userWords = userInput.split(' ').filter(w => w !== "");
+            const targetWords = targetText.split(' ');
+
+            if (userWords.length === 0) {
+                msgBox.innerText = "Bạn chưa gõ gì cả. Nhấn Ctrl để nghe nhé!";
+                return;
+            }
+
+            let wrongIndex = -1;
+            for (let i = 0; i < userWords.length; i++) {
+                if (userWords[i] !== targetWords[i]) {
+                    wrongIndex = i;
+                    break;
+                }
+            }
+
+            if (wrongIndex !== -1) {
+                msgBox.innerText = `Lỗi ở từ thứ ${wrongIndex + 1}. Nhấn Tab để được gợi ý!`;
+            } else if (userWords.length < targetWords.length) {
+                msgBox.innerText = "Chưa hết câu, hãy nghe thêm và gõ tiếp nhé!";
+            } else {
+                msgBox.innerText = "Có lỗi sai chính tả nhỏ, hãy kiểm tra lại.";
+            }
+        }
+    }
+
+    function giveHint() {
+        if (modalOverlay.style.display === "flex") return;
+
+        const userInput = inputField.value;
+        const targetWords = lessonData[currentIndex].en.split(' ');
+        const userWords = userInput.trim().split(' ').filter(w => w !== "");
+
+        let hintWord = targetWords[userWords.length];
+        for (let i = 0; i < userWords.length; i++) {
+            if (normalizeText(userWords[i]) !== normalizeText(targetWords[i])) {
+                hintWord = targetWords[i];
+                inputField.value = targetWords.slice(0, i).join(' ') + (i > 0 ? " " : "");
+                break;
+            }
+        }
+
+        if (hintWord) {
+            inputField.value += (inputField.value.length > 0 && !inputField.value.endsWith(' ') ? ' ' : '') + hintWord + ' ';
+            msgBox.innerText = "Đã điền từ tiếp theo!";
+        }
+    }
+
+    function showModal() {
+        inputField.blur();
+        const data = lessonData[currentIndex];
+        
+        document.getElementById("trans-en").innerText = data.en;
+        document.getElementById("trans-vi").innerText = data.vi;
+        document.getElementById("trans-grammar").innerText = data.grammar;
+        
+        const vocabList = document.getElementById("trans-vocab");
+        vocabList.innerHTML = "";
+        if(data.vocab.length > 0) {
+            data.vocab.forEach(v => {
+                let li = document.createElement("li");
+                let parts = v.split(" (");
+                li.innerHTML = `<strong>${parts[0]}</strong> (${parts[1]}`;
+                vocabList.appendChild(li);
+            });
+        }
+        
+        modalOverlay.style.display = "flex";
+    }
+
+    function nextSentence() {
+        modalOverlay.style.display = "none";
+        currentIndex++;
+        inputField.value = "";
+        msgBox.innerText = "";
+        
+        if (currentIndex < lessonData.length) {
+            localStorage.setItem('morning_briefing_progress', currentIndex);
+            updateUI();
+            playAudio();
+        } else {
+            finishLesson();
+        }
+    }
+
+    function updateProgress() {
+        const percent = Math.round((currentIndex / lessonData.length) * 100);
+        document.getElementById("progress-percent").innerText = percent;
+        document.getElementById("progress-ring").style.background = `conic-gradient(var(--primary) ${percent}%, #eee 0)`;
+    }
+
+    function finishLesson() {
+        document.getElementById("learning-screen").style.display = "none";
+        document.getElementById("end-screen").style.display = "block";
+        
+        let count = parseInt(localStorage.getItem('morning_briefing_count')) || 0;
+        count++;
+        localStorage.setItem('morning_briefing_count', count);
+        document.getElementById('study-count').innerText = count;
+
+        localStorage.removeItem('morning_briefing_progress');
+
+        const transcriptBox = document.getElementById("full-transcript");
+        transcriptBox.innerHTML = lessonData.map(d => {
+            return `<p style="margin-bottom:15px;">
+                <strong style="color:#1565c0">${d.speaker}:</strong> ${d.en}<br>
+                <span style="color:#666; font-size: 14px;">${d.vi}</span>
+            </p>`;
+        }).join("");
+    }
+
+    function restartLesson() {
+        localStorage.setItem('morning_briefing_progress', 0);
+        location.reload();
+    }
+
+    async function playFullAudio() {
+        if (synth.speaking) synth.cancel();
+        
+        for (let i = 0; i < lessonData.length; i++) {
+            await speakSentence(lessonData[i]);
+        }
+    }
+
+    function speakSentence(data) {
+        return new Promise(resolve => {
+            const utterThis = new SpeechSynthesisUtterance(data.en);
+            utterThis.lang = 'en-US';
+            if (maleVoice) utterThis.voice = maleVoice;
+            
+            utterThis.onend = resolve;
+            synth.speak(utterThis);
+        });
+    }
+</script>
+
+</body>
+</html>
