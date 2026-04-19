@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-main: #fcfcfc;
+            --box-bg: #ffffff;
+            --pastel-blue: #f1f5f9;
+            --pastel-pink: #fff0f5;
+            --text-main: #334155;
+            --text-pinyin: #eab308;
+            --highlight: #ec4899;
+            --tooltip-bg: #1e293b;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: transparent; 
+            color: var(--text-main);
+            margin: 0;
+            padding: 5px; 
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+            background: var(--box-bg);
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04); 
+            padding: 30px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: var(--highlight);
+            font-size: 26px;
+            margin: 0 0 5px 0;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 14px;
+            margin: 0;
+            font-style: italic;
+        }
+
+        /* KHUNG ĐỌC 2 CỘT */
+        .reader-wrapper {
+            display: flex;
+            gap: 20px;
+            height: 420px; 
+            margin-bottom: 30px;
+        }
+
+        .column {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 25px;
+            background: #fafaf9;
+            border-radius: 16px;
+            border: 1px solid #f3f4f6;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 transparent;
+        }
+
+        .column::-webkit-scrollbar { width: 5px; }
+        .column::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .column::-webkit-scrollbar-track { background: transparent; }
+
+        /* CỘT TIẾNG TRUNG */
+        .chinese-content {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end; /* Đã thêm dòng này để đưa dấu câu xuống dưới đáy hàng */
+            gap: 15px 8px; 
+            line-height: 2.2;
+        }
+
+        .word-group {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .pinyin {
+            font-size: 12px; 
+            color: var(--text-pinyin);
+            font-weight: 600;
+            margin-bottom: -2px;
+        }
+
+        /* Thêm padding nhẹ cho các dấu câu đứng riêng lẻ để chúng mượt mà hơn */
+        .char {
+            font-size: 26px; 
+            color: var(--text-main);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            padding-bottom: 2px; 
+        }
+
+        /* TOOLTIP CHUYÊN NGHIỆP */
+        .word-group::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            top: 105%;
+            left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            background: var(--tooltip-bg);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+            z-index: 10;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .word-group:hover::after {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .word-group:hover .char {
+            color: var(--highlight);
+            transform: scale(1.08);
+        }
+
+        /* CỘT TIẾNG VIỆT */
+        .viet-content {
+            font-size: 16px; 
+            color: #475569;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        .viet-content p {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        /* KHUNG KIẾN THỨC BÊN DƯỚI */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .info-box {
+            padding: 20px 25px;
+            border-radius: 16px;
+            font-size: 14.5px;
+            line-height: 1.6;
+        }
+
+        .grammar-box {
+            background: var(--pastel-blue);
+            color: #334155;
+        }
+
+        .tip-box {
+            background: var(--pastel-pink);
+            border: 1px dashed #f9a8d4;
+            color: #831843;
+        }
+
+        .info-box h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box p { margin: 8px 0; }
+
+        /* NÚT ĐIỀU HƯỚNG CỐ ĐỊNH */
+        .nav-fixed {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 100;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .btn-list { 
+            background: #ffffff; 
+            color: #64748b; 
+            border: 1px solid #e2e8f0; 
+        }
+        
+        .btn-next { 
+            background: var(--highlight); 
+            color: white; 
+        }
+
+        .btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1); 
+        }
+
+        @media (max-width: 768px) {
+            .reader-wrapper { flex-direction: column; height: auto; }
+            .column { height: 350px; }
+            .info-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Tiếng Cười Muộn Màng</h1>
+        <p>只有我没笑</p>
+    </div>
+
+    <div class="reader-wrapper">
+        <div class="column">
+            <div class="chinese-content">
+                <div class="word-group" data-tooltip="Tiểu Vương"><span class="pinyin">xiǎo Wáng</span><span class="char">小王</span></div>
+                <div class="word-group" data-tooltip="Từ"><span class="pinyin">cóng</span><span class="char">从</span></div>
+                <div class="word-group" data-tooltip="Trường học"><span class="pinyin">xué xiào</span><span class="char">学校</span></div>
+                <div class="word-group" data-tooltip="Về"><span class="pinyin">huí</span><span class="char">回</span></div>
+                <div class="word-group" data-tooltip="Nhà"><span class="pinyin">jiā</span><span class="char">家</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Mẹ"><span class="pinyin">mā ma</span><span class="char">妈妈</span></div>
+                <div class="word-group" data-tooltip="Hỏi"><span class="pinyin">wèn</span><span class="char">问</span></div>
+                <div class="word-group" data-tooltip="Cậu ấy"><span class="pinyin">tā</span><span class="char">他</span></div>
+                <div class="word-group" data-tooltip="Hôm nay"><span class="pinyin">jīn tiān</span><span class="char">今天</span></div>
+                <div class="word-group" data-tooltip="Như thế nào"><span class="pinyin">zěn me yàng</span><span class="char">怎么样</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Cậu ấy"><span class="pinyin">tā</span><span class="char">他</span></div>
+                <div class="word-group" data-tooltip="Nói với"><span class="pinyin">gào sù</span><span class="char">告诉</span></div>
+                <div class="word-group" data-tooltip="Mẹ"><span class="pinyin">mā ma</span><span class="char">妈妈</span></div>
+                <span class="char">：</span><span class="char">“</span>
+                <div class="word-group" data-tooltip="Hôm nay"><span class="pinyin">jīn tiān</span><span class="char">今天</span></div>
+                <div class="word-group" data-tooltip="Có"><span class="pinyin">yǒu</span><span class="char">有</span></div>
+                <div class="word-group" data-tooltip="Một"><span class="pinyin">yī</span><span class="char">一</span></div>
+                <div class="word-group" data-tooltip="Đứa (Lượng từ)"><span class="pinyin">gè</span><span class="char">个</span></div>
+                <div class="word-group" data-tooltip="Đứa trẻ"><span class="pinyin">hái zi</span><span class="char">孩子</span></div>
+                <div class="word-group" data-tooltip="Rơi/Ngã"><span class="pinyin">diào</span><span class="char">掉</span></div>
+                <div class="word-group" data-tooltip="Vào"><span class="pinyin">jìn</span><span class="char">进</span></div>
+                <div class="word-group" data-tooltip="Nước"><span class="pinyin">shuǐ</span><span class="char">水</span></div>
+                <div class="word-group" data-tooltip="Trong"><span class="pinyin">lǐ</span><span class="char">里</span></div>
+                <div class="word-group" data-tooltip="Rồi (Trợ từ)"><span class="pinyin">le</span><span class="char">了</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Bạn học"><span class="pinyin">tóng xué</span><span class="char">同学</span></div>
+                <div class="word-group" data-tooltip="Các (Số nhiều)"><span class="pinyin">men</span><span class="char">们</span></div>
+                <div class="word-group" data-tooltip="Đều"><span class="pinyin">dōu</span><span class="char">都</span></div>
+                <div class="word-group" data-tooltip="Cười lớn"><span class="pinyin">dà xiào</span><span class="char">大笑</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Chỉ có"><span class="pinyin">zhǐ yǒu</span><span class="char">只有</span></div>
+                <div class="word-group" data-tooltip="Tôi/Con"><span class="pinyin">wǒ</span><span class="char">我</span></div>
+                <div class="word-group" data-tooltip="Không (Quá khứ)"><span class="pinyin">méi</span><span class="char">没</span></div>
+                <div class="word-group" data-tooltip="Cười"><span class="pinyin">xiào</span><span class="char">笑</span></div>
+                <span class="char">。</span><span class="char">”</span>
+                <div style="width: 100%; height: 5px;"></div>
+                <div class="word-group" data-tooltip="Mẹ"><span class="pinyin">mā ma</span><span class="char">妈妈</span></div>
+                <div class="word-group" data-tooltip="Rất"><span class="pinyin">hěn</span><span class="char">很</span></div>
+                <div class="word-group" data-tooltip="Vui vẻ"><span class="pinyin">gāo xìng</span><span class="char">高兴</span></div>
+                <span class="char">：</span><span class="char">“</span>
+                <div class="word-group" data-tooltip="Tốt/Ngoan"><span class="pinyin">hǎo</span><span class="char">好</span></div>
+                <div class="word-group" data-tooltip="Đứa trẻ"><span class="pinyin">hái zi</span><span class="char">孩子</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Chúng ta"><span class="pinyin">wǒ men</span><span class="char">我们</span></div>
+                <div class="word-group" data-tooltip="Đương nhiên"><span class="pinyin">dāng rán</span><span class="char">当然</span></div>
+                <div class="word-group" data-tooltip="Không thể"><span class="pinyin">bù néng</span><span class="char">不能</span></div>
+                <div class="word-group" data-tooltip="Cười nhạo"><span class="pinyin">xiào</span><span class="char">笑</span></div>
+                <div class="word-group" data-tooltip="Người khác"><span class="pinyin">bié rén</span><span class="char">别人</span></div>
+                <span class="char">。</span>
+                <div class="word-group" data-tooltip="Ai"><span class="pinyin">shéi</span><span class="char">谁</span></div>
+                <div class="word-group" data-tooltip="Rơi/Ngã"><span class="pinyin">diào</span><span class="char">掉</span></div>
+                <div class="word-group" data-tooltip="Vào"><span class="pinyin">jìn</span><span class="char">进</span></div>
+                <div class="word-group" data-tooltip="Nước"><span class="pinyin">shuǐ</span><span class="char">水</span></div>
+                <div class="word-group" data-tooltip="Trong"><span class="pinyin">lǐ</span><span class="char">里</span></div>
+                <div class="word-group" data-tooltip="Rồi"><span class="pinyin">le</span><span class="char">了</span></div>
+                <span class="char">？</span><span class="char">”</span>
+                <div style="width: 100%; height: 5px;"></div>
+                <div class="word-group" data-tooltip="Tiểu Vương"><span class="pinyin">xiǎo Wáng</span><span class="char">小王</span></div>
+                <div class="word-group" data-tooltip="Nói"><span class="pinyin">shuō</span><span class="char">说</span></div>
+                <span class="char">：</span><span class="char">“</span>
+                <div class="word-group" data-tooltip="Con/Tôi"><span class="pinyin">wǒ</span><span class="char">我</span></div>
+                <span class="char">。</span><span class="char">”</span>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="viet-content">
+                <p>Tiểu Vương tan học đi từ trường về nhà. Mẹ hỏi cậu hôm nay ở trường thế nào, cậu thưa với mẹ rằng: "Hôm nay có một bạn nhỏ bị rơi xuống nước, các bạn khác đều cười ồ lên, chỉ có con là không cười chút nào."</p>
+                <p>Người mẹ nghe xong rất lấy làm vui lòng, khen ngợi: "Con ngoan lắm, chúng ta tuyệt đối không được cười nhạo trên nỗi đau của người khác. Thế con cho mẹ biết, ai là người tội nghiệp bị rơi xuống nước thế?"</p>
+                <p>Tiểu Vương lí nhí đáp: "Dạ... là con ạ."</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-box grammar-box">
+            <h3 style="color: #0284c7;">📘 Ngữ pháp chi tiết</h3>
+            <p>• <b>从...回... (Cóng...huí...)</b>: Chuyển động từ đâu về đâu (Ví dụ: Từ trường về nhà).</p>
+            <p>• <b>怎么样 (Zěnmeyàng)</b>: Dùng để hỏi tính chất, trạng thái. "Thế nào?"</p>
+            <p>• <b>掉进...里 (Diào jìn... lǐ)</b>: Bổ ngữ kết quả. "Rơi" (掉) + hướng "vào" (进).</p>
+            <p>• <b>只有...没... (Zhǐyǒu...méi...)</b>: Cấu trúc nhấn mạnh "Chỉ có... là chưa/không...".</p>
+        </div>
+        <div class="info-box tip-box">
+            <h3>✨ Mẹo nhớ hay</h3>
+            <p>So sánh <b>哭 (khóc)</b> và <b>笑 (cười)</b>: Chữ Cười (笑) có bộ Trúc ở trên trông như đôi lông mày cong lên khi vui. Chữ Khóc (哭) có hai cái "miệng" ở trên nhìn như hai con mắt đang rơi lệ!</p>
+        </div>
+    </div>
+</div>
+
+<div class="nav-fixed">
+    <a href="doc-hsk.html" class="btn btn-list">🏠 Danh sách</a>
+    <a href="cong-viec-cua-ba.html" class="btn btn-next">Bài tiếp theo ➜</a>
+</div>
+
+</body>
+</html>
