@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hành Trình Phát Âm | SnapEnglish</title>
+    <base target="_blank">
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- Cài đặt chung & Biến màu --- */
+        :root {
+            --primary-color: #ff477e;
+            --primary-light: #ff709b;
+            --bg-gradient: linear-gradient(135deg, #fff0f5 0%, #ffe6ee 100%);
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --hover-shadow: 0 15px 35px rgba(255, 71, 126, 0.15);
+        }
+
+        body { 
+            font-family: 'Poppins', 'Quicksand', sans-serif; 
+            margin: 0;
+            padding: 50px 20px;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: var(--text-main);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* --- Hiệu ứng Background (Blobs) --- */
+        .blob {
+            position: fixed;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.5;
+            animation: float 12s ease-in-out infinite;
+        }
+
+        .blob-1 {
+            width: 400px; height: 400px;
+            background: #ff9a9e;
+            top: -100px; left: -100px;
+            border-radius: 50%;
+        }
+
+        .blob-2 {
+            width: 500px; height: 500px;
+            background: #fecfef;
+            bottom: -150px; right: -100px;
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation-delay: -6s;
+        }
+
+        /* --- Header --- */
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        h1 { 
+            font-family: 'Poppins', sans-serif;
+            font-size: 36px; 
+            margin-bottom: 10px;
+            font-weight: 700;
+            background: linear-gradient(45deg, #ff477e, #ff8a00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        p.subtitle {
+            color: var(--text-muted);
+            font-family: 'Quicksand', sans-serif;
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* --- Nút Luyện Tập Phát Âm --- */
+        .btn-practice {
+            display: inline-block;
+            margin-bottom: 30px;
+            padding: 14px 32px;
+            background: linear-gradient(45deg, var(--primary-color), #ff8a00);
+            color: #fff;
+            text-decoration: none;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 50px;
+            box-shadow: 0 10px 20px rgba(255, 71, 126, 0.3);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeInDown 0.8s ease 0.1s backwards;
+        }
+
+        .btn-practice:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 25px rgba(255, 71, 126, 0.5);
+            color: #fff;
+        }
+
+        /* --- Thanh Tìm Kiếm --- */
+        .search-wrapper {
+            max-width: 550px;
+            margin: 0 auto 50px auto;
+            position: relative;
+            animation: fadeInUp 0.8s ease 0.2s backwards;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 18px 55px 18px 30px;
+            border-radius: 50px;
+            border: 2px solid var(--glass-border);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            font-family: 'Quicksand', sans-serif;
+            font-size: 16px;
+            color: var(--text-main);
+            outline: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            box-sizing: border-box; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #searchInput::placeholder {
+            color: #a4b0be;
+            font-weight: 500;
+        }
+
+        #searchInput:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 15px 30px rgba(255, 71, 126, 0.2);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 20px;
+            pointer-events: none; 
+            opacity: 0.6;
+        }
+
+        /* --- Grid & Cards (Glassmorphism) --- */
+        .container { 
+            max-width: 1000px; 
+            margin: auto; 
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .unit-card { 
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 22px 25px;
+            border-radius: 24px;
+            cursor: pointer; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 32px rgba(255, 71, 126, 0.05);
+            border: 1px solid var(--glass-border);
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease backwards; 
+        }
+
+        .unit-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg);
+            transition: all 0.7s ease;
+        }
+
+        .unit-card:hover { 
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+            border-color: var(--primary-light);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .unit-card:hover::before {
+            left: 200%;
+        }
+
+        .unit-icon-box {
+            font-size: 28px;
+            background: #fff0f5;
+            width: 55px; height: 55px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 18px;
+            margin-right: 18px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
+            transition: 0.3s;
+        }
+
+        .unit-card:hover .unit-icon-box {
+            background: var(--primary-color);
+            transform: rotate(-10deg) scale(1.1);
+        }
+
+        .unit-info {
+            text-align: left;
+            flex-grow: 1;
+        }
+
+        .unit-number {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--primary-light);
+            font-weight: 700;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .unit-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .arrow-icon {
+            color: #dcdde1;
+            font-size: 20px;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        .unit-card:hover .arrow-icon {
+            color: var(--primary-color);
+            transform: translateX(5px);
+        }
+
+        .hidden { display: none !important; }
+        
+        #noResults {
+            text-align: center;
+            grid-column: 1 / -1; 
+            color: var(--text-muted);
+            font-family: 'Quicksand', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            background: var(--glass-bg);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px dashed var(--primary-light);
+            display: none;
+        }
+
+        /* --- Keyframes --- */
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(20px, -20px) scale(1.05); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .container { grid-template-columns: 1fr; }
+            h1 { font-size: 28px; }
+            #searchInput { padding: 16px 50px 16px 25px; font-size: 15px; }
+            .unit-card { padding: 18px 20px; }
+            .unit-icon-box { width: 45px; height: 45px; font-size: 22px; }
+            .btn-practice { padding: 12px 24px; font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="header-section">
+        <h1>✨ Master Pronunciation | SnapEnglish</h1>
+        <p class="subtitle">Lộ trình chuẩn hóa phát âm từ con số 0 đến tự tin giao tiếp</p>
+        <a href="practice-pronunciation.html" class="btn-practice">🎯 Luyện Tập Phát Âm Ngay</a>
+    </div>
+    
+    <div class="search-wrapper">
+        <input type="text" id="searchInput" placeholder="Tìm kiếm bài học (VD: IPA, Trọng âm, Nối âm)...">
+        <span class="search-icon">🔍</span>
+    </div>
+
+    <div class="container" id="unitContainer">
+        <div id="noResults">Không tìm thấy bài học nào phù hợp nè... 🥺<br><span style="font-size: 13px; font-weight: normal;">Thử nhập lại từ khóa khác xem sao nhé!</span></div>
+    </div>
+
+<script>
+    // Lộ trình học Phát Âm (Phân cấp từ Âm -> Từ -> Câu)
+    const unitsData = [
+        { title: "Cách phát âm nguyên âm ngắn và dài ɪ - ɪː", icon: "🎯" },
+        { title: "Cách phát âm nguyên âm ʊ - uː", icon: "🎯" },
+        { title: "Cách phát âm nguyên âm e - ə - ɜː", icon: "🎯" },
+        { title: "Cách phát âm nguyên âm ɒ - ɔː", icon: "🎯" },
+        { title: "Cách phát âm nguyên âm æ - ʌ - ɑː", icon: "🎯" },
+        { title: "Cách phát âm 8 nguyên âm đôi eɪ - ɑɪ - əʊ - eə - ʊə - ɪə - ɑʊ - ɔɪ", icon: "🎯" },
+        { title: "Cách phát âm p - b", icon: "🎵" },
+        { title: "Cách phát âm t - d", icon: "🎵" },
+        { title: "Cách phát âm tʃ - dʒ", icon: "🎵" },
+        { title: "Cách phát âm k - g", icon: "🎵" },
+        { title: "Cách phát âm f - v", icon: "🎵" },
+        { title: "Cách phát âm ð - θ", icon: "🎵" },
+        { title: "Cách phát âm s - z", icon: "🎵" },
+        { title: "Cách phát âm ʃ - ʒ", icon: "🎵" },
+        { title: "Cách phát âm mũi m - n - ŋ", icon: "🎵" },
+        { title: "Cách phát âm h - l - r - w - j", icon: "🎵" },
+        { title: "Tổng hợp cách đọc 24 phụ âm trong bảng IPA", icon: "📚" },
+        { title: "Đánh vần 46 cụm IPA", icon: "📚" },
+        { title: "Phân biệt các cặp âm IPA khó phát (ví dụ dễ nhầm lẫn như /i:/ và /ɪ/, /e/ và /æ/, /ɔː/ và /ɒ/)", icon: "💡" },
+        { title: "Tầm quan trọng của phát âm cuối (Ending sounds)", icon: "💡" },
+        { title: "Cách phát âm đuôi -ed", icon: "💡" },
+        { title: "Trọng âm", icon: "⭐" },
+        { title: "Ngữ điệu", icon: "⭐" }
+    ];
+
+    const container = document.getElementById('unitContainer');
+    const searchInput = document.getElementById('searchInput');
+    const noResultsMsg = document.getElementById('noResults');
+
+    function renderUnits() {
+        unitsData.forEach((unit, index) => {
+            const unitNum = index + 1;
+            const card = document.createElement('a');
+            card.className = 'unit-card';
+            
+            // Đã chuyển đổi sang link HTML nội bộ đặc trưng của SnapEnglish
+            card.href = `lesson-${unitNum}.html`;
+            
+            // Từ khóa tìm kiếm bao gồm cả tiếng Việt và tiếng Anh (không lấy dấu)
+            card.setAttribute('data-search', `bài ${unitNum} lesson ${unitNum} unit ${unitNum} ${unit.title.toLowerCase()}`); 
+            
+            card.style.animationDelay = `${(index * 0.05) + 0.3}s`;
+            
+            // Sử dụng fallback cho icon: nếu không có unit.icon thì mặc định hiện '📚'
+            card.innerHTML = `
+                <div class="unit-icon-box">${unit.icon || '📚'}</div>
+                <div class="unit-info">
+                    <span class="unit-number">Bài ${unitNum}</span>
+                    <h3 class="unit-title">${unit.title}</h3>
+                </div>
+                <div class="arrow-icon">➔</div>
+            `;
+            container.insertBefore(card, noResultsMsg);
+        });
+    }
+
+    searchInput.addEventListener('keyup', function() {
+        const filter = this.value.toLowerCase().trim();
+        const cards = document.querySelectorAll('.unit-card');
+        let hasResult = false;
+
+        cards.forEach(card => {
+            const searchText = card.getAttribute('data-search');
+            if (searchText.includes(filter)) {
+                card.classList.remove('hidden');
+                hasResult = true;
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+
+        if (!hasResult) {
+            noResultsMsg.style.display = 'block';
+        } else {
+            noResultsMsg.style.display = 'none';
+        }
+    });
+
+    renderUnits();
+</script>
+
+</body>
+</html>
