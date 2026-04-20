@@ -51,6 +51,9 @@
         .option-label input:checked + .custom-radio { border-color: var(--primary); }
         .option-label input:checked + .custom-radio::after { content: ""; width: 10px; height: 10px; background: var(--primary); border-radius: 50%; position: absolute; top: 3px; left: 3px; }
 
+        /* Navigation Footer */
+        .nav-footer { display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 20px; min-height: 60px; }
+
         /* Results Screen */
         .score-box { text-align: center; padding: 30px; background: var(--primary-light); border-radius: 20px; margin-bottom: 30px; }
         .score-number { font-size: 3rem; font-weight: 800; color: var(--primary); }
@@ -86,7 +89,7 @@
 
 <div class="container">
     <div id="screen-welcome" class="screen active">
-        <h1>TOEIC Listening Practice - Part 1 - 2018 </h1>
+        <h1>TOEIC Listening Practice</h1>
         <p class="desc">Luyện tập mô tả tranh với đầy đủ giải thích chi tiết.<br>Chọn chế độ để bắt đầu.</p>
         <div style="display: flex; justify-content: center; gap: 20px;">
             <button class="btn btn-outline" onclick="startApp('practice')">🌿 Luyện tập</button>
@@ -101,10 +104,13 @@
                 <div id="audio-container" style="margin-top:20px; width:100%;">
                     <audio id="q-audio" controls style="width:100%"></audio>
                 </div>
-                <p id="mock-msg" style="display:none; color: var(--primary); font-weight:700; margin-top:15px;">🎧 Đang phát tự động...</p>
+                <p id="mock-msg" style="display:none; color: var(--primary); font-weight:700; margin-top:15px; background: var(--primary-light); padding: 10px 20px; border-radius: 20px; display: inline-flex; align-items: center; gap: 8px;">
+                    <span style="display:inline-block; width:8px; height:8px; background:var(--primary); border-radius:50%; animation: pulse 1s infinite;"></span>
+                    Audio đang phát...
+                </p>
             </div>
             <div class="question-col">
-                <h3 id="q-number">Question 1</h3>
+                <h3 id="q-number" style="margin-bottom: 15px; font-size: 1.3rem; border-bottom: 2px dashed #eee; padding-bottom: 10px;">Question 1</h3>
                 <div class="options" id="options-container">
                     <label class="option-label"><input type="radio" name="ans" value="A"><div class="custom-radio"></div><span>A</span></label>
                     <label class="option-label"><input type="radio" name="ans" value="B"><div class="custom-radio"></div><span>B</span></label>
@@ -113,9 +119,9 @@
                 </div>
             </div>
         </div>
-        <div style="display: flex; justify-content: space-between; border-top: 1px solid #eee; padding-top: 20px;">
-            <button id="btn-prev" class="btn btn-outline" onclick="changeQuestion(-1)">Câu trước</button>
-            <button id="btn-next" class="btn" onclick="changeQuestion(1)">Câu tiếp theo</button>
+        <div class="nav-footer">
+            <button id="btn-prev" class="btn btn-outline" style="display:none;" onclick="changeQuestion(-1)">Câu trước</button>
+            <div style="flex-grow: 1;"></div> <button id="btn-next" class="btn" style="display:none;" onclick="changeQuestion(1)">Câu tiếp theo</button>
             <button id="btn-submit" class="btn btn-success" style="display:none;" onclick="finishTest()">Nộp bài ngay</button>
         </div>
     </div>
@@ -126,8 +132,7 @@
             <div class="score-number" id="final-score">0/6</div>
             <p id="score-comment">Cố gắng hơn nữa nhé!</p>
         </div>
-        <div id="result-list">
-            </div>
+        <div id="result-list"></div>
         <div style="text-align: center; margin-top: 30px;">
             <button class="btn" onclick="location.reload()">Làm lại bài mới</button>
         </div>
@@ -170,6 +175,14 @@
         </div>
     </div>
 </div>
+
+<style>
+    @keyframes pulse {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(74, 144, 226, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(74, 144, 226, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(74, 144, 226, 0); }
+    }
+</style>
 
 <script>
     const questions = [
@@ -270,10 +283,13 @@
     let userAnswers = new Array(questions.length).fill(null);
     const audio = document.getElementById('q-audio');
 
+    // Handle play error for strict browsers
+    audio.addEventListener('error', (e) => { console.error("Audio Load Error"); });
+
     function showScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        audio.pause();
+        if (!audio.paused) audio.pause();
     }
 
     function startApp(mode) {
@@ -297,18 +313,32 @@
             r.onchange = () => { userAnswers[currentIndex] = r.value; };
         });
 
-        // UI Logic
         const isLast = currentIndex === questions.length - 1;
-        document.getElementById('btn-prev').style.visibility = (currentIndex === 0) ? 'hidden' : 'visible';
-        document.getElementById('btn-next').style.display = isLast ? 'none' : 'inline-flex';
-        document.getElementById('btn-submit').style.display = isLast ? 'inline-flex' : 'none';
 
-        if(currentMode === 'mock') {
+        if (currentMode === 'mock') {
+            // MOCK MODE LOGIC
+            document.getElementById('btn-prev').style.display = 'none';
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-submit').style.display = isLast ? 'inline-flex' : 'none';
+            
             document.getElementById('audio-container').style.display = 'none';
-            document.getElementById('mock-msg').style.display = 'block';
-            audio.play();
-            audio.onended = () => { if(!isLast) changeQuestion(1); };
+            document.getElementById('mock-msg').style.display = 'inline-flex';
+            
+            audio.play().catch(e => console.log("Trình duyệt có thể chặn autoplay. Vui lòng tương tác trước với trang web."));
+            
+            audio.onended = () => {
+                if (!isLast) {
+                    changeQuestion(1);
+                } else {
+                    document.getElementById('mock-msg').style.display = 'none'; // Tắt hiệu ứng nhấp nháy khi hết audio câu cuối
+                }
+            };
         } else {
+            // PRACTICE MODE LOGIC
+            document.getElementById('btn-prev').style.display = (currentIndex === 0) ? 'none' : 'inline-flex';
+            document.getElementById('btn-next').style.display = isLast ? 'none' : 'inline-flex';
+            document.getElementById('btn-submit').style.display = isLast ? 'inline-flex' : 'none';
+
             document.getElementById('audio-container').style.display = 'block';
             document.getElementById('mock-msg').style.display = 'none';
             audio.onended = null;
@@ -346,7 +376,6 @@
         document.getElementById('score-comment').innerText = correctCount === 6 ? "Xuất sắc! Bạn đã nắm vững Part 1." : "Cố gắng luyện tập thêm phần giải thích nhé!";
     }
 
-    // Modal logic
     function openDetail(idx) {
         const q = questions[idx];
         document.getElementById('modal-title').innerText = `Giải thích chi tiết Câu ${q.id}`;
