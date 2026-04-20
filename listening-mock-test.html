@@ -1,0 +1,288 @@
+from ds_python_interpreter import HTML
+import os
+
+# Định nghĩa nội dung HTML cho trang Listening Mock Test
+html_content = """
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Listening Mock Tests | SnapEnglish</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* Bảng màu SnapEnglish Pastel */
+            --primary: #a29bfe;      /* Tím pastel */
+            --primary-dark: #6c5ce7;
+            --accent-green: #55efc4; /* Xanh mint */
+            --accent-orange: #e7a87c;/* Cam đất */
+            --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #f4f2ff 100%);
+            --text-dark: #2d3436;
+            --text-gray: #636e72;
+
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.9);
+            --glass-shadow: 0 8px 32px 0 rgba(162, 155, 254, 0.15);
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            margin: 0;
+            padding: 40px 20px;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        /* --- Background Shapes trang trí --- */
+        .shape {
+            position: fixed;
+            z-index: -1;
+            filter: blur(80px);
+            opacity: 0.5;
+            border-radius: 50%;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        .shape-1 { width: 350px; height: 350px; background: var(--accent-green); top: -50px; left: -100px; }
+        .shape-2 { width: 400px; height: 400px; background: var(--primary); bottom: -100px; right: -50px; }
+        .shape-3 { width: 200px; height: 200px; background: var(--accent-orange); top: 50%; left: 40%; filter: blur(100px); opacity: 0.3; }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(20px) scale(1.05); }
+        }
+
+        /* --- Thanh điều hướng trên cùng --- */
+        .top-bar {
+            width: 100%;
+            max-width: 1000px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+        }
+
+        .back-btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            color: var(--primary-dark);
+            cursor: pointer;
+            box-shadow: var(--glass-shadow);
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .back-btn:hover {
+            transform: translateX(-5px);
+            background: #fff;
+            color: var(--accent-orange);
+            border-color: var(--primary);
+        }
+
+        /* --- Header --- */
+        .header-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 36px;
+            color: var(--primary-dark);
+            margin: 0 0 10px 0;
+        }
+
+        .brand-name { color: var(--accent-orange); font-weight: 700; }
+        .subtitle { color: var(--text-gray); font-size: 16px; margin: 0; }
+
+        /* --- Thanh tìm kiếm --- */
+        .search-box {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 16px 25px;
+            border-radius: 25px;
+            border: 2px solid transparent;
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            font-size: 16px;
+            font-family: 'Nunito', sans-serif;
+            color: var(--text-dark);
+            box-shadow: var(--glass-shadow);
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            outline: none;
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(162, 155, 254, 0.2);
+        }
+
+        /* --- Lưới hiển thị các bài Test --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 15px;
+            width: 100%;
+            max-width: 1000px;
+            padding-bottom: 50px;
+        }
+
+        /* --- Thẻ bài Test --- */
+        a.test-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 10px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            color: var(--primary-dark);
+            text-decoration: none;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: var(--glass-shadow);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.5s ease forwards;
+            opacity: 0;
+        }
+
+        a.test-card::before {
+            content: "🎧";
+            font-size: 28px;
+            margin-bottom: 8px;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        a.test-card:hover {
+            transform: translateY(-5px);
+            background: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 12px 25px rgba(162, 155, 254, 0.25);
+            color: var(--accent-orange);
+        }
+
+        a.test-card:hover::before {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .hidden { display: none !important; }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .grid-container { grid-template-columns: repeat(3, 1fr); }
+            h1 { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+
+    <div class="top-bar">
+        <a href="index.html" class="back-btn">⬅ Trang chủ</a>
+    </div>
+
+    <div class="header-section">
+        <h1>🎧 <span class="brand-name">SnapEnglish</span> Listening Mock</h1>
+        <p class="subtitle">Thử thách kỹ năng nghe với kho 200 đề Full IELTS Listening.</p>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Tìm đề thi (VD: 5, 120...)" onkeyup="filterTests()">
+    </div>
+
+    <div class="grid-container" id="listContainer">
+        </div>
+
+    <script>
+        // Cấu hình link dẫn đến các file bài tập nghe
+        const baseUrl = "test-"; 
+        const suffix = "-listening.html";
+        const totalTests = 200; 
+        const container = document.getElementById('listContainer');
+
+        // Hàm tự động tạo 200 thẻ Test
+        function generateList() {
+            container.innerHTML = "";
+            
+            for (let i = 1; i <= totalTests; i++) {
+                const link = document.createElement('a');
+                link.className = 'test-card';
+                // Link format: test-1-listening.html
+                link.href = baseUrl + i + suffix; 
+                
+                // Mở trực tiếp trên cùng tab theo yêu cầu
+                
+                link.setAttribute('data-id', i);
+                // Tạo hiệu ứng xuất hiện so le cho mượt mà
+                link.style.animationDelay = `${(i % 20) * 0.02}s`; 
+                link.innerHTML = `TEST ${i}`;
+                
+                container.appendChild(link);
+            }
+        }
+
+        // Hàm lọc danh sách khi học viên nhập số vào ô tìm kiếm
+        function filterTests() {
+            const input = document.getElementById('searchInput').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.test-card');
+
+            cards.forEach(card => {
+                const id = card.getAttribute('data-id');
+                const text = card.innerText.toLowerCase();
+                
+                if (id.includes(input) || text.includes(input)) {
+                    card.classList.remove('hidden');
+                    card.style.animation = "none";
+                    card.style.opacity = "1";
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        // Thực thi tạo danh sách khi tải trang
+        generateList();
+    </script>
+
+</body>
+</html>
+"""
+
+# Lưu file (trong môi trường thực tế của bạn)
+with open("listening-mock-test.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
