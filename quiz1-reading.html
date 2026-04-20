@@ -125,8 +125,12 @@
         h2 { color: var(--primary-dark); margin-top: 0; font-size: 30px; text-align: center; font-family: 'Lora', serif; border-bottom: 2px dashed var(--border); padding-bottom: 20px;}
         p { margin-bottom: 22px; }
 
-        /* --- EVIDENCE HIGHLIGHT COLORS --- */
-        .ev-box { padding: 2px 4px; border-radius: 6px; transition: background-color 0.5s ease; }
+        /* --- EVIDENCE HIGHLIGHT COLORS & EFFECT --- */
+        .ev-box { 
+            padding: 2px 4px; border-radius: 6px; 
+            transition: all 0.4s ease; 
+            border: 2px solid transparent;
+        }
         
         .ev-color-1 { background-color: #ffadad; color: #5a1c1c; } /* Đỏ nhạt */
         .ev-color-2 { background-color: #ffd6a5; color: #663d14; } /* Cam nhạt */
@@ -142,6 +146,14 @@
         .ev-color-13 { background-color: #fce1e4; color: #66262e; } /* Rose */
         
         .color-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
+
+        /* Focus blink effect for Locate Button */
+        .ev-box.focus-blink {
+            border-color: var(--primary-dark);
+            background-color: var(--highlight) !important;
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
 
         /* --- QUESTIONS UI --- */
         .q-block { 
@@ -206,7 +218,20 @@
             font-size: 18px; line-height: 1.8; color: #333; animation: slideIn 0.4s;
         }
         .exp-box.show { display: block; }
-        .exp-title { font-weight: 700; color: var(--primary-dark); margin-bottom: 12px; font-size: 20px; display: flex; align-items: center; gap: 8px; }
+        .exp-title { 
+            font-weight: 700; color: var(--primary-dark); margin-bottom: 12px; 
+            font-size: 20px; display: flex; align-items: center; justify-content: space-between; gap: 8px; 
+        }
+        .exp-title-left { display: flex; align-items: center; gap: 8px; }
+        
+        .locate-btn {
+            background: white; border: 1px solid var(--primary); color: var(--primary-dark);
+            padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 15px;
+            font-weight: 600; font-family: inherit; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .locate-btn:hover { background: var(--primary); color: white; }
+
         .exp-text { margin-bottom: 12px; }
         .exp-vocab { font-size: 17px; color: var(--primary-dark); background: white; padding: 12px; border-radius: 10px; border: 1px solid var(--border);}
         .exp-vocab b { color: var(--primary); }
@@ -249,7 +274,7 @@
 
 <div id="setupOverlay">
     <div class="setup-modal">
-        <h2>Chào mừng bạn đến với Reading Library của SnapEnglish ✨</h2>
+        <h2>Chào mừng bạn đến với Reading Library ✨</h2>
         <p style="font-size: 19px; color: #666; margin-bottom: 30px;">Hôm nay bạn muốn rèn luyện theo cách nào?</p>
         
         <button class="mode-btn mode-practice" onclick="selectMode('practice')">🎯 Chế độ Luyện Tập</button>
@@ -265,7 +290,7 @@
 </div>
 
 <header>
-    <div class="brand"><span>SnapEnglish</span> QUIZ 1</div>
+    <div class="brand"><span>IELTS</span> QUIZ 1</div>
     <div class="controls">
         <div class="timer-box">⏰ <span id="timer">00:00</span></div>
         <button class="btn-submit" onclick="submitTest(true)">NỘP BÀI</button>
@@ -628,9 +653,15 @@
                 let vocabHtml = expData.vocab ? `<div class="exp-vocab">${expData.vocab}</div>` : '';
                 let tipHtml = expData.tip ? `<div style="margin-top:10px; color:#d93838; font-weight:700;">📌 Mẹo: ${expData.tip}</div>` : '';
                 
+                // Nút Locate Vị trí
+                let locateBtnHtml = expData.colorClass ? `<button class="locate-btn" onclick="scrollToEvidence(${q.id})">📍 Xem trong bài</button>` : '';
+
                 expContainer.innerHTML = `
                     <div class="exp-box show">
-                        <div class="exp-title">${colorDotHtml}💡 Giải thích chi tiết Câu ${q.id}</div>
+                        <div class="exp-title">
+                            <div class="exp-title-left">${colorDotHtml}💡 Giải thích chi tiết Câu ${q.id}</div>
+                            ${locateBtnHtml}
+                        </div>
                         <div class="exp-text">${expData.exp}</div>
                         ${vocabHtml}
                         ${tipHtml}
@@ -647,6 +678,17 @@
         setTimeout(() => {
             alert(`🎉 CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH!\n\nSố câu đúng: ${score}/13\n\nHãy chú ý các vùng được HIGHLIGHT MÀU bên bài đọc, chúng tương ứng với các dấu chấm màu trong phần giải thích nhé!`);
         }, 500);
+    }
+
+    // Function scroll đến đúng evidence
+    function scrollToEvidence(id) {
+        const evElement = document.getElementById(`ev-${id}`);
+        if(evElement) {
+            evElement.scrollIntoView({behavior: "smooth", block: "center"});
+            // Hiệu ứng chớp nháy (blink) để gây chú ý
+            evElement.classList.add("focus-blink");
+            setTimeout(() => evElement.classList.remove("focus-blink"), 1200);
+        }
     }
 
     function startTimer() {
