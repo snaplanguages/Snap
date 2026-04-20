@@ -3,156 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz 2 | SnapEnglish</title>
-  <link rel="icon" type="image/png" href="ảnh.png">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Quiz 2 - The Impact of Environment to Children | SnapEnglish</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #d63384; /* Màu hồng đậm theo theme cũ của bạn */
-            --bg-body: #f4f6f8;
-            --border-color: #dfe3e8;
-            --text-color: #212b36;
-            --highlight-color: #ffff00;
-            --header-h: 60px;
-            --footer-h: 60px;
+            /* Palette Dusty Rose & Pastel Pink - Ngọt ngào, thanh lịch */
+            --primary: #D47A9A;         /* Hồng đất nhạt */
+            --primary-dark: #A95272;    /* Hồng đất đậm */
+            --accent: #F1B5CB;          /* Hồng phấn tươi sáng */
+            --bg-body: #FCF7F9;         /* Trắng ngà ám hồng */
+            --bg-pane: #FFFFFF;
+            --text-main: #4a4a4a;
+            --text-light: #888;
+            --border: #F0D9E1;
+            --highlight: #FFF59D;       /* Vàng chanh cho bôi đen tự do */
+            --correct: #2A9D8F;
+            --wrong: #E76F51;
+            --exp-bg: #FAF2F5;          /* Nền giải thích hồng phấn cực nhạt */
+            --header-h: 75px;
+            --footer-h: 85px;
         }
 
         * { box-sizing: border-box; }
 
         body {
             margin: 0; padding: 0;
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Quicksand', sans-serif;
             background: var(--bg-body);
-            color: var(--text-color);
+            color: var(--text-main);
             height: 100vh;
             display: flex; flex-direction: column;
             overflow: hidden;
         }
 
-        /* HEADER */
+        /* --- OVERLAY & MODAL (CÀI ĐẶT CHẾ ĐỘ) --- */
+        #setupOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+        }
+        .setup-modal {
+            background: white; padding: 45px 40px; border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(212, 122, 154, 0.2);
+            width: 90%; max-width: 500px; text-align: center;
+            border: 2px solid var(--border);
+        }
+        .setup-modal h2 { font-family: 'Lora', serif; color: var(--primary-dark); font-size: 30px; margin-top: 0; }
+        .mode-btn {
+            display: block; width: 100%; padding: 18px; margin: 15px 0;
+            border-radius: 15px; font-size: 18px; font-weight: 700; cursor: pointer;
+            transition: 0.3s; font-family: inherit;
+        }
+        .mode-practice { background: #FFF3EB; color: #D87059; border: 2px solid #FAD6CD; }
+        .mode-practice:hover, .mode-practice.selected { background: var(--accent); color: white; border-color: var(--accent); }
+        .mode-mock { background: var(--exp-bg); color: var(--primary-dark); border: 2px solid var(--border); }
+        .mode-mock:hover, .mode-mock.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        #timeInputBox { display: none; margin: 20px 0; }
+        #timeInput { 
+            width: 110px; padding: 12px; font-size: 20px; text-align: center; 
+            border: 2px solid var(--border); border-radius: 12px; font-family: inherit;
+            color: var(--primary-dark); font-weight: bold; outline: none;
+        }
+        #timeInput:focus { border-color: var(--primary); }
+        
+        .start-btn {
+            background: var(--primary); color: white; border: none; padding: 15px 40px;
+            border-radius: 50px; font-size: 18px; font-weight: 700; cursor: pointer;
+            margin-top: 25px; transition: 0.3s; display: none; box-shadow: 0 6px 20px rgba(212, 122, 154, 0.4);
+        }
+        .start-btn:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(212, 122, 154, 0.5); }
+
+        /* --- HEADER --- */
         header {
             height: var(--header-h); background: #fff;
-            border-bottom: 1px solid var(--border-color);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.04);
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 20px; z-index: 100;
+            padding: 0 35px; z-index: 100;
         }
-        h1 { font-size: 18px; margin: 0; font-weight: 700; color: var(--primary); }
         
-        .timer-box { font-family: monospace; font-size: 18px; font-weight: 700; color: #d32f2f; background: #ffebee; padding: 5px 12px; border-radius: 4px; }
-        .btn-submit { background: var(--primary); color: white; border: none; padding: 8px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
-        .btn-submit:hover { background: #b02a6b; }
+        .brand { font-size: 24px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .brand span { background: var(--primary); color: white; padding: 5px 12px; border-radius: 10px; font-size: 16px; }
 
-        /* LAYOUT */
-        .container { display: flex; height: calc(100vh - var(--header-h) - var(--footer-h)); width: 100%; }
+        .controls { display: flex; gap: 20px; align-items: center; }
+        .timer-box { 
+            font-family: 'Quicksand', sans-serif; font-weight: 700; color: var(--primary-dark); 
+            background: var(--exp-bg); padding: 10px 22px; border-radius: 15px; font-size: 20px;
+            border: 1px solid var(--border);
+        }
+        .btn-submit { 
+            background: var(--primary); color: white; border: none; padding: 12px 28px; 
+            border-radius: 15px; font-weight: 700; font-size: 17px; cursor: pointer; transition: 0.2s;
+            font-family: inherit; box-shadow: 0 4px 0 var(--primary-dark);
+        }
+        .btn-submit:active { transform: translateY(4px); box-shadow: none; }
 
-        /* PANES */
+        /* --- LAYOUT --- */
+        .container { 
+            display: flex; 
+            height: calc(100vh - var(--header-h) - var(--footer-h)); 
+            width: 100%; max-width: 100%; 
+            margin: 0;
+        }
+
         .pane {
-            flex: 1; padding: 30px; overflow-y: auto;
-            position: relative;
+            flex: 1; padding: 40px 50px; overflow-y: auto;
+            position: relative; scroll-behavior: smooth;
         }
-        .pane-left { border-right: 4px solid #e0e0e0; background: #fff; font-size: 16px; line-height: 1.8; text-align: justify; }
-        .pane-right { background: #f9fafb; }
-        
-        /* SCROLLBAR */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-thumb { background: #bdbdbd; border-radius: 4px; }
-
-        /* CONTENT STYLES */
-        .passage-title { text-align: center; color: var(--primary); margin-bottom: 20px; }
-        .paragraph { margin-bottom: 15px; }
-        
-        /* QUESTION STYLES */
-        .question-section { padding: 20px; border-bottom: 1px solid var(--border-color); background: #fff; margin-bottom: 10px; border-radius: 8px; }
-        .instruction { color: var(--primary); font-weight: 700; margin-bottom: 15px; font-size: 15px; background: #fce4ec; padding: 10px; border-radius: 5px; }
-
-        /* TABLE STYLE */
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        th, td { border: 1px solid #ccc; padding: 10px; text-align: center; vertical-align: middle; }
-        th { background: #f8c8dc; color: #333; }
-        
-        /* INPUTS */
-        .input-gap {
-            display: inline-block; width: 120px; padding: 5px;
-            border: 1px solid #cfd8dc; border-radius: 4px; 
-            text-align: center; font-weight: 700; color: #0277bd;
-            font-size: 14px; text-transform: uppercase;
+        .pane-left { 
+            background: #fff; border-right: 2px solid var(--border); 
+            font-size: 19px; line-height: 2; text-align: justify; color: #333;
         }
-        .input-gap:focus { border-color: var(--primary); outline: none; background: #fffde7; }
+        .pane-right { background: #fafcff; }
+
+        ::-webkit-scrollbar { width: 12px; height: 12px; }
+        ::-webkit-scrollbar-thumb { background: #E1C8D2; border-radius: 6px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- CONTENT STYLES --- */
+        h2 { color: var(--primary-dark); margin-top: 0; font-size: 30px; text-align: center; font-family: 'Lora', serif; border-bottom: 2px dashed var(--border); padding-bottom: 20px;}
+        p { margin-bottom: 22px; }
+        .paragraph-label { color: var(--primary); font-weight: 800; font-size: 1.2em; margin-right: 5px; }
+
+        /* --- EVIDENCE HIGHLIGHT COLORS & EFFECT --- */
+        .ev-box { 
+            padding: 2px 4px; border-radius: 6px; 
+            transition: all 0.4s ease; 
+            border: 2px solid transparent;
+        }
         
-        select.input-gap { width: 130px; cursor: pointer; }
+        .ev-color-14 { background-color: #ffadad; color: #5a1c1c; } /* Đỏ nhạt */
+        .ev-color-15 { background-color: #ffd6a5; color: #663d14; } /* Cam nhạt */
+        .ev-color-16 { background-color: #caffbf; color: #1f4d1f; } /* Xanh lá nhạt */
+        .ev-color-17 { background-color: #9bf6ff; color: #16565c; } /* Xanh dương nhạt */
+        .ev-color-18 { background-color: #a0c4ff; color: #1c3666; } /* Xanh biển */
+        .ev-color-19 { background-color: #bdb2ff; color: #352666; } /* Tím nhạt */
+        .ev-color-20 { background-color: #ffc6ff; color: #661a66; } /* Hồng nhạt */
+        .ev-color-21 { background-color: #e2f0cb; color: #3e5222; } /* Mint */
+        .ev-color-22 { background-color: #fdede8; color: #6b3424; } /* Peach */
+        .ev-color-23 { background-color: #dfd8f5; color: #3b2c6b; } /* Lavender */
+        .ev-color-24 { background-color: #cbe3f0; color: #21435c; } /* Ice Blue */
+        .ev-color-25 { background-color: #fce1e4; color: #66262e; } /* Rose */
+        .ev-color-26 { background-color: #e5f6e5; color: #1e4a1e; } /* Soft Green */
+        
+        .color-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
 
-        .mcq-option { display: block; padding: 8px; cursor: pointer; border-radius: 4px; margin-bottom: 5px; }
-        .mcq-option:hover { background: #eee; }
-        .mcq-option input { margin-right: 10px; }
+        /* Focus blink effect for Locate Button */
+        .ev-box.focus-blink {
+            border-color: var(--primary-dark);
+            background-color: var(--highlight) !important;
+            transform: scale(1.01);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
 
-        /* FOOTER & PALETTE */
+        /* --- QUESTIONS UI --- */
+        .q-block { 
+            margin-bottom: 40px; background: white; 
+            padding: 35px; border-radius: 15px; 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.04); 
+            border: 1px solid #edf1f5;
+        }
+        .instruction {
+            background: var(--exp-bg); color: var(--primary-dark); 
+            padding: 16px 20px; border-radius: 12px; 
+            font-weight: 600; font-size: 17px; margin-bottom: 30px; 
+            border-left: 5px solid var(--primary); line-height: 1.6;
+        }
+
+        .q-item { display: flex; margin-bottom: 30px; align-items: flex-start; flex-direction: column; }
+        .q-content-wrapper { display: flex; width: 100%; align-items: flex-start; }
+        .q-num {
+            min-width: 38px; height: 38px; background: var(--primary); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 17px; font-weight: bold; margin-right: 18px; margin-top: 2px; flex-shrink: 0;
+        }
+        .q-content { flex: 1; font-size: 19px; line-height: 1.8; font-weight: 500; }
+
+        input[type="text"], select {
+            border: 2px solid var(--border); border-radius: 10px; padding: 10px 18px;
+            font-family: inherit; font-size: 18px; color: var(--primary-dark);
+            outline: none; background: white; transition: 0.2s; font-weight: 600; margin: 5px 0;
+            cursor: pointer;
+        }
+        input[type="text"]:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(212, 122, 154, 0.2); }
+        .input-gap { width: 180px; text-align: center; }
+        .input-gap.filled { background: var(--exp-bg); border-color: var(--primary); }
+
+        .mc-option { display: block; margin: 12px 0; cursor: pointer; padding: 15px; border-radius: 12px; transition: background 0.2s; font-size: 18px; border: 1px solid transparent; }
+        .mc-option:hover { background: var(--exp-bg); border-color: var(--border); }
+        .mc-option input { margin-right: 15px; transform: scale(1.4); }
+
+        .feedback { font-weight: 700; margin-left: 15px; font-size: 18px; }
+        .correct { color: var(--correct); }
+        .wrong { color: var(--wrong); }
+
+        /* --- TABLE STYLES --- */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 18px; border-radius: 12px; overflow: hidden;}
+        th, td { border: 1px solid var(--border); padding: 18px; text-align: center; vertical-align: middle; }
+        th { background: var(--primary); color: white; }
+        td { background: white; }
+
+        /* --- GIẢI THÍCH CHI TIẾT --- */
+        .exp-box {
+            display: none; background: var(--exp-bg); border-left: 6px solid var(--primary);
+            padding: 25px; margin-top: 20px; border-radius: 0 15px 15px 0; width: 100%;
+            font-size: 18px; line-height: 1.8; color: #333; animation: slideIn 0.4s;
+        }
+        .exp-box.show { display: block; }
+        .exp-title { 
+            font-weight: 700; color: var(--primary-dark); margin-bottom: 12px; 
+            font-size: 20px; display: flex; align-items: center; justify-content: space-between; gap: 8px; 
+        }
+        .exp-title-left { display: flex; align-items: center; gap: 8px; }
+        
+        .locate-btn {
+            background: white; border: 1px solid var(--primary); color: var(--primary-dark);
+            padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 15px;
+            font-weight: 600; font-family: inherit; transition: all 0.2s;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .locate-btn:hover { background: var(--primary); color: white; }
+
+        .exp-text { margin-bottom: 12px; }
+        .exp-vocab { font-size: 17px; color: var(--primary-dark); background: white; padding: 12px; border-radius: 10px; border: 1px solid var(--border);}
+        .exp-vocab b { color: var(--primary); }
+
+        /* --- FOOTER --- */
         footer {
-            height: var(--footer-h); background: #fff; border-top: 1px solid var(--border-color);
-            display: flex; align-items: center; padding: 0 20px; gap: 10px; z-index: 100;
+            height: var(--footer-h); background: #fff; border-top: 2px solid var(--border);
+            display: flex; flex-direction: column; justify-content: center; padding: 0 35px;
+            z-index: 100;
         }
-        .palette-scroller { flex: 1; display: flex; gap: 6px; overflow-x: auto; padding: 5px 0; }
+        .nav-scroller { display: flex; gap: 12px; overflow-x: auto; padding: 10px 0; align-items: center; }
         .nav-dot {
-            min-width: 32px; height: 32px; border: 1px solid #cfd8dc; border-radius: 4px;
-            display: flex; align-items: center; justify-content: center; font-size: 13px;
-            cursor: pointer; color: #78909c; background: white;
+            min-width: 45px; height: 45px; border: 2px solid #edf1f5; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 700;
+            cursor: pointer; color: #a1b0be; background: white; transition: 0.2s; flex-shrink: 0;
         }
-        .nav-dot.done { background: #fce4ec; color: var(--primary); border-color: #f8bbd0; font-weight: bold; }
         .nav-dot:hover { border-color: var(--primary); color: var(--primary); }
+        .nav-dot.done { background: var(--exp-bg); color: var(--primary-dark); border-color: var(--border); }
 
-        /* HIGHLIGHT */
-        .highlight { background-color: var(--highlight-color); cursor: pointer; }
+        /* HIGHLIGHT MENU */
         #ctxMenu {
             position: absolute; display: none; background: white; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15); border-radius: 6px; 
-            font-size: 13px; z-index: 99999; border: 1px solid #eee; min-width: 140px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12); border-radius: 12px; 
+            z-index: 99999; min-width: 180px; overflow: hidden;
         }
         #ctxMenu button {
-            background: none; border: none; padding: 10px 15px; 
-            width: 100%; text-align: left; cursor: pointer; display: block;
+            background: none; border: none; padding: 15px 20px; 
+            width: 100%; text-align: left; cursor: pointer; 
+            font-family: inherit; font-size: 17px; color: #444; font-weight: 600;
         }
-        #ctxMenu button:hover { background: #f0f7ff; color: var(--primary); }
+        #ctxMenu button:hover { background: #f4f7f9; color: var(--primary-dark); }
+        #ctxMenu button.delete:hover { background: #fdf3f0; color: var(--wrong); }
+        .highlight { background-color: var(--highlight); cursor: pointer; border-radius: 4px; padding: 2px 0; }
+        .text-highlight-answer { background-color: #b2fab4; font-weight: bold; padding: 2px 6px; border-radius: 6px; color: #1e6b2e;}
 
-        .feedback { display: block; margin-top: 5px; font-weight: bold; font-size: 13px; }
-        .correct { color: #2e7d32; }
-        .wrong { color: #c62828; }
-
+        @keyframes slideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
 
+<div id="setupOverlay">
+    <div class="setup-modal">
+        <h2>Chào mừng bạn đến với Reading Library ✨</h2>
+        <p style="font-size: 19px; color: #666; margin-bottom: 30px;">Hôm nay bạn muốn rèn luyện theo cách nào?</p>
+        
+        <button class="mode-btn mode-practice" onclick="selectMode('practice')">🎯 Chế độ Luyện Tập</button>
+        <button class="mode-btn mode-mock" onclick="selectMode('mock')">🏆 Chế độ Thi Thử</button>
+        
+        <div id="timeInputBox">
+            <label style="font-size: 19px; font-weight: bold; color: #555;">Cài đặt thời gian (phút): </label>
+            <input type="number" id="timeInput" value="60" min="10" max="180">
+        </div>
+        
+        <button class="start-btn" id="startBtn" onclick="askReady()">Sẵn sàng (OK)</button>
+    </div>
+</div>
+
 <header>
-    <h1>📖 Passage 2 Test 1</h1>
-    <div style="display:flex; align-items:center; gap:15px;">
-        <div class="timer-box">⏱ <span id="timer">60:00</span></div>
-        <button class="btn-submit" onclick="submitTest(true)">SUBMIT</button>
+    <div class="brand"><span>SnapEnglish</span> QUIZ 2</div>
+    <div class="controls">
+        <div class="timer-box">⏰ <span id="timer">00:00</span></div>
+        <button class="btn-submit" onclick="submitTest(true)">NỘP BÀI</button>
     </div>
 </header>
 
 <div class="container" id="mainContainer">
+    
     <div class="pane pane-left" id="passagePane">
-        <h2 class="passage-title">The Impact of Environment to Children</h2>
-        <div id="passageText">
-            <p class="paragraph"><strong>A.</strong> What determines how a child develops? In reality, it would be impossible to account for each and every influence that ultimately determines who a child becomes. What we can look at are some of the most apparent influences such as genetics, parenting, experiences, friends, family relationships and school to help us understand the influences that help contribute to a child’s growth.</p>
+        <h2>The Impact of Environment to Children 👶</h2>
+        <p><span class="paragraph-label">A.</span> <span id="ev-22" class="ev-box">What determines how a child develops?</span> In reality, it would be impossible to account for each and every influence that ultimately determines who a child becomes. What we can look at are some of the most apparent influences such as genetics, parenting, experiences, friends, family relationships and school to help us understand the influences that help contribute to a child's growth.</p>
 
-            <p class="paragraph"><strong>B.</strong> Think of these influences as building blocks. While roost people tend to have the same basic building blocks, these components can be put together in an infinite number of ways. Consider your own overall personality. How much of who you are today was shaped by your genetic inheritance, and how much is a result of your lifetime of experiences? This question has puzzled philosophers, psychologists and educators for hundreds of years and is frequently referred to as the nature versus nurture debate. Generally, the given rate of influence on children is 40 % to 50%. It may refer to all of siblings of a family. Are we the result of nature (our genetic background) or nurture (our environment)? Today, most researchers agree that child development involves a complex interaction of both nature and nurture, while some aspects of development may be strongly influenced by biology, environmental influences may also play a role. For example, the timing of when the onset of puberty occurs is largely the results of heredity, but environmental factors such as nutrition can also have an effect.</p>
+        <p><span class="paragraph-label">B.</span> Think of these influences as building blocks. While most people tend to have the same basic building blocks, these components can be put together in an infinite number of ways. Consider your own overall personality. How much of who you are today was shaped by your genetic inheritance, and how much is a result of your lifetime of experiences? This question has puzzled philosophers, psychologists and educators for hundreds of years and is frequently referred to as the nature versus nurture debate. Generally, the given rate of influence on children is 40% to 50%. It may refer to all of siblings of a family. Are we the result of nature (<span id="ev-14" class="ev-box">our genetic background</span>) or nurture (our environment)? Today, most researchers agree that child development involves a complex interaction of both nature and nurture, while some aspects of development may be strongly influenced by biology, environmental influences may also play a role. For example, the timing of when the onset of puberty occurs is largely the results of heredity, but environmental factors such as nutrition can also have an effect.</p>
 
-            <p class="paragraph"><strong>C.</strong> From the earliest moments of life, the interaction of heredity and the environment works to shape who children are and who they will become. While the genetic instructions a child inherits from his parents may set out a road map for development, the environment can impact how these directions are expressed, shaped or event silenced. The complex interaction of nature and nurture does not just occur at certain moments or at certain periods of time; it is persistent and lifelong.</p>
+        <p><span class="paragraph-label">C.</span> From the earliest moments of life, the interaction of heredity and the environment works to shape who children are and who they will become. While the genetic instructions a child inherits from his parents may set out a road map for development, the environment can impact how these directions are expressed, shaped or even silenced. The complex interaction of nature and nurture does not just occur at certain moments or at certain periods of time; it is persistent and lifelong.</p>
 
-            <p class="paragraph"><strong>D.</strong> The shared environment (also called common environment) refers to environmental influences that have the effect of making siblings more similar to one another. Shared environmental influences can include shared family experiences, shared peer groups, and sharing the same school and community. In general, there has not been strong evidence for shared environmental effects on many behaviors, particularly those measured in adults. Possible reasons for this are discussed. Shared environmental effects are evident in children and adolescents, but these effects generally decrease across the life span. New developments in behavior genetic methods have made it possible to specify shared environments of importance and to tease apart familial and nonfamilial sources of shared environmental influence. It may also refer to all of siblings of a family, but the rate of influence is less than 10 per cent.</p>
+        <p><span class="paragraph-label">D.</span> The shared environment (also called common environment) refers to environmental influences that have the effect of making siblings more similar to one another. Shared environmental influences can include shared family experiences, shared peer groups, and sharing the same school and community. In general, there has not been strong evidence for shared environmental effects on many behaviors, particularly those measured in adults. Possible reasons for this are discussed. Shared environmental effects are evident in children and adolescents, but these effects generally decrease across the life span. New developments in behavior genetic methods have made it possible to specify shared environments of importance and to tease apart familial and nonfamilial sources of shared environmental influence. It may also <span id="ev-15" class="ev-box">refer to all of siblings</span> of a family, but the rate of influence is <span id="ev-16" class="ev-box">less than 10 per cent</span>.</p>
 
-            <p class="paragraph"><strong>E.</strong> The importance of non-shared environment lay hidden within quantitative genetic studies since they began nearly a century ago. Quantitative genetic methods, such as twin and adoption methods, were designed to tease apart nature and nurture in order to explain family resemblance. For nearly all complex phenotypes, it has emerged that the answer to the question of the origins of family resemblance is nature-things run in families primarily for genetic reasons. However, the best available evidence for the importance of environmental influence comes from this same quantitative genetic research because genetic influence never explains all of the variances for complex phenotypes, and the remaining variance must be ascribed to environmental influences. Non-shared environment, it may refer to the part of siblings of a family, the rate of influence to children is 40 % to 50%.</p>
+        <p><span class="paragraph-label">E.</span> The importance of non-shared environment lay hidden within quantitative genetic studies since they began nearly a century ago. Quantitative genetic methods, such as twin and adoption methods, were designed to tease apart nature and nurture in order to explain family resemblance. For nearly all complex phenotypes, it has emerged that the answer to the question of the origins of family resemblance is nature-things run in families primarily for genetic reasons. However, the best available evidence for the importance of environmental influence comes from this same quantitative genetic research because <span id="ev-23" class="ev-box">genetic influence never explains all of the variances for complex phenotypes, and the remaining variance must be ascribed to environmental influences.</span> <span id="ev-17" class="ev-box">Non-shared environment</span>, it may refer to the part of siblings of a family, <span id="ev-18" class="ev-box">the rate of influence to children is 40 % to 50%</span>.</p>
 
-            <p class="paragraph"><strong>F.</strong> Yet it took many decades for the full meaning of these findings to emerge. If genetics explains why siblings growing up in the same family are similar, but the environment is important, then it must be the case that the salient environmental effects do not make siblings similar. That is, they are not shared by children growing up in the same family-they must be ‘non-shared’. This implication about non-shared environmental import lay fallow in the field of quantitative genetics because the field’s attention was then firmly on the nature-nurture debate. ‘Nurture’ in the nature-nurture debate was implicitly taken to mean shared environment because, from Freud onwards, theories of socialization had assumed that children’s environments are doled out on a family-by-family basis. In contrast, the point of the non-shared environment is that environments are doled out on a child-by-child basis. Note that the phrase ‘non-shared environment’ is shorthand for a component of phenotypic variance-it refers to ‘effects’ rather than ‘events’, as discussed later. Research in recent years suggested that the impact from parents will be easy to be interrupted by the influence from the children of the same age. That also showed that variations of knowledge that children get from other culture are increasing. A number of interests between, whatever, fathers and mothers or parents and their children are conflicting.</p>
+        <p><span class="paragraph-label">F.</span> Yet it took many decades for the full meaning of these findings to emerge. If genetics explains why siblings growing up in the same family are similar, but the environment is important, then it must be the case that the salient environmental effects do not make siblings similar. That is, they are not shared by children growing up in the same family-they must be ‘non-shared’. This implication about non-shared environmental import lay fallow in the field of quantitative genetics because the field’s attention was then firmly on the nature-nurture debate. ‘Nurture’ in the nature-nurture debate was implicitly taken to mean shared environment because, from Freud onwards, theories of socialization had assumed that children’s environments are doled out on a family-by-family basis. In contrast, the point of the non-shared environment is that environments are doled out on a child-by-child basis. Note that the phrase ‘non-shared environment’ is shorthand for a component of phenotypic variance-it refers to ‘effects’ rather than ‘events’, as discussed later. Research in recent years suggested that <span id="ev-19" class="ev-box">the impact from parents will be easy to be interrupted</span> by the <span id="ev-24" class="ev-box">influence from the children of the same age.</span> That also showed that <span id="ev-20" class="ev-box">variations of knowledge that children get from other culture are increasing</span>. <span id="ev-21" class="ev-box">A number of interests between, whatever, fathers and mothers or parents and their children are conflicting.</span></p>
 
-            <p class="paragraph"><strong>G.</strong> Because siblings living in the same home share some but not all of the potential genetic and environmental factors that influence their behaviors, teasing apart the potential influences of genetic and non-genetic factors that differentiate siblings is very difficult. Turkheimer and Waldron (2000) have noted that non-shared environmental influences——which include all of the random measurement error——may not be systematic, but instead may operate idiosyncratically and in ways that cannot be ascertained. Thus, the question is whether or not quasi-experimental behavioral genetic designs can be used to actually identify systematic non-shared environmental mechanisms cross-sectionally and longitudinally. This is the impetus for the current study.</p>
-        </div>
+        <p><span class="paragraph-label">G.</span> Because siblings living in the same home share some but not all of the potential genetic and environmental factors that influence their behaviors, teasing apart the potential influences of genetic and non-genetic factors that differentiate siblings is very difficult. <span id="ev-26" class="ev-box">Turkheimer and Waldron (2000) have noted that non-shared environmental influences——which include all of the random measurement error——may not be systematic, but instead may operate idiosyncratically and in ways that cannot be ascertained.</span> <span id="ev-25" class="ev-box">Thus, the question is whether or not quasi-experimental behavioral genetic designs can be used to actually identify systematic non-shared environmental mechanisms</span> cross-sectionally and longitudinally. This is the impetus for the current study.</p>
     </div>
 
-    <div class="pane pane-right" id="questionPane">
+    <div class="pane pane-right">
         
-        <div class="question-section" id="q-group-1">
-            <div class="instruction">Questions 14-18: Complete the table below.<br>Choose NO MORE THAN THREE WORDS from the passage for each answer.</div>
-            
+        <div class="q-block">
+            <div class="instruction">
+                <u>Questions 14-18:</u> Complete the table below.<br>Choose <strong>NO MORE THAN THREE WORDS</strong> from the passage for each answer.
+            </div>
             <table>
                 <tr>
                     <th>Type of Impact to Children</th>
@@ -161,11 +324,12 @@
                 </tr>
                 <tr>
                     <td>
-                        <div class="q-block" id="q-14">
-                            <b>14.</b> <input type="text" class="input-gap" id="ans-14" oninput="updateNav(14)">
-                            background from parents and family.
-                            <span id="fb-14" class="feedback"></span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <b>14.</b> <input type="text" class="input-gap" id="ans-14" oninput="updateNav(14)" style="width: 120px;">
                         </div>
+                        <div style="margin-top: 5px;">background from parents and family.</div>
+                        <span id="fb-14" class="feedback" style="display:block; margin-top:5px;"></span>
+                        <div id="exp-14"></div>
                     </td>
                     <td>Including to all of siblings</td>
                     <td>40%-50%</td>
@@ -173,190 +337,215 @@
                 <tr>
                     <td>Shared Environment</td>
                     <td>
-                        <div class="q-block" id="q-15">
+                        <div style="display:flex; align-items:center; gap:8px; justify-content:center;">
                             to <b>15.</b> <input type="text" class="input-gap" id="ans-15" oninput="updateNav(15)">
-                            <span id="fb-15" class="feedback"></span>
                         </div>
+                        <span id="fb-15" class="feedback" style="display:block; margin-top:5px;"></span>
+                        <div id="exp-15"></div>
                     </td>
                     <td>
-                        <div class="q-block" id="q-16">
+                        <div style="display:flex; align-items:center; gap:8px; justify-content:center;">
                             less than <b>16.</b> <input type="text" class="input-gap" id="ans-16" oninput="updateNav(16)">
-                            <span id="fb-16" class="feedback"></span>
                         </div>
+                        <span id="fb-16" class="feedback" style="display:block; margin-top:5px;"></span>
+                        <div id="exp-16"></div>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <div class="q-block" id="q-17">
-                            <b>17.</b> <input type="text" class="input-gap" id="ans-17" oninput="updateNav(17)">
-                            <span id="fb-17" class="feedback"></span>
+                        <div style="display:flex; align-items:center; gap:8px; justify-content:center;">
+                            <b>17.</b> <input type="text" class="input-gap" id="ans-17" oninput="updateNav(17)" style="width:250px;">
                         </div>
+                        <span id="fb-17" class="feedback" style="display:block; margin-top:5px;"></span>
+                        <div id="exp-17"></div>
                     </td>
                     <td>to part of siblings</td>
                     <td>
-                        <div class="q-block" id="q-18">
-                            <b>18.</b> <input type="text" class="input-gap" id="ans-18" oninput="updateNav(18)">
-                            - 50%
-                            <span id="fb-18" class="feedback"></span>
+                        <div style="display:flex; align-items:center; gap:8px; justify-content:center;">
+                            <b>18.</b> <input type="text" class="input-gap" id="ans-18" oninput="updateNav(18)" style="width: 100px;"> - 50%
                         </div>
+                        <span id="fb-18" class="feedback" style="display:block; margin-top:5px;"></span>
+                        <div id="exp-18"></div>
                     </td>
                 </tr>
             </table>
         </div>
 
-        <div class="question-section" id="q-group-2">
-            <div class="instruction">Questions 19-21: Complete the summary.<br>Choose NO MORE THAN THREE WORDS from the passage.</div>
-            <p style="line-height: 2;">
+        <div class="q-block">
+            <div class="instruction">
+                <u>Questions 19-21:</u> Complete the summary.<br>Choose <strong>NO MORE THAN THREE WORDS</strong> from the passage.
+            </div>
+            <div style="background: white; padding: 30px; border-radius: 12px; border: 2px dashed var(--border); line-height: 2.2; font-size: 19px;">
                 Research in recent years illuminated that the impact from parents will frequently be 
-                <b>19.</b> <input type="text" class="input-gap" id="ans-19" oninput="updateNav(19)">
-                <span id="fb-19" class="feedback"></span>
+                <strong>19.</strong> <input type="text" class="input-gap" id="ans-19" oninput="updateNav(19)"> <span id="fb-19" class="feedback"></span><div id="exp-19"></div>
                 by the peer’s pressure. It was also indicated that 
-                <b>20.</b> <input type="text" class="input-gap" id="ans-20" oninput="updateNav(20)">
-                <span id="fb-20" class="feedback"></span>
+                <strong>20.</strong> <input type="text" class="input-gap" id="ans-20" oninput="updateNav(20)"> <span id="fb-20" class="feedback"></span><div id="exp-20"></div>
                 of knowledge that children learned from other culture is increasing. The study has found quantities of competing 
-                <b>21.</b> <input type="text" class="input-gap" id="ans-21" oninput="updateNav(21)">
-                <span id="fb-21" class="feedback"></span>
+                <strong>21.</strong> <input type="text" class="input-gap" id="ans-21" oninput="updateNav(21)"> <span id="fb-21" class="feedback"></span><div id="exp-21"></div>
                 between parents and children or even between parents themselves.
-            </p>
-        </div>
-
-        <div class="question-section" id="q-group-3">
-            <div class="instruction">Questions 22-25: Do the following statements agree with the claims of the writer?<br>YES / NO / NOT GIVEN</div>
-            
-            <div class="q-item">
-                <p><b>22.</b> The more children there are in a family, the more impacts of environment it is.</p>
-                <select class="input-gap" id="ans-22" onchange="updateNav(22)">
-                    <option value="">Select...</option>
-                    <option value="YES">YES</option>
-                    <option value="NO">NO</option>
-                    <option value="NOT GIVEN">NOT GIVEN</option>
-                </select>
-                <span id="fb-22" class="feedback"></span>
-            </div>
-            <hr style="border:0; border-top:1px dashed #eee; margin: 10px 0;">
-
-            <div class="q-item">
-                <p><b>23.</b> Methods based on twin studies still meet unexpected differences that cannot be ascribed to be a purely genetic explanation.</p>
-                <select class="input-gap" id="ans-23" onchange="updateNav(23)">
-                    <option value="">Select...</option>
-                    <option value="YES">YES</option>
-                    <option value="NO">NO</option>
-                    <option value="NOT GIVEN">NOT GIVEN</option>
-                </select>
-                <span id="fb-23" class="feedback"></span>
-            </div>
-            <hr style="border:0; border-top:1px dashed #eee; margin: 10px 0;">
-
-            <div class="q-item">
-                <p><b>24.</b> Children prefer to speak the language from the children of the same age to the language spoken by their parents.</p>
-                <select class="input-gap" id="ans-24" onchange="updateNav(24)">
-                    <option value="">Select...</option>
-                    <option value="YES">YES</option>
-                    <option value="NO">NO</option>
-                    <option value="NOT GIVEN">NOT GIVEN</option>
-                </select>
-                <span id="fb-24" class="feedback"></span>
-            </div>
-            <hr style="border:0; border-top:1px dashed #eee; margin: 10px 0;">
-
-            <div class="q-item">
-                <p><b>25.</b> The study of non-shared environment influence can be a generally agreed idea among researchers in the field.</p>
-                <select class="input-gap" id="ans-25" onchange="updateNav(25)">
-                    <option value="">Select...</option>
-                    <option value="YES">YES</option>
-                    <option value="NO">NO</option>
-                    <option value="NOT GIVEN">NOT GIVEN</option>
-                </select>
-                <span id="fb-25" class="feedback"></span>
             </div>
         </div>
 
-        <div class="question-section" id="q-group-4">
-            <div class="instruction">Question 26: Choose the correct letter, A, B, C, or D.</div>
-            <p>According to this passage, which comment is TRUE about the current Study of non-shared environment influence to children?</p>
-            
-            <label class="mcq-option"><input type="radio" name="mcq-26" value="A" onchange="updateNav(26)"> A. a little biased in nature</label>
-            <label class="mcq-option"><input type="radio" name="mcq-26" value="B" onchange="updateNav(26)"> B. not sufficiently proved</label>
-            <label class="mcq-option"><input type="radio" name="mcq-26" value="C" onchange="updateNav(26)"> C. very systematic</label>
-            <label class="mcq-option"><input type="radio" name="mcq-26" value="D" onchange="updateNav(26)"> D. can be workable</label>
-            <span id="fb-26" class="feedback"></span>
+        <div class="q-block">
+            <div class="instruction">
+                <u>Questions 22-25:</u> Do the following statements agree with the claims of the writer in Reading Passage?<br><br>
+                <b><strong>YES</strong> if the statement is true<br>
+                <b><strong>NO</strong> if the statement is false<br>
+                <b><strong>NOT GIVEN</strong> if the information is not given in the passage
+            </div>
+            <div class="q-item">
+                <div class="q-content-wrapper">
+                    <div class="q-num">22</div>
+                    <div class="q-content">The more children there are in a family, the more impacts of environment it is. <br><select id="ans-22" onchange="updateNav(22)"><option value="">Select...</option><option value="YES">YES</option><option value="NO">NO</option><option value="NOT GIVEN">NOT GIVEN</option></select><span class="feedback" id="fb-22"></span></div>
+                </div><div id="exp-22"></div>
+            </div>
+            <div class="q-item">
+                <div class="q-content-wrapper">
+                    <div class="q-num">23</div>
+                    <div class="q-content">Methods based on twin studies still meet unexpected differences that cannot be ascribed to be a purely genetic explanation. <br><select id="ans-23" onchange="updateNav(23)"><option value="">Select...</option><option value="YES">YES</option><option value="NO">NO</option><option value="NOT GIVEN">NOT GIVEN</option></select><span class="feedback" id="fb-23"></span></div>
+                </div><div id="exp-23"></div>
+            </div>
+            <div class="q-item">
+                <div class="q-content-wrapper">
+                    <div class="q-num">24</div>
+                    <div class="q-content">Children prefer to speak the language from the children of the same age to the language spoken by their parents. <br><select id="ans-24" onchange="updateNav(24)"><option value="">Select...</option><option value="YES">YES</option><option value="NO">NO</option><option value="NOT GIVEN">NOT GIVEN</option></select><span class="feedback" id="fb-24"></span></div>
+                </div><div id="exp-24"></div>
+            </div>
+            <div class="q-item">
+                <div class="q-content-wrapper">
+                    <div class="q-num">25</div>
+                    <div class="q-content">The study of non-shared environment influence can be a generally agreed idea among researchers in the field. <br><select id="ans-25" onchange="updateNav(25)"><option value="">Select...</option><option value="YES">YES</option><option value="NO">NO</option><option value="NOT GIVEN">NOT GIVEN</option></select><span class="feedback" id="fb-25"></span></div>
+                </div><div id="exp-25"></div>
+            </div>
+        </div>
+
+        <div class="q-block" id="q-group-4">
+            <div class="instruction">
+                <u>Question 26:</u> Choose the correct letter, A, B, C, or D.
+            </div>
+            <div class="q-item">
+                <div class="q-content-wrapper">
+                    <div class="q-num">26</div>
+                    <div class="q-content"><b>According to this passage, which comment is TRUE about the current Study of non-shared environment influence to children?</b><br>
+                        <label class="mc-option"><input type="radio" name="mcq-26" value="A" onchange="updateNav(26)"> A. a little biased in nature</label>
+                        <label class="mc-option"><input type="radio" name="mcq-26" value="B" onchange="updateNav(26)"> B. not sufficiently proved</label>
+                        <label class="mc-option"><input type="radio" name="mcq-26" value="C" onchange="updateNav(26)"> C. very systematic</label>
+                        <label class="mc-option"><input type="radio" name="mcq-26" value="D" onchange="updateNav(26)"> D. can be workable</label>
+                        <span class="feedback" id="fb-26"></span>
+                    </div>
+                </div><div id="exp-26"></div>
+            </div>
         </div>
 
     </div>
 </div>
 
-<div id="ctxMenu">
-    <button onclick="doHighlight()">🖍 Highlight</button>
-    <button onclick="removeHighlight()">🗑 Xóa Highlight</button>
-</div>
-
 <footer>
-    <div style="font-size:14px; font-weight:bold; color:#555;">Palette:</div>
-    <div class="palette-scroller" id="navPalette"></div>
+    <div style="font-size:15px; font-weight:bold; color:var(--text-light); text-transform:uppercase; margin-right:20px; flex-shrink: 0;">Bảng điều hướng nhanh:</div>
+    <div class="nav-scroller" id="navPalette"></div>
 </footer>
 
-<script>
-    // --- DATA ---
-    // Danh sách đáp án đúng (Hỗ trợ cả mảng cho các đáp án có nhiều cách viết)
-    const correctAnswers = {
-        14: "GENETIC",
-        15: "ALL OF SIBLINGS",
-        16: ["10%", "10 PERCENT"],
-        17: "NON-SHARED ENVIRONMENT", // Lưu ý: Text trong input của bạn cần khớp chính xác hoặc bạn cần nhập đúng
-        18: ["40%", "40 PERCENT"],
-        19: "INTERRUPTED",
-        20: "VARIATIONS",
-        21: "INTERESTS",
-        22: "NOT GIVEN",
-        23: "YES",
-        24: "NO",
-        25: "NOT GIVEN",
-        26: "B" // Câu trắc nghiệm
-    };
-    
-    // Cấu hình số câu hỏi
-    const startQ = 14;
-    const endQ = 26;
-    const totalQuestions = endQ - startQ + 1;
+<div id="ctxMenu">
+    <button onclick="applyHighlight()">🖍 Bôi vàng Highlight tự do</button>
+    <button onclick="deleteHighlight()" id="btnDelHL" style="display:none; color:var(--wrong);">❌ Xóa Highlight</button>
+</div>
 
-    // --- INIT ---
-    window.onload = function() {
-        renderPalette();
-        startTimer();
+<script>
+    // --- STATE ---
+    let currentMode = '';
+    let testDuration = 0; 
+    let timerInterval = null;
+    let isSubmitted = false;
+
+    // --- SETUP CHẾ ĐỘ ---
+    function selectMode(mode) {
+        currentMode = mode;
+        document.querySelector('.mode-practice').classList.toggle('selected', mode === 'practice');
+        document.querySelector('.mode-mock').classList.toggle('selected', mode === 'mock');
+        
+        document.getElementById('timeInputBox').style.display = (mode === 'practice') ? 'block' : 'none';
+        document.getElementById('startBtn').style.display = 'inline-block';
     }
 
-    // --- RENDER PALETTE (Thanh điều hướng câu hỏi) ---
-    function renderPalette() {
-        const nav = document.getElementById("navPalette");
-        for (let i = startQ; i <= endQ; i++) {
-            let dot = document.createElement("div");
-            dot.className = "nav-dot";
-            dot.id = `nav-${i}`;
-            dot.innerText = i;
+    function askReady() {
+        let confirmMsg = currentMode === 'mock' 
+            ? "Chế độ THI THỬ (60 phút).\nBạn đã sẵn sàng làm bài chưa?" 
+            : `Chế độ LUYỆN TẬP (${document.getElementById('timeInput').value} phút).\nBạn đã chuẩn bị tinh thần chưa?`;
             
-            dot.onclick = () => {
-                // Scroll đến câu hỏi tương ứng
-                let targetId = (i === 26) ? 'q-group-4' : (i >= 22 ? `ans-${i}` : `ans-${i}`);
-                if(i === 26) targetId = 'q-group-4'; 
-                
-                let el = document.getElementById(targetId);
-                // Nếu không tìm thấy input cụ thể thì tìm theo block câu hỏi
-                if (!el) el = document.getElementById(`q-${i}`); 
-                if (!el && i === 26) el = document.getElementById('q-group-4');
-
-                if(el) el.scrollIntoView({behavior:"smooth", block:"center"});
-            };
-            nav.appendChild(dot);
+        if(confirm(confirmMsg)) {
+            let minutes = (currentMode === 'mock') ? 60 : parseInt(document.getElementById('timeInput').value);
+            if(isNaN(minutes) || minutes < 1) minutes = 60;
+            testDuration = minutes * 60;
+            
+            document.getElementById('setupOverlay').style.display = 'none';
+            startTimer();
         }
     }
 
-    // --- UPDATE NAV STATUS (Đổi màu khi đã làm) ---
+    // --- DATA ---
+    const answers = {
+        14: ["GENETIC"],
+        15: ["ALL OF SIBLINGS"],
+        16: ["10%", "10 PERCENT"],
+        17: ["NON-SHARED ENVIRONMENT", "NON SHARED ENVIRONMENT"],
+        18: ["40%", "40 PERCENT"],
+        19: ["INTERRUPTED"],
+        20: ["VARIATIONS"],
+        21: ["INTERESTS"],
+        22: ["NOT GIVEN"],
+        23: ["YES"],
+        24: ["NO", "NOT GIVEN"], // Chấp nhận NO theo key gốc của file cũ, nhưng thực tế bài đọc là NOT GIVEN
+        25: ["NO"],
+        26: ["B"]
+    };
+
+    const explanations = {
+        14: { exp: "Dựa vào cụm 'our genetic background' ở đoạn B. Chú ý yêu cầu điền tối đa 3 từ.", vocab: "<b>Genetic (adj)</b>: Thuộc về di truyền", colorClass: "ev-color-14" },
+        15: { exp: "Bảng hỏi về phạm vi tham chiếu (Range of Reference) của Shared Environment. Đoạn D ghi rõ 'refer to all of siblings'.", vocab: "<b>Sibling (n)</b>: Anh chị em ruột", colorClass: "ev-color-15" },
+        16: { exp: "Tỉ lệ ảnh hưởng (Rate of influence) của Shared Environment được nêu rõ ở cuối đoạn D là 'less than 10%'.", vocab: "<b>Evident (adj)</b>: Rõ ràng", colorClass: "ev-color-16" },
+        17: { exp: "Đoạn E mô tả yếu tố ảnh hưởng tới một bộ phận anh chị em (part of siblings) với tỉ lệ 40-50% chính là 'Non-shared environment'.", colorClass: "ev-color-17" },
+        18: { exp: "Tỉ lệ của yếu tố Non-shared environment được định lượng ở cuối đoạn E là 40% đến 50%. (Điền 40%).", colorClass: "ev-color-18" },
+        19: { exp: "Tóm tắt: Impact from parents will frequently be [interrupted] by peer's pressure (children of the same age). Đoạn F.", vocab: "<b>Interrupt (v)</b>: Gián đoạn, can thiệp", colorClass: "ev-color-19" },
+        20: { exp: "Bài đọc nói rằng 'variations of knowledge' (sự đa dạng kiến thức) trẻ học từ văn hóa khác đang tăng lên.", vocab: "<b>Variation (n)</b>: Sự biến đổi, đa dạng", colorClass: "ev-color-20" },
+        21: { exp: "Competing = conflicting. Ở cuối đoạn F nói 'interests between... are conflicting'. Từ cần điền là 'interests' (những mối quan tâm/lợi ích).", colorClass: "ev-color-21" },
+        22: { exp: "Bài đọc có đề cập đến anh em trong nhà (siblings) và tác động môi trường, nhưng KHÔNG CÓ thông tin nào so sánh 'càng nhiều con thì tác động môi trường càng lớn'.", tip: "Thông tin có vẻ đúng theo logic thông thường nhưng không có trong bài thì chọn NOT GIVEN.", colorClass: "ev-color-22" },
+        23: { exp: "Đoạn E xác nhận các nghiên cứu di truyền (bao gồm cả nghiên cứu sinh đôi) không thể giải thích mọi biến thể chỉ bằng di truyền (never explains all of the variances), mà phần còn lại phải do môi trường.", colorClass: "ev-color-23" },
+        24: { exp: "Bài đọc có nhắc đến ảnh hưởng từ bạn bè cùng tuổi, nhưng KHÔNG HỀ nói về việc trẻ 'thích nói ngôn ngữ của bạn bè hơn ngôn ngữ của bố mẹ'. Do đó đáp án IELTS chuẩn là NOT GIVEN (Lưu ý: Hệ thống cũng chấp nhận NO nếu theo key cũ).", colorClass: "ev-color-24" },
+        25: { exp: "Đoạn cuối (G) nhấn mạnh việc xác định cơ chế này rất khó khăn và vẫn đang là một 'câu hỏi' (the question is whether or not...), CHƯA PHẢI là một ý tưởng đã được đồng thuận chung. => NO", colorClass: "ev-color-25" },
+        26: { exp: "Các nhà nghiên cứu (Turkheimer & Waldron) nhấn mạnh rằng những ảnh hưởng này 'not systematic' và hoạt động đặc dị, khó xác định (chưa được chứng minh đầy đủ / not sufficiently proved). => B", colorClass: "ev-color-26" }
+    };
+
+    // --- RENDER ---
+    window.onload = function() {
+        const nav = document.getElementById("navPalette");
+        for (let i = 14; i <= 26; i++) {
+            let dot = document.createElement("div");
+            dot.className = "nav-dot"; dot.id = `nav-${i}`; dot.innerText = i;
+            dot.onclick = () => {
+                let targetId = (i === 26) ? 'q-group-4' : (i >= 22 ? `ans-${i}` : `ans-${i}`);
+                let el = document.getElementById(targetId) || document.getElementById(`q-${i}`);
+                if (!el && i === 26) el = document.getElementById('q-group-4');
+                
+                if(el) {
+                    el.scrollIntoView({behavior:"smooth", block:"center"});
+                    let row = el.closest('.q-item, tr, .q-block');
+                    if(row) {
+                        row.style.transition = "background 0.5s";
+                        row.style.backgroundColor = "var(--highlight)";
+                        setTimeout(() => row.style.backgroundColor = "", 1000);
+                    }
+                }
+            };
+            nav.appendChild(dot);
+        }
+        document.getElementById('setupOverlay').style.display = 'flex'; 
+    }
+
     function updateNav(id) {
         let nav = document.getElementById(`nav-${id}`);
         if (!nav) return;
 
         let val = "";
-        
         if (id === 26) {
             let checked = document.querySelector('input[name="mcq-26"]:checked');
             if (checked) val = checked.value;
@@ -369,29 +558,91 @@
         else nav.classList.remove("done");
     }
 
-    // --- TIMER ---
-    function startTimer() {
-        let duration = 60 * 60; // 60 phút
-        let display = document.getElementById("timer");
-        let timer = setInterval(function () {
-            let m = Math.floor(duration / 60);
-            let s = duration % 60;
-            display.textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
-            if (--duration < 0) { clearInterval(timer); submitTest(false); }
-        }, 1000);
+    // --- HIGHLIGHT MENU LOGIC GLOBAL ---
+    const mainContainer = document.getElementById("mainContainer");
+    const menu = document.getElementById("ctxMenu");
+    const btnDel = document.getElementById("btnDelHL");
+    let savedRange = null;
+    let targetSpan = null; 
+
+    document.addEventListener("contextmenu", (e) => {
+        if (!e.target.closest('.pane')) return;
+        e.preventDefault();
+        
+        savedRange = null;
+        targetSpan = null;
+        btnDel.style.display = "none";
+        
+        const sel = window.getSelection();
+        
+        if (e.target.classList.contains('highlight')) {
+            targetSpan = e.target;
+            btnDel.style.display = "block";
+            showMenu(e.pageX, e.pageY);
+            return;
+        }
+
+        if(sel.rangeCount > 0 && sel.toString().length > 0) {
+            savedRange = sel.getRangeAt(0).cloneRange(); 
+            showMenu(e.pageX, e.pageY);
+        } else {
+            menu.style.display = "none";
+        }
+    });
+
+    function showMenu(x, y) {
+        menu.style.display = "block";
+        let mw = menu.offsetWidth;
+        let mh = menu.offsetHeight;
+        let left = x + mw > window.innerWidth ? window.innerWidth - mw - 10 : x;
+        let top = y + mh > window.innerHeight ? window.innerHeight - mh - 10 : y;
+        menu.style.left = left + "px";
+        menu.style.top = top + "px";
     }
 
-    // --- SUBMIT & SAVE RESULT ---
-    function submitTest(manual) {
-        if (manual && !confirm("Bạn có chắc chắn muốn nộp bài?")) return;
+    document.addEventListener("click", (e) => { 
+        if(!menu.contains(e.target)) menu.style.display="none"; 
+    });
+
+    function applyHighlight() {
+        if(savedRange) {
+            try {
+                let span = document.createElement("span");
+                span.className = "highlight";
+                savedRange.surroundContents(span);
+                window.getSelection().removeAllRanges(); 
+            } catch(e) {}
+        }
+        menu.style.display="none";
+    }
+
+    function deleteHighlight() {
+        if(targetSpan) {
+            let parent = targetSpan.parentNode;
+            while(targetSpan.firstChild) {
+                parent.insertBefore(targetSpan.firstChild, targetSpan);
+            }
+            parent.removeChild(targetSpan);
+            mainContainer.normalize();
+        }
+        menu.style.display="none";
+    }
+
+    // --- SUBMIT & TIMER & EXPLANATION ---
+    function submitTest(confirmSubmit) {
+        if (isSubmitted) return;
+        if (confirmSubmit && !confirm("Bạn đã chắc chắn kiểm tra kỹ và muốn nộp bài chưa?")) return;
+        
+        isSubmitted = true;
+        clearInterval(timerInterval);
+        
+        document.querySelectorAll('input, select').forEach(el => el.disabled = true);
         
         let score = 0;
-        
-        // Vòng lặp chấm điểm
-        for (let i = startQ; i <= endQ; i++) {
+        const totalQ = 13;
+
+        for (let i = 14; i <= 26; i++) {
             let userAns = "";
-            
-            // Lấy giá trị từ người dùng
             if (i === 26) {
                 let checked = document.querySelector('input[name="mcq-26"]:checked');
                 if (checked) userAns = checked.value;
@@ -400,132 +651,93 @@
                 if (el) userAns = el.value.trim().toUpperCase();
             }
 
-            // So sánh đáp án
-            let correctKey = correctAnswers[i];
+            let correctKey = answers[i];
             let isCorrect = false;
             
             if (Array.isArray(correctKey)) {
-                // Nếu đáp án đúng là mảng (ví dụ ["10%", "10 PERCENT"])
                 isCorrect = correctKey.includes(userAns);
             } else {
                 isCorrect = (userAns === correctKey);
             }
 
-            // Hiển thị Feedback
             let fb = document.getElementById(`fb-${i}`);
-            // Fix lỗi null cho câu 26 (vì trong HTML bạn để fb-26 trong thẻ p, đôi khi JS tìm không ra nếu cấu trúc thay đổi)
             if (!fb && i === 26) fb = document.querySelector('#q-group-4 .feedback'); 
+            let expContainer = document.getElementById(`exp-${i}`);
 
-            if (fb) {
-                if (isCorrect) {
-                    score++;
-                    fb.innerText = "✓";
-                    fb.className = "feedback correct";
-                } else {
-                    let showAns = Array.isArray(correctKey) ? correctKey[0] : correctKey;
-                    fb.innerText = `✗ (${showAns})`;
-                    fb.className = "feedback wrong";
+            let showAns = Array.isArray(correctKey) ? correctKey[0] : correctKey;
+
+            if (isCorrect && userAns !== "") {
+                score++;
+                if(fb) { fb.innerHTML = "✓ Đúng"; fb.className = "feedback correct"; }
+            } else {
+                if(fb) { fb.innerHTML = `✗ Sai (Key: <span class="text-highlight-answer">${showAns}</span>)`; fb.className = "feedback wrong"; }
+            }
+
+            // Gắn giải thích chi tiết & Bật Highlight trên Passage
+            if(expContainer && explanations[i]) {
+                let expData = explanations[i];
+                
+                if(expData.colorClass) {
+                    let targetEvidence = document.getElementById(`ev-${i}`);
+                    if(targetEvidence) {
+                        targetEvidence.classList.add(expData.colorClass);
+                    }
                 }
+
+                let colorDotHtml = expData.colorClass ? `<span class="color-dot ${expData.colorClass}"></span>` : '';
+                let vocabHtml = expData.vocab ? `<div class="exp-vocab">${expData.vocab}</div>` : '';
+                let tipHtml = expData.tip ? `<div style="margin-top:10px; color:#E76F51; font-weight:700;">📌 Mẹo: ${expData.tip}</div>` : '';
+                let locateBtnHtml = expData.colorClass ? `<button class="locate-btn" onclick="scrollToEvidence(${i})">📍 Xem trong bài</button>` : '';
+
+                expContainer.innerHTML = `
+                    <div class="exp-box show">
+                        <div class="exp-title">
+                            <div class="exp-title-left">${colorDotHtml}💡 Giải thích chi tiết Câu ${i}</div>
+                            ${locateBtnHtml}
+                        </div>
+                        <div class="exp-text">${expData.exp}</div>
+                        ${vocabHtml}
+                        ${tipHtml}
+                    </div>
+                `;
+            }
+
+            let nav = document.getElementById(`nav-${i}`);
+            if(nav) {
+                nav.style.background = isCorrect ? "#e8f5e9" : "#ffebee";
+                nav.style.color = isCorrect ? "#2e7d32" : "#c62828";
+                nav.style.border = isCorrect ? "2px solid #81c784" : "2px solid #ef9a9a";
             }
         }
         
-        // Tính toán dữ liệu để lưu
-        let wrong = totalQuestions - score;
-        let timeRemaining = document.getElementById("timer").innerText;
-        
-        // --- LƯU VÀO DASHBOARD ---
-        saveResultToDashboard(
-            "Reading Passage 2 - Test 1", 
-            false, // false = Bài luyện tập (Part), true = Full Test
-            score, 
-            wrong, 
-            "60:00", // Bạn có thể tính thời gian thực tế nếu muốn
-            `Kết quả: ${score}/${totalQuestions}`
-        );
-        
-        alert(`Bạn làm đúng ${score}/${totalQuestions} câu.\nKết quả đã được lưu!`);
-        
-        // Chuyển hướng về trang kết quả
-        window.location.href = "IELTS-tracker.html";
+        setTimeout(() => {
+            alert(`🎉 CHÚC MỪNG BẠN ĐÃ HOÀN THÀNH!\n\nSố câu đúng: ${score}/${totalQ}\n\nHãy chú ý các vùng được HIGHLIGHT MÀU bên bài đọc, chúng tương ứng với các dấu chấm màu trong phần giải thích nhé!`);
+        }, 500);
     }
 
-    // --- HÀM LƯU TRỮ (Core Function) ---
-    function saveResultToDashboard(testName, isFullTest, correctCount, wrongCount, timeString, suggestions) {
-        let history = JSON.parse(localStorage.getItem('ieltsResultHistory')) || [];
-        
-        let total = correctCount + wrongCount;
-        let percent = total === 0 ? 0 : ((correctCount / total) * 100).toFixed(1);
-        let today = new Date().toLocaleDateString("vi-VN");
-
-        let newResult = {
-            date: today,
-            testName: testName,
-            type: isFullTest ? "Full Test" : "Practice",
-            correct: correctCount,
-            wrong: wrongCount,
-            percentage: percent,
-            timeTaken: timeString,
-            suggestion: suggestions
-        };
-
-        history.push(newResult);
-        localStorage.setItem('ieltsResultHistory', JSON.stringify(history));
+    // Function scroll đến đúng evidence
+    function scrollToEvidence(id) {
+        const evElement = document.getElementById(`ev-${id}`);
+        if(evElement) {
+            evElement.scrollIntoView({behavior: "smooth", block: "center"});
+            evElement.classList.add("focus-blink");
+            setTimeout(() => evElement.classList.remove("focus-blink"), 1200);
+        }
     }
 
-    // --- HIGHLIGHT SYSTEM ---
-    const container = document.getElementById("mainContainer");
-    const menu = document.getElementById("ctxMenu");
-    let targetEl = null;
-    let selectedRange = null;
-
-    container.addEventListener("contextmenu", (e) => {
-        e.preventDefault();
-        targetEl = null; selectedRange = null;
-        menu.style.display = "none";
-
-        if (e.target.classList.contains("highlight")) {
-            targetEl = e.target;
-            showMenu(e.pageX, e.pageY, "remove");
-            return;
-        }
-
-        let sel = window.getSelection();
-        if (sel.toString().trim().length > 0 && container.contains(sel.anchorNode)) {
-            selectedRange = sel.getRangeAt(0);
-            showMenu(e.pageX, e.pageY, "add");
-        }
-    });
-
-    document.addEventListener("click", (e) => {
-        if (!menu.contains(e.target)) menu.style.display = "none";
-    });
-
-    function showMenu(x, y, mode) {
-        menu.style.display = "block";
-        menu.style.left = x + "px";
-        menu.style.top = y + "px";
-        menu.children[0].style.display = (mode === "add") ? "block" : "none";
-        menu.children[1].style.display = (mode === "remove") ? "block" : "none";
-    }
-
-    function doHighlight() {
-        if (selectedRange) {
-            let span = document.createElement("span");
-            span.className = "highlight";
-            try { selectedRange.surroundContents(span); } catch(e){}
-            window.getSelection().removeAllRanges();
-        }
-        menu.style.display = "none";
-    }
-
-    function removeHighlight() {
-        if (targetEl) {
-            let text = document.createTextNode(targetEl.textContent);
-            targetEl.parentNode.replaceChild(text, targetEl);
-            container.normalize();
-        }
-        menu.style.display = "none";
+    function startTimer() {
+        let display = document.getElementById("timer");
+        timerInterval = setInterval(() => {
+            let m = Math.floor(testDuration / 60);
+            let s = testDuration % 60;
+            display.textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            if (--testDuration < 0) { 
+                clearInterval(timerInterval); 
+                submitTest(false); 
+            }
+        }, 1000);
     }
 </script>
+
 </body>
 </html>
