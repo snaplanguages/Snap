@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading Mock Tests | SnapEnglish</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8e44ad; /* Tím đậm */
+            --light-purple: #f5e6fe;
+            --gradient-start: #d8b6ff;
+            --gradient-end: #b39ddb;
+            --text-color: #4a4a4a;
+        }
+
+        * { box-sizing: border-box; }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: var(--light-purple);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* --- NÚT QUAY LẠI --- */
+        .back-btn {
+            align-self: flex-start;
+            text-decoration: none;
+            color: white;
+            background-color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 4px 10px rgba(142, 68, 173, 0.3);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(142, 68, 173, 0.5);
+        }
+
+        h1 { 
+            color: var(--primary);
+            font-size: 32px; 
+            margin: 0 0 10px 0;
+            text-align: center;
+        }
+
+        p.subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        /* --- THANH TÌM KIẾM --- */
+        .search-box {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 15px 25px;
+            border-radius: 30px;
+            border: 2px solid white;
+            font-family: inherit;
+            font-size: 16px;
+            outline: none;
+            box-shadow: 0 5px 15px rgba(142, 68, 173, 0.1);
+            transition: all 0.3s;
+        }
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 5px 20px rgba(142, 68, 173, 0.2);
+        }
+
+        /* --- DANH SÁCH GRID --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        /* Thẻ Test (Dùng thẻ A để link chuẩn hơn) */
+        a.test-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 10px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        a.test-card::before {
+            content: "📄";
+            font-size: 24px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        a.test-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(142, 68, 173, 0.3);
+            filter: brightness(1.05);
+        }
+
+        /* Ẩn hiện khi tìm kiếm */
+        .hidden { display: none; }
+
+        @media (max-width: 600px) {
+            .grid-container { grid-template-columns: repeat(2, 1fr); }
+            h1 { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <a href="index.html" class="back-btn">
+        🏠 Trang chủ
+    </a>
+
+    <h1>📖 Reading Mock Tests with SnapEnglish</h1>
+    <p class="subtitle">Kho luyện đề từ 1 - 200</p>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔍 Tìm nhanh (VD: 15, 102...)" onkeyup="filterTests()">
+    </div>
+
+    <div class="grid-container" id="listContainer">
+    </div>
+
+   <script>
+    // --- CẤU HÌNH ---
+    // Link gốc chuyển về dạng file cục bộ
+    const baseUrl = "test-"; 
+    
+    // Số lượng bài test muốn tạo
+    const totalTests = 200; 
+
+    const container = document.getElementById('listContainer');
+
+    // Hàm tạo danh sách tự động
+    function generateList() {
+        container.innerHTML = "";
+        
+        for (let i = 1; i <= totalTests; i++) {
+            const link = document.createElement('a');
+            link.className = 'test-card';
+            link.href = baseUrl + i + ".html"; // Tạo link: test-1.html, test-2.html...
+            
+            // Đã loại bỏ link.target = "_blank";
+            
+            // Gán dữ liệu để tìm kiếm
+            link.setAttribute('data-id', i);
+            
+            link.innerHTML = `TEST ${i}`;
+            
+            container.appendChild(link);
+        }
+    }
+
+    // Hàm tìm kiếm
+    function filterTests() {
+        const input = document.getElementById('searchInput').value.toLowerCase().trim();
+        const cards = document.querySelectorAll('.test-card');
+
+        cards.forEach(card => {
+            const id = card.getAttribute('data-id');
+            const text = card.innerText.toLowerCase();
+            
+            // Tìm theo số hoặc theo chữ "test X"
+            if (id.includes(input) || text.includes(input)) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    }
+
+    // Chạy hàm tạo danh sách khi tải trang
+    generateList();
+
+</script>
+
+</body>
+</html>
