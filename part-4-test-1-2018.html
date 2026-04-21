@@ -47,39 +47,68 @@
             display: flex;
             flex-direction: column;
         }
-/* Bố cục 2 cột cho các đoạn có Graphic */
-.two-col-layout {
+/* --- BỐ CỤC 2 CỘT & THANH TRƯỢT (RESIZER) --- */
+.two-col-layout, .script-split {
     display: flex;
-    gap: 30px;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 0; /* Xóa gap để thanh trượt nằm khít ở giữa */
     max-width: 1200px;
-    margin: 0 auto;
+    margin: 0 auto 30px auto;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    border: 2px solid #f1f2f6;
+    overflow: hidden;
 }
 
-/* Cột bên trái chứa hình ảnh - cố định khi cuộn nếu hình nhỏ */
-.left-col {
-    flex: 1;
-    position: sticky;
-    top: 100px;
+.left-col, .right-col, .script-col {
+    padding: 25px;
+    overflow-y: auto; /* Thêm thanh cuộn dọc độc lập cho từng cột */
+    max-height: 650px;
 }
 
-/* Cột bên phải chứa các Question Blocks */
-.right-col {
-    flex: 1;
+.left-col, .script-col:first-child {
+    flex: 0 0 50%; /* Cột trái chiếm 50% mặc định */
+}
+
+.right-col, .script-col:last-child {
+    flex: 1; /* Cột phải chiếm phần còn lại */
+    background: #fdfdfd;
+}
+
+/* Thanh trượt ở giữa */
+.resizer {
+    width: 14px;
+    background-color: #EBF4FA;
+    cursor: col-resize;
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+    z-index: 5;
 }
 
-/* Tự động chuyển về 1 cột trên màn hình điện thoại */
+.resizer:hover, .resizer.dragging {
+    background-color: var(--primary);
+}
+
+.resizer-handle {
+    width: 4px;
+    height: 40px;
+    background-color: rgba(255,255,255,0.8);
+    border-radius: 4px;
+}
+
+.resizer:not(:hover):not(.dragging) .resizer-handle {
+    background-color: #B2BEC3;
+}
+
+/* Ẩn thanh kéo khi dùng điện thoại (chuyển về 1 cột dọc) */
 @media (max-width: 1000px) {
-    .two-col-layout {
-        flex-direction: column;
-    }
-    .left-col {
-        position: static;
-        width: 100%;
-    }
+    .two-col-layout, .script-split { flex-direction: column; }
+    .left-col, .script-col:first-child { flex: 0 0 auto; width: 100% !important; }
+    .resizer { display: none; }
 }
         .screen { display: none; padding: 30px 5%; flex-grow: 1; animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; }
         .screen.active { display: flex; flex-direction: column; }
@@ -275,12 +304,17 @@
             <audio id="modal-audio" class="audio-player-custom" style="max-width: 600px;" controls></audio>
         </div>
         
-        <div class="script-split">
-            <div class="script-col">
+        <div class="script-split" id="scriptSplit">
+            <div class="script-col" id="scriptEnCol">
                 <h3>🇬🇧 English Script</h3>
                 <div class="script-text" id="m-script-en"></div>
             </div>
-            <div class="script-col script-vi">
+            
+            <div class="resizer" id="scriptResizer">
+                <div class="resizer-handle"></div>
+            </div>
+
+            <div class="script-col script-vi" id="scriptViCol">
                 <h3>🇻🇳 Bản dịch Tiếng Việt</h3>
                 <div class="script-text" id="m-script-vi"></div>
             </div>
@@ -775,31 +809,42 @@
         qContainer.innerHTML = '';
 
         // Nếu CÓ hình ảnh (Graphic), sử dụng bố cục 2 cột
-        if (pData.graphic) {
-            const layoutWrap = document.createElement('div');
-            layoutWrap.className = 'two-col-layout';
+        // Nếu CÓ hình ảnh (Graphic), sử dụng bố cục 2 cột CÓ THANH TRƯỢT
+    if (pData.graphic) {
+        const layoutWrap = document.createElement('div');
+        layoutWrap.className = 'two-col-layout';
 
-            // Tạo cột TRÁI (Graphic)
-            const leftCol = document.createElement('div');
-            leftCol.className = 'left-col';
-            const gBox = document.createElement('div');
-            gBox.className = 'graphic-box';
-            gBox.innerHTML = pData.graphic;
-            leftCol.appendChild(gBox);
-            layoutWrap.appendChild(leftCol);
+        // Cột TRÁI (Graphic)
+        const leftCol = document.createElement('div');
+        leftCol.className = 'left-col';
+        const gBox = document.createElement('div');
+        gBox.className = 'graphic-box';
+        gBox.innerHTML = pData.graphic;
+        leftCol.appendChild(gBox);
+        layoutWrap.appendChild(leftCol);
 
-            // Tạo cột PHẢI (Câu hỏi)
-            const rightCol = document.createElement('div');
-            rightCol.className = 'right-col';
-            
-            pData.questions.forEach((q, index) => {
-                const qBlock = createQuestionBlock(q, index); 
-                rightCol.appendChild(qBlock);
-            });
-            
-            layoutWrap.appendChild(rightCol);
-            qContainer.appendChild(layoutWrap);
-        } else {
+        // THANH KÉO (RESIZER)
+        const resizer = document.createElement('div');
+        resizer.className = 'resizer';
+        resizer.innerHTML = '<div class="resizer-handle"></div>';
+        layoutWrap.appendChild(resizer);
+
+        // Cột PHẢI (Câu hỏi)
+        const rightCol = document.createElement('div');
+        rightCol.className = 'right-col';
+        
+        pData.questions.forEach((q, index) => {
+            const qBlock = createQuestionBlock(q, index); 
+            rightCol.appendChild(qBlock);
+        });
+        layoutWrap.appendChild(rightCol);
+        
+        qContainer.appendChild(layoutWrap);
+
+        // Khởi động tính năng kéo cho thanh trượt vừa tạo
+        initResizer(resizer, leftCol, layoutWrap);
+        
+    } else {
             // Nếu KHÔNG có hình ảnh, hiển thị 1 cột bình thường
             pData.questions.forEach((q, index) => {
                 const qBlock = createQuestionBlock(q, index);
@@ -986,6 +1031,45 @@
         document.getElementById('modal-detail').style.display = 'none';
         document.getElementById('modal-audio').pause();
     }
+    // HÀM XỬ LÝ KÉO THẢ THANH TRƯỢT
+    function initResizer(resizer, leftElement, container) {
+        let isDragging = false;
+
+        resizer.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            resizer.classList.add('dragging');
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none'; // Chống bôi đen chữ khi kéo
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            const containerRect = container.getBoundingClientRect();
+            // Tính toán % chiều rộng mới
+            let newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+            // Khóa giới hạn (chỉ cho phép kéo từ 20% đến 80%)
+            if (newWidth < 20) newWidth = 20;
+            if (newWidth > 80) newWidth = 80;
+            leftElement.style.flex = `0 0 ${newWidth}%`;
+        });
+
+        document.addEventListener('mouseup', function() {
+            if (isDragging) {
+                isDragging = false;
+                resizer.classList.remove('dragging');
+                document.body.style.cursor = 'default';
+                document.body.style.userSelect = 'auto';
+            }
+        });
+    }
+
+    // KÍCH HOẠT THANH TRƯỢT CHO MODAL KỊCH BẢN KHI TẢI TRANG
+    document.addEventListener('DOMContentLoaded', function() {
+        const modalResizer = document.getElementById('scriptResizer');
+        const modalLeftCol = document.getElementById('scriptEnCol');
+        const modalContainer = document.getElementById('scriptSplit');
+        if(modalResizer) initResizer(modalResizer, modalLeftCol, modalContainer);
+    });
 </script>
 
 </body>
