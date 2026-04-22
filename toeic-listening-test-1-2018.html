@@ -974,7 +974,7 @@
                     <div class="split-questions">
                         <div class="q-header">
                             <div class="q-num">${q.id}</div>
-                            <div class="q-text"></div>
+                            <div class="q-text">Look at the picture and choose the correct statement.</div>
                         </div>
                         <div class="options-grid">
                             ${q.opts.map(opt => `
@@ -988,9 +988,9 @@
                             <div class="script-en">${q.script_en.join('<br>')}</div>
                             <div class="script-vi">${q.script_vi.join('<br>')}</div>
                             <div style="margin-top:15px; display:flex; flex-direction:column; gap:10px;">
-    ${q.exp.map((e, i) => `<div><b>(${q.opts[i]})</b> ${e}</div>`).join('')}
-</div>
-<div class="vocab-box">${q.vocab.replace(/\n/g, '<br>')}</div>
+                                ${q.exp.map((e, i) => `<div><b>(${q.opts[i]})</b> ${e}</div>`).join('')}
+                            </div>
+                            <div class="vocab-box">${q.vocab.replace(/\n/g, '<br>')}</div>
                         </div>
                     </div>
                 </div>
@@ -999,38 +999,56 @@
         p1HTML += `</div>`;
         main.innerHTML += p1HTML;
 
-        // Render Part 2
+        // Render Part 2 (Đã fix: Ẩn chữ câu hỏi lúc thi, Hiện chi tiết giải thích sau khi nộp)
         let p2HTML = `<div id="part2" class="part-container">
             <div class="part-title">Part 2: Question & Response</div>
-            <div class="part-desc">Listen to the question and choose the best response (A, B, or C).</div>`;
+            <div class="part-desc">Listen to the audio and select the best response.</div>`;
         TOEIC_DATA.part2.forEach(q => {
             p2HTML += `
             <div class="q-card" id="card-${q.id}">
                 <div class="q-header">
                     <div class="q-num">${q.id}</div>
-                    <div class="q-text ${isMockMode ? 'hidden-in-mock' : ''}" id="text-q${q.id}">${q.q_en}<br><span style="font-size:15px; color:#636E72; font-weight:normal;">Dịch: ${q.q_vi}</span></div>
+                    <div class="q-text">Mark your answer on your answer sheet.</div>
                 </div>
                 <audio controls src="${q.audio}" style="width:100%; margin-bottom:15px;"></audio>
                 <div class="options-grid">
-                    ${['A', 'B', 'C'].map(opt => `
-                    <label class="opt-label" onclick="selectAnswer(${q.id}, '${opt}')">
-                        <input type="radio" name="q${q.id}" value="${opt}">
-                        <div class="custom-radio"></div><span>Option ${opt}</span>
+                    ${['A', 'B', 'C'].map(optLetter => `
+                    <label class="opt-label" onclick="selectAnswer(${q.id}, '${optLetter}')">
+                        <input type="radio" name="q${q.id}" value="${optLetter}">
+                        <div class="custom-radio"></div><span>Option ${optLetter}</span>
                     </label>`).join('')}
                 </div>
                 <div class="explanation-box" id="exp-${q.id}">
                     <div class="exp-title">Phân tích chi tiết</div>
-                    <div style="margin-bottom: 10px;">${q.exp}</div>
-                    <div class="vocab-box">${q.vocab.replace(/\n/g, '<br>')}</div>
+                    
+                    <div style="margin-bottom: 15px; padding: 15px; background: #F4F8FF; border-radius: 8px; border: 1px solid #A0C4FF;">
+                        <div style="font-weight: 700; color: var(--primary-dark); font-size: 16px;">Q: ${q.q_en}</div>
+                        <div style="color: var(--text-muted); font-style: italic; margin-bottom: 10px;">Dịch: ${q.q_vi}</div>
+                        <div style="color: #D35400; font-size: 14px;">💡 <b>Mẹo giải:</b> ${q.hint}</div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                        ${q.opts.map(opt => {
+                            let isAns = (opt.l === q.ans);
+                            let tag = isAns ? "<span class='bingo-tag'>Đúng</span>" : "<span class='trap-tag'>Sai</span>";
+                            return `<div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border);">
+                                <div style="font-weight: 700; margin-bottom: 5px;">(${opt.l}) ${opt.txt}</div>
+                                <div style="color: var(--text-muted); font-size: 14px; font-style: italic; margin-bottom: 8px;">${opt.vi}</div>
+                                <div>${tag} ${opt.exp}</div>
+                            </div>`;
+                        }).join('')}
+                    </div>
+                    
+                    <div class="vocab-box">${q.vocab ? q.vocab.replace(/\n/g, '<br>') : ''}</div>
                 </div>
             </div>`;
         });
         p2HTML += `</div>`;
         main.innerHTML += p2HTML;
 
-       // Render Part 3 & 4 helper
+        // Render Part 3 & 4 (Đã fix: Graphic Ảnh/Bảng biểu & Cắt tiếng Việt lúc thi)
         const renderPassage = (data, title) => {
-            let html = `<div id="part${title === 'Part 3' ? 3 : 4}" class="part-container">
+            let html = `<div id="part${title.includes('3') ? 3 : 4}" class="part-container">
                 <div class="part-title">${title}</div>
                 <div class="part-desc">Listen to the talks and answer the questions.</div>`;
             data.forEach(p => {
@@ -1039,15 +1057,19 @@
                     <div class="split-layout" style="padding:30px;">
                         <div class="split-media">
                             <div style="font-weight:800; color:var(--primary-dark); margin-bottom:15px;">Questions ${p.id}</div>
-                            ${p.graphic ? (p.graphic.includes('<table') ? `<div style="overflow-x:auto;">${p.graphic}</div>` : `<img src="${p.graphic}" alt="Graphic">`) : ''}
+                            ${p.graphic ? (p.graphic.includes('<') ? `<div style="overflow-x:auto; margin-bottom:15px;">${p.graphic}</div>` : `<img src="${p.graphic}" alt="Graphic">`) : ''}
                             <audio controls src="${p.audio}"></audio>
                         </div>
                         <div class="split-questions">`;
                 p.questions.forEach(q => {
+                    // Logic cắt dịch tiếng Việt ra khỏi câu hỏi lúc thi
+                    let qTextEn = q.q.includes('<br>') ? q.q.split('<br>')[0] : q.q;
+                    let qTextVi = q.q.includes('<br>') ? q.q.split('<br>')[1] : '';
+                    
                     html += `
                             <div class="q-header" id="card-${q.id}" style="margin-top:${q===p.questions[0] ? '0' : '30px'};">
                                 <div class="q-num">${q.id}</div>
-                                <div class="q-text">${q.q}</div>
+                                <div class="q-text">${qTextEn}</div>
                             </div>
                             <div class="options-grid">
                                 ${['A','B','C','D'].map((opt, i) => `
@@ -1057,6 +1079,7 @@
                                 </label>`).join('')}
                             </div>
                             <div class="explanation-box" id="exp-${q.id}">
+                                <div style="margin-bottom:10px; font-size:15px; color:var(--text-muted);">${qTextVi}</div>
                                 ${q.exp}
                             </div>`;
                 });
@@ -1078,7 +1101,7 @@
         main.innerHTML += renderPassage(TOEIC_DATA.part3, 'Part 3: Conversations');
         main.innerHTML += renderPassage(TOEIC_DATA.part4, 'Part 4: Short Talks');
 
-        // Sinh nốt giao diện fake cho các câu còn thiếu để đủ 100 nút bấm (Do demo data)
+        // Tạo 100 nút bấm điều hướng
         const allIDs = [
             ...TOEIC_DATA.part1.map(q=>q.id), 
             ...TOEIC_DATA.part2.map(q=>q.id),
