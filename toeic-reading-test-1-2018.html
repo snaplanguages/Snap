@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part 5 - 2018 | SnapEnglish</title>
+     <link rel="icon" type="image/png" href="ảnh.png">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap');
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: transparent;
+            color: #4a4a4a;
+            display: flex;
+            justify-content: center;
+            padding: 20px 0;
+            margin: 0;
+        }
+
+        .quiz-container {
+            background-color: #fffaf0; 
+            width: 100%;
+            max-width: 650px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 40px;
+            box-sizing: border-box;
+            border: 2px solid #fce4ec; 
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px dashed #ffcdd2;
+            padding-bottom: 15px;
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #d88c9a; 
+            margin: 0;
+        }
+
+        .progress {
+            font-size: 16px;
+            font-weight: 600;
+            color: #8da399; 
+            background-color: #e8f5e9;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .question-text {
+            font-size: 18px;
+            line-height: 1.6;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 35px;
+        }
+
+        .option {
+            background-color: #ffffff;
+            border: 2px solid #e1e8ed;
+            border-radius: 12px;
+            padding: 15px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .option:hover {
+            background-color: #f0f8ff;
+            border-color: #bde0fe;
+        }
+
+        .option.selected {
+            background-color: #e8f4f8; 
+            border-color: #a2d2ff;
+            color: #2b6cb0;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(162, 210, 255, 0.3);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Nunito', sans-serif;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-prev {
+            background-color: #f1f3f5;
+            color: #868e96;
+        }
+
+        .btn-prev:hover {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+
+        .btn-next {
+            background-color: #ffb4a2; 
+            color: #fff;
+            margin-left: auto;
+        }
+
+        .btn-next:hover {
+            background-color: #e5989b;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(229, 152, 155, 0.4);
+        }
+
+        .btn-submit {
+            background-color: #b5e2fa; 
+            color: #0f4c75;
+            margin-left: auto;
+            display: none;
+        }
+
+        .btn-submit:hover {
+            background-color: #8bbce1;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 188, 225, 0.4);
+        }
+
+        .btn-explain {
+            background-color: #cdb4db; 
+            color: #fff;
+            margin-top: 20px;
+        }
+
+        .btn-explain:hover {
+            background-color: #b089c7;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(176, 137, 199, 0.4);
+        }
+
+        #result-container {
+            display: none;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #ffc3a0 0%, #ffafbd 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px auto;
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            box-shadow: 0 10px 20px rgba(255, 175, 189, 0.4);
+        }
+
+        .result-message {
+            font-size: 20px;
+            color: #d88c9a;
+            margin-bottom: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+        /* --- OVERLAYS & MODALS (POPUP) --- */
+        .custom-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center;
+            z-index: 99999;
+        }
+        .custom-modal {
+            background: white; padding: 40px; border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            width: 90%; max-width: 450px; text-align: center;
+            border: 2px solid #ffcdd2;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-family: 'Nunito', sans-serif;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .custom-modal h2 { color: #d88c9a; font-size: 26px; margin-top: 0; }
+        
+        #timeInputBox { margin: 30px 0; }
+        #timeInput { 
+            width: 100px; padding: 10px; font-size: 18px; text-align: center; 
+            border: 2px solid #e1e8ed; border-radius: 10px; font-family: inherit; outline: none;
+        }
+        
+        .modal-actions { display: flex; gap: 15px; margin-top: 25px; justify-content: center; }
+        .btn-cancel {
+            background: #f1f3f5; color: #666; border: none; padding: 12px 20px;
+            border-radius: 15px; font-weight: 700; font-size: 16px; cursor: pointer; flex: 1;
+        }
+        .btn-confirm {
+            background: #ffb4a2; color: white; border: none; padding: 12px 20px;
+            border-radius: 15px; font-weight: 700; font-size: 16px; cursor: pointer; flex: 1;
+        }
+        .start-btn {
+            background: #ffb4a2; color: white; border: none; padding: 12px 35px;
+            border-radius: 50px; font-size: 18px; font-weight: 700; cursor: pointer;
+            margin-top: 20px; box-shadow: 0 5px 15px rgba(229, 152, 155, 0.4);
+        }
+        .timer-box {
+            font-size: 18px; font-weight: 700; color: #d88c9a;
+            background: #fff0f3; padding: 6px 15px; border-radius: 15px;
+            border: 2px solid #ffe3e3; margin-left: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quiz-app">
+    <div id="question-container">
+        <div class="header">
+            <div style="display: flex; align-items: center;">
+                <h2 class="title">Part 5 Practice</h2>
+                <div class="timer-box">⏱ <span id="timer">00:00</span></div>
+            </div>
+            <div class="progress" id="progress-text">Câu 1 / 30</div>
+        </div>
+        
+        <div class="question-text" id="question-text">
+            Đang tải câu hỏi...
+        </div>
+        
+        <div class="options" id="options-container">
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-prev hidden" id="btn-prev" onclick="prevQuestion()">Quay lại</button>
+            <button class="btn btn-next" id="btn-next" onclick="nextQuestion()">Tiếp theo</button>
+           <button class="btn btn-submit" id="btn-submit" onclick="askSubmit()">Nộp bài</button>
+        </div>
+    </div>
+
+    <div id="result-container">
+        <h2 class="title" style="margin-bottom: 25px;">Kết quả của bạn</h2>
+        <div class="score-circle" id="score-display">0/30</div>
+        <div class="result-message" id="result-message">Chúc mừng bạn đã hoàn thành bài thi!</div>
+        <a href="part-5-test-1-2018-answers-reading.html" class="btn btn-explain">Xem Giải Thích Chi Tiết</a>
+    </div>
+</div>
+<div id="setupOverlay" class="custom-overlay" style="display: flex;">
+    <div class="custom-modal">
+        <h2>Chào mừng đến với Test 1 - 2018 ✨</h2>
+        <p style="font-size: 18px; color: #666; margin-bottom: 20px;">Hãy cài đặt thời gian để bắt đầu luyện tập nhé!</p>
+        
+        <div id="timeInputBox">
+            <label style="font-size: 18px; font-weight: bold; color: #555;">Thời gian (phút): </label>
+            <input type="number" id="timeInput" value="15" min="1" max="60">
+        </div>
+        
+        <button class="start-btn" onclick="askReady()">Sẵn sàng (OK)</button>
+    </div>
+</div>
+
+<div id="startConfirmOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Xác nhận bắt đầu</h2>
+        <p id="startConfirmMsg" style="font-size: 18px; color: #555; margin-bottom: 20px; white-space: pre-line;"></p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeStartConfirmModal()">Huỷ</button>
+            <button class="btn-confirm" onclick="startTestActual()">OK</button>
+        </div>
+    </div>
+</div>
+
+<div id="confirmOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Xác nhận nộp bài</h2>
+        <p style="font-size: 18px; color: #555; margin-bottom: 10px;">Bạn có chắc chắn muốn nộp bài để xem đáp án và điểm số không?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmModal()">Quay lại</button>
+            <button class="btn-confirm" onclick="submitQuiz()">Nộp bài</button>
+        </div>
+    </div>
+</div>
+<script>
+  Part 5
+    const questions = [
+        { q: "Dr.Braun will write —--- letters only for interns who master every task expected of a junior copy editor.", options: ["recommends", "recommendation", "recommended", "recommending"], a: "recommendation" },
+        { q: "The —----- of a new chief financial officer at Veracore Industries was announced on April 6.", options: ["appoint", "appoints", "appointed", "appointment"], a: "appointment" },
+        { q: "After a six-month probationary period, city employees are —- to take vacation days.", options: ["beneficial", "eligible", "convenient", "relevant"], a: "eligible" },
+        { q: "Ms. Larensky is applying with several different agencies to obtain the permits ----- for the outdoor art event.", options: ["required", "requiring", "requires", "will require"], a: "required" },
+        { q: "This letter serves as ----that we have received and processed your credit-card cancellation request.", options: ["confirm", "confirmed", "confirmable", "confirmation"], a: "confirmation" },
+        { q: "Many people at the company have industry experience, but only a handful of —--- can see the future importance of current trends.", options: ["we", "us", "our", "ourselves"], a: "us" },
+        { q: "The new furniture for the conference room is scheduled to be delivered —--- on Tuesday.", options: ["hardly", "comfortably", "early", "eagerly"], a: "early" },
+        { q: "After working in Canada for ten years, Cha Joon has —-------- to Seoul to plan the opening of an upscale restaurant.", options: ["visited", "returned", "occurred", "related"], a: "returned" },
+        { q: "Toucan Database System is designed to perform a detailed financial analysis—---------.", options: ["automate", "automatic", "automated", "automatically"], a: "automatically" },
+        { q: "The city council approved the bill to increase funding for its road improvement —----------.", options: ["statement", "permission", "project", "ability"], a: "project" },
+        { q: "The Neighborhood Involvement Program honors residents —-- volunteer their time to help Egin City.", options: ["for", "who", "those", "as"], a: "who" },
+        { q: "Several architects —--- intriguing design plans for the Hadler Building’s addition.", options: ["proposing", "proposed", "proposal", "proposals"], a: "proposed" },
+        { q: "The updated training program is limited to site supervisors —---- the Casey Medical Care system.", options: ["within", "until", "during", "since"], a: "within" },
+        { q: "Mr.Koizumi must complete the cost estimate before he —--- for the conference.", options: ["will leave", "leaves", "leaving", "left"], a: "leaves" },
+        { q: "Although the new X150 printer is —---- to other models, it costs only half as much.", options: ["similar", "likable", "reflected", "considerate"], a: "similar" },
+        { q: "To address budget deficits, Lunere County plans to limit spending and —--- tourism.", options: ["promote", "declare", "obtain", "benefit"], a: "promote" },
+        { q: "Operating instructions are posted above the printer so you can —--- refer to them.", options: ["consecutively", "standardly", "namely", "easily"], a: "easily" },
+        { q: "The Vickwell Historical Museum will be closed for renovations —-- on Monday, September 10.", options: ["will begin", "has begun", "beginner", "beginning"], a: "beginning" },
+        { q: "Finley Plant Nursery implements the —--- latest agricultural techniques.", options: ["so", "more", "very", "much"], a: "very" },
+        { q: "According to the compensation guidelines, employees who regularly complete their work —-- it is due may receive bonuses.", options: ["before", "how", "why", "either"], a: "before" },
+        { q: "Thank you for your —---- in the Foxdale Apartments community enhancement survey.", options: ["participant", "participation", "participate", "participated"], a: "participation" },
+        { q: "Solar energy has become a key —---- in the development of additional energy resources throughout the region.", options: ["factor", "position", "instructor", "composition"], a: "factor" },
+        { q: "The LPN auto company has issued a special report to address concerns —--- the fuel efficiency of its vehicles.", options: ["excluding", "during", "following", "regarding"], a: "regarding" },
+        { q: "This year’s company retreat will focus on techniques that help people think more —--.", options: ["create", "creative", "creativity", "creatively"], a: "creatively" },
+        { q: "Employees must —--- requests for time off to Ms.Cheung for approval.", options: ["apply", "submit", "vacate", "oppose"], a: "submit" },
+        { q: "Board members are free to discuss the issues among —-- before the formal votes are taken.", options: ["themselves", "theirs", "their", "they"], a: "themselves" },
+        { q: "Judging by ticket sales, Fen Jiang’s first attempt at directing a film was —--- a success.", options: ["clear", "clearly", "clearer", "clearing"], a: "clearly" },
+        { q: "—--- the Nolan Credit Union parking area is now open to the public, a section has been reserved for credit union employees.", options: ["While", "When", "For", "But"], a: "While" },
+        { q: "Pharmacy technicians are responsible for verifying and processing prescriptions —-- they are requested by a physician.", options: ["as well as", "as soon as", "in regard to", "in addition to"], a: "as soon as" },
+        { q: "All laboratory personnel must attend the clinical safety workshop to ensure —-- with new regulations.", options: ["activation", "fulfillment", "compliance", "indication"], a: "compliance" }
+    ];
+  Part 6
+
+  {
+            passage: `<p>Cecil Munrow, founder and president of Munrow's, Liverpool's largest retail clothier, announced that he <b>(31) ____________</b> £4,000 to the city's new community center. The funds derive from the sale of tickets to a party held last night at his company's <b>(32) __________</b>. Mr. Munrow will present a check to the center tomorrow at its opening ceremony.</p><p><b>(33) ____________</b> the past twenty years, Mr. Munrow has organized several fund-raising events for charitable institutions and community services <b>(34) _____________</b>.</p>`,
+            questions: [
+                { id: 31, options: { A: "will donate", B: "donated", C: "might donate", D: "donating" }, correct: "A" },
+                { id: 32, options: { A: "museum", B: "hotel", C: "factory", D: "store" }, correct: "D" },
+                { id: 33, options: { A: "Despite", B: "Over", C: "Between", D: "Beneath" }, correct: "B" },
+                { id: 34, options: { A: "The opening ceremony will begin at 10:00 A.M.", B: "The community center offers classes for adults and children.", C: "Last night’s event was the most successful thus far.", D: "Mr.Munrow plans to open a new location in London next year." }, correct: "C" }
+            ]
+        },
+        {
+            passage: `<p>WXO Radio Turns 50!</p><p>On February 3 WXO Radio will celebrate its fiftieth anniversary. That’s half a century of stimulating <b>(35) _________</b>. Over the years, we <b>(36) _______</b> our listeners breaking news, thought-provoking stories, and popular music from around the world.</p><p>Now we invite you to celebrate with us during an open house from 5:00 P.M to 6:30 P.M on February 3 at our Eighth Street studio. Take a tour and see some of the behind-the-scenes magic. Watch a demonstration of our digital audio equipment. <b>(37) _________</b>. The open house is free, but registration is required. We hope you can join us for this <b>(38) ________</b> occasion.</p>`,
+            questions: [
+                { id: 35, options: { A: "concerts", B: "discussions", C: "programming", D: "development" }, correct: "C" },
+                { id: 36, options: { A: "offers", B: "offering", C: "will offer", D: "have offered" }, correct: "D" },
+                { id: 37, options: { A: "We plan to merge with another local radio station next year.", B: "You can even meet some of your favorite broadcasters.", C: "This is the first event in our February schedule.", D: "This station continues to be a vital part of your community." }, correct: "B" },
+                { id: 38, options: { A: "special", B: "specialize", C: "especially", D: "specialization" }, correct: "A" }
+            ]
+        },
+        {
+            passage: `<p>June 8-Today the Bratton City Council approved an agreement with KGRM Enterprises. Under the agreement, KGRM <b>(39) _____</b> the 22-acre lot on Mueller Street. The proposal calls for building both offices and retail stores on the site.</p><p>Bratton's mayor, Keith Wercler, says he welcomes the <b>(40) __________</b> opportunities this project will bring to the area. "We expect the project to create 700 permanent full-time jobs," he said. "I am glad it was finally approved after so many postponements." <b>(41) _________</b>.</p><p>KGRM spokesperson Katie Cornyn expects the project will take five years to complete, yet cautions that setbacks may still occur. "We've provided the council our best <b>(42) ________</b>, but it's not possible to foresee all issues that may arise," Cornyn said.</p>`,
+            questions: [
+                { id: 39, options: { A: "to develop", B: "will develop", C: "has developed", D: "could have developed" }, correct: "B" },
+                { id: 40, options: { A: "economic", B: "unforeseen", C: "volunteer", D: "frequent" }, correct: "A" },
+                { id: 41, options: { A: "While the city is anxious for work to get underway, delays are typical for major commercial endeavors such as this.", B: "Nearby tenants, however, have raised some valid concerns about the construction noise.", C: "Despite city officials' promises to grant the company a long-term agreement, they now may have to reconsider.", D: "Council members will vote on three different proposals from the architects." }, correct: "A" },
+                { id: 42, options: { A: "argument", B: "background", C: "estimate", D: "combination" }, correct: "C" }
+            ]
+        },
+        {
+            passage: `<p>From: Customer Care &lt;custcare@arttodaymag.ca&gt;<br>To: Karina Bhat &lt;kbhat871@5mail.ca&gt;<br>Date: November 5<br>Subject: Welcome to Art Today<br>Attachment: Form</p><p>Dear Ms. Bhat:</p><p>Thank you for subscribing to Art Today! <b>(43) _______</b> you will be among the first to know about exciting art exhibits, concerts, auctions, and festivals throughout Western Canada. Your first issue will arrive within the next few days, and then each issue will be sent at the beginning of the month. <b>(44) ______</b>.</p><p>Your subscription also allows you unlimited <b>(45) _______</b> to articles, videos, and other multimedia on our Web site. All you need to do is log in using your subscriber number and password, which you will find <b>(46) ____</b> the enclosed enrollment form.</p><p>Sincerely,<br>Ken Suzuki<br>Customer Representative</p>`,
+            questions: [
+                { id: 43, options: { A: "Now", B: "Afterward", C: "Then", D: "Meanwhile" }, correct: "A" },
+                { id: 44, options: { A: "To place a subscription, call our service desk during business hours.", B: "If you do not receive your copy in a week, please contact us immediately.", C: "Artists are invited to submit descriptions of their work.", D: "The first concert is scheduled to take place in Vancouver in early October." }, correct: "B" },
+                { id: 45, options: { A: "accessing", B: "accesses", C: "accessed", D: "access" }, correct: "D" },
+                { id: 46, options: { A: "for", B: "about", C: "on", D: "at" }, correct: "C" }
+            ]
+        }
+    ];
+
+  Part 7
+ {
+        passage: `<div class="doc-box" style="border: 1px solid #1e3a8a; border-top: 8px solid #1e3a8a; padding: 25px; line-height: 1.7; color: #1e293b; background: #fff;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <h3 style="color: #1e3a8a; letter-spacing: 3px; font-weight: 700;">NOTICE</h3>
+                <hr style="width: 50px; border: 1px solid #1e3a8a; margin: 10px auto;">
+            </div>
+
+            <p>We are pleased to announce that Teresa Park has joined the Severin Law Firm as an associate attorney. Ms. Park graduated with high honors from Naridell University Law School, where she specialized in copyright and trademark law. While attending school, she worked as a clerk in the legal aid office at the university.</p><br>
+
+            <p>This past summer, she completed an internship at Delmar and Associates, a legal firm whose client base includes writers, musicians, and other professionals in the publishing industry. Ms. Park has an exceptional record of service and will be a valuable asset to our team.</p><br>
+
+            <p style="background: #f1f5f9; padding: 15px; border-radius: 8px; text-align: center; border: 1px dashed #cbd5e1;">
+                Please join us this Thursday at 3:00 P.M. in the main conference room to welcome her to our office.
+            </p>
+        </div>`,
+        questions: [
+            { id: 47, text: "Where is the notice most likely posted?", options: { A: "In a law office", B: "In a talent agency", C: "In a recording studio", D: "In a publishing company" }, correct: "A" },
+            { id: 48, text: "What are employees invited to do on Thursday?", options: { A: "Watch a musical performance", B: "Join a community service group", C: "Attend a professional conference", D: "Meet a new staff member" }, correct: "D" }
+        ]
+    },
+    {
+        passage: `<div class="doc-box" style="border: 1px solid #f97316; border-left: 6px solid #f97316; background: #fff7ed; padding: 25px; line-height: 1.6;">
+            <p style="color: #9a3412; font-size: 1.1em;"><strong>Attention West Arragon Residents:</strong></p><br>
+            
+            <p>The West Arragon Business Directory has grown so large that it takes up a sizable portion of the neighborhood newsletter. As a result, we will no longer be printing the directory on paper and will offer it online instead.</p><br>
+            
+            <p>The directory is not posted yet, but it will be found at <a href="#" style="color: #c2410c; text-decoration: underline;"><strong>www.westarragon.com</strong></a> in the next few weeks. When it becomes available, I suggest that you review your listing to make sure it is accurate. If you find that your listing is out of date or has a link that does not work, please let me know so that I can make the necessary changes.</p><br>
+            
+            <div style="margin-top: 15px; color: #444;">
+                <p>Thanks,</p>
+                <p><strong>Judy Lanster</strong></p>
+                <p><small>West Arragon Neighborhood Council<br>555-0013</small></p>
+            </div>
+        </div>`,
+        questions: [
+            { id: 49, text: "What change will be made to the business directory?", options: { A: "It will have shortened listings", B: "It will be available only online", C: "It will be available on a different date", D: "It will cover more than one neighborhood" }, correct: "B" },
+            { id: 50, text: "According to the notice, why might readers contact Ms. Lanster?", options: { A: "To request a correction", B: "To obtain an access code", C: "To subscribe to a newsletter", D: "To suggest changes in deadlines" }, correct: "A" }
+        ]
+    },
+    {
+        passage: `<div class="doc-box">
+            <div style="text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px;">
+                <h3 style="color: #1e3a8a; font-size: 1.5em; margin-bottom: 10px;">Workshop: Team Building</h3>
+                <div style="background: #f8fafc; display: inline-block; padding: 10px 25px; border-radius: 30px; border: 1px solid #cbd5e1;">
+                    <span style="margin-right: 15px;">📅 <strong>17 April</strong></span>
+                    <br><span style="margin-right: 15px;">🕒 <strong>9:15 A.M. to 4:30 P.M.</strong></span>
+                    <br><span>💰 <strong>£40 per person</strong></span>
+                </div>
+            </div>
+
+            <table class="table-data" style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+                <thead>
+                    <tr style="background: #f1f5f9;">
+                        <th style="padding: 12px; border: 1px solid #cbd5e1; width: 20%; text-align: left;">Time</th>
+                        <th style="padding: 12px; border: 1px solid #cbd5e1; text-align: left;">Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #cbd5e1;">9:15 A.M.</td>
+                        <td style="padding: 12px; border: 1px solid #cbd5e1;">
+                            <strong>First Steps:</strong> Focus on important issues that small businesses face. Identify your company's long- and short-term objectives as well as any areas in need of improvement.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #cbd5e1;">10:45 A.M.</td>
+                        <td style="padding: 12px; border: 1px solid #cbd5e1;">
+                            <strong>Fostering Fellowship:</strong> Learn how to help create an atmosphere of cooperation rather than competition among your employees at all levels.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #cbd5e1;">12:15 P.M.</td>
+                        <td style="padding: 12px; border: 1px solid #cbd5e1;">
+                            <strong>Lunch Break:</strong> Participants may choose between two complimentary entrees: grilled chicken sandwich with salad greens or pasta with vegetables.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #cbd5e1;">1:30 P.M.</td>
+                        <td style="padding: 12px; border: 1px solid #cbd5e1;">
+                            <strong>Team Activities:</strong> Experiment with team-building exercises for both small and large groups. Work with your fellow participants to get ideas that you can use with your own employees.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px; border: 1px solid #cbd5e1;">3:00 P.M.</td>
+                        <td style="padding: 12px; border: 1px solid #cbd5e1;">
+                            <strong>Evaluation Techniques:</strong> Learn about methods to determine whether team-building activities are having the intended effect. Get tips on how to use common office software to track progress at your company.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>`,
+        questions: [
+            { id: 51, text: "For whom is the workshop most likely intended?", options: { A: "Business journalists", B: "Human resource experts", C: "Owners of small businesses", D: "New employees at small companies" }, correct: "C" },
+            { id: 52, text: "What session involves identifying goals?", options: { A: "First Steps", B: "Fostering Fellowship", C: "Team Activities", D: "Evaluation Techniques" }, correct: "A" },
+            { id: 53, text: "What is NOT indicated about the workshop?", options: { A: "It requires a fee to attend", B: "It includes a meal", C: "It is a one-day event", D: "It will focus on new software" }, correct: "D" }
+        ]
+    },
+    {
+        passage: `<div class="doc-box" style="line-height: 1.6; color: #1e293b;">
+            <div style="text-align: center; margin-bottom: 25px;">
+                <h2 style="font-family: serif; border-bottom: 1px solid #334155; display: inline-block; padding-bottom: 5px;">Local News</h2>
+                <p style="margin-top: 8px; font-style: italic; font-size: 0.9em;">Monday, March 31</p>
+            </div>
+
+            <p>The Cloud Theater on Gordon Street will close at the end of this month, but this important piece of real estate won't be closed for long. The building has been sold to the Lakehurst Cinema Society (LCS). According to LCS Executive Director Kartik Malla, the group is planning to make some updates to the building before it reopens. He explained that the seats, screens, and sound systems will be replaced in all of the theaters. <strong>[1]</strong>.</p><br>
+
+            <p>"However," Mr. Malla added, "we'll be keeping one of the Cloud Theater's old projectors so we can continue to show classic films in their original format".</p><br>
+
+            <p>Up to now, the Cloud Theater has played mainly art house, independent, and foreign films. <strong>[2]</strong>. The former owner, Mr. Eugene Sattler, who has now retired, always sought to make the Cloud Theater a haven for artistic films. He was successful for many years, but ticket sales have declined in recent years and he decided it was time to sell. <strong>[3]</strong>.</p><br>
+
+            <p>"This was a hard decision to make," said Mr. Sattler. "I will miss working at the theater. I am happy the LCS is going to bring new life to the old theater".</p><br>
+
+            <p>Under its new ownership, the theater will continue to show those artistic types of movies on special occasions. It will also show more mainstream movies that will appeal to families and children.</p><br>
+
+            <p>The society plans to reopen the theater to the public on July 1. In addition, it will continue to serve as host for the classic film festival that begins the first weekend in August and continues for ten days. Everything about the festival will remain the same except for one thing. Formerly called the Gordon Street Film Festival, it will now be known as the Lakehurst Cinema Society Film Festival. <strong>[4]</strong>.</p>
+        </div>`,
+        questions: [
+            { id: 54, text: "What is suggested about the Cloud Theater?", options: { A: "It will show mainly classic films", B: "It will soon have new equipment installed", C: "Its ticket prices will increase", D: "Its customers are not happy" }, correct: "B" },
+            { id: 55, text: "According to the article, what was difficult for Mr. Sattler?", options: { A: "Securing equipment", B: "Selecting a location for retirement", C: "Deciding to sell the theater", D: "Finding buyers" }, correct: "C" },
+            { id: 56, text: "What was renamed?", options: { A: "A movie theater", B: "An executive position", C: "A film festival", D: "A Lakehurst street" }, correct: "C" },
+            { id: 57, text: "Where does this sentence best belong: 'The concession stand has also been eliminated.'", options: { A: "[1]", B: "[2]", C: "[3]", D: "[4]" }, correct: "A" }
+        ]
+    },
+    {
+        passage: `<div class="doc-box" style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+            <div style="background: #0f172a; color: #f8fafc; padding: 20px; text-align: center;">
+                <h2 style="margin: 0; letter-spacing: 2px; font-family: 'Segoe UI', sans-serif;">VENTURE SOLUTIONS</h2>
+                <p style="margin: 5px 0 0 0; font-size: 0.85em; opacity: 0.8;">Next-Generation IT Corporate Services</p>
+            </div>
+
+            <div style="padding: 25px; background: #fff;">
+                <div style="margin-bottom: 25px;">
+                    <p style="color: #2563eb; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <span style="background: #2563eb; width: 4px; height: 18px; display: inline-block;"></span>
+                        As our corporate client, you:
+                    </p>
+                    <ul style="list-style: none; padding-left: 10px;">
+                        <li style="margin-bottom: 8px;">✅ gain access to cutting-edge technology</li>
+                        <li style="margin-bottom: 8px;">✅ pay only for what you use, thus reducing hardware and software expenses</li>
+                        <li style="margin-bottom: 8px;">✅ enjoy our streamlined, up-front, and ongoing billing</li>
+                    </ul>
+                </div>
+
+                <div style="background: #f8fafc; border: 1px solid #f1f5f9; padding: 20px; border-radius: 8px;">
+                    <p style="font-weight: 600; margin-bottom: 12px; color: #1e293b;">We provide:</p>
+                    <ul class="footer-list" style="line-height: 1.6;">
+                        <li style="margin-bottom: 6px;">customized software production and regular maintenance of on-site hardware requires one-year contract</li>
+                        <li style="margin-bottom: 6px;">management and regular upgrades of applications and databases</li>
+                        <li style="margin-bottom: 6px;">storage, backup, and data recovery</li>
+                        <li style="margin-bottom: 6px;">an around-the-clock service center for fast resolution of issues</li>
+                        <li style="margin-bottom: 6px;">access to our exclusive Venture Remote Monitoring (VRM) system</li>
+                    </ul>
+                </div>
+            </div>
+        </div>`,
+        questions: [
+            { id: 58, text: "What is one of the services offered?", options: { A: "Legal advice", B: "Office accounting", C: "Building maintenance", D: "Software development" }, correct: "D" },
+            { id: 59, text: "What is mentioned about care of computer equipment?", options: { A: "It must be purchased for at least one year", B: "It is recommended for older systems", C: "It is performed by external consultants", D: "It is not available to new customers" }, correct: "A" }
+        ]
+    },
+    {
+        passage: `<div class="doc-box" style="padding: 0; overflow: hidden; border: 1px solid #cbd5e1; border-radius: 12px;">
+            <div style="background: #f1f5f9; padding: 10px 20px; border-bottom: 1px solid #cbd5e1; display: flex; align-items: center; gap: 10px;">
+                <div style="display: flex; gap: 6px;">
+                    <span style="width: 12px; height: 12px; background: #ff5f56; border-radius: 50%;"></span>
+                    <span style="width: 12px; height: 12px; background: #ffbd2e; border-radius: 50%;"></span>
+                    <span style="width: 12px; height: 12px; background: #27c93f; border-radius: 50%;"></span>
+                </div>
+                <div style="background: #fff; border-radius: 6px; padding: 4px 12px; flex: 1; font-size: 0.85em; color: #64748b; border: 1px solid #e2e8f0;">
+                    http://www.youronlinejobfinder.com
+                </div>
+            </div>
+
+            <div style="padding: 25px; background: #fff;">
+                <h3 style="color: #1e3a8a; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; margin-bottom: 20px;">Your Online Job Finder</h3>
+                
+                <p style="font-size: 1.1em; color: #1e40af;"><strong>Work for the best!</strong></p><br>
+                
+                <p>Other companies ask their salespeople to make countless calls to potential customers who are not expecting to be contacted. At AJQ Insurance, customers call us for their insurance needs! Our insurance sales associates take only inbound sales calls from interested potential policyholders. These positions are free from the pressure of selling on commission.</p><br>
+
+                <p><br>
+                Complete our sales training while being paid a generous hourly rate. Take the exam to become a licensed insurance professional. If you succeed, you may be offered a salaried position.</p><br>
+
+                <p><br>
+                We will consider education and experience in the salary offer. Some university work is useful, but motivated high school graduates will also be considered. Because we work 24/7, we offer many shifts to choose from with an additional 10% in pay for late-night and early-morning shifts.</p><br>
+
+                <div style="background: #eff6ff; border-left: 4px solid #3b82f6; padding: 15px; font-size: 0.9em; color: #1e3a8a;">
+                    We recommend that you become familiar with the company before applying by visiting our Web site at <strong>AJQinsurance.com</strong>.
+                </div><br>
+
+                <div style="text-align: center; margin-top: 20px;">
+                    <button style="background: #2563eb; color: #fff; border: none; padding: 12px 30px; border-radius: 8px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);">Apply Now</button>
+                </div>
+            </div>
+        </div>`,
+        questions: [
+            { id: 60, text: "What duty is mentioned as part of the job?", options: { A: "Meeting sales commission targets", B: "Receiving calls from potential customers", C: "Working only during unconventional hours", D: "Calling people unfamiliar with the company" }, correct: "B" },
+            { id: 61, text: "What is required for a salaried position?", options: { A: "Sales experience", B: "A university degree", C: "Employer references", D: "An insurance license" }, correct: "D" },
+            { id: 62, text: "Why should applicants visit the AJQ Web site?", options: { A: "To learn about AJQ Insurance", B: "To apply for the job", C: "To ask questions", D: "To find application status" }, correct: "A" }
+        ]
+    },
+    {
+        passage: `<div class="doc-box" style="background: #fffcf2; border: 1px solid #d4a373; padding: 30px; line-height: 1.8;">
+            <div style="text-align: center; border-bottom: 2px solid #d4a373; margin-bottom: 20px; padding-bottom: 10px;">
+                <h2 style="color: #5f4339; font-family: 'Georgia', serif; letter-spacing: 1px;">A Long-Lasting Love for Books</h2>
+                <p style="color: #7f5539; font-size: 0.9em; margin-top: 5px;"><em>Pine Hill Local News • February 29</em></p>
+            </div>
+
+            <p>Both in and around Pine Hill, Alfred Carlson, who has been teaching Russian literature at Pine Hill State University for twenty years, is probably best known as the owner of The Treasure Box, the town's oldest bookstore. The store has two unique features: it specializes in rare books and is open for business on Saturdays only. Evidently, walk-in sales make up only a small percentage of Mr. Carlson's business; the bulk of the store's revenue is generated by orders placed over the telephone or online by universities, museums, and private collectors.</p><br>
+
+            <p>On Sunday, The Treasure Box will be celebrating its sixtieth anniversary. "When my mother, Willisa, opened the bookstore all those years ago on Green Edge Road, two blocks from here, she probably had no idea it would still be serving the public six decades later," Mr. Carlson said. The store still displays the original sign over the doorway. The interior retains the living-room atmosphere it always had, with its mismatched tables and chairs. One section of the store is filled with books about baseball, an abiding passion of the Carlson family.</p><br>
+
+            <p>Later this month, Mr. Carlson will mark another milestone: he will be retiring from his teaching position. His retirement does not mean, however, that The Treasure Box will see extended business hours; it will continue to be open once a week. "I am not retiring from one job just so that I can spend more time on another," Mr. Carlson said. "Rather... I will be able to dedicate more time to my children and grandchildren".</p>
+        </div>`,
+        
+        questions: [
+            { id: 63, text: "Why was the article written?", options: { A: "To attract book club members", B: "To highlight unique selling benefits", C: "To celebrate local business achievements", D: "To announce relocation" }, correct: "C" },
+            { id: 64, text: "What is NOT suggested about Mr. Carlson?", options: { A: "He will soon end his teaching career", B: "He studies works by Russian authors", C: "He has lived in Pine Hill for almost ten years", D: "He enjoys talking about baseball" }, correct: "C" },
+            { id: 65, text: "The word 'retains' is closest in meaning to:", options: { A: "Contributed to", B: "Agrees with", C: "Remembers", D: "Keeps" }, correct: "D" },
+            { id: 66, text: "What is stated about The Treasure Box?", options: { A: "It will add a children's section", B: "It will maintain current hours", C: "Sales are expected to increase", D: "Its sign will be replaced" }, correct: "B" }
+        ]
+    },
+    {
+        passage: `<div class="doc-box" style="background: #f1f5f9; padding: 20px;">
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                
+                <div style="align-self: flex-start; max-width: 85%; background: #ffffff; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 18px 18px 18px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    <strong style="color: #4338ca; font-size: 0.85em;">Iosif Volkov</strong>
+                    <p style="margin-top: 4px;">Ms. Medrano, I e-mailed you the revised contract. Have you received it?</p>
+                    <div style="text-align: right; font-size: 0.7em; color: #94a3b8; margin-top: 4px;">11:04 AM</div>
+                </div>
+
+                <div style="align-self: flex-end; max-width: 85%; background: #dcfce7; border: 1px solid #bbf7d0; padding: 12px 16px; border-radius: 18px 18px 0 18px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    <strong style="color: #15803d; font-size: 0.85em;">Lucia Medrano</strong>
+                    <p style="margin-top: 4px;">Yes, it just came in now. Thanks for making those changes.</p>
+                    <div style="text-align: right; font-size: 0.7em; color: #166534; margin-top: 4px;">11:06 AM</div>
+                </div>
+
+                <div style="align-self: flex-start; max-width: 85%; background: #ffffff; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 18px 18px 18px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    <strong style="color: #4338ca; font-size: 0.85em;">Iosif Volkov</strong>
+                    <p style="margin-top: 4px;">Of course. Thanks for bringing them to my attention. The contract now states that you will be paid 175€ per accepted article rather than 125€.</p>
+                    <div style="text-align: right; font-size: 0.7em; color: #94a3b8; margin-top: 4px;">11:07 AM</div>
+                </div>
+
+                <div style="align-self: flex-end; max-width: 85%; background: #dcfce7; border: 1px solid #bbf7d0; padding: 12px 16px; border-radius: 18px 18px 0 18px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    <strong style="color: #15803d; font-size: 0.85em;">Lucia Medrano</strong>
+                    <p style="margin-top: 4px;">Perfect. I'll look it over now, sign it, and send it back to you.</p>
+                    <div style="text-align: right; font-size: 0.7em; color: #166534; margin-top: 4px;">11:08 AM</div>
+                </div>
+
+                <div style="align-self: flex-start; max-width: 85%; background: #ffffff; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 18px 18px 18px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    <strong style="color: #4338ca; font-size: 0.85em;">Iosif Volkov</strong>
+                    <p style="margin-top: 4px;">Great. We're always looking for good material for our magazine. I look forward to receiving your submissions.</p>
+                    <div style="text-align: right; font-size: 0.7em; color: #94a3b8; margin-top: 4px;">11:10 AM</div>
+                </div>
+
+            </div>
+        </div>`,
+        questions: [
+            { id: 67, text: "At 11:07 A.M., what does Mr. Volkov mean by 'Of course'?", options: { A: "Email received", B: "Contract signed", C: "Solution is obvious", D: "Happy to fulfill request" }, correct: "D" },
+            { id: 68, text: "Who most likely is Ms. Medrano?", options: { A: "A writer", B: "A lawyer", C: "A financial adviser", D: "A human resources manager" }, correct: "A" }
+        ]
+    },
+    {
+        passage: `<div class="doc-box">
+            <div style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
+                <div style="background: #f1f5f9; padding: 15px; border-bottom: 1px solid #e2e8f0; font-size: 0.9em;">
+                    <div><strong>To:</strong> Mercedes Salinas &lt;msalinas@fithealthplanning.bm&gt;</div>
+                    <div><strong>From:</strong> Leonard Cowden &lt;lcowden@srhealthcenter.bm&gt;</div>
+                    <div><strong>Date:</strong> 16 April</div>
+                    <div><strong>Subject:</strong> Bermuda Healthy Living Conference</div>
+                </div>
+                <div style="padding: 25px; background: #fff; line-height: 1.6;">
+                    <p>Dear Ms. Salinas,</p><br>
+                    <p>I'm excited that you have agreed to be one of the speakers at our second annual Bermuda Healthy Living Conference on 12 May. I realize the invitation was last minute, and I truly appreciate your willingness to step in for Cara Branston. <strong>[1]</strong>. Your expertise as a dietitian will be greatly valued by our participants. The strong attendance at Ms. Branston's session last year on vegetarian meal preparation reflected that. <strong>[2]</strong>. This year there is sure to be great interest in your unique approach to healthy eating.</p><br>
+                    <p>If you would like to sell copies of your book, please ship them in advance to allow time for us to set up a display. <strong>[3]</strong>. Also, be sure to let me know if you'll need access to a projector with a remote for your presentation. <strong>[4]</strong>. Lastly, could you send me a short biographical profile as soon as possible for inclusion in our conference program? Thanks again.</p><br>
+                    <p>Regards,</p>
+                    <p><strong>Leonard Cowden</strong></p>
+                </div>
+            </div>
+        </div>`,
+        questions: [
+            { id: 69, text: "Why did Mr. Cowden send the email?", options: { A: "To invite her to an event", B: "To acknowledge acceptance of an offer", C: "To ask for a recommendation", D: "To reschedule a session" }, correct: "B" },
+            { id: 70, text: "What is suggested about Ms. Branston?", options: { A: "She spoke at the conference last year", B: "She wrote a popular book", C: "She is a colleague of Ms. Salinas", D: "She is studying dietitian" }, correct: "A" },
+            { id: 71, text: "Where does this sentence fit: 'It is no trouble at all to have visual equipment available.'", options: { A: "[1]", B: "[2]", C: "[3]", D: "[4]" }, correct: "D" }
+        ]
+    },
+    {
+        passage: `<div class="doc-box" style="background: #f8fafc;">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="align-self: flex-start; max-width: 80%; background: #ffffff; border: 1px solid #e2e8f0; padding: 10px 15px; border-radius: 15px 15px 15px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    <strong style="color: #4f46e5; font-size: 0.85em;">Diane Ulrich</strong>
+                    <p style="margin-top: 5px;">Jake, has order #9829-2 been sent out yet? If not, the customer has asked us to add item #645A.</p>
+                    <div style="text-align: right; font-size: 0.75em; color: #94a3b8; margin-top: 4px;">10:25</div>
+                </div>
+
+                <div style="align-self: flex-end; max-width: 80%; background: #ede9fe; border: 1px solid #ddd6fe; padding: 10px 15px; border-radius: 15px 15px 0 15px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                    <strong style="color: #6d28d9; font-size: 0.85em;">Jake Hollis</strong>
+                    <p style="margin-top: 5px;">That's a customized silver ring, right? The engravers usually require a minimum of 3 days to add the customer's personalized message.</p>
+                    <div style="text-align: right; font-size: 0.75em; color: #7c3aed; margin-top: 4px;">10:28</div>
+                </div>
+
+                <div style="align-self: flex-start; max-width: 80%; background: #ffffff; border: 1px solid #e2e8f0; padding: 10px 15px; border-radius: 15px 15px 15px 0;">
+                    <strong style="color: #4f46e5; font-size: 0.85em;">Diane Ulrich</strong>
+                    <p style="margin-top: 5px;">Can you get it any sooner? The customer needs it as soon as possible.</p>
+                    <div style="text-align: right; font-size: 0.75em; color: #94a3b8; margin-top: 4px;">10:29</div>
+                </div>
+
+                <div style="align-self: flex-end; max-width: 80%; background: #ede9fe; border: 1px solid #ddd6fe; padding: 10px 15px; border-radius: 15px 15px 0 15px;">
+                    <strong style="color: #6d28d9; font-size: 0.85em;">Jake Hollis</strong>
+                    <p style="margin-top: 5px;">Let me check with someone from the engraving department.</p>
+                    <div style="text-align: right; font-size: 0.75em; color: #7c3aed; margin-top: 4px;">10:31</div>
+                </div>
+
+                <div style="align-self: flex-end; max-width: 80%; background: #ede9fe; border: 1px solid #ddd6fe; padding: 10px 15px; border-radius: 15px 15px 0 15px;">
+                    <strong style="color: #6d28d9; font-size: 0.85em;">Jake Hollis</strong>
+                    <p style="margin-top: 5px;">Kim, can you do a rush job on a ring? It's item #645A, for order #9829-2.</p>
+                    <div style="text-align: right; font-size: 0.75em; color: #7c3aed; margin-top: 4px;">10:33</div>
+                </div>
+
+                <div style="align-self: flex-start; max-width: 80%; background: #fce7f3; border: 1px solid #fbcfe8; padding: 10px 15px; border-radius: 15px 15px 15px 0;">
+                    <strong style="color: #be185d; font-size: 0.85em;">Kim O'Dell</strong>
+                    <p style="margin-top: 5px;">How soon do you need it? Is tomorrow OK?</p>
+                    <div style="text-align: right; font-size: 0.75em; color: #db2777; margin-top: 4px;">10:34</div>
+                </div>
+
+                <div style="align-self: flex-start; max-width: 80%; background: #ffffff; border: 1px solid #e2e8f0; padding: 10px 15px; border-radius: 15px 15px 15px 0;">
+                    <strong style="color: #4f46e5; font-size: 0.85em;">Diane Ulrich</strong>
+                    <p style="margin-top: 5px;">Yes, that works. Thank you both for your help!</p>
+                    <div style="text-align: right; font-size: 0.75em; color: #94a3b8; margin-top: 4px;">10:35</div>
+                </div>
+            </div>
+        </div>`,
+        questions: [
+            { id: 72, text: "What type of products does the store sell?", options: { A: "Books", B: "Jewelry", C: "Flowers", D: "Appliances" }, correct: "B" },
+            { id: 73, text: "What does the customer want to do?", options: { A: "Change an order", B: "Update address", C: "Receive a refund", D: "Choose shipping" }, correct: "A" },
+            { id: 74, text: "Why does Mr. Hollis contact Ms. O'Dell?", options: { A: "To request faster work", B: "Find shipping date", C: "Find meeting time", D: "Report message error" }, correct: "A" },
+            { id: 75, text: "At 10:35, what does 'that works' mean?", options: { A: "Interviewing someone", B: "Equipment is functional", C: "Customer satisfied with tomorrow", D: "New items for catalog" }, correct: "C" }
+        ]
+    },
+    {
+        passage: `<div class="doc-box"><div class="email-header"><strong>To:</strong> j.wickler@seed-delight.net<br><strong>From:</strong> bartosz@ashersfarmingdigest.com<br><strong>Date:</strong> September 22<strong><p>Subject:</strong> Asher's Farming Digest</div></p><p>Dear Mr. Wickler,</p><br>For a limited time, Asher's Farming Digest is offering discounted pricing on advertisements to companies that have not yet advertised in our magazine. When you advertise with Asher's Farming Digest, you can reach a targeted audience of over 30,000 agriculture professionals in print and online. Take advantage of this unique opportunity to help expand your customer base!</p>
+        <br>Our current offers for first-time advertisers, valid until October 15, are outlined below. To reserve any of these full-color advertisements, have one of our designers create a custom advertisement for you, or request more information, please reply to this e-mail or call me at 603-555-0103, ext. 27. Specifications for advertisements are available at www.ashersfarmingdigest.com/ads.</p>
+        <p><table class="table-data"><tr><th>Package</th><th>Format</th><th>Price (Per Month)</th></tr><tr><td>1</td><td>One full-page print ad plus 6" x 1" Web site ad</td><td>$675</td></tr><tr><td>2</td><td>One half-page print ad plus 4" x 5" Web site ad</td><td>$525</td></tr><tr><td>3</td><td>One half-page print ad plus 3" x 3" Web site ad</td><td>$475</td></tr><tr><td>4</td><td>One quarter-page print ad plus 3" x 3" Web site ad</td><td>$400</td></tr></table></div><p>Sincerely,</p><p>Gosia Bartosz</p><p>Marketing Coordinator</p><p>Asher's Farming Digest</p>
+            <div style="text-align: center; margin: 30px 0; color: #90a4ae; letter-spacing: 10px; font-size: 20px;">     • • • </div><br><div class="email-header"><strong>To: </strong>bartosz@ashersfarmingdigest.com<br> <strong>From:</strong> j.wickler@seed-delight.net<br><strong>Date:</strong> September29<br><strong>Subject:</strong> Re: Asher's Farming Digest</div><p>Hello Ms. Bartosz,</p><p> <br>I received your e-mail and am interested in placing an advertisement in Asher's Farming Digest. First, though, I would like some clarification about the online advertisement. I reviewed the specifications on your Web site but am still uncertain about the location of the advertisement. Where exactly would the 4" x 5" advertisement appear on your Web site?</p><p> <br>As soon as I hear from you, I can provide an electronic file of the advertisement together with payment details.</p><p>Thanks,</p><p><br>James Wickler</p><p>Owner, Seed Delight Company </p></div>`,
+        questions: [
+            { id: 76, text: "Why did Ms. Bartosz email Mr. Wickler?", options: { A: "Launch publication", B: "Advertise product", C: "Inform of promotion", D: "Offer subscription discount" }, correct: "C" },
+            { id: 77, text: "What is suggested about the Digest?", options: { A: "Expanded readership", B: "Special issue", C: "Increased rates", D: "Full-color magazine" }, correct: "D" },
+            { id: 78, text: "What is mentioned about Ms. Bartosz?", options: { A: "Graphic designer", B: "Worked with Wickler", C: "Provides assistance", D: "Out of office" }, correct: "C" },
+            { id: 79, text: "The word 'placing' is closest in meaning to:", options: { A: "Hiring", B: "Putting", C: "Assigning", D: "Calculating" }, correct: "B" },
+            { id: 80, text: "What package does Mr. Wickler likely want?", options: { A: "Package 1", B: "Package 2", C: "Package 3", D: "Package 4" }, correct: "B" }
+        ]
+    },
+    {
+        passage: `<div class="doc-box">
+            <div style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; margin-bottom: 25px;">
+                <div style="background: #f8fafc; padding: 15px; border-bottom: 1px solid #e2e8f0; font-size: 0.9em;">
+                    <div><strong>To:</strong> j.bonsky@kwipt.net</div>
+                    <div><strong>From:</strong> u.akpan@fraskerdigitalmarketing.com</div>
+                    <div><strong>Date:</strong> Wednesday, July 9</div>
+                    <div><strong>Subject:</strong> Frasker Digital Marketing technical writing</div>
+                </div>
+                <div style="padding: 20px; background: #fff;">
+                    <p>Dear Ms. Bonsky,</p><br>
+                    <p>Thank you again for applying to Frasker Digital Marketing. We enjoyed speaking with you on Monday and are thrilled to invite you to join our technical writing team. As you know, your work will entail writing user guides, installation manuals, newsletters, and other documents for our technology clients.</p><br>
+                    <p>Your work will begin in August with an in-person training session at our headquarters in Albany, New York. Please respond as soon as possible and let me know which weekend in August you prefer.</p><br>
+                    <p>This is a contract position, and work will be done remotely during whichever hours you choose. Aside from the training, you will receive a page rate that depends on the complexity of each assignment. Al Chalmers, our head of human resources, will be in touch soon with the necessary documents.</p><br>
+                    <p>We look forward to working with you!<br><strong>Uwana Akpan</strong></p>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 20px 0; color: #cbd5e1; font-size: 20px;">• • •</div>
+
+            <div style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; margin-bottom: 10px;">
+                <div style="background: #f1f5f9; padding: 15px; border-bottom: 1px solid #e2e8f0; font-size: 0.9em;">
+                    <div><strong>To:</strong> undisclosed recipients</div>
+                    <div><strong>From:</strong> u.akpan@fraskerdigitalmarketing.com</div>
+                    <div><strong>Date:</strong> Thursday, July 10</div>
+                    <div><strong>Subject:</strong> FDM Training</div>
+                </div>
+                <div style="padding: 20px; background: #fff;">
+                    <p>Dear Technical Writing Team,</p><br>
+                    <p>Based on your responses, we have determined that August 16-17 works best for most of you. Training will run from Saturday morning through Sunday afternoon.</p><br>
+                    <p>We expect anyone who lives outside the area to arrive on Friday, when we will arrange for you to have dinner with some of our local writers. All travel expenses will be covered by Frasker Digital Marketing. More details will follow soon.</p><br>
+                    <p><strong>Uwana Akpan</strong><br>Frasker Digital Marketing</p>
+                </div>
+            </div>
+        </div>`,
+        questions: [
+            { id: 81, text: "Why did Ms. Akpan write to Ms. Bonsky?", options: { A: "Offer a position", B: "Technical help", C: "Promote workshop", D: "Negotiate salary" }, correct: "A" },
+            { id: 82, text: "What info is Ms. Bonsky asked to provide?", options: { A: "Education", B: "Availability for training", C: "Current clients", D: "Work summary" }, correct: "B" },
+            { id: 83, text: "What is indicated about team members?", options: { A: "Paid at variable rates", B: "Worked together before", C: "Same location", D: "Pay own travel" }, correct: "A" },
+            { id: 84, text: "Why will Mr. Chalmers contact Ms. Bonsky?", options: { A: "Company policy", B: "Travel arrangements", C: "Employment paperwork", D: "Software requirements" }, correct: "C" },
+            { id: 85, text: "What will Ms. Bonsky likely do on August 15?", options: { A: "Submit assignment", B: "Travel to Albany", C: "Participate in training", D: "Meet Mr. Chalmers" }, correct: "B" }
+        ]
+    },
+    {
+        passage: `<div class="doc-box">
+            <div style="background: #1e3a8a; color: #fff; padding: 20px; border-radius: 10px; text-align: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">Janney's Star Tours</h2>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">Edinburgh, Scotland</p>
+            </div>
+
+            <div style="margin-bottom: 25px; line-height: 1.6;">
+                <p>To celebrate the arrival of Spring, Janney's Star Tours is offering packages at 10 percent less than the cost of last year's tours. This offer applies to travel reservations made on or before 15 May. Our Spring tours are offered every week, but book yours early before they fill up! Here is a sampling of our standard packages:</p>
+                
+                <div style="display: grid; gap: 15px; margin-top: 15px;">
+                    <div style="background: #f8fafc; padding: 15px; border-left: 4px solid #3b82f6; border-radius: 4px;">
+                        <strong>• Glasgow and Inverness:</strong> This 4-day tour begins in one of the most bustling seaports in Britain. Enjoy live theatre and view modern art before continuing to Inverness.
+                    </div>
+                    <div style="background: #f8fafc; padding: 15px; border-left: 4px solid #3b82f6; border-radius: 4px;">
+                        <strong>• Aberdeen & Isle of Skye:</strong> Explore Aberdeen's shipbuilding and fishing industries, parks, and bookshops. Then proceed to Skye, a peaceful northern island.
+                    </div>
+                    <div style="background: #f8fafc; padding: 15px; border-left: 4px solid #3b82f6; border-radius: 4px;">
+                        <strong>• Dublin:</strong> Explore the Emerald Isle with our 3- and 5-day tours covering Belfast, Donegal, Blarney Castle, and more.
+                    </div>
+                </div>
+                <p style="margin-top: 10px; font-style: italic;">* We can customize tours for special groups by length and type of attractions.</p>
+            </div>
+
+            <div style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; margin-bottom: 25px;">
+                <div style="background: #f1f5f9; padding: 15px; border-bottom: 1px solid #e2e8f0; font-size: 0.9em;">
+                    <div><strong>From:</strong> noreply@bookings.janneysstar.com</div>
+                    <div><strong>To:</strong> ebryant127@telserver.com</div>
+                    <div><strong>Date:</strong> 8 April</div>
+                    <div><strong>Subject:</strong> Confirmation of Reservation</div>
+                </div>
+                <div style="padding: 20px; background: #fff;">
+                    <p>Dear Mr. Bryant, Thank you for choosing Janney's Star Tours. Your reservation has been confirmed:</p>
+                    <ul style="margin: 15px 0; padding-left: 20px; list-style-type: none;">
+                        <li style="margin-bottom: 5px;">📍 <strong>Tour name:</strong> Aberdeen and Isle of Skye</li>
+                        <li style="margin-bottom: 5px;">📅 <strong>Departure:</strong> Monday, 19 May, 9:00</li>
+                        <li style="margin-bottom: 5px;">🏠 <strong>Return:</strong> Thursday, 22 May, 19:00</li>
+                        <li style="margin-bottom: 5px;">💳 <strong>Charged:</strong> £184.00</li>
+                    </ul>
+                    <p><small>If you have an enquiry, please e-mail tours@janneysstar.com or call +44 (0) 134 236 0155.</small></p>
+                </div>
+            </div>
+
+            <div style="background: #fffbeb; border: 1px solid #fde68a; padding: 20px; border-radius: 12px;">
+                <h4 style="margin-top: 0; color: #92400e;">Participant Feedback</h4>
+                <p style="font-style: italic; color: #451a03;">"I'm a photographer, and the views on this tour are second to none. Our guide, Dympna Murray, was knowledgeable and energetic. As a native of the city we visited, she exhibited a charming familiarity with its traditions. I learned a lot about the history through her stories."</p>
+                <p style="text-align: right; margin-bottom: 0;"><strong>— Evan Bryant</strong></p>
+            </div>
+        </div>`,
+        questions: [
+            { id: 86, text: "What is suggested about Janney's Star Tours?", options: { A: "Opened new offices", B: "Celebrating expansion", C: "New tours created", D: "Tours scheduled weekly" }, correct: "D" },
+            { id: 87, text: "What can they offer clients?", options: { A: "Artist discussions", B: "Repeat discounts", C: "Max group size", D: "Group preferences customization" }, correct: "D" },
+            { id: 88, text: "What is suggested about Mr. Bryant's tour?", options: { A: "Five days long", B: "Purchased at reduced price", C: "No gallery fees", D: "Designed for historians" }, correct: "B" },
+            { id: 89, text: "The word 'treat' is closest in meaning to:", options: { A: "Serve", B: "Pay for", C: "Develop", D: "Improve" }, correct: "A" },
+            { id: 90, text: "What is indicated about Ms. Murray?", options: { A: "She is from Aberdeen", B: "Newly trained", C: "Speaks several languages", D: "Local student" }, correct: "A" }
+        ]
+    },
+    {
+        passage: `<div class="doc-box">
+            <div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; background: #fff; margin-bottom: 25px;">
+                <div class="header-text" style="text-align: center; margin-bottom: 20px;">
+                    <h3 style="color: #1e1b4b;">African Council for Industry & Commerce</h3>
+                    <p>6th Annual Symposium | Van Ravenswaaij Convention Centre</p>
+                    <p><small>Cape Town, South Africa • Saturday, 9 August</small></p>
+                </div>
+
+                <table class="table-data" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: #f8fafc;">
+                            <th style="padding: 10px; border: 1px solid #e2e8f0; width: 25%;">Time</th>
+                            <th style="padding: 10px; border: 1px solid #e2e8f0;">Mangrove Room</th>
+                            <th style="padding: 10px; border: 1px solid #e2e8f0;">Willowmore Room</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #e2e8f0;"><small>9:00 A.M. – 9:30 A.M.</small></td>
+                            <td colspan="2" style="padding: 10px; border: 1px solid #e2e8f0; text-align: center; background: #fdf2f8;">
+                                <strong>Welcome and Opening Remarks</strong><br>
+                                <small>ACIC President Storey Dambuza (Leadwood Banquet Hall)</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #e2e8f0;"><small>10:00 A.M. – 11:30 A.M.</small></td>
+                            <td style="padding: 10px; border: 1px solid #e2e8f0; font-size: 0.9em;">Enhancing Flavor, Texture, and Nutritional Value – <em>Marius Van Rhyn</em></td>
+                            <td style="padding: 10px; border: 1px solid #e2e8f0; font-size: 0.9em;">Creating Standards of Excellence for Safety and Quality – <em>Shameen Pillay</em></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #e2e8f0;"><small>1:00 P.M. – 2:30 P.M.</small></td>
+                            <td style="padding: 10px; border: 1px solid #e2e8f0; font-size: 0.9em;">Traditional Preservation Techniques Revisited: Canning and Pickling – <em>Fezekile Agwu</em></td>
+                            <td style="padding: 10px; border: 1px solid #e2e8f0; font-size: 0.9em;">Purchasing Automated Equipment For Your Production Facility – <em>Avanish Gupta</em></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #e2e8f0;"><small>3:00 P.M. – 4:30 P.M.</small></td>
+                            <td style="padding: 10px; border: 1px solid #e2e8f0; font-size: 0.9em;">Innovations in Refrigeration and Storage for Perishable Products – <strong>Anja Haasbroek</strong></td>
+                            <td style="padding: 10px; border: 1px solid #e2e8f0; font-size: 0.9em;">Packaging Strategies for Product Shipping – <strong>Thabo Kekana</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="margin-top: 15px; font-size: 0.85em; color: #64748b;">
+                    <ul class="footer-list">
+                        <li>Presenters must notify Cedrick Molawa by 3 July of changes.</li>
+                        <li>Presenters MUST register and mark the box labeled "Presenter".</li>
+                        <li>Discounted rooms available at Vertin Suites for early booking.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: #fff; margin-bottom: 25px;">
+                <div style="background: #f1f5f9; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 0.9em;">
+                    <div><strong>From:</strong> Anja Haasbroek &lt;ahaasbroek5@mnpind.co.za&gt;</div>
+                    <div><strong>To:</strong> Cedrick Molawa &lt;cmolawa@acic.org.za&gt;</div>
+                    <div><strong>Date:</strong> Thursday, 24 June</div>
+                    <div><strong>Subject:</strong> Schedule change request</div>
+                </div>
+                <p>Dear Mr. Molawa,</p><br>
+                <p>Due to circumstances beyond his control, my colleague, Thabo Kekana, is unable to give his presentation. I have now been asked to take over from him. Looking at the most recent draft of the conference schedule, however, I noticed that the time slot assigned to Mr. Kekana conflicts with mine. Kindly assist me in resolving this dilemma.</p><br>
+                <p>Sincerely,<br><strong>Anja Haasbroek</strong></p>
+            </div>
+
+            <div style="border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden;">
+                <div style="background: #334155; color: #fff; padding: 10px 20px; font-size: 0.85em; display: flex; gap: 20px;">
+                    <span>Program</span> | <span>Registration</span> | <span>Sponsorships</span> | <span style="text-decoration: underline; font-weight: bold;">Comments</span>
+                </div>
+                <div style="padding: 20px; background: #f8fafc;">
+                    <p style="font-style: italic; color: #334155;">"At the recent ACIC symposium I gave a presentation on the intricacies of buying automated machinery. Not only was my lecture well attended, I also interviewed a dozen candidates for a critical position at my company. This initial experience was utterly gratifying and I'm looking forward to the next edition."</p>
+                    <p style="text-align: right; margin-top: 10px;"><strong>— Avanish Gupta</strong></p>
+                </div>
+            </div>
+        </div>`,
+        questions: [
+            { id: 91, text: "What industry is the focus?", options: { A: "Recycling", B: "Food", C: "Automotive", D: "Clothing" }, correct: "B" },
+            { id: 92, text: "What are presenters expected to do?", options: { A: "Mark 'Presenter' on registration", B: "Indicate where materials sent", C: "Reserve hotel by July 10", D: "Request discount code" }, correct: "A" },
+            { id: 93, text: "What has Ms. Haasbroek been asked to do?", options: { A: "Meeting with Molawa", B: "Submit draft", C: "Discuss goods for transport", D: "Cancel Kekana travel" }, correct: "C" },
+            { id: 94, text: "The word 'capacity' is closest in meaning to:", options: { A: "Role", B: "Time", C: "Ability", D: "Experience" }, correct: "A" },
+            { id: 95, text: "What is true about Mr. Gupta?", options: { A: "Opened plant recently", B: "Filled Employer Application", C: "Preferred this conference", D: "Topic easy to understand" }, correct: "B" }
+        ]
+    },
+    {
+        passage: `<div class="doc-box">
+            <div style="border-bottom: 2px solid #eee; padding-bottom: 15px; margin-bottom: 20px;">
+                <p><strong>CORDOVA (May 6)</strong> — Cordova city officials have begun preliminary discussions about what to do with Lowell Street Bridge, a historic city landmark that is in dire need of an upgrade. While costly restoration options are being considered, several factors make demolition a more likely outcome.</p><br>
+                <p>"It's a tough decision and one we don't intend to make hastily," said city planner Colin Barnwell. "So far, it seems that replacing the bridge makes the most financial sense."</p><br>
+                <p>Price isn't the only consideration, however. According to structural engineer Steve Pachenco, traffic flow is another important factor. "Highway 49 will soon be broadened from two lanes to four. Then, Lowell Street Bridge will no longer be able to accommodate the increase in vehicles," he said. "The way I see it, a wider, more modern bridge is inevitable."</p><br>
+                <p>For residents who want to share their opinions and ideas, the city council will be holding a public input session at Helman Square next Thursday at 11:00 A.M.</p>
+            </div>
+
+            <div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #90a4ae;">
+                <p><strong>Letters to the Editor</strong></p>
+                <p><small>May 7</small></p><br>
+                <p>I'm writing in response to yesterday's article about Lowell Street Bridge. This bridge is an invaluable part of Cordova's cultural identity and it is in the city's best interest to keep it intact. Considering the tremendous amount of income the cultural-heritage-tourism industry brings to the city annually, I would argue that the short-term costs of restoring this historic landmark would be economically worthwhile.</p><br>
+                <p><em>— Maria Cantu, member of the Cordova Preservation Society (CPS)</em></p>
+            </div>
+
+            <div style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 15px; background: #fff;">
+                <div class="email-header" style="background: #f1f5f9; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+                    <div><strong>To:</strong> members@cordovaps.org</div>
+                    <div><strong>From:</strong> leo_contreras@cordovaps.org</div>
+                    <div><strong>Date:</strong> May 19</div>
+                    <div><strong>Subject:</strong> Lowell Street Bridge Update</div>
+                </div>
+                <p>Dear CPS Members,</p><br>
+                <p>Congratulations! Thanks to our strong community presence at the city council event, and after countless phone calls to city council members, it looks like Lowell Street Bridge will not be demolished after all! The Cordova Times published an article today stating that the city is now planning to relocate the bridge to the Eastside cultural district, where it will be used for foot traffic rather than motor vehicles.</p><br>
+                <p>This decision is surely due in part to the fact that each of you voiced your opinions last Thursday.</p><br>
+                <p>Thanks again,</p>
+                <p><strong>Leo Contreras</strong><br><small>Community Organizer, Cordova Preservation Society</small></p>
+            </div>
+        </div>`,
+        questions: [
+            { id: 96, text: "What is indicated about Cordova?", options: { A: "Offering tours", B: "Increase budget", C: "Road expansion project", D: "New regulations" }, correct: "C" },
+            { id: 97, text: "What is NOT implied about Ms. Cantu?", options: { A: "Values landmark", B: "Worked with Pachenco", C: "Disagrees with Barnwell", D: "Read May 6 article" }, correct: "B" },
+            { id: 98, text: "The word 'countless' is closest in meaning to:", options: { A: "Numerous", B: "Unrecorded", C: "Insignificant", D: "Registered" }, correct: "A" },
+            { id: 99, text: "Why congratulate CPS members?", options: { A: "New leadership", B: "In newspaper", C: "Influenced city decision", D: "Secured funding" }, correct: "C" },
+            { id: 100, text: "What is suggested about CPS members?", options: { A: "Repaired structure", B: "Meet every Thursday", C: "Spoke at Helman Square", D: "Live in Eastside" }, correct: "C" }
+        ]
+    }
+];
+  
+let testDuration = 0;
+    let timerInterval = null;
+    let isSubmitted = false;
+    function askReady() {
+        let minutes = parseInt(document.getElementById('timeInput').value);
+        if(isNaN(minutes) || minutes < 1) minutes = 15; // Part 5 mặc định gợi ý 15p
+
+        let confirmMsg = `Bạn đã cài đặt thời gian làm bài là ${minutes} phút.\nBạn đã chuẩn bị tinh thần chưa?`;
+        
+        document.getElementById('startConfirmMsg').innerText = confirmMsg;
+        document.getElementById('startConfirmOverlay').style.display = 'flex';
+    }
+
+    function closeStartConfirmModal() {
+        document.getElementById('startConfirmOverlay').style.display = 'none';
+    }
+
+    function startTestActual() {
+        document.getElementById('startConfirmOverlay').style.display = 'none';
+        document.getElementById('setupOverlay').style.display = 'none';
+        
+        let minutes = parseInt(document.getElementById('timeInput').value);
+        if(isNaN(minutes) || minutes < 1) minutes = 15;
+        testDuration = minutes * 60;
+        
+        startTimer();
+    }
+
+    function startTimer() {
+        let display = document.getElementById("timer");
+        timerInterval = setInterval(() => {
+            let m = Math.floor(testDuration / 60);
+            let s = testDuration % 60;
+            display.textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            if (--testDuration < 0) { 
+                clearInterval(timerInterval); 
+                submitQuiz(); // Hết giờ tự động nộp
+            }
+        }, 1000);
+    }
+
+    function askSubmit() {
+        if (isSubmitted) return;
+        document.getElementById('confirmOverlay').style.display = 'flex';
+    }
+
+    function closeConfirmModal() {
+        document.getElementById('confirmOverlay').style.display = 'none';
+    }
+    let currentQuestionIndex = 0;
+    const userAnswers = new Array(questions.length).fill(null);
+
+    const questionTextEl = document.getElementById("question-text");
+    const optionsContainerEl = document.getElementById("options-container");
+    const progressTextEl = document.getElementById("progress-text");
+    const btnPrev = document.getElementById("btn-prev");
+    const btnNext = document.getElementById("btn-next");
+    const btnSubmit = document.getElementById("btn-submit");
+
+    function loadQuestion() {
+        const currentQ = questions[currentQuestionIndex];
+        questionTextEl.textContent = `${currentQuestionIndex + 1}. ${currentQ.q}`;
+        progressTextEl.textContent = `Câu ${currentQuestionIndex + 1} / ${questions.length}`;
+
+        optionsContainerEl.innerHTML = "";
+
+        currentQ.options.forEach(option => {
+            const div = document.createElement("div");
+            div.className = "option";
+            if (userAnswers[currentQuestionIndex] === option) {
+                div.classList.add("selected");
+            }
+            div.textContent = option;
+            div.onclick = () => selectOption(option);
+            optionsContainerEl.appendChild(div);
+        });
+
+        if (currentQuestionIndex === 0) {
+            btnPrev.classList.add("hidden");
+        } else {
+            btnPrev.classList.remove("hidden");
+        }
+
+        if (currentQuestionIndex === questions.length - 1) {
+            btnNext.classList.add("hidden");
+            btnSubmit.style.display = "block";
+        } else {
+            btnNext.classList.remove("hidden");
+            btnSubmit.style.display = "none";
+        }
+    }
+
+    function selectOption(option) {
+        userAnswers[currentQuestionIndex] = option;
+        loadQuestion(); 
+    }
+
+    function prevQuestion() {
+        if (currentQuestionIndex > 0) {
+            currentQuestionIndex--;
+            loadQuestion();
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < questions.length - 1) {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+    }
+
+    function submitQuiz() {
+        document.getElementById('confirmOverlay').style.display = 'none';
+        isSubmitted = true;
+        clearInterval(timerInterval);
+      
+
+        
+        let correctCount = 0;
+        for (let i = 0; i < questions.length; i++) {
+            if (userAnswers[i] === questions[i].a) {
+                correctCount++;
+            }
+        }
+
+        document.getElementById("question-container").style.display = "none";
+        document.getElementById("result-container").style.display = "block";
+        document.getElementById("score-display").textContent = `${correctCount}/${questions.length}`;
+        
+        let message = "Tuyệt vời! Bạn đã làm rất tốt.";
+        if (correctCount < 15) message = "Hãy cố gắng ôn tập thêm nhé!";
+        else if (correctCount < 25) message = "Khá lắm, tiếp tục phát huy nha!";
+        document.getElementById("result-message").textContent = message;
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
