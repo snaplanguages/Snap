@@ -34,7 +34,7 @@
 
         .container {
             width: 100%;
-            max-width: 100%; /* Phóng to hết ra màn hình, không bị giới hạn */
+            max-width: 100%;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 20px;
@@ -189,7 +189,7 @@
                     <h3>Nhập Điểm Thi</h3>
                     <form id="scoreForm">
                         <div class="form-group">
-                            <label>Kỹ năng (Part)</label>
+                            <label>Kỹ năng</label>
                             <select id="skill" required onchange="updateDefaultQuestions()">
                                 <option value="Listening">Listening 🎧 (Max 495đ)</option>
                                 <option value="Reading">Reading 📖 (Max 495đ)</option>
@@ -198,8 +198,12 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label>Tên bài thi (VD: ETS 2024 - Test 1)</label>
-                            <input type="text" id="testName" placeholder="Nhập tên bài thi..." required>
+                            <label>Tên bộ đề (VD: ETS 2024 - Test 1)</label>
+                            <input type="text" id="testName" placeholder="Nhập tên bộ đề..." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phần thi (VD: Part 5, Part 1-2, Full)</label>
+                            <input type="text" id="partName" placeholder="Nhập phần thi..." required>
                         </div>
                         <div class="form-group">
                             <label>Thời gian làm bài (Phút)</label>
@@ -271,11 +275,10 @@
                                 <tr>
                                     <th>Ngày</th>
                                     <th>Kỹ năng</th>
-                                    <th>Tên bài thi</th>
+                                    <th>Tên bộ đề</th>
+                                    <th>Phần (Part)</th>
                                     <th>Thời gian</th>
                                     <th>Đúng/Tổng</th>
-                                    <th>Sai</th>
-                                    <th>Điểm</th>
                                     <th>Xóa</th>
                                 </tr>
                             </thead>
@@ -350,6 +353,7 @@
             
             const skill = document.getElementById('skill').value;
             const testName = document.getElementById('testName').value;
+            const partName = document.getElementById('partName').value;
             const timeTaken = document.getElementById('timeTaken').value;
             const totalQ = parseInt(document.getElementById('totalQ').value);
             const correctQ = parseInt(document.getElementById('correctQ').value);
@@ -367,7 +371,7 @@
             const timestamp = now.getTime();
 
             const newRecord = {
-                id: timestamp, date: dateStr, skill, testName, timeTaken, totalQ, correctQ, incorrectQ, score: calculatedScore
+                id: timestamp, date: dateStr, skill, testName, partName, timeTaken, totalQ, correctQ, incorrectQ, score: calculatedScore
             };
 
             compareAndShowToast(newRecord);
@@ -460,20 +464,22 @@
             const reversed = [...records].reverse();
 
             if (reversed.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; color: #999;">Chưa có dữ liệu luyện tập</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: #999;">Chưa có dữ liệu luyện tập</td></tr>`;
                 return;
             }
 
             reversed.forEach(record => {
+                // Tương thích ngược với các dữ liệu cũ chưa có trường partName
+                const displayPart = record.partName ? record.partName : 'Full/Khác';
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>${record.date}</td>
                     <td><span class="badge badge-${record.skill.toLowerCase()}">${record.skill}</span></td>
                     <td><strong>${record.testName}</strong></td>
+                    <td>${displayPart}</td>
                     <td>${record.timeTaken}'</td>
                     <td><span style="color: var(--correct); font-weight: bold;">${record.correctQ}</span>/${record.totalQ}</td>
-                    <td style="color: var(--incorrect);">${record.incorrectQ}</td>
-                    <td style="font-weight: bold;">${record.score}</td>
                     <td><button class="btn-delete" onclick="deleteRecord(${record.id})">Xóa</button></td>
                 `;
                 tbody.appendChild(tr);
