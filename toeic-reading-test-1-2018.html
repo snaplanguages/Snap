@@ -806,141 +806,344 @@ footer {
     }
 ];
   
-let testDuration = 0;
-    let timerInterval = null;
-    let isSubmitted = false;
-    function askReady() {
-        let minutes = parseInt(document.getElementById('timeInput').value);
-        if(isNaN(minutes) || minutes < 1) minutes = 15; // Part 5 mặc định gợi ý 15p
+// --- MODE & TIMER STATE ---
+let currentMode = '';
+let testDuration = 0; // seconds
+let timerInterval = null;
+let isSubmitted = false;
+const answerKey = {}; // Sẽ được tự động điền từ toeicData
+let allQuestionIds = []; // Lưu trữ ID để làm bảng điều hướng
 
-        let confirmMsg = `Bạn đã cài đặt thời gian làm bài là ${minutes} phút.\nBạn đã chuẩn bị tinh thần chưa?`;
+// --- SETUP MODAL LOGIC ---
+function selectMode(mode) {
+    currentMode = mode;
+    document.querySelector('.mode-practice').classList.toggle('selected', mode === 'practice');
+    document.querySelector('.mode-mock').classList.toggle('selected', mode === 'mock');
+    
+    document.getElementById('timeInputBox').style.display = (mode === 'practice') ? 'block' : 'none';
+    document.getElementById('startBtn').style.display = 'inline-block';
+}
+
+function askReady() {
+    let confirmMsg = currentMode === 'mock' 
+        ? "Bạn chọn Thi Thử (75 phút chuẩn TOEIC Reading).\nBạn đã sẵn sàng bước vào bài làm chưa?" 
+        : `Bạn chọn Luyện Tập (${document.getElementById('timeInput').value} phút).\nBạn đã sẵn sàng chưa?`;
         
-        document.getElementById('startConfirmMsg').innerText = confirmMsg;
-        document.getElementById('startConfirmOverlay').style.display = 'flex';
-    }
+    document.getElementById('startConfirmMsg').innerText = confirmMsg;
+    document.getElementById('startConfirmOverlay').style.display = 'flex';
+}
 
-    function closeStartConfirmModal() {
-        document.getElementById('startConfirmOverlay').style.display = 'none';
-    }
+function closeStartConfirmModal() {
+    document.getElementById('startConfirmOverlay').style.display = 'none';
+}
 
-    function startTestActual() {
-        document.getElementById('startConfirmOverlay').style.display = 'none';
-        document.getElementById('setupOverlay').style.display = 'none';
-        
-        let minutes = parseInt(document.getElementById('timeInput').value);
-        if(isNaN(minutes) || minutes < 1) minutes = 15;
-        testDuration = minutes * 60;
-        
-        startTimer();
-    }
+function startTestActual() {
+    document.getElementById('startConfirmOverlay').style.display = 'none';
+    
+    let minutes = (currentMode === 'mock') ? 75 : parseInt(document.getElementById('timeInput').value);
+    if(isNaN(minutes) || minutes < 1) minutes = 75;
+    testDuration = minutes * 60;
+    
+    document.getElementById('setupOverlay').style.display = 'none';
+    startTimer();
+}
 
-    function startTimer() {
-        let display = document.getElementById("timer");
-        timerInterval = setInterval(() => {
-            let m = Math.floor(testDuration / 60);
-            let s = testDuration % 60;
-            display.textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
-            if (--testDuration < 0) { 
-                clearInterval(timerInterval); 
-                submitQuiz(); // Hết giờ tự động nộp
-            }
-        }, 1000);
-    }
+// --- INIT ---
+window.onload = function() {
+    renderDynamicContent();
+    document.getElementById('setupOverlay').style.display = 'flex';
+}
 
-    function askSubmit() {
-        if (isSubmitted) return;
-        document.getElementById('confirmOverlay').style.display = 'flex';
-    }
+// --- RENDER FUNCTIONS (Lõi xử lý TOEIC Data) ---
+function renderDynamicContent() {
+    let part5Html = '';
+    let part6Html = '';
+    let part7Html = '';
 
-    function closeConfirmModal() {
-        document.getElementById('confirmOverlay').style.display = 'none';
-    }
-    let currentQuestionIndex = 0;
-    const userAnswers = new Array(questions.length).fill(null);
-
-    const questionTextEl = document.getElementById("question-text");
-    const optionsContainerEl = document.getElementById("options-container");
-    const progressTextEl = document.getElementById("progress-text");
-    const btnPrev = document.getElementById("btn-prev");
-    const btnNext = document.getElementById("btn-next");
-    const btnSubmit = document.getElementById("btn-submit");
-
-    function loadQuestion() {
-        const currentQ = questions[currentQuestionIndex];
-        questionTextEl.textContent = `${currentQuestionIndex + 1}. ${currentQ.q}`;
-        progressTextEl.textContent = `Câu ${currentQuestionIndex + 1} / ${questions.length}`;
-
-        optionsContainerEl.innerHTML = "";
-
-        currentQ.options.forEach(option => {
-            const div = document.createElement("div");
-            div.className = "option";
-            if (userAnswers[currentQuestionIndex] === option) {
-                div.classList.add("selected");
-            }
-            div.textContent = option;
-            div.onclick = () => selectOption(option);
-            optionsContainerEl.appendChild(div);
+    // 1. Render Part 5
+    if(toeicData.part5) {
+        part5Html += `<div class="instruction"> <u>Part 5: Incomplete Sentences</u><br>Choose the word or phrase that best completes the sentence.</div>`;
+        toeicData.part5.forEach(q => {
+            part5Html += createTOEICQuestion(q);
+            allQuestionIds.push(q.id);
+            // Lưu đáp án. Nếu đáp án là text (vd: "recommendation"), ta cần chuyển sang A, B, C, D
+            answerKey[q.id] = formatAnswer(q.options, q.a || q.correct);
         });
+        document.getElementById('render-part5').innerHTML = part5Html;
+    }
 
-        if (currentQuestionIndex === 0) {
-            btnPrev.classList.add("hidden");
-        } else {
-            btnPrev.classList.remove("hidden");
-        }
+    // 2. Render Part 6
+    if(toeicData.part6) {
+        part6Html += `<div class="instruction"> <u>Part 6: Text Completion</u><br>Choose the best word or phrase for each blank.</div>`;
+        toeicData.part6.forEach(passageObj => {
+            part6Html += createPassageBlock(passageObj);
+        });
+        document.getElementById('render-part6').innerHTML = part6Html;
+    }
 
-        if (currentQuestionIndex === questions.length - 1) {
-            btnNext.classList.add("hidden");
-            btnSubmit.style.display = "block";
-        } else {
-            btnNext.classList.remove("hidden");
-            btnSubmit.style.display = "none";
+    // 3. Render Part 7
+    if(toeicData.part7) {
+        part7Html += `<div class="instruction"> <u>Part 7: Reading Comprehension</u><br>Read the passages and answer the questions.</div>`;
+        toeicData.part7.forEach(passageObj => {
+            part7Html += createPassageBlock(passageObj);
+        });
+        document.getElementById('render-part7').innerHTML = part7Html;
+    }
+
+    // 4. Khởi tạo Footer Navigation Dots
+    const nav = document.getElementById("navPalette");
+    allQuestionIds.sort((a, b) => a - b); // Sắp xếp ID từ bé đến lớn
+    allQuestionIds.forEach(id => {
+        let dot = document.createElement("div");
+        dot.className = "nav-dot"; 
+        dot.id = `nav-${id}`; 
+        dot.innerText = id;
+        dot.onclick = () => scrollToQuestion(id);
+        nav.appendChild(dot);
+    });
+}
+
+// Helper: Chuyển đáp án Text thành A, B, C, D nếu cần
+function formatAnswer(options, answer) {
+    if(!options) return answer;
+    if(Array.isArray(options)) {
+        let labels = ["A", "B", "C", "D"];
+        let idx = options.indexOf(answer);
+        return idx !== -1 ? labels[idx] : answer;
+    }
+    return answer; // Nếu options đã là Object {A: "...", B: "..."} thì answer đã là A,B,C,D
+}
+
+// Helper: Tạo HTML cho 1 câu hỏi trắc nghiệm
+function createTOEICQuestion(qObj) {
+    let text = qObj.q || qObj.text;
+    let opts = qObj.options;
+    let optsHTML = "";
+
+    if (Array.isArray(opts)) {
+        let labels = ["A", "B", "C", "D"];
+        opts.forEach((opt, i) => {
+            optsHTML += `<label class="mc-option"><input type="radio" name="q${qObj.id}" value="${labels[i]}" onclick="checkNav(${qObj.id})"> <b>${labels[i]}.</b> ${opt}</label>`;
+        });
+    } else {
+        for (let key in opts) {
+            optsHTML += `<label class="mc-option"><input type="radio" name="q${qObj.id}" value="${key}" onclick="checkNav(${qObj.id})"> <b>${key}.</b> ${opts[key]}</label>`;
         }
     }
 
-    function selectOption(option) {
-        userAnswers[currentQuestionIndex] = option;
-        loadQuestion(); 
-    }
+    return `<div class="q-row" id="q-row-${qObj.id}">
+                <div class="q-content-wrapper">
+                    <div class="q-num">${qObj.id}</div>
+                    <div class="q-text"><b>${text}</b><br>${optsHTML}<span id="fb-${qObj.id}" class="feedback"></span></div>
+                </div>
+                <div id="exp-${qObj.id}"></div>
+            </div>`;
+}
 
-    function prevQuestion() {
-        if (currentQuestionIndex > 0) {
-            currentQuestionIndex--;
-            loadQuestion();
+// Helper: Tạo khối Đoạn văn + Câu hỏi cho Part 6 & 7
+function createPassageBlock(passageObj) {
+    let html = `<div class="passage-block" style="margin-bottom: 40px; background: white; padding: 25px; border-radius: 12px; border: 2px solid var(--border);">`;
+    html += `<div class="passage-text" style="margin-bottom: 25px; font-size: 18px; line-height: 1.8;">${passageObj.passage}</div>`;
+    html += `<div class="passage-questions" style="border-top: 2px dashed #eee; padding-top: 20px;">`;
+    
+    passageObj.questions.forEach(q => {
+        html += createTOEICQuestion(q);
+        allQuestionIds.push(q.id);
+        answerKey[q.id] = formatAnswer(q.options, q.a || q.correct);
+    });
+    
+    html += `</div></div>`;
+    return html;
+}
+
+// --- LOGIC GIAO DIỆN & ĐIỀU HƯỚNG ---
+function switchTab(n) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) => { b.classList.toggle('active', i + 1 === n); });
+    document.querySelectorAll('.question-group').forEach((q, i) => { q.style.display = (i + 1 === n) ? 'block' : 'none'; });
+    
+    // Copy nội dung đoạn văn sang cột trái nếu đang ở Part 6 hoặc 7
+    let passagePane = document.getElementById('passagePane');
+    if(n === 1) {
+        passagePane.innerHTML = `<h2 style="color: var(--primary-dark); text-align: center; margin-top: 50px;">Part 5: Incomplete Sentences<br><br>👉 Hãy đọc kỹ và chọn đáp án đúng bên cột phải nhé!</h2>`;
+    } else {
+        passagePane.innerHTML = `<h2 style="color: var(--primary-dark); text-align: center;">Đoạn văn tham khảo</h2><p style="text-align:center; color:#888;">(Cuộn cột bên phải để xem các đoạn văn tương ứng)</p>`;
+    }
+    document.querySelector('.pane-left').scrollTop = 0;
+    document.querySelector('.pane-right').scrollTop = 0;
+}
+
+function checkNav(id) {
+    if(isSubmitted) return;
+    let val = "";
+    let radios = document.getElementsByName(`q${id}`);
+    for (let r of radios) if (r.checked) val = r.value;
+
+    let nav = document.getElementById(`nav-${id}`);
+    if(nav) {
+        if (val) nav.classList.add("done");
+        else nav.classList.remove("done");
+    }
+}
+
+function scrollToQuestion(id) {
+    // Xác định câu hỏi thuộc Part nào để switch tab
+    let group = 1;
+    if (toeicData.part6.some(p => p.questions.some(q => q.id == id))) group = 2;
+    if (toeicData.part7.some(p => p.questions.some(q => q.id == id))) group = 3;
+    
+    switchTab(group);
+    
+    setTimeout(() => {
+        let el = document.getElementById(`q-row-${id}`);
+        if (el) {
+            el.scrollIntoView({behavior: "smooth", block: "center"});
+            el.style.transition = "background 0.5s";
+            el.style.background = "#fff9c4";
+            setTimeout(() => el.style.background = "", 1000);
         }
-    }
+    }, 100);
+}
 
-    function nextQuestion() {
-        if (currentQuestionIndex < questions.length - 1) {
-            currentQuestionIndex++;
-            loadQuestion();
+// --- TIMER ---
+function startTimer() {
+    let display = document.getElementById("timer");
+    timerInterval = setInterval(function () {
+        let m = Math.floor(testDuration / 60);
+        let s = testDuration % 60;
+        display.textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+        if (--testDuration < 0) { 
+            clearInterval(timerInterval); 
+            submitTest(false); 
         }
+    }, 1000);
+}
+
+// --- GRADING ---
+function submitTest(manual) {
+    if (isSubmitted) return;
+    if (manual) {
+        document.getElementById('confirmOverlay').style.display = 'flex';
+    } else {
+        executeSubmit();
     }
+}
 
-    function submitQuiz() {
-        document.getElementById('confirmOverlay').style.display = 'none';
-        isSubmitted = true;
-        clearInterval(timerInterval);
-      
+function closeConfirmModal() { document.getElementById('confirmOverlay').style.display = 'none'; }
+function closeResultModal() { document.getElementById('resultOverlay').style.display = 'none'; }
 
-        
-        let correctCount = 0;
-        for (let i = 0; i < questions.length; i++) {
-            if (userAnswers[i] === questions[i].a) {
-                correctCount++;
+function executeSubmit() {
+    document.getElementById('confirmOverlay').style.display = 'none';
+    isSubmitted = true;
+    clearInterval(timerInterval);
+    document.querySelectorAll('input, select').forEach(el => el.disabled = true);
+    
+    let score = 0;
+    let totalQuestions = allQuestionIds.length;
+
+    allQuestionIds.forEach(id => {
+        let userAns = "";
+        let radios = document.getElementsByName(`q${id}`);
+        for (let r of radios) if (r.checked) userAns = r.value;
+
+        let correctAns = answerKey[id];
+        let isCorrect = (userAns === correctAns);
+        if (isCorrect) score++;
+
+        // Render Feedback mark
+        let feedbackEl = document.getElementById(`fb-${id}`);
+        if(feedbackEl) {
+            if(isCorrect) {
+                feedbackEl.innerHTML = `✓ Đúng`;
+                feedbackEl.className = "feedback correct";
+            } else {
+                feedbackEl.innerHTML = `✗ Sai (Đáp án: <span class="text-highlight-answer">${correctAns}</span>)`;
+                feedbackEl.className = "feedback wrong";
             }
         }
-
-        document.getElementById("question-container").style.display = "none";
-        document.getElementById("result-container").style.display = "block";
-        document.getElementById("score-display").textContent = `${correctCount}/${questions.length}`;
         
-        let message = "Tuyệt vời! Bạn đã làm rất tốt.";
-        if (correctCount < 15) message = "Hãy cố gắng ôn tập thêm nhé!";
-        else if (correctCount < 25) message = "Khá lắm, tiếp tục phát huy nha!";
-        document.getElementById("result-message").textContent = message;
-    }
+        // Cập nhật Navigator dots
+        let nav = document.getElementById(`nav-${id}`);
+        if(nav) {
+            nav.style.background = isCorrect ? "#c8e6c9" : "#ffcdd2";
+            nav.style.color = isCorrect ? "#2e7d32" : "#c62828";
+            nav.style.borderColor = isCorrect ? "#81c784" : "#ef9a9a";
+        }
+    });
 
+    // Final UI Alert (Tính điểm chuẩn TOEIC Reading Ước lượng)
+    let toeicScore = calculateToeicReading(score, totalQuestions);
+    document.getElementById('resultMessage').innerHTML = `
+        <strong style="font-size: 20px; color: #555; display: block; margin-bottom: 10px;">Số câu đúng: ${score}/${totalQuestions}</strong>
+        <strong style="font-size: 32px; color: var(--primary);">Điểm Reading: ${toeicScore}/495</strong>
+    `;
+    setTimeout(() => { document.getElementById('resultOverlay').style.display = 'flex'; }, 500);
+}
+
+// Bảng quy đổi điểm TOEIC Reading (Ước lượng)
+function calculateToeicReading(raw, total) {
+    if (raw === 0) return 5;
+    // Vì data của bạn có thể không đủ 100 câu, ta dùng công thức tỷ lệ
+    let percent = raw / total;
+    let score = Math.round((percent * 495) / 5) * 5; 
+    return score > 495 ? 495 : (score < 5 ? 5 : score);
+}
+
+// --- HIGHLIGHT SYSTEM (Dành cho Part 6 & 7) ---
+const mainContainer = document.getElementById("mainContainer");
+const menu = document.getElementById("ctxMenu");
+let targetElement = null;
+let selectedRange = null;
+
+mainContainer.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    targetElement = null; selectedRange = null;
+    if (e.target.classList.contains("highlight")) {
+        targetElement = e.target;
+        showMenu(e.pageX, e.pageY, "remove");
+        return;
+    }
+    let sel = window.getSelection();
+    if (sel.toString().trim().length > 0 && mainContainer.contains(sel.anchorNode)) {
+        selectedRange = sel.getRangeAt(0);
+        showMenu(e.pageX, e.pageY, "add");
+    } else {
+        menu.style.display = "none";
+    }
+});
+
+document.addEventListener("click", (e) => { if (menu && !menu.contains(e.target)) menu.style.display = "none"; });
+
+function showMenu(x, y, mode) {
+    menu.style.display = "block";
+    let mw = menu.offsetWidth;
+    let mh = menu.offsetHeight;
+    let left = x + mw > window.innerWidth ? window.innerWidth - mw - 10 : x;
+    let top = y + mh > window.innerHeight ? window.innerHeight - mh - 10 : y;
+    
+    menu.style.left = left + "px";
+    menu.style.top = top + "px";
+    menu.children[0].style.display = (mode === "add") ? "block" : "none";
+    menu.children[1].style.display = (mode === "remove") ? "block" : "none";
+}
+
+function doHighlight() {
+    if (selectedRange) {
+        let span = document.createElement("span");
+        span.className = "highlight";
+        try { selectedRange.surroundContents(span); } catch(e) {}
+        window.getSelection().removeAllRanges();
+    }
+    menu.style.display = "none";
+}
+
+function removeHighlight() {
+    if (targetElement) {
+        let text = document.createTextNode(targetElement.textContent);
+        targetElement.parentNode.replaceChild(text, targetElement);
+        mainContainer.normalize();
+    }
+    menu.style.display = "none";
+}
     loadQuestion();
 </script>
 
