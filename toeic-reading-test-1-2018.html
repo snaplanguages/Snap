@@ -89,7 +89,17 @@ header {
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-thumb { background: #d0d6cc; border-radius: 5px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
-
+/* --- HIGHLIGHT --- */
+.highlight { 
+    background-color: var(--highlight); 
+    cursor: pointer; 
+    border-radius: 4px; 
+    padding: 2px 0; 
+    transition: 0.2s;
+}
+.highlight:hover {
+    background-color: #fff176; /* Đậm hơn một chút khi di chuột vào để dễ xóa */
+}
 /* --- NÚT ĐIỀU HƯỚNG TRÊN HEADER --- */
 .btn-toggle-nav {
     background: #fff0eb; color: #d87059; border: none; padding: 10px 20px;
@@ -1209,43 +1219,61 @@ const menu = document.getElementById("ctxMenu");
 let targetElement = null;
 let selectedRange = null;
 
+// Chuyển menu sang fixed để bám đúng con trỏ chuột dù đang cuộn ở cột nào
+menu.style.position = "fixed";
+
 mainContainer.addEventListener("contextmenu", (e) => {
     e.preventDefault();
     targetElement = null; selectedRange = null;
+    
+    // Nếu click chuột phải vào vùng đã highlight -> Hiện nút Xóa
     if (e.target.classList.contains("highlight")) {
         targetElement = e.target;
-        showMenu(e.pageX, e.pageY, "remove");
+        showMenu(e.clientX, e.clientY, "remove");
         return;
     }
+    
+    // Nếu bôi đen văn bản mới -> Hiện nút Thêm
     let sel = window.getSelection();
     if (sel.toString().trim().length > 0 && mainContainer.contains(sel.anchorNode)) {
         selectedRange = sel.getRangeAt(0);
-        showMenu(e.pageX, e.pageY, "add");
+        showMenu(e.clientX, e.clientY, "add");
     } else {
         menu.style.display = "none";
     }
 });
 
-document.addEventListener("click", (e) => { if (menu && !menu.contains(e.target)) menu.style.display = "none"; });
+// Bấm chuột trái ra ngoài thì ẩn menu
+document.addEventListener("click", (e) => { 
+    if (menu && !menu.contains(e.target)) menu.style.display = "none"; 
+});
 
 function showMenu(x, y, mode) {
     menu.style.display = "block";
     let mw = menu.offsetWidth;
     let mh = menu.offsetHeight;
+    
+    // Chống tràn màn hình
     let left = x + mw > window.innerWidth ? window.innerWidth - mw - 10 : x;
     let top = y + mh > window.innerHeight ? window.innerHeight - mh - 10 : y;
     
     menu.style.left = left + "px";
     menu.style.top = top + "px";
+    
     menu.children[0].style.display = (mode === "add") ? "block" : "none";
     menu.children[1].style.display = (mode === "remove") ? "block" : "none";
 }
 
 function doHighlight() {
     if (selectedRange) {
-        let span = document.createElement("span");
-        span.className = "highlight";
-        try { selectedRange.surroundContents(span); } catch(e) {}
+        try { 
+            let span = document.createElement("span");
+            span.className = "highlight";
+            selectedRange.surroundContents(span); 
+        } catch(e) {
+            // Cảnh báo nếu người dùng bôi đen vắt ngang qua 2 đoạn văn (xuống dòng)
+            alert("Lưu ý: Chỉ có thể bôi vàng các cụm từ nằm trong cùng một đoạn văn. Vui lòng không bôi đen vắt ngang qua các khoảng ngắt dòng nhé!");
+        }
         window.getSelection().removeAllRanges();
     }
     menu.style.display = "none";
@@ -1255,9 +1283,10 @@ function removeHighlight() {
     if (targetElement) {
         let text = document.createTextNode(targetElement.textContent);
         targetElement.parentNode.replaceChild(text, targetElement);
-        mainContainer.normalize();
+        mainContainer.normalize(); // Nối lại văn bản liền mạch
     }
     menu.style.display = "none";
+}
 }
 </script>
 
