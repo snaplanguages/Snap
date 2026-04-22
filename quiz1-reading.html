@@ -125,21 +125,26 @@
         h2 { color: var(--primary-dark); margin-top: 0; font-size: 30px; text-align: center; font-family: 'Lora', serif; border-bottom: 2px dashed var(--border); padding-bottom: 20px;}
         p { margin-bottom: 22px; }
 
-        /* --- EVIDENCE HIGHLIGHT COLORS & EFFECT --- */
-        .ev-box { padding: 2px 4px; border-radius: 6px; transition: all 0.4s ease; border: 2px solid transparent; }
-        
-        .ev-color-1 { background-color: #ffadad; color: #5a1c1c; } 
-        .ev-color-2 { background-color: #ffd6a5; color: #663d14; } 
-        .ev-color-3 { background-color: #caffbf; color: #1f4d1f; } 
-        .ev-color-4 { background-color: #9bf6ff; color: #16565c; } 
-        .ev-color-5 { background-color: #a0c4ff; color: #1c3666; } 
-        .ev-color-6 { background-color: #bdb2ff; color: #352666; } 
-        .ev-color-7 { background-color: #ffc6ff; color: #661a66; } 
-        .ev-color-8 { background-color: #e2f0cb; color: #3e5222; } 
-        .ev-color-9 { background-color: #fdede8; color: #6b3424; } 
-        .ev-color-11 { background-color: #dfd8f5; color: #3b2c6b; } 
-        .ev-color-12 { background-color: #cbe3f0; color: #21435c; } 
-        .ev-color-13 { background-color: #fce1e4; color: #66262e; } 
+       
+        /* --- HIỆU ỨNG DẪN CHỨNG --- */
+        .ev-box { 
+            padding: 2px 4px; border-radius: 6px; 
+            transition: all 0.4s ease; 
+            border: 2px solid transparent;
+            /* Mặc định chưa nộp bài sẽ trong suốt, trông như chữ bình thường */
+            background-color: transparent;
+            color: inherit;
+        }
+
+        /* Hiệu ứng chớp nháy mạnh khi bấm nút "Xem dẫn chứng" */
+        .ev-box.focus-blink {
+            border-color: var(--primary-dark) !important;
+            transform: scale(1.05); /* Phóng to nhẹ lên */
+            box-shadow: 0 5px 20px rgba(212, 122, 154, 0.5) !important; /* Đổ bóng sáng bừng lên */
+            filter: brightness(0.95);
+            z-index: 10;
+            position: relative;
+        } 
         
         .color-dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; margin-right: 8px; vertical-align: middle; border: 1px solid rgba(0,0,0,0.1); }
 
@@ -770,8 +775,26 @@
             }
         }
 
-        // Bỏ màu xám nền của bài đọc
+        // Bỏ màu xám nền passage
         document.getElementById('passagePane').style.backgroundColor = "#fff";
+        
+        // HIỂN THỊ TẤT CẢ DẪN CHỨNG VỚI MÀU SẮC PAstel KHÁC NHAU SAU KHI NỘP BÀI
+        const pastelColors = [
+            { bg: '#ffadad', text: '#5a1c1c' }, { bg: '#ffd6a5', text: '#663d14' },
+            { bg: '#caffbf', text: '#1f4d1f' }, { bg: '#9bf6ff', text: '#16565c' },
+            { bg: '#a0c4ff', text: '#1c3666' }, { bg: '#bdb2ff', text: '#352666' },
+            { bg: '#ffc6ff', text: '#661a66' }, { bg: '#e2f0cb', text: '#3e5222' },
+            { bg: '#fdede8', text: '#6b3424' }, { bg: '#dfd8f5', text: '#3b2c6b' },
+            { bg: '#cbe3f0', text: '#21435c' }, { bg: '#fce1e4', text: '#66262e' },
+            { bg: '#e5f6e5', text: '#1e4a1e' }
+        ];
+
+        // Tìm tất cả các thẻ chứa dẫn chứng và tô màu lần lượt
+        document.querySelectorAll('.ev-box').forEach((el, index) => {
+            let color = pastelColors[index % pastelColors.length];
+            el.style.backgroundColor = color.bg;
+            el.style.color = color.text;
+        });
         
         // Hiển thị điểm số (Điểm /13, loại bỏ Band Score vì Quiz không đủ 40 câu)
         document.getElementById('resultMessage').innerHTML = `
@@ -784,13 +807,22 @@
         }, 500);
     }
 
-    // Function scroll đến đúng evidence
+    // Function scroll đến đúng evidence và tạo hiệu ứng phát sáng
     function scrollToEvidence(id) {
         const evElement = document.getElementById(`ev-${id}`);
         if(evElement) {
+            // Cuộn mượt mà để dẫn chứng nằm ngay giữa màn hình
             evElement.scrollIntoView({behavior: "smooth", block: "center"});
+            
+            // Xóa class cũ (nếu có) để ép trình duyệt chạy lại animation chớp nháy từ đầu
+            evElement.classList.remove("focus-blink");
+            void evElement.offsetWidth; // Lệnh hack nhỏ giúp restart CSS animation
+            
+            // Thêm class phát sáng
             evElement.classList.add("focus-blink");
-            setTimeout(() => evElement.classList.remove("focus-blink"), 1200);
+            
+            // Tắt hiệu ứng sau 1.5 giây để sẵn sàng cho lần bấm tiếp theo
+            setTimeout(() => evElement.classList.remove("focus-blink"), 1500);
         }
     }
 
