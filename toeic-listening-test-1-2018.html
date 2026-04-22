@@ -122,7 +122,34 @@
         /* LAYOUTS */
         /* Part 1 & 3,4 Split */
         .split-layout { display: flex; gap: 30px; align-items: flex-start; }
-        .split-media { flex: 1; position: sticky; top: 0; background: #F8FAFC; padding: 20px; border-radius: 12px; border: 1px dashed #CBD5E1; text-align: center;}
+        /* Đã fix: Thêm giới hạn chiều cao & thanh cuộn cho cột chứa Script */
+        .split-media { 
+            flex: 1; 
+            position: sticky; 
+            top: 90px; /* Cố định ngay dưới Header */
+            max-height: calc(100vh - 130px); /* Chiều cao tối đa vừa màn hình */
+            overflow-y: auto; /* Bật thanh cuộn nội bộ */
+            background: #F8FAFC; padding: 20px; border-radius: 12px; 
+            border: 1px dashed #CBD5E1; text-align: center;
+            scroll-behavior: smooth;
+        }
+        /* Làm đẹp thanh cuộn nội bộ */
+        .split-media::-webkit-scrollbar { width: 6px; }
+        .split-media::-webkit-scrollbar-thumb { background: #B2BEC3; border-radius: 10px; }
+
+        /* THANH TRƯỢT KÉO THẢ GIỮA 2 CỘT */
+        .resizer {
+            width: 8px;
+            background-color: #DFE6E9;
+            cursor: col-resize;
+            border-radius: 4px;
+            transition: background 0.2s;
+            flex-shrink: 0;
+            margin-top: 15px;
+        }
+        .resizer:hover, .resizer.dragging {
+            background-color: var(--primary);
+        }
         .split-media img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; }
         .split-media audio { width: 100%; outline: none; }
         .split-questions { flex: 1.2; }
@@ -1046,7 +1073,7 @@
         p2HTML += `</div>`;
         main.innerHTML += p2HTML;
 
-        // Render Part 3 & 4 (Đã dời Transcript sang trái & Hỗ trợ dịch A,B,C,D)
+       // Render Part 3 & 4 (Đã chèn Resizer & Cố định ID để kéo thả)
         const renderPassage = (data, title) => {
             let html = `<div id="part${title.includes('3') ? 3 : 4}" class="part-container">
                 <div class="part-title">${title}</div>
@@ -1054,8 +1081,9 @@
             data.forEach(p => {
                 html += `
                 <div class="q-card" style="padding:0; overflow:hidden;">
-                    <div class="split-layout" style="padding:30px;">
-                        <div class="split-media">
+                    <div class="split-layout" id="layout-${p.id}" style="padding:30px;">
+                        
+                        <div class="split-media" id="media-${p.id}">
                             <div style="font-weight:800; color:var(--primary-dark); margin-bottom:15px;">Questions ${p.id}</div>
                             ${p.graphic ? (p.graphic.includes('<') ? `<div style="overflow-x:auto; margin-bottom:15px;">${p.graphic}</div>` : `<img src="${p.graphic}" alt="Graphic">`) : ''}
                             <audio controls src="${p.audio}" style="width: 100%;"></audio>
@@ -1067,6 +1095,9 @@
                                 ${p.vocab ? `<div class="vocab-box" style="margin-top:15px; background:#F8FAFC;"><b>📚 Từ vựng quan trọng:</b><br>${p.vocab.replace(/\n/g, '<br>')}</div>` : ''}
                             </div>
                         </div>
+
+                        <div class="resizer" id="resizer-${p.id}"></div>
+
                         <div class="split-questions">`;
                 p.questions.forEach(q => {
                     let qTextEn = q.q.includes('<br>') ? q.q.split('<br>')[0] : q.q;
@@ -1079,10 +1110,8 @@
                             </div>
                             <div class="options-grid">
                                 ${['A','B','C','D'].map((opt, i) => {
-                                    // Hỗ trợ hiển thị dịch tiếng Việt nếu Data có chứa text_vi
                                     let optText = typeof q.opts[i] === 'object' ? q.opts[i].text : q.opts[i];
                                     let optVi = typeof q.opts[i] === 'object' && q.opts[i].text_vi ? `<div class="opt-vi-hint" style="display:none; font-size:14px; color:var(--text-muted); font-weight:normal; margin-top:4px;"><i>${q.opts[i].text_vi}</i></div>` : '';
-                                    
                                     return `
                                     <label class="opt-label" onclick="selectAnswer(${q.id}, '${opt}')">
                                         <input type="radio" name="q${q.id}" value="${opt}">
@@ -1125,6 +1154,15 @@
         }
         missingDivs += '</div>';
         main.innerHTML += missingDivs;
+        // Bỏ vào cuối hàm renderTest() (ngay trước dấu ngoặc nhọn đóng })
+        document.querySelectorAll('.resizer').forEach(resizer => {
+            let id = resizer.id.split('resizer-')[1]; // Lấy ID của passage (vd: 32-34)
+            let leftCol = document.getElementById(`media-${id}`);
+            let container = document.getElementById(`layout-${id}`);
+            if(leftCol && container) {
+                initResizer(resizer, leftCol, container);
+            }
+        });
     } // ĐÓNG HÀM renderTest()
 
     function buildNavGrid() {
@@ -1248,6 +1286,38 @@
         // Show Kết Quả
         document.getElementById('scoreDisplay').innerText = `${correctCount}/${totalRendered}`; 
         document.getElementById('resultModal').classList.add('show');
+    }
+    // HÀM XỬ LÝ KÉO THẢ THANH TRƯỢT
+    function initResizer(resizer, leftElement, container) {
+        let isDragging = false;
+
+        resizer.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            resizer.classList.add('dragging');
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none'; // Chống bôi đen chữ khi kéo
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            const containerRect = container.getBoundingClientRect();
+            // Tính toán % chiều rộng mới
+            let newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+            // Khóa giới hạn (chỉ cho phép kéo từ 25% đến 75%)
+            if (newWidth < 25) newWidth = 25;
+            if (newWidth > 75) newWidth = 75;
+            
+            leftElement.style.flex = `0 0 ${newWidth}%`;
+        });
+
+        document.addEventListener('mouseup', function() {
+            if (isDragging) {
+                isDragging = false;
+                resizer.classList.remove('dragging');
+                document.body.style.cursor = 'default';
+                document.body.style.userSelect = 'auto';
+            }
+        });
     }
 </script>
 </body>
