@@ -220,6 +220,10 @@
                             </select>
                         </div>
                         <div class="form-group">
+    <label>Ngày làm bài</label>
+    <input type="date" id="testDate" required>
+</div>
+                        <div class="form-group">
                             <label>Tên bộ đề</label>
                             <input type="text" id="testName" placeholder="VD: ETS 2024 - Test 1" required>
                         </div>
@@ -430,7 +434,15 @@ window.renderTable = function(data) {
             if (estimated < 0) return 0;
             return estimated;
         }
+// Khởi tạo ngày mặc định cho ô chọn ngày là hôm nay
+const setTodayDefault = () => {
+    const today = new Date().toISOString().split('T')[0];
+    const dateInput = document.getElementById('testDate');
+    if(dateInput) dateInput.value = today;
+};
 
+// Gọi hàm ngay khi tải trang
+setTodayDefault();
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 document.getElementById('authOverlay').style.display = 'none';
@@ -470,28 +482,34 @@ window.renderTable = function(data) {
                 return;
             }
 
-            const calculatedScore = calculateToeicScore(skill, correctQ, totalQ);
-            const timestamp = Date.now();
-            const docId = userContext.uid + "_toeic_" + timestamp;
+           const calculatedScore = calculateToeicScore(skill, correctQ, totalQ);
 
-            try {
-                await setDoc(doc(db, "user_toeic_scores", docId), {
-                    email: userContext.email,
-                    skill: skill,
-                    testName: testName,
-                    partName: partName,
-                    timeTaken: timeTaken,
-                    totalQ: totalQ,
-                    correctQ: correctQ,
-                    score: calculatedScore,
-                    date: new Date().toLocaleDateString('vi-VN'),
-                    timestamp: timestamp
-                });
-                
-                showToast("Thành công! 🎉", `Đã lưu điểm ${skill} lên hệ thống.`);
-                this.reset();
-                updateDefaultQuestions();
-                fetchData(); 
+// Lấy ngày từ ô input và chuyển đổi
+const testDateValue = document.getElementById('testDate').value;
+const dateObj = new Date(testDateValue);
+
+// Vẫn dùng Date.now() cho docId để đảm bảo ID luôn là duy nhất (nếu nhập nhiều bài cùng 1 ngày)
+const docId = userContext.uid + "_toeic_" + Date.now();
+
+try {
+    await setDoc(doc(db, "user_toeic_scores", docId), {
+        email: userContext.email,
+        skill: skill,
+        testName: testName,
+        partName: partName,
+        timeTaken: timeTaken,
+        totalQ: totalQ,
+        correctQ: correctQ,
+        score: calculatedScore,
+        date: dateObj.toLocaleDateString('vi-VN'), // Lưu theo format DD/MM/YYYY để hiển thị đồng nhất
+        timestamp: dateObj.getTime() // Dùng timestamp của ngày đã chọn để biểu đồ và lịch sử sort đúng thứ tự
+    });
+    
+    showToast("Thành công! 🎉", `Đã lưu điểm ${skill} lên hệ thống.`);
+    this.reset();
+    setTodayDefault(); // Đặt lại ngày hiện tại sau khi reset form
+    updateDefaultQuestions();
+    fetchData(); 
             } catch (error) {
                 showToast("Lỗi", "Không thể lưu điểm: " + error.message, true);
             }
