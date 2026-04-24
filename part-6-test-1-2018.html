@@ -617,9 +617,13 @@ let testDuration = 0;
         document.getElementById('result-overlay').classList.add('active');
         btnExplain.style.display = 'inline-block';
 
-        // 3. ĐẨY ĐIỂM LÊN FIREBASE (Firebase đã load xong từ đời nào rồi)
+        // 3. ĐẨY ĐIỂM LÊN FIREBASE
         if(window.luuDiemTOEICLenFirebase) {
-            window.luuDiemTOEICLenFirebase(totalQuestions, correctCount, "Test 1 - 2018", "Reading", "Part 6");
+            window.luuDiemTOEICLenFirebase(totalQuestions, correctCount, "Test 1 - 2018", "Reading", "Part 6"); // Lưu ý đổi "Test 2" ở file số 2
+        } else {
+            console.error("Cảnh báo: Hàm lưu điểm chưa sẵn sàng. Firebase có thể chưa tải xong.");
+            // Hiện tạm alert hoặc toast nếu người dùng nộp bài quá sớm
+            alert("Đang kết nối tới máy chủ, vui lòng thử nộp bài lại trong vài giây.");
         }
     }
     function closeResult() {
@@ -680,9 +684,16 @@ let testDuration = 0;
         return estimated;
     }
 
-    // Gắn hàm này vào lúc nộp bài (Ví dụ trong hàm finishTest() hoặc submitQuiz())
-    window.luuDiemTOEICLenFirebase = async function(tongSoCau, soCauDung, tenBai, kyNang, tenPart) {
-        if (!window.currentUserUid) return; 
+   window.luuDiemTOEICLenFirebase = async function(tongSoCau, soCauDung, tenBai, kyNang, tenPart) {
+        // Kiểm tra log xem hàm có được gọi không
+        console.log("Đang tiến hành đồng bộ...", {tongSoCau, soCauDung, tenBai, kyNang, tenPart});
+
+        if (!window.currentUserUid) {
+            console.warn("Đồng bộ thất bại: Không tìm thấy Uid (Người dùng chưa đăng nhập).");
+            showInGameToast("⚠️ Không thể lưu: Bạn cần đăng nhập để lưu điểm!");
+            return; 
+        }
+
         // Tính điểm quy đổi
         let diemQuyDoi = calculateToeicScore(kyNang, soCauDung, tongSoCau);
         let thoiGianHienTai = document.getElementById("timer") ? document.getElementById("timer").innerText : "--"; 
@@ -693,19 +704,21 @@ let testDuration = 0;
         try {
             await setDoc(doc(db, "user_toeic_scores", docId), {
                 email: window.currentUserEmail,
-                skill: kyNang,           // VD: "Reading" hoặc "Listening"
-                testName: tenBai,        // VD: "Test 1 - 2018"
-                partName: tenPart,       // VD: "Part 5"
+                skill: kyNang,           
+                testName: tenBai,        
+                partName: tenPart,       
                 timeTaken: thoiGianHienTai,
                 totalQ: tongSoCau,
                 correctQ: soCauDung,
-                score: diemQuyDoi,       // Lưu thẳng điểm đã nhân hệ số (VD: 150 điểm)
+                score: diemQuyDoi,       
                 date: new Date().toLocaleDateString('vi-VN'),
                 timestamp: timestamp
             });
+            console.log("Đồng bộ Firebase thành công!");
             showInGameToast("☁️ Đã đồng bộ điểm số lên Máy Chủ!");
         } catch (error) {
-            console.error(error);
+            console.error("Lỗi cấp quyền / mạng khi ghi lên Firestore:", error);
+            showInGameToast("❌ Lỗi đồng bộ: " + error.message);
         }
     }
 </script>
