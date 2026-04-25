@@ -77,6 +77,15 @@
             letter-spacing: -0.5px;
         }
 
+        /* Thêm vùng chứa bộ đếm thời gian nếu dự án của bạn cần đồng bộ thời gian (Optional) */
+        #timer-container {
+            font-weight: 700;
+            color: var(--primary-hover);
+            background: var(--primary-light);
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+
         .container {
             width: 100%;
             max-width: 800px;
@@ -433,14 +442,17 @@
         <div class="brand-logo">🎓</div>
         <div class="brand-name">SnapEnglish</div>
     </a>
-    <div id="test-progress" style="font-weight: 800; color: var(--primary-hover); display: none;">Question 7 / 31</div>
+    <div style="display: flex; gap: 15px; align-items: center;">
+        <div id="timer-container" style="display: none;"><span id="timer">00:00</span></div>
+        <div id="test-progress" style="font-weight: 800; color: var(--primary-hover); display: none;">Question 7 / 31</div>
+    </div>
 </header>
 
 <div class="container">
     <div id="screen-welcome" class="screen active">
         <div class="welcome-card">
             <h1>TOEIC Part 2 - Test 3 🎧</h1>
-            <p>Phần này tập trung vào kỹ năng nghe <b>Hỏi & Đáp</b>.<br>Đã tối ưu layout ẩn ảnh, hiển thị 3 đáp án A, B, C và tích hợp tính năng <b>Tự động chuyển câu</b> trong chế độ thi thử.</p>
+            <p>Phần này tập trung vào kỹ năng nghe <b>Hỏi & Đáp</b>.<br>Hệ thống tự động chuyển câu trong chế độ thi thử và đồng bộ điểm số khi nộp bài.</p>
             <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
                 <button class="btn btn-outline" onclick="promptStart('practice')">Chế độ Luyện tập</button>
                 <button class="btn btn-primary" onclick="promptStart('mock')">Chế độ Thi thử</button>
@@ -486,7 +498,7 @@
             <div class="score-box">
                 <h2>Kết quả của bạn 🎉</h2>
                 <div class="score-circle" id="final-score">0/25</div>
-                <p id="score-msg">Làm tốt lắm! Nhấp vào từng câu bên dưới để xem Transcript & Giải thích chi tiết.</p>
+                <p id="score-msg">Làm tốt lắm! Dữ liệu của bạn đã được đồng bộ lên hệ thống.<br>Nhấp vào từng câu bên dưới để xem Giải thích chi tiết.</p>
             </div>
             
             <div class="result-list" id="result-list-ui">
@@ -513,7 +525,7 @@
 <div id="modal-submit-confirm" class="modal" style="display: none; z-index: 2000;">
     <div class="confirm-box">
         <div class="confirm-title">Nộp bài ngay? ✨</div>
-        <div class="confirm-desc">Bạn có chắc chắn muốn nộp bài? Chắc chắn không còn muốn xem lại hay sửa đổi gì nữa chứ?</div>
+        <div class="confirm-desc">Bạn có chắc chắn muốn nộp bài? Kết quả của bạn sẽ được lưu lên hệ thống.</div>
         <div class="confirm-actions">
             <button class="btn btn-outline" onclick="cancelSubmit()">Kiểm tra lại</button>
             <button class="btn btn-success" onclick="confirmSubmit()">Nộp luôn!</button>
@@ -544,6 +556,49 @@
 </div>
 
 <script>
+    // Hàm hỗ trợ Firebase Đồng bộ điểm số
+    function calculateToeicScore(skill, correct, total) {
+        let percentage = correct / total;
+        let estimated = Math.round(percentage * 495);
+        if (estimated < 5 && (skill === 'Listening' || skill === 'Reading')) return 5;
+        if (estimated < 0) return 0;
+        return estimated;
+    }
+
+    // Định nghĩa logic lưu Firebase
+    window.luuDiemTOEICLenFirebase = async function(tongSoCau, soCauDung, tenBai, kyNang, tenPart) {
+        // Lưu ý: Đảm bảo biến window.currentUserUid, db, setDoc, doc đã được định nghĩa ở thư viện Firebase chính
+        if (!window.currentUserUid) {
+            console.log("Cảnh báo: Chưa đăng nhập, không thể lưu điểm lên Firebase.");
+            return; 
+        }
+
+        let diemQuyDoi = calculateToeicScore(kyNang, soCauDung, tongSoCau);
+        let thoiGianHienTai = document.getElementById("timer") ? document.getElementById("timer").innerText : "--:--"; 
+
+        let timestamp = Date.now();
+        let docId = window.currentUserUid + "_toeic_" + timestamp;
+        
+        try {
+            // Giả định db đã được khởi tạo
+            await window.setDoc(window.doc(window.db, "user_toeic_scores", docId), {
+                email: window.currentUserEmail || "unknown@email.com",
+                skill: kyNang,           
+                testName: tenBai,        
+                partName: tenPart,       
+                timeTaken: thoiGianHienTai,
+                totalQ: tongSoCau,
+                correctQ: soCauDung,
+                score: diemQuyDoi,       
+                date: new Date().toLocaleDateString('vi-VN'),
+                timestamp: timestamp
+            });
+            console.log("Thành công: Đã đồng bộ điểm TOEIC lên Firebase SnapEnglish!");
+        } catch (e) {
+            console.error("Lỗi khi lưu điểm lên Firebase: ", e);
+        }
+    }
+
     const questions = [
         {
             id: 7, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/04/zenlish-3-07.mp3", answer: "A",
@@ -878,7 +933,6 @@
     let isMockMode = false;
     let autoNextTimeout;
 
-    // Xử lý Popup Bắt đầu
     function promptStart(selectedMode) {
         pendingMode = selectedMode;
         document.getElementById('modal-start-confirm').style.display = 'flex';
@@ -928,7 +982,6 @@
             }
 
             audioEl.onended = () => {
-                // Đợi 3 giây để người dùng chọn sau khi nghe xong, rồi tự động chuyển
                 autoNextTimeout = setTimeout(() => {
                     if (currentIdx < questions.length - 1) {
                         currentIdx++;
@@ -977,7 +1030,6 @@
         }
     }
 
-    // Xử lý Popup Nộp bài
     function promptSubmit() {
         document.getElementById('modal-submit-confirm').style.display = 'flex';
     }
@@ -1023,6 +1075,11 @@
         });
 
         document.getElementById('final-score').innerText = `${correctCount}/${questions.length}`;
+
+        // ĐỒNG BỘ ĐIỂM SỐ LÊN FIREBASE SNAPENGLISH
+        if (typeof window.luuDiemTOEICLenFirebase === "function") {
+            window.luuDiemTOEICLenFirebase(questions.length, correctCount, "Test 3 - 2018", "Listening", "Part 2");
+        }
     }
 
     function openDetail(idx) {
