@@ -66,7 +66,6 @@
             letter-spacing: -0.5px;
         }
 
-        /* Giao diện mở rộng toàn màn hình */
         .layout-container {
             display: flex;
             gap: 25px;
@@ -154,7 +153,7 @@
             display: none; justify-content: center; align-items: center; z-index: 1000;
         }
         .modal-content {
-            background: white; width: 90%; max-width: 550px; padding: 35px;
+            background: white; width: 90%; max-width: 600px; padding: 35px;
             border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.2);
             animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-align: left; position: relative; max-height: 90vh; overflow-y: auto;
@@ -164,6 +163,10 @@
         .modal-content h3 { color: #10B981; font-size: 22px; margin-bottom: 15px; text-align: center; }
         .modal-script { font-size: 20px; font-weight: 700; color: var(--primary); margin-bottom: 10px; text-align: center; padding-bottom: 15px; border-bottom: 2px dashed #eee;}
         .modal-content p { margin-bottom: 10px; line-height: 1.6; font-size: 16px; }
+        
+        .vocab-list { list-style-type: none; padding-left: 0; margin-top: 10px;}
+        .vocab-list li { margin-bottom: 8px; background: #F8FAFC; padding: 10px 15px; border-radius: 8px; border-left: 4px solid var(--accent);}
+        .vocab-list li strong { color: var(--accent); font-size: 16.5px;}
         
         .btn-next-modal { width: 100%; background: var(--primary); color: white; margin-top: 20px; padding: 15px; font-size: 18px; }
         .btn-next-modal:hover { background: var(--primary-hover); }
@@ -262,88 +265,425 @@
         <h3>🎉 Chính xác!</h3>
         <div class="modal-script" id="trans-en"></div>
         <p><strong>🇻🇳 Nghĩa:</strong> <span id="trans-vi"></span></p>
+        <p id="grammar-container" style="display: none;"><strong>📖 Cấu trúc/Ngữ pháp:</strong> <span id="trans-grammar"></span></p>
+        <ul class="vocab-list" id="trans-vocab"></ul>
         <button class="btn btn-next-modal" onclick="nextSentence()">Qua câu tiếp theo (Enter) ➔</button>
     </div>
 </div>
 
 <script>
-    // TOÀN BỘ DỮ LIỆU ĐƯỢC TRÍCH XUẤT TỪ PART 4 TEST 2 (Câu 71 đến 100)
     const lessonData = [
         // Talk 1 (71-73)
-        { en: "Hello and welcome to the Healthy Ways Exhibition here in San Antonio.", vi: "Xin chào và chào mừng đến với Triển lãm Healthy Ways tại San Antonio.", speaker: "Hiroki", gender: "male" },
-        { en: "My name is Hiroki, and I work at Cambria Technologies.", vi: "Tên tôi là Hiroki, và tôi làm việc tại Cambria Technologies.", speaker: "Hiroki", gender: "male" },
-        { en: "Today, I'd like to show you a new personal fitness-tracking device my company just released.", vi: "Hôm nay, tôi muốn giới thiệu với các bạn một thiết bị theo dõi thể dục cá nhân mới mà công ty chúng tôi vừa ra mắt.", speaker: "Hiroki", gender: "male" },
-        { en: "What makes our device unique is not its many features—it actually has all the same features as the other fitness trackers.", vi: "Điều làm cho thiết bị của chúng tôi trở nên độc đáo không phải là nhiều tính năng—thực tế nó có tất cả các tính năng giống như các thiết bị theo dõi thể dục khác.", speaker: "Hiroki", gender: "male" },
-        { en: "What sets ours apart is its price: it's the least expensive device available.", vi: "Điều làm chúng tôi nổi bật là giá cả: đây là thiết bị rẻ nhất hiện có trên thị trường.", speaker: "Hiroki", gender: "male" },
-        { en: "And by participating in today's session, you'll get one to keep, at no cost to you!", vi: "Hôm nay, vì các bạn đã tham gia buổi thảo luận này, các bạn sẽ nhận được một chiếc miễn phí!", speaker: "Hiroki", gender: "male" },
-        { en: "All you'll have to do is fill out a survey about your exercise habits.", vi: "Tất cả những gì bạn cần làm là điền vào một bản khảo sát về thói quen tập thể dục của mình.", speaker: "Hiroki", gender: "male" },
+        { 
+            en: "Hello and welcome to the Healthy Ways Exhibition here in San Antonio.", 
+            vi: "Xin chào và chào mừng đến với Triển lãm Healthy Ways tại San Antonio.", 
+            speaker: "Hiroki", gender: "male",
+            grammar: "Welcome to + N: Chào mừng tới đâu.",
+            vocab: ["exhibition (triển lãm) - Đồng nghĩa: show, display, exposition"]
+        },
+        { 
+            en: "My name is Hiroki, and I work at Cambria Technologies.", 
+            vi: "Tên tôi là Hiroki, và tôi làm việc tại Cambria Technologies.", 
+            speaker: "Hiroki", gender: "male",
+            grammar: "Work at/for + Company: Làm việc tại công ty nào.",
+            vocab: []
+        },
+        { 
+            en: "Today, I'd like to show you a new personal fitness-tracking device my company just released.", 
+            vi: "Hôm nay, tôi muốn giới thiệu với các bạn một thiết bị theo dõi thể dục cá nhân mới mà công ty chúng tôi vừa ra mắt.", 
+            speaker: "Hiroki", gender: "male",
+            grammar: "I would like to + V: Tôi muốn làm gì (trang trọng).",
+            vocab: ["fitness-tracking device (thiết bị theo dõi thể dục)", "release (ra mắt, phát hành) - Đồng nghĩa: launch, introduce"]
+        },
+        { 
+            en: "What makes our device unique is not its many features—it actually has all the same features as the other fitness trackers.", 
+            vi: "Điều làm cho thiết bị của chúng tôi trở nên độc đáo không phải là nhiều tính năng—thực tế nó có tất cả các tính năng giống như các thiết bị theo dõi thể dục khác.", 
+            speaker: "Hiroki", gender: "male",
+            grammar: "Mệnh đề danh ngữ (What makes...) đóng vai trò làm chủ ngữ. The same as: Giống như.",
+            vocab: ["unique (độc đáo, duy nhất) - Đồng nghĩa: distinctive, one of a kind", "feature (tính năng, đặc điểm) - Đồng nghĩa: characteristic, attribute"]
+        },
+        { 
+            en: "What sets ours apart is its price: it's the least expensive device available.", 
+            vi: "Điều làm chúng tôi nổi bật là giá cả: đây là thiết bị rẻ nhất hiện có trên thị trường.", 
+            speaker: "Hiroki", gender: "male",
+            grammar: "The least + tính từ dài: Ít... nhất (Trái nghĩa với The most).",
+            vocab: ["set apart (làm cho khác biệt/nổi bật) - Đồng nghĩa: distinguish", "available (có sẵn, hiện có) - Đồng nghĩa: accessible, on hand"]
+        },
+        { 
+            en: "And by participating in today's session, you'll get one to keep, at no cost to you!", 
+            vi: "Hôm nay, vì các bạn đã tham gia buổi thảo luận này, các bạn sẽ nhận được một chiếc miễn phí!", 
+            speaker: "Hiroki", gender: "male",
+            grammar: "By + V-ing: Bằng cách làm gì.",
+            vocab: ["participate in (tham gia vào) - Đồng nghĩa: take part in, join", "session (buổi/phiên họp)", "at no cost (miễn phí) - Đồng nghĩa: for free, free of charge"]
+        },
+        { 
+            en: "All you'll have to do is fill out a survey about your exercise habits.", 
+            vi: "Tất cả những gì bạn cần làm là điền vào một bản khảo sát về thói quen tập thể dục của mình.", 
+            speaker: "Hiroki", gender: "male",
+            grammar: "All you have to do is + (to) V: Tất cả những gì bạn cần làm là...",
+            vocab: ["fill out (điền vào mẫu đơn) - Đồng nghĩa: complete, fill in", "survey (cuộc khảo sát) - Đồng nghĩa: questionnaire", "habit (thói quen) - Đồng nghĩa: routine"]
+        },
 
         // Talk 2 (74-76)
-        { en: "So now that you've all had a chance to see the museum's collection of abstract paintings, I'd like you to come out into the garden with me, where our collection of eighteenth-century sculptures is on display.", vi: "Vì tất cả các bạn đã có cơ hội ngắm nhìn bộ sưu tập tranh trừu tượng của bảo tàng, bây giờ tôi muốn các bạn cùng tôi ra ngoài vườn, nơi bộ sưu tập các tác phẩm điêu khắc thế kỷ 18 của chúng tôi đang được trưng bày.", speaker: "Speaker", gender: "female" },
-        { en: "This collection was generously donated to us by art collector Emily Wellman two months ago.", vi: "Bộ sưu tập này đã được nhà sưu tập nghệ thuật Emily Wellman hào phóng tặng cho chúng tôi cách đây hai tháng.", speaker: "Speaker", gender: "female" },
-        { en: "I'll tell you about two sculptures in particular.", vi: "Tôi sẽ nói cụ thể về hai bức tượng điêu khắc.", speaker: "Speaker", gender: "female" },
-        { en: "Also, if you're interested in the collection more generally, I would highly recommend the short documentary about the collection, which is showing in the theater near the exit on the other side of the garden.", vi: "Ngoài ra, nếu bạn quan tâm đến bộ sưu tập một cách tổng quát hơn, tôi thực sự khuyên bạn nên xem bộ phim tài liệu ngắn về bộ sưu tập, đang được chiếu tại rạp gần cửa ra ở phía bên kia của khu vườn.", speaker: "Speaker", gender: "female" },
+        { 
+            en: "So now that you've all had a chance to see the museum's collection of abstract paintings, I'd like you to come out into the garden with me, where our collection of eighteenth-century sculptures is on display.", 
+            vi: "Vì tất cả các bạn đã có cơ hội ngắm nhìn bộ sưu tập tranh trừu tượng của bảo tàng, bây giờ tôi muốn các bạn cùng tôi ra ngoài vườn, nơi bộ sưu tập các tác phẩm điêu khắc thế kỷ 18 của chúng tôi đang được trưng bày.", 
+            speaker: "Speaker", gender: "female",
+            grammar: "Now that + Clause: Vì giờ đây... On display: Đang được trưng bày.",
+            vocab: ["abstract (trừu tượng)", "collection (bộ sưu tập)", "sculpture (tác phẩm điêu khắc)", "on display (đang được trưng bày) - Đồng nghĩa: on show"]
+        },
+        { 
+            en: "This collection was generously donated to us by art collector Emily Wellman two months ago.", 
+            vi: "Bộ sưu tập này đã được nhà sưu tập nghệ thuật Emily Wellman hào phóng tặng cho chúng tôi cách đây hai tháng.", 
+            speaker: "Speaker", gender: "female",
+            grammar: "Câu bị động: was + adv + V3/ed.",
+            vocab: ["generously (một cách hào phóng) - Đồng nghĩa: liberally", "donate (quyên góp, tặng) - Đồng nghĩa: give, contribute", "collector (nhà sưu tập)"]
+        },
+        { 
+            en: "I'll tell you about two sculptures in particular.", 
+            vi: "Tôi sẽ nói cụ thể về hai bức tượng điêu khắc.", 
+            speaker: "Speaker", gender: "female",
+            grammar: "In particular: Đặc biệt, cụ thể.",
+            vocab: []
+        },
+        { 
+            en: "Also, if you're interested in the collection more generally, I would highly recommend the short documentary about the collection, which is showing in the theater near the exit on the other side of the garden.", 
+            vi: "Ngoài ra, nếu bạn quan tâm đến bộ sưu tập một cách tổng quát hơn, tôi thực sự khuyên bạn nên xem bộ phim tài liệu ngắn về bộ sưu tập, đang được chiếu tại rạp gần cửa ra ở phía bên kia của khu vườn.", 
+            speaker: "Speaker", gender: "female",
+            grammar: "Be interested in: Quan tâm, thích thú việc gì.",
+            vocab: ["highly recommend (thực sự khuyên/đề xuất)", "documentary (phim tài liệu)", "exit (lối ra) - Trái nghĩa: entrance"]
+        },
 
         // Talk 3 (77-79)
-        { en: "Hi Mei-ling, this is Lee Sanders calling from Rose Avenue Properties.", vi: "Chào Mei-ling, tôi là Lee Sanders gọi đến từ Rose Avenue Properties.", speaker: "Lee Sanders", gender: "male" },
-        { en: "It was great meeting you on Monday, and I hope you're still considering renting the two-bedroom apartment I showed you.", vi: "Rất vui được gặp cô vào thứ Hai, và tôi hy vọng cô vẫn đang cân nhắc việc thuê căn hộ hai phòng ngủ mà tôi đã cho cô xem.", speaker: "Lee Sanders", gender: "male" },
-        { en: "You also asked about parking in the garage next door, and I wanted to get back to you to let you know that there are a few spaces available.", vi: "Cô cũng đã hỏi về vấn đề đậu xe ở gara bên cạnh, và tôi muốn phản hồi cho cô biết rằng hiện đang có một vài chỗ trống.", speaker: "Lee Sanders", gender: "male" },
-        { en: "Anyway, this is a very popular building, so let me know what you want to do.", vi: "Dù sao thì đây là một tòa nhà rất được ưa chuộng, vì vậy hãy cho tôi biết cô muốn làm gì.", speaker: "Lee Sanders", gender: "male" },
-        { en: "That way, I can prepare all the necessary paperwork for the lease.", vi: "Bằng cách đó, tôi có thể chuẩn bị mọi giấy tờ cần thiết cho hợp đồng thuê.", speaker: "Lee Sanders", gender: "male" },
+        { 
+            en: "Hi Mei-ling, this is Lee Sanders calling from Rose Avenue Properties.", 
+            vi: "Chào Mei-ling, tôi là Lee Sanders gọi đến từ Rose Avenue Properties.", 
+            speaker: "Lee Sanders", gender: "male",
+            grammar: "Cách giới thiệu tên qua điện thoại: This is [Tên] calling from [Nơi chốn].",
+            vocab: ["property (bất động sản, tài sản) - Đồng nghĩa: real estate, premises"]
+        },
+        { 
+            en: "It was great meeting you on Monday, and I hope you're still considering renting the two-bedroom apartment I showed you.", 
+            vi: "Rất vui được gặp cô vào thứ Hai, và tôi hy vọng cô vẫn đang cân nhắc việc thuê căn hộ hai phòng ngủ mà tôi đã cho cô xem.", 
+            speaker: "Lee Sanders", gender: "male",
+            grammar: "Consider + V-ing: Cân nhắc làm việc gì.",
+            vocab: ["consider (cân nhắc, xem xét) - Đồng nghĩa: think about, contemplate", "rent (thuê) - Đồng nghĩa: lease, hire"]
+        },
+        { 
+            en: "You also asked about parking in the garage next door, and I wanted to get back to you to let you know that there are a few spaces available.", 
+            vi: "Cô cũng đã hỏi về vấn đề đậu xe ở gara bên cạnh, và tôi muốn phản hồi cho cô biết rằng hiện đang có một vài chỗ trống.", 
+            speaker: "Lee Sanders", gender: "male",
+            grammar: "Get back to s.o: Phản hồi/gọi lại cho ai.",
+            vocab: ["garage (nhà để xe)", "next door (ngay bên cạnh)", "available (có sẵn, trống)"]
+        },
+        { 
+            en: "Anyway, this is a very popular building, so let me know what you want to do.", 
+            vi: "Dù sao thì đây là một tòa nhà rất được ưa chuộng, vì vậy hãy cho tôi biết cô muốn làm gì.", 
+            speaker: "Lee Sanders", gender: "male",
+            grammar: "Let me know + Wh-word: Hãy cho tôi biết...",
+            vocab: ["popular (phổ biến, được ưa chuộng) - Đồng nghĩa: well-liked, in demand"]
+        },
+        { 
+            en: "That way, I can prepare all the necessary paperwork for the lease.", 
+            vi: "Bằng cách đó, tôi có thể chuẩn bị mọi giấy tờ cần thiết cho hợp đồng thuê.", 
+            speaker: "Lee Sanders", gender: "male",
+            grammar: "That way: Bằng cách đó/như vậy.",
+            vocab: ["prepare (chuẩn bị) - Đồng nghĩa: get ready", "paperwork (giấy tờ, thủ tục văn bản)", "lease (hợp đồng cho thuê) - Đồng nghĩa: rental agreement"]
+        },
 
         // Talk 4 (80-82)
-        { en: "OK everyone, I have one final reminder before we end this meeting.", vi: "Được rồi mọi người, tôi có một lời nhắc cuối cùng trước khi kết thúc cuộc họp này.", speaker: "Manager", gender: "female" },
-        { en: "Since all of the cashiers are present, I want to remind you of an important step in customer transactions here at GL Supermarket.", vi: "Vì tất cả các thu ngân đều có mặt, tôi muốn nhắc các bạn về một bước quan trọng trong quá trình giao dịch khách hàng tại GL Supermarket này.", speaker: "Manager", gender: "female" },
-        { en: "As you know, many of our customers are part of our membership program, which means that they receive five percent off their purchase when you swipe their membership card.", vi: "Như các bạn đã biết, phần lớn khách hàng của chúng ta là thành viên của chương trình hội viên. Điều đó có nghĩa là họ sẽ được giảm giá 5% khi các bạn quẹt thẻ hội viên của họ.", speaker: "Manager", gender: "female" },
-        { en: "Please remember that it is our responsibility to ask customers for their membership card when scanning their groceries.", vi: "Hãy nhớ rằng trách nhiệm của chúng ta là hỏi thẻ hội viên của khách hàng khi quét hàng tạp hóa.", speaker: "Manager", gender: "female" },
-        { en: "If a customer doesn't have a membership card, make sure to mention that applications are available at the customer service desk.", vi: "Nếu khách hàng không có thẻ hội viên, hãy chắc chắn đề cập rằng đơn đăng ký luôn có sẵn tại bàn dịch vụ khách hàng.", speaker: "Manager", gender: "female" },
+        { 
+            en: "OK everyone, I have one final reminder before we end this meeting.", 
+            vi: "Được rồi mọi người, tôi có một lời nhắc cuối cùng trước khi kết thúc cuộc họp này.", 
+            speaker: "Manager", gender: "female",
+            grammar: "",
+            vocab: ["reminder (lời nhắc nhở)"]
+        },
+        { 
+            en: "Since all of the cashiers are present, I want to remind you of an important step in customer transactions here at GL Supermarket.", 
+            vi: "Vì tất cả các thu ngân đều có mặt, tôi muốn nhắc các bạn về một bước quan trọng trong quá trình giao dịch khách hàng tại GL Supermarket này.", 
+            speaker: "Manager", gender: "female",
+            grammar: "Since = Because = As: Bởi vì. Remind s.o of sth: Nhắc ai nhớ về cái gì.",
+            vocab: ["cashier (nhân viên thu ngân)", "present (có mặt) - Trái nghĩa: absent", "transaction (cuộc giao dịch) - Đồng nghĩa: deal, exchange"]
+        },
+        { 
+            en: "As you know, many of our customers are part of our membership program, which means that they receive five percent off their purchase when you swipe their membership card.", 
+            vi: "Như các bạn đã biết, phần lớn khách hàng của chúng ta là thành viên của chương trình hội viên. Điều đó có nghĩa là họ sẽ được giảm giá 5% khi các bạn quẹt thẻ hội viên của họ.", 
+            speaker: "Manager", gender: "female",
+            grammar: "Receive + [số] percent off: Nhận được mức giảm giá bao nhiêu %.",
+            vocab: ["membership (tư cách hội viên)", "purchase (đơn hàng, việc mua sắm) - Đồng nghĩa: buy", "swipe (quẹt thẻ)"]
+        },
+        { 
+            en: "Please remember that it is our responsibility to ask customers for their membership card when scanning their groceries.", 
+            vi: "Hãy nhớ rằng trách nhiệm của chúng ta là hỏi thẻ hội viên của khách hàng khi quét hàng tạp hóa.", 
+            speaker: "Manager", gender: "female",
+            grammar: "It is one's responsibility to V: Trách nhiệm của ai đó là làm gì.",
+            vocab: ["responsibility (trách nhiệm) - Đồng nghĩa: duty, obligation", "scan (quét mã vạch)", "grocery (hàng tạp hóa)"]
+        },
+        { 
+            en: "If a customer doesn't have a membership card, make sure to mention that applications are available at the customer service desk.", 
+            vi: "Nếu khách hàng không có thẻ hội viên, hãy chắc chắn đề cập rằng đơn đăng ký luôn có sẵn tại bàn dịch vụ khách hàng.", 
+            speaker: "Manager", gender: "female",
+            grammar: "Make sure to + V: Chắc chắn phải làm gì.",
+            vocab: ["mention (đề cập, nhắc đến) - Đồng nghĩa: state, point out", "application (đơn đăng ký)"]
+        },
 
         // Talk 5 (83-85)
-        { en: "Good morning, SKL Radio listeners, and welcome to the Madison Business Show.", vi: "Chào buổi sáng các thính giả đài SKL và chào mừng đến với Chương trình Kinh doanh Madison.", speaker: "Host", gender: "female" },
-        { en: "Today I'll be speaking to professional career counselor Tara Goldberg.", vi: "Hôm nay tôi sẽ trò chuyện với chuyên gia tư vấn nghề nghiệp Tara Goldberg.", speaker: "Host", gender: "female" },
-        { en: "Over this next hour, Ms. Goldberg will outline strategies for finding a profession that matches your skills, interests, and personality.", vi: "Trong một giờ tới, cô Goldberg sẽ trình bày các chiến lược tìm kiếm một nghề nghiệp phù hợp với kỹ năng, sở thích và tính cách của các bạn.", speaker: "Host", gender: "female" },
-        { en: "During the last part of the program, she'd like to hear from listeners, so we encourage you to call in when we open up our lines, and let us know what you think.", vi: "Ở phần cuối chương trình, cô ấy muốn lắng nghe ý kiến từ thính giả, vì vậy chúng tôi khuyến khích các bạn hãy gọi điện khi chúng tôi mở đường dây để cho chúng tôi biết suy nghĩ của mình.", speaker: "Host", gender: "female" },
-        { en: "Well, let me start off by saying welcome, Ms. Goldberg.", vi: "Nào, hãy để tôi bắt đầu bằng lời chào mừng cô Goldberg.", speaker: "Host", gender: "female" },
-        { en: "From what I understand, you're publishing a book about this topic, which will be out in print next month.", vi: "Theo tôi được biết, cô sắp xuất bản một cuốn sách về chủ đề này vào tháng tới.", speaker: "Host", gender: "female" },
+        { 
+            en: "Good morning, SKL Radio listeners, and welcome to the Madison Business Show.", 
+            vi: "Chào buổi sáng các thính giả đài SKL và chào mừng đến với Chương trình Kinh doanh Madison.", 
+            speaker: "Host", gender: "female",
+            grammar: "",
+            vocab: ["listener (người nghe, thính giả)"]
+        },
+        { 
+            en: "Today I'll be speaking to professional career counselor Tara Goldberg.", 
+            vi: "Hôm nay tôi sẽ trò chuyện với chuyên gia tư vấn nghề nghiệp Tara Goldberg.", 
+            speaker: "Host", gender: "female",
+            grammar: "Thì Tương lai tiếp diễn (will be speaking) diễn tả kế hoạch/sự việc sẽ xảy ra như thường lệ.",
+            vocab: ["professional (chuyên nghiệp) - Đồng nghĩa: expert", "counselor (cố vấn, người tư vấn) - Đồng nghĩa: advisor, consultant"]
+        },
+        { 
+            en: "Over this next hour, Ms. Goldberg will outline strategies for finding a profession that matches your skills, interests, and personality.", 
+            vi: "Trong một giờ tới, cô Goldberg sẽ trình bày các chiến lược tìm kiếm một nghề nghiệp phù hợp với kỹ năng, sở thích và tính cách của các bạn.", 
+            speaker: "Host", gender: "female",
+            grammar: "Mệnh đề quan hệ (that matches...).",
+            vocab: ["outline (phác thảo, trình bày tóm tắt) - Đồng nghĩa: sketch, summarize", "strategy (chiến lược) - Đồng nghĩa: plan, approach", "profession (nghề nghiệp) - Đồng nghĩa: career, occupation", "match (phù hợp với) - Đồng nghĩa: fit, suit"]
+        },
+        { 
+            en: "During the last part of the program, she'd like to hear from listeners, so we encourage you to call in when we open up our lines, and let us know what you think.", 
+            vi: "Ở phần cuối chương trình, cô ấy muốn lắng nghe ý kiến từ thính giả, vì vậy chúng tôi khuyến khích các bạn hãy gọi điện khi chúng tôi mở đường dây để cho chúng tôi biết suy nghĩ của mình.", 
+            speaker: "Host", gender: "female",
+            grammar: "Encourage s.o to V: Khuyến khích ai đó làm gì.",
+            vocab: ["encourage (khuyến khích) - Đồng nghĩa: urge, inspire", "call in (gọi điện thoại tới đài)"]
+        },
+        { 
+            en: "Well, let me start off by saying welcome, Ms. Goldberg.", 
+            vi: "Nào, hãy để tôi bắt đầu bằng lời chào mừng cô Goldberg.", 
+            speaker: "Host", gender: "female",
+            grammar: "Start off by + V-ing: Bắt đầu bằng việc làm gì.",
+            vocab: []
+        },
+        { 
+            en: "From what I understand, you're publishing a book about this topic, which will be out in print next month.", 
+            vi: "Theo tôi được biết, cô sắp xuất bản một cuốn sách về chủ đề này vào tháng tới.", 
+            speaker: "Host", gender: "female",
+            grammar: "Be out in print: Được in ra/xuất bản (thành bản cứng).",
+            vocab: ["publish (xuất bản) - Đồng nghĩa: issue, release", "topic (chủ đề) - Đồng nghĩa: subject, theme"]
+        },
 
         // Talk 6 (86-88)
-        { en: "Hey Deepak, it's Donna. I'm looking over your design for the magazine advertisement for Langford Restaurant, and I wanted to give you my thoughts.", vi: "Chào Deepak, Donna đây. Tôi đang xem qua bản thiết kế của anh cho quảng cáo tạp chí của Nhà hàng Langford, và tôi muốn chia sẻ suy nghĩ của mình.", speaker: "Donna", gender: "female" },
-        { en: "It isn't what I was expecting. Langford Restaurant has always preferred very traditional advertisements, and this one that you made is quite modern.", vi: "Nó không giống như những gì tôi mong đợi. Nhà hàng Langford luôn ưa chuộng các quảng cáo rất truyền thống, trong khi bản thiết kế của anh lại khá hiện đại.", speaker: "Donna", gender: "female" },
-        { en: "I'm sorry I didn't mention the client's preference before—I know this is your first time working with them.", vi: "Tôi xin lỗi vì đã không đề cập đến sở thích của khách hàng trước đó—tôi biết đây là lần đầu tiên anh làm việc với họ.", speaker: "Donna", gender: "female" },
-        { en: "You know, why don't you ask Adam to help you out? He's worked with Langford Restaurant in the past.", vi: "Anh biết đấy, tại sao anh không nhờ Adam giúp đỡ nhỉ? Anh ấy đã từng làm việc với Nhà hàng Langford trước đây rồi.", speaker: "Donna", gender: "female" },
-        { en: "Thanks, Deepak. I'll talk to you later.", vi: "Cảm ơn Deepak. Sẽ nói chuyện với anh sau nhé.", speaker: "Donna", gender: "female" },
+        { 
+            en: "Hey Deepak, it's Donna. I'm looking over your design for the magazine advertisement for Langford Restaurant, and I wanted to give you my thoughts.", 
+            vi: "Chào Deepak, Donna đây. Tôi đang xem qua bản thiết kế của anh cho quảng cáo tạp chí của Nhà hàng Langford, và tôi muốn chia sẻ suy nghĩ của mình.", 
+            speaker: "Donna", gender: "female",
+            grammar: "Look over: Xem qua, kiểm tra nhanh.",
+            vocab: ["advertisement (quảng cáo) - Đồng nghĩa: advert, ad", "thoughts (suy nghĩ, quan điểm) - Đồng nghĩa: opinion, feedback"]
+        },
+        { 
+            en: "It isn't what I was expecting. Langford Restaurant has always preferred very traditional advertisements, and this one that you made is quite modern.", 
+            vi: "Nó không giống như những gì tôi mong đợi. Nhà hàng Langford luôn ưa chuộng các quảng cáo rất truyền thống, trong khi bản thiết kế của anh lại khá hiện đại.", 
+            speaker: "Donna", gender: "female",
+            grammar: "Thì HTHT (has always preferred) diễn tả thói quen từ quá khứ đến nay.",
+            vocab: ["expect (mong đợi) - Đồng nghĩa: anticipate", "prefer (ưa thích hơn) - Đồng nghĩa: favor", "traditional (truyền thống) - Đồng nghĩa: classic, conventional"]
+        },
+        { 
+            en: "I'm sorry I didn't mention the client's preference before—I know this is your first time working with them.", 
+            vi: "Tôi xin lỗi vì đã không đề cập đến sở thích của khách hàng trước đó—tôi biết đây là lần đầu tiên anh làm việc với họ.", 
+            speaker: "Donna", gender: "female",
+            grammar: "It is one's first time + V-ing: Đây là lần đầu tiên ai làm gì.",
+            vocab: ["mention (đề cập, nói đến) - Đồng nghĩa: state", "preference (sở thích, sự ưu tiên)"]
+        },
+        { 
+            en: "You know, why don't you ask Adam to help you out? He's worked with Langford Restaurant in the past.", 
+            vi: "Anh biết đấy, tại sao anh không nhờ Adam giúp đỡ nhỉ? Anh ấy đã từng làm việc với Nhà hàng Langford trước đây rồi.", 
+            speaker: "Donna", gender: "female",
+            grammar: "Why don't you + V: Câu gợi ý/khuyên bảo.",
+            vocab: ["help out (giúp đỡ một tay)"]
+        },
+        { 
+            en: "Thanks, Deepak. I'll talk to you later.", 
+            vi: "Cảm ơn Deepak. Sẽ nói chuyện với anh sau nhé.", 
+            speaker: "Donna", gender: "female",
+            grammar: "",
+            vocab: []
+        },
 
         // Talk 7 (89-91)
-        { en: "I'd like to take a minute to discuss the company guidelines for travel.", vi: "Tôi muốn dành một chút thời gian để thảo luận về các nguyên tắc đi công tác của công ty.", speaker: "Speaker", gender: "male" },
-        { en: "I understand that many of you are planning to attend next month's conference in Scotland and need to book airline tickets soon.", vi: "Tôi hiểu rằng nhiều người trong số các bạn đang lên kế hoạch tham dự hội nghị vào tháng tới tại Scotland và cần đặt vé máy bay sớm.", speaker: "Speaker", gender: "male" },
-        { en: "Before you make a reservation, please send the flight information to Vadim, our business manager.", vi: "Trước khi đặt chỗ, vui lòng gửi thông tin chuyến bay cho Vadim, quản lý kinh doanh của chúng ta.", speaker: "Speaker", gender: "male" },
-        { en: "He will review it and notify you if the price of the flight is approved.", vi: "Anh ấy sẽ xem xét và thông báo cho bạn nếu giá chuyến bay được phê duyệt.", speaker: "Speaker", gender: "male" },
-        { en: "After that, you may book your tickets. Remember that you will have to pay for your own meals while you're there, but you'll receive a reimbursement within two to three weeks of your return.", vi: "Sau đó, bạn mới có thể đặt vé. Hãy nhớ rằng bạn sẽ phải tự trả tiền ăn khi ở đó, nhưng bạn sẽ nhận được khoản hoàn trả trong vòng hai đến ba tuần sau khi trở về.", speaker: "Speaker", gender: "male" },
+        { 
+            en: "I'd like to take a minute to discuss the company guidelines for travel.", 
+            vi: "Tôi muốn dành một chút thời gian để thảo luận về các nguyên tắc đi công tác của công ty.", 
+            speaker: "Speaker", gender: "male",
+            grammar: "Take a minute to V: Dành một chút thời gian để làm gì.",
+            vocab: ["discuss (thảo luận) - Đồng nghĩa: talk about", "guideline (nguyên tắc chỉ đạo, hướng dẫn) - Đồng nghĩa: rule, policy"]
+        },
+        { 
+            en: "I understand that many of you are planning to attend next month's conference in Scotland and need to book airline tickets soon.", 
+            vi: "Tôi hiểu rằng nhiều người trong số các bạn đang lên kế hoạch tham dự hội nghị vào tháng tới tại Scotland và cần đặt vé máy bay sớm.", 
+            speaker: "Speaker", gender: "male",
+            grammar: "Plan to V: Lên kế hoạch làm gì.",
+            vocab: ["attend (tham dự)", "conference (hội nghị) - Đồng nghĩa: convention", "book (đặt chỗ) - Đồng nghĩa: reserve"]
+        },
+        { 
+            en: "Before you make a reservation, please send the flight information to Vadim, our business manager.", 
+            vi: "Trước khi đặt chỗ, vui lòng gửi thông tin chuyến bay cho Vadim, quản lý kinh doanh của chúng ta.", 
+            speaker: "Speaker", gender: "male",
+            grammar: "Make a reservation = Book: Đặt chỗ.",
+            vocab: ["reservation (sự đặt chỗ) - Đồng nghĩa: booking", "flight (chuyến bay)"]
+        },
+        { 
+            en: "He will review it and notify you if the price of the flight is approved.", 
+            vi: "Anh ấy sẽ xem xét và thông báo cho bạn nếu giá chuyến bay được phê duyệt.", 
+            speaker: "Speaker", gender: "male",
+            grammar: "Câu điều kiện loại 1 kết hợp bị động (is approved).",
+            vocab: ["review (xem xét lại) - Đồng nghĩa: examine, go over", "notify (thông báo) - Đồng nghĩa: inform", "approve (chấp thuận, phê duyệt) - Đồng nghĩa: accept, authorize"]
+        },
+        { 
+            en: "After that, you may book your tickets. Remember that you will have to pay for your own meals while you're there, but you'll receive a reimbursement within two to three weeks of your return.", 
+            vi: "Sau đó, bạn mới có thể đặt vé. Hãy nhớ rằng bạn sẽ phải tự trả tiền ăn khi ở đó, nhưng bạn sẽ nhận được khoản hoàn trả trong vòng hai đến ba tuần sau khi trở về.", 
+            speaker: "Speaker", gender: "male",
+            grammar: "Have to V: Phải làm gì. Within + time: Trong vòng (khoảng thời gian).",
+            vocab: ["pay for (thanh toán cho)", "reimbursement (khoản tiền hoàn lại) - Đồng nghĩa: refund, repayment"]
+        },
 
         // Talk 8 (92-94)
-        { en: "Thanks for coming to this department head meeting. Today our focus is budgeting.", vi: "Cảm ơn các bạn đã đến dự cuộc họp trưởng bộ phận này. Hôm nay trọng tâm của chúng ta là lập ngân sách.", speaker: "Manager", gender: "female" },
-        { en: "Our new video game is coming along, but once again the release date's been pushed back.", vi: "Trò chơi video mới của chúng ta đang được hoàn thiện, nhưng một lần nữa ngày phát hành lại bị lùi lại.", speaker: "Manager", gender: "female" },
-        { en: "This means a lot of our resources will be tied up until this project is completed, but who knows when that will be.", vi: "Điều này có nghĩa là rất nhiều nguồn lực của chúng ta sẽ bị kẹt cho đến khi dự án này hoàn thành, nhưng ai biết được khi nào điều đó sẽ xảy ra.", speaker: "Manager", gender: "female" },
-        { en: "For now, we need to cut costs in other places.", vi: "Hiện tại, chúng ta cần cắt giảm chi phí ở những nơi khác.", speaker: "Manager", gender: "female" },
-        { en: "So I'd like each of you to identify areas in your department where you can make budget cuts.", vi: "Vì vậy, tôi muốn mỗi người trong số các bạn xác định các lĩnh vực trong bộ phận của mình mà bạn có thể cắt giảm ngân sách.", speaker: "Manager", gender: "female" },
-        { en: "I'm ready to set aside time to work with you individually to review your departmental budgets.", vi: "Tôi sẵn sàng dành thời gian làm việc riêng với từng người để xem xét ngân sách của bộ phận các bạn.", speaker: "Manager", gender: "female" },
-        { en: "Let me know when you have time to do this.", vi: "Hãy cho tôi biết khi nào bạn có thời gian để thực hiện việc này.", speaker: "Manager", gender: "female" },
+        { 
+            en: "Thanks for coming to this department head meeting. Today our focus is budgeting.", 
+            vi: "Cảm ơn các bạn đã đến dự cuộc họp trưởng bộ phận này. Hôm nay trọng tâm của chúng ta là lập ngân sách.", 
+            speaker: "Manager", gender: "female",
+            grammar: "Thanks for V-ing: Cảm ơn vì đã làm gì.",
+            vocab: ["department head (trưởng bộ phận)", "budgeting (việc lập ngân sách) - Đồng nghĩa: financial planning"]
+        },
+        { 
+            en: "Our new video game is coming along, but once again the release date's been pushed back.", 
+            vi: "Trò chơi video mới của chúng ta đang được hoàn thiện, nhưng một lần nữa ngày phát hành lại bị lùi lại.", 
+            speaker: "Manager", gender: "female",
+            grammar: "Push back: Lùi lịch/trì hoãn (bị động hiện tại hoàn thành: 's been pushed back).",
+            vocab: ["come along (tiến triển, phát triển) - Đồng nghĩa: progress, shape up", "release date (ngày phát hành/ra mắt)", "push back (lùi lại, trì hoãn) - Đồng nghĩa: delay, postpone"]
+        },
+        { 
+            en: "This means a lot of our resources will be tied up until this project is completed, but who knows when that will be.", 
+            vi: "Điều này có nghĩa là rất nhiều nguồn lực của chúng ta sẽ bị kẹt cho đến khi dự án này hoàn thành, nhưng ai biết được khi nào điều đó sẽ xảy ra.", 
+            speaker: "Manager", gender: "female",
+            grammar: "Be tied up: Bị vướng bận/mắc kẹt.",
+            vocab: ["resource (nguồn lực) - Đồng nghĩa: asset, capital", "tie up (chiếm dụng, kẹt cứng) - Đồng nghĩa: occupy"]
+        },
+        { 
+            en: "For now, we need to cut costs in other places.", 
+            vi: "Hiện tại, chúng ta cần cắt giảm chi phí ở những nơi khác.", 
+            speaker: "Manager", gender: "female",
+            grammar: "",
+            vocab: ["for now (hiện tại, trước mắt)", "cut cost (cắt giảm chi phí) - Đồng nghĩa: reduce expense"]
+        },
+        { 
+            en: "So I'd like each of you to identify areas in your department where you can make budget cuts.", 
+            vi: "Vì vậy, tôi muốn mỗi người trong số các bạn xác định các lĩnh vực trong bộ phận của mình mà bạn có thể cắt giảm ngân sách.", 
+            speaker: "Manager", gender: "female",
+            grammar: "Would like s.o to V: Muốn ai đó làm gì.",
+            vocab: ["identify (xác định, nhận dạng) - Đồng nghĩa: determine, pinpoint", "budget cut (cắt giảm ngân sách)"]
+        },
+        { 
+            en: "I'm ready to set aside time to work with you individually to review your departmental budgets.", 
+            vi: "Tôi sẵn sàng dành thời gian làm việc riêng với từng người để xem xét ngân sách của bộ phận các bạn.", 
+            speaker: "Manager", gender: "female",
+            grammar: "Be ready to V: Sẵn sàng làm gì.",
+            vocab: ["set aside (dành ra, để dành) - Đồng nghĩa: allocate, reserve", "individually (một cách cá nhân, riêng lẻ) - Đồng nghĩa: separately", "review (xem xét lại) - Đồng nghĩa: go over"]
+        },
+        { 
+            en: "Let me know when you have time to do this.", 
+            vi: "Hãy cho tôi biết khi nào bạn có thời gian để thực hiện việc này.", 
+            speaker: "Manager", gender: "female",
+            grammar: "",
+            vocab: []
+        },
 
         // Talk 9 (95-97)
-        { en: "Hi. It's Maria, and I'm calling with some information about the party that we're organizing for Nadia's retirement.", vi: "Chào. Tôi là Maria, tôi gọi để thông báo một số thông tin về bữa tiệc mà chúng ta đang chuẩn bị cho sự nghỉ hưu của Nadia.", speaker: "Maria", gender: "female" },
-        { en: "Now, um... you and I decided that the party would be on August fifth.", vi: "À, ừm... bạn và tôi đã quyết định rằng bữa tiệc sẽ diễn ra vào ngày 5 tháng 8.", speaker: "Maria", gender: "female" },
-        { en: "And, I'm really glad to hear that forty people from the office are coming.", vi: "Và tôi thực sự vui mừng khi nghe nói có 40 người từ văn phòng sẽ đến.", speaker: "Maria", gender: "female" },
-        { en: "But, unfortunately, it looks like we can't use the coupon from Dinner Delights after all.", vi: "Nhưng thật không may, có vẻ như rốt cuộc chúng ta không thể sử dụng phiếu giảm giá từ Dinner Delights.", speaker: "Maria", gender: "female" },
-        { en: "We might want to make a reservation someplace else... Also, Marc agreed to play Nadia's favorite song on his guitar during the party.", vi: "Chúng ta có thể muốn đặt chỗ ở một nơi khác... Ngoài ra, Marc đã đồng ý chơi bài hát yêu thích của Nadia bằng ghi-ta trong bữa tiệc.", speaker: "Maria", gender: "female" },
-        { en: "Do you think you could make photocopies of the lyrics so that everyone can sing along?", vi: "Bạn có nghĩ mình có thể sao chép lời bài hát để mọi người cùng hát theo không?", speaker: "Maria", gender: "female" },
+        { 
+            en: "Hi. It's Maria, and I'm calling with some information about the party that we're organizing for Nadia's retirement.", 
+            vi: "Chào. Tôi là Maria, tôi gọi để thông báo một số thông tin về bữa tiệc mà chúng ta đang chuẩn bị cho sự nghỉ hưu của Nadia.", 
+            speaker: "Maria", gender: "female",
+            grammar: "Mệnh đề quan hệ (that we're organizing) bổ nghĩa cho 'party'.",
+            vocab: ["organize (tổ chức, sắp xếp) - Đồng nghĩa: arrange, put together", "retirement (sự nghỉ hưu) - Đồng nghĩa: stepping down"]
+        },
+        { 
+            en: "Now, um... you and I decided that the party would be on August fifth.", 
+            vi: "À, ừm... bạn và tôi đã quyết định rằng bữa tiệc sẽ diễn ra vào ngày 5 tháng 8.", 
+            speaker: "Maria", gender: "female",
+            grammar: "On + [ngày tháng]: Cấu trúc chỉ thời gian.",
+            vocab: ["decide (quyết định) - Đồng nghĩa: resolve, make up one's mind"]
+        },
+        { 
+            en: "And, I'm really glad to hear that forty people from the office are coming.", 
+            vi: "Và tôi thực sự vui mừng khi nghe nói có 40 người từ văn phòng sẽ đến.", 
+            speaker: "Maria", gender: "female",
+            grammar: "Be glad to hear that: Rất vui khi nghe rằng...",
+            vocab: ["glad (vui mừng) - Đồng nghĩa: happy, pleased"]
+        },
+        { 
+            en: "But, unfortunately, it looks like we can't use the coupon from Dinner Delights after all.", 
+            vi: "Nhưng thật không may, có vẻ như rốt cuộc chúng ta không thể sử dụng phiếu giảm giá từ Dinner Delights.", 
+            speaker: "Maria", gender: "female",
+            grammar: "After all: Rốt cuộc (đặt cuối câu).",
+            vocab: ["unfortunately (thật không may) - Đồng nghĩa: unluckily, regrettably", "coupon (phiếu giảm giá) - Đồng nghĩa: voucher"]
+        },
+        { 
+            en: "We might want to make a reservation someplace else... Also, Marc agreed to play Nadia's favorite song on his guitar during the party.", 
+            vi: "Chúng ta có thể muốn đặt chỗ ở một nơi khác... Ngoài ra, Marc đã đồng ý chơi bài hát yêu thích của Nadia bằng ghi-ta trong bữa tiệc.", 
+            speaker: "Maria", gender: "female",
+            grammar: "Might want to: Có lẽ sẽ muốn (lời khuyên nhẹ nhàng).",
+            vocab: ["make a reservation (đặt chỗ) - Đồng nghĩa: book a table", "someplace else (một nơi nào đó khác)"]
+        },
+        { 
+            en: "Do you think you could make photocopies of the lyrics so that everyone can sing along?", 
+            vi: "Bạn có nghĩ mình có thể sao chép lời bài hát để mọi người cùng hát theo không?", 
+            speaker: "Maria", gender: "female",
+            grammar: "So that + Clause: Để mà (chỉ mục đích).",
+            vocab: ["make photocopies (sao chép, photo)", "lyrics (lời bài hát)", "sing along (hát theo)"]
+        },
 
         // Talk 10 (98-100)
-        { en: "First, some great news to start the meeting—thanks to this team's excellent product designs, our line of Ruby Star appliances outsold all competing appliances on the market last quarter.", vi: "Đầu tiên, một tin vui để bắt đầu cuộc họp—nhờ vào những thiết kế sản phẩm tuyệt vời của nhóm này, dòng thiết bị Ruby Star của chúng ta đã bán chạy hơn tất cả các thiết bị cạnh tranh trên thị trường trong quý vừa qua.", speaker: "Speaker", gender: "male" },
-        { en: "Well done! Now I want to discuss our revised product development process.", vi: "Làm tốt lắm! Bây giờ tôi muốn thảo luận về quy trình phát triển sản phẩm đã được sửa đổi của chúng ta.", speaker: "Speaker", gender: "male" },
-        { en: "As you can see from this flowchart, we've added a step between \"create a design\" and \"build a model.\"", vi: "Như bạn có thể thấy từ sơ đồ này, chúng ta đã thêm một bước giữa \"thiết kế\" và \"xây dựng mô hình.\"", speaker: "Speaker", gender: "male" },
-        { en: "This new step means you'll need approval from the executive board before creating your prototype.", vi: "Bước mới này có nghĩa là bạn sẽ cần sự chấp thuận của ban điều hành trước khi tạo ra nguyên mẫu của mình.", speaker: "Speaker", gender: "male" },
-        { en: "Lately, there's been some concern about the amount of time being spent on prototypes that never actually become products.", vi: "Gần đây, đã có một số lo ngại về lượng thời gian dành cho các nguyên mẫu không bao giờ thực sự trở thành sản phẩm.", speaker: "Speaker", gender: "male" },
-        { en: "This new process will help our team become more productive and use time more efficiently.", vi: "Quy trình mới này sẽ giúp nhóm của chúng ta năng suất hơn và sử dụng thời gian hiệu quả hơn.", speaker: "Speaker", gender: "male" }
+        { 
+            en: "First, some great news to start the meeting—thanks to this team's excellent product designs, our line of Ruby Star appliances outsold all competing appliances on the market last quarter.", 
+            vi: "Đầu tiên, một tin vui để bắt đầu cuộc họp—nhờ vào những thiết kế sản phẩm tuyệt vời của nhóm này, dòng thiết bị Ruby Star của chúng ta đã bán chạy hơn tất cả các thiết bị cạnh tranh trên thị trường trong quý vừa qua.", 
+            speaker: "Speaker", gender: "male",
+            grammar: "Thanks to + N: Nhờ vào.",
+            vocab: ["appliance (thiết bị, đồ gia dụng) - Đồng nghĩa: device, machine", "outsell (bán chạy hơn)", "competing (cạnh tranh) - Đồng nghĩa: rival"]
+        },
+        { 
+            en: "Well done! Now I want to discuss our revised product development process.", 
+            vi: "Làm tốt lắm! Bây giờ tôi muốn thảo luận về quy trình phát triển sản phẩm đã được sửa đổi của chúng ta.", 
+            speaker: "Speaker", gender: "male",
+            grammar: "Well done: Câu cảm thán khen ngợi.",
+            vocab: ["revise (sửa đổi, duyệt lại) - Đồng nghĩa: amend, update", "process (quy trình) - Đồng nghĩa: procedure"]
+        },
+        { 
+            en: "As you can see from this flowchart, we've added a step between \"create a design\" and \"build a model.\"", 
+            vi: "Như bạn có thể thấy từ sơ đồ này, chúng ta đã thêm một bước giữa \"thiết kế\" và \"xây dựng mô hình.\"", 
+            speaker: "Speaker", gender: "male",
+            grammar: "Between A and B: Giữa A và B.",
+            vocab: ["flowchart (sơ đồ quy trình, lưu đồ)", "add (thêm vào) - Đồng nghĩa: include"]
+        },
+        { 
+            en: "This new step means you'll need approval from the executive board before creating your prototype.", 
+            vi: "Bước mới này có nghĩa là bạn sẽ cần sự chấp thuận của ban điều hành trước khi tạo ra nguyên mẫu của mình.", 
+            speaker: "Speaker", gender: "male",
+            grammar: "Need + N + from: Cần cái gì từ ai.",
+            vocab: ["approval (sự chấp thuận, phê duyệt) - Đồng nghĩa: permission, consent", "executive board (ban điều hành, ban giám đốc)", "prototype (nguyên mẫu, mẫu thử nghiệm) - Đồng nghĩa: original model"]
+        },
+        { 
+            en: "Lately, there's been some concern about the amount of time being spent on prototypes that never actually become products.", 
+            vi: "Gần đây, đã có một số lo ngại về lượng thời gian dành cho các nguyên mẫu không bao giờ thực sự trở thành sản phẩm.", 
+            speaker: "Speaker", gender: "male",
+            grammar: "Be spent on + V-ing/N: Bị tiêu tốn vào việc gì (bị động).",
+            vocab: ["lately (gần đây) - Đồng nghĩa: recently", "concern (mối lo ngại) - Đồng nghĩa: worry, apprehension", "amount of time (lượng thời gian)"]
+        },
+        { 
+            en: "This new process will help our team become more productive and use time more efficiently.", 
+            vi: "Quy trình mới này sẽ giúp nhóm của chúng ta năng suất hơn và sử dụng thời gian hiệu quả hơn.", 
+            speaker: "Speaker", gender: "male",
+            grammar: "Help s.o (to) V: Giúp ai đó làm gì.",
+            vocab: ["productive (có năng suất, hiệu quả) - Đồng nghĩa: fruitful", "efficiently (một cách hiệu quả) - Đồng nghĩa: effectively"]
+        }
     ];
 
     window.currentIndex = 0;
@@ -448,16 +788,12 @@
         if (modalOverlay.style.display !== "flex") inputField.focus();
     }
 
-// 1. Hàm xóa dấu câu và ĐỒNG BỘ DẤU NHÁY từ mọi thiết bị
     function normalizeText(text) { 
-        // Gom tất cả nháy cong, nháy ngược về nháy thẳng (')
         let standardText = text.replace(/[’‘`´]/g, "'"); 
         return standardText.toLowerCase().replace(/[.,?!–\-:"]/g, '').trim(); 
     }
 
-    // 2. Hàm hỗ trợ quy đổi từ viết tắt sang dạng đầy đủ
     function expandContractions(text) {
-        // Đồng bộ dấu nháy trước khi tra từ điển
         let lower = text.toLowerCase().replace(/[’‘`´]/g, "'");
         const dict = {
             "they're": "they are", "we're": "we are", "you're": "you are",
@@ -476,48 +812,40 @@
         lower = lower.replace(/[.,?!–\-:"]/g, '');
         return lower.split(/\s+/).map(w => dict[w] || w).join(' ').trim();
     }
-    // 3. Hàm chuẩn hóa chính tả Anh-Anh sang Anh-Mỹ để bao dung lỗi
+    
     function normalizeSpelling(text) {
         return text
-            // Xử lý đuôi s/z (VD: realise -> realize, organise -> organize, organisation -> organization)
             .replace(/ise\b/g, 'ize')
             .replace(/ised\b/g, 'ized')
             .replace(/ising\b/g, 'izing')
             .replace(/ises\b/g, 'izes')
             .replace(/isation/g, 'ization')
-            // Xử lý our/or (VD: colour -> color, favour -> favor)
             .replace(/our\b/g, 'or')
             .replace(/ours\b/g, 'ors')
-            // Xử lý tre/ter (VD: centre -> center)
             .replace(/tre\b/g, 'ter')
             .replace(/tres\b/g, 'ters')
-            // Xử lý phụ âm kép l/ll (VD: travelling -> traveling)
             .replace(/lling\b/g, 'ling')
             .replace(/lled\b/g, 'led');
     }
+
     function checkAnswer() {
         const rawUserInput = inputField.value;
         const rawTargetText = lessonData[window.currentIndex].en;
         
-        // Mở rộng viết tắt, xóa nháy phẩy, VÀ đồng bộ chính tả s/z, our/or
         const userInputExpanded = normalizeSpelling(expandContractions(rawUserInput).replace(/'/g, ''));
         const targetTextExpanded = normalizeSpelling(expandContractions(rawTargetText).replace(/'/g, ''));
         
-        // KIỂM TRA 1: Nếu đáp án đúng hoàn toàn (Full câu)
         if (userInputExpanded === targetTextExpanded) {
             msgBox.innerText = "";
             showModal();
             return;
         }
 
-        // KIỂM TRA 2 (NÂNG CẤP): Đang gõ dở nhưng vẫn đúng hướng
-        // (Bao dung cả trường hợp đang gõ They are thay vì They're)
         if (targetTextExpanded.startsWith(userInputExpanded) && userInputExpanded.length > 0) {
             msgBox.innerText = "Chưa hết câu, hãy nghe thêm và gõ tiếp nhé!";
             return; 
         }
 
-        // KIỂM TRA 3: NẾU SAI THẬT SỰ: Chạy logic cũ để tìm và bôi đỏ từ sai
         const userInput = normalizeText(rawUserInput);
         const targetText = normalizeText(rawTargetText);
         
@@ -540,21 +868,18 @@
             }
 
             if (wrongIndex !== -1) {
-                // Tính vị trí cần select (bôi đen)
                 let startPos = 0;
                 for (let k = 0; k < wrongIndex; k++) {
-                    startPos += rawWords[k].length + 1; // +1 là dấu khoảng trắng
+                    startPos += rawWords[k].length + 1; 
                 }
                 
                 const leadingSpaces = inputField.value.length - inputField.value.trimStart().length;
                 startPos += leadingSpaces;
                 let endPos = startPos + rawWords[wrongIndex].length;
 
-                // Tự động bôi đen chữ sai
                 inputField.focus();
                 inputField.setSelectionRange(startPos, endPos);
 
-                // Hiển thị đoạn text nhấp nháy đỏ
                 let displayHTML = rawWords.map((w, idx) => {
                     if (idx === wrongIndex) {
                         return `<span class="glow-error">${w}</span>`;
@@ -579,9 +904,10 @@
 
         const rawUserInput = inputField.value;
         const userInput = normalizeText(rawUserInput);
-        const targetText = normalizeText(lessonData[currentIndex].en);
+        // FIX: Đã đổi currentIndex thành window.currentIndex
+        const targetText = normalizeText(lessonData[window.currentIndex].en);
         
-        const targetWordsRaw = lessonData[currentIndex].en.split(' ');
+        const targetWordsRaw = lessonData[window.currentIndex].en.split(' ');
         const targetWordsNorm = targetText.split(' ');
         const userWords = userInput.split(' ').filter(w => w !== "");
 
@@ -607,6 +933,25 @@
         document.getElementById("trans-en").innerText = data.en;
         document.getElementById("trans-vi").innerText = data.vi;
         
+        const grammarContainer = document.getElementById("grammar-container");
+        if(data.grammar) {
+            grammarContainer.style.display = "block";
+            document.getElementById("trans-grammar").innerText = data.grammar;
+        } else {
+            grammarContainer.style.display = "none";
+        }
+        
+        const vocabList = document.getElementById("trans-vocab");
+        vocabList.innerHTML = "";
+        if(data.vocab && data.vocab.length > 0) {
+            data.vocab.forEach(v => {
+                let li = document.createElement("li");
+                let parts = v.split(" (");
+                li.innerHTML = `<strong>${parts[0]}</strong> <span style="color:var(--text-light); font-size:15px;">(${parts[1]}</span>`;
+                vocabList.appendChild(li);
+            });
+        }
+        
         modalOverlay.style.display = "flex";
         document.querySelector('.btn-next-modal').focus();
     }
@@ -628,42 +973,50 @@
     }
     
     function resetForNewSentence() {
-    modalOverlay.style.display = "none";
-    inputField.value = "";
-    msgBox.innerHTML = "";
-    
-    // Lưu Local dự phòng
-    localStorage.setItem('part4_test2_progress', window.currentIndex); 
-    // LƯU LÊN CLOUD
-    if(window.saveProgressToCloud) window.saveProgressToCloud(window.currentIndex); 
-    
-    updateUI();
-    playAudio();
-}
-
-    function nextSentence() {
-    modalOverlay.style.display = "none";
-    window.currentIndex++;
-    inputField.value = "";
-    msgBox.innerHTML = "";
-    
-    if (window.currentIndex < lessonData.length) {
-        // Lưu Local dự phòng
-        localStorage.setItem('part4_test2_progress', window.currentIndex);
-        // LƯU LÊN CLOUD
-        if(window.saveProgressToCloud) window.saveProgressToCloud(window.currentIndex);
-
+        modalOverlay.style.display = "none";
+        inputField.value = "";
+        msgBox.innerHTML = "";
+        
+        localStorage.setItem('part4_test2_progress', window.currentIndex); 
+        if(window.saveProgressToCloud) window.saveProgressToCloud(window.currentIndex); 
+        
         updateUI();
         playAudio();
-    } else {
-        finishLesson();
     }
-}
+
+    function nextSentence() {
+        modalOverlay.style.display = "none";
+        window.currentIndex++;
+        inputField.value = "";
+        msgBox.innerHTML = "";
+        
+        if (window.currentIndex < lessonData.length) {
+            localStorage.setItem('part4_test2_progress', window.currentIndex);
+            if(window.saveProgressToCloud) window.saveProgressToCloud(window.currentIndex);
+
+            updateUI();
+            playAudio();
+        } else {
+            finishLesson();
+        }
+    }
+
     function updateProgress() {
         const percent = Math.round((window.currentIndex / lessonData.length) * 100);
         document.getElementById("progress-percent").innerText = percent;
         document.getElementById("progress-ring").style.background = `conic-gradient(var(--primary) ${percent}%, #eee 0)`;
     }
+
+    // NÚT PLAY AUDIO KHI KẾT THÚC
+    window.playEndScreenAudio = function(text, gender) {
+        if (synth.speaking) synth.cancel();
+        const utterThis = new SpeechSynthesisUtterance(text);
+        utterThis.lang = 'en-US';
+        utterThis.rate = parseFloat(document.getElementById('speed-setting').value) || 1.0; 
+        if (gender === 'female' && femaleVoice) utterThis.voice = femaleVoice;
+        else if (gender === 'male' && maleVoice) utterThis.voice = maleVoice;
+        synth.speak(utterThis);
+    };
 
     function finishLesson() {
         document.getElementById("learning-screen").style.display = "none";
@@ -675,6 +1028,7 @@
         document.getElementById('study-count').innerText = count;
 
         localStorage.removeItem('part4_test2_progress');
+        if(window.saveProgressToCloud) window.saveProgressToCloud(0);
 
         const transcriptBox = document.getElementById("full-transcript");
         let htmlContent = "";
@@ -682,7 +1036,8 @@
         lessonData.forEach(d => {
             const color = d.gender === 'male' ? '#0369A1' : '#BE185D';
             htmlContent += `<p style="margin-bottom:12px; padding-left: 10px;">
-                <strong style="color:${color}">${d.speaker}:</strong> <span style="font-weight: 500;">${d.en}</span><br>
+                <strong style="color:${color}">${d.speaker}:</strong> <span style="font-weight: 500;">${d.en}</span>
+                <button onclick="playEndScreenAudio(\`${d.en.replace(/`/g, "'")}\`, '${d.gender}')" style="background:none; border:none; cursor:pointer; font-size:18px; margin-left: 5px; transition: 0.2s;" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'" title="Nghe lại câu này">🔊</button><br>
                 <span style="color:var(--text-light); font-size: 14px;">${d.vi}</span>
             </p>`;
         });
@@ -697,7 +1052,6 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-    // IMPORT THÊM FIRESTORE
     import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -711,9 +1065,8 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const db = getFirestore(app); // KHỞI TẠO FIRESTORE
+    const db = getFirestore(app);
 
-    // Khai báo hàm để lưu tiến độ lên Cloud có thể gọi từ bên ngoài module
     window.saveProgressToCloud = async (progressIndex) => {
         if (window.currentUserUid) {
             try {
@@ -732,7 +1085,6 @@
             window.currentUserEmail = user.email;
             console.log("Đã đồng bộ ngầm tài khoản:", user.email);
 
-            // KHI ĐĂNG NHẬP, KÉO DỮ LIỆU TỪ CLOUD VỀ
             try {
                 const docRef = doc(db, "userProgress", user.uid);
                 const docSnap = await getDoc(docRef);
@@ -740,7 +1092,6 @@
                 if (docSnap.exists()) {
                     let cloudProgress = docSnap.data().part4_test2_progress;
                     if (cloudProgress !== undefined) {
-                        // Gắn tiến độ mới và cập nhật giao diện
                         window.currentIndex = cloudProgress; 
                         window.updateUI();
                     }
