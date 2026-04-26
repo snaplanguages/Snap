@@ -522,7 +522,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Giao diện Toast nhanh (không cần CSS)
+    // Thông báo Toast nhỏ góc màn hình
     function showInGameToast(msg) {
         let toast = document.createElement("div");
         toast.innerText = msg;
@@ -539,11 +539,11 @@
             window.currentUserUid = user.uid;
             window.currentUserEmail = user.email;
         } else {
-            showInGameToast("⚠️ Bạn đang chơi dưới dạng Khách, điểm sẽ không lưu lên kho!");
+            showInGameToast("⚠️ Bạn đang chơi dưới dạng Khách, điểm sẽ không lưu lên hệ thống!");
         }
     });
 
-    // Hàm tính điểm theo chuẩn TOEIC
+    // Tính điểm TOEIC
     function calculateToeicScore(skill, correct, total) {
         let percentage = correct / total;
         let maxScore = (skill === 'Listening' || skill === 'Reading') ? 495 : 200;
@@ -555,46 +555,48 @@
         return estimated;
     }
 
-    // Gắn hàm này vào lúc nộp bài (Ví dụ trong hàm finishTest() hoặc submitQuiz())
+    // Đưa hàm lưu điểm ra window để nút "Nộp bài" có thể gọi được
     window.luuDiemTOEICLenFirebase = async function(tongSoCau, soCauDung, tenBai, kyNang, tenPart) {
         if (!window.currentUserUid) return; 
 
-        // Tính điểm quy đổi
         let diemQuyDoi = calculateToeicScore(kyNang, soCauDung, tongSoCau);
-       // CÁCH MỚI (Tính thời gian đã tiêu hao thực tế)
-let thoiGianHienTai = "--";
-// Lấy lại thời gian gốc người dùng đã nhập ở modal (mặc định 20)
-let inputPhut = parseInt(document.getElementById('timeInput').value) || 20; 
-let tongThoiGianGoc = inputPhut * 60; // Đổi ra giây
+        
+        // SỬA LỖI TÌM THEO ID
+        let thoiGianHienTai = "--";
+        let timeInput = document.getElementById('timeInput');
+        let inputPhut = timeInput ? parseInt(timeInput.value) : 20; 
+        inputPhut = inputPhut || 20; // Default 20 phút nếu trống
+        
+        let tongThoiGianGoc = inputPhut * 60;
 
-// testDuration là biến đếm ngược bạn đã khai báo sẵn trong code
-if (typeof testDuration !== 'undefined') {
-    let thoiGianDaLam = tongThoiGianGoc - testDuration;
-    if (thoiGianDaLam < 0) thoiGianDaLam = 0; // Đề phòng lỗi bấm nộp khi vừa vào
-    
-    let m = Math.floor(thoiGianDaLam / 60);
-    let s = thoiGianDaLam % 60;
-    thoiGianHienTai = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-}
+        if (typeof testDuration !== 'undefined') {
+            let thoiGianDaLam = tongThoiGianGoc - testDuration;
+            if (thoiGianDaLam < 0) thoiGianDaLam = 0; 
+            let m = Math.floor(thoiGianDaLam / 60);
+            let s = thoiGianDaLam % 60;
+            thoiGianHienTai = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
         let timestamp = Date.now();
         let docId = window.currentUserUid + "_toeic_" + timestamp;
         
         try {
             await setDoc(doc(db, "user_toeic_scores", docId), {
-                email: window.currentUserEmail,
-                skill: kyNang,           // VD: "Reading" hoặc "Listening"
-                testName: tenBai,        // VD: "Test 1 - 2018"
-                partName: tenPart,       // VD: "Part 5"
+                email: window.currentUserEmail || "Khách",
+                skill: kyNang,           
+                testName: tenBai,        
+                partName: tenPart,       
                 timeTaken: thoiGianHienTai,
                 totalQ: tongSoCau,
                 correctQ: soCauDung,
-                score: diemQuyDoi,       // Lưu thẳng điểm đã nhân hệ số (VD: 150 điểm)
+                score: diemQuyDoi,       
                 date: new Date().toLocaleDateString('vi-VN'),
                 timestamp: timestamp
             });
             showInGameToast("☁️ Đã đồng bộ điểm số lên Máy Chủ!");
         } catch (error) {
-            console.error(error);
+            console.error("Lỗi khi lưu điểm:", error);
+            showInGameToast("❌ Lỗi khi lưu điểm lên máy chủ!");
         }
     }
 </script>
