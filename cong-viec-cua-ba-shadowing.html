@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Công việc của ba - Luyện Âm | SnapChinese</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        :root {
+            --bg-main: #fcfcfc;
+            --box-bg: #ffffff;
+            --pastel-blue: #f1f5f9;
+            --pastel-pink: #fff0f5;
+            --text-main: #334155;
+            --text-pinyin: #eab308;
+            --highlight: #ec4899;
+            --tooltip-bg: #1e293b;
+            --shadowing-bg: #fdf2f8; /* Tone hồng pastel nhạt */
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #f8fafc;
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            padding-bottom: 80px; /* Chừa chỗ cho nút fixed */
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+            background: var(--box-bg);
+            border-radius: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            padding: 30px;
+        }
+
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { color: var(--highlight); font-size: 26px; margin: 0; }
+        .header p { color: #64748b; font-weight: 500; font-size: 18px; margin-top: 5px; }
+
+        /* --- AUDIO CONTROLS CSS --- */
+        .audio-player {
+            background: var(--pastel-blue);
+            padding: 15px 25px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn-audio {
+            background: white;
+            border: 1px solid #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.2s;
+            color: var(--text-main);
+        }
+
+        .btn-audio:hover { background: var(--highlight); color: white; border-color: var(--highlight); }
+        .speed-control { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+        select { padding: 5px; border-radius: 8px; border: 1px solid #ddd; font-family: inherit; }
+
+        /* --- PHẦN READER --- */
+        .reader-wrapper { display: flex; gap: 20px; min-height: 380px; margin-bottom: 30px; }
+        .column { flex: 1; padding: 20px 25px; background: #fafaf9; border-radius: 16px; border: 1px solid #f3f4f6; }
+        .chinese-content { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 15px 8px; line-height: 2.2; }
+        .word-group { display: inline-flex; flex-direction: column; align-items: center; position: relative; cursor: pointer; }
+        .pinyin { font-size: 12px; color: var(--text-pinyin); font-weight: 600; margin-bottom: -2px; }
+        .char { font-size: 26px; color: var(--text-main); font-weight: 500; transition: all 0.2s ease; }
+        
+        .word-group:hover .char { color: var(--highlight); transform: scale(1.1); }
+        .word-group:active .char { transform: scale(0.9); }
+
+        .word-group::after {
+            content: attr(data-tooltip);
+            position: absolute; top: 105%; left: 50%; transform: translateX(-50%) translateY(8px);
+            background: var(--tooltip-bg); color: white; padding: 5px 12px; border-radius: 8px;
+            font-size: 13px; white-space: nowrap; opacity: 0; visibility: hidden; transition: all 0.25s ease; z-index: 10;
+        }
+        .word-group:hover::after { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+
+        .viet-content { font-size: 16px; color: #475569; line-height: 1.8; text-align: justify; }
+
+        /* --- KHU VỰC SHADOWING CUTE --- */
+        .shadowing-section {
+            background: var(--shadowing-bg);
+            border: 2px dashed #fbcfe8;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .shadowing-section h3 {
+            color: var(--highlight);
+            margin-top: 0;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-mic {
+            background: linear-gradient(135deg, #ec4899, #f43f5e);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 15px 0;
+        }
+
+        .btn-mic:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+        }
+
+        /* Hiệu ứng nhịp đập khi đang thu âm */
+        .btn-mic.recording {
+            animation: pulse-ring 1.5s infinite;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .speech-result {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            min-height: 50px;
+            margin-top: 15px;
+            font-size: 18px;
+            color: var(--text-main);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            border: 1px solid #fce7f3;
+        }
+
+        .feedback-text {
+            margin-top: 10px;
+            font-weight: 600;
+            font-size: 15px;
+            min-height: 22px;
+        }
+        .feedback-good { color: #10b981; } /* Xanh lá */
+        .feedback-try { color: #f59e0b; } /* Vàng cam */
+
+        /* --- INFO GRID --- */
+        .info-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        .info-box { padding: 20px 25px; border-radius: 16px; font-size: 14.5px; line-height: 1.6; }
+        .grammar-box { background: var(--pastel-blue); }
+        .tip-box { background: var(--pastel-pink); border: 1px dashed #f9a8d4; }
+
+        .nav-fixed { position: fixed; bottom: 25px; right: 25px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
+        .btn { padding: 10px 18px; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 13px; text-align: center; }
+        .btn-list { background: #ffffff; color: #64748b; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .btn-next { background: var(--highlight); color: white; box-shadow: 0 4px 6px rgba(236, 72, 153, 0.25); }
+
+        @media (max-width: 768px) {
+            .reader-wrapper { flex-direction: column; height: auto; }
+            .info-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Công Việc Của Ba</h1>
+        <p>爸爸的工作</p>
+    </div>
+
+    <div class="audio-player">
+        <button class="btn-audio" onclick="playAll()">▶ Nghe người bản xứ</button>
+        <button class="btn-audio" onclick="pauseSpeech()">⏸ Tạm dừng</button>
+        <button class="btn-audio" onclick="stopSpeech()">⏹ Dừng hẳn</button>
+        <div class="speed-control">
+            <span>Tốc độ:</span>
+            <select id="speedSelect">
+                <option value="0.5">0.5x (Rất chậm)</option>
+                <option value="0.8" selected>0.8x (Vừa phải)</option>
+                <option value="1">1.0x (Bình thường)</option>
+                <option value="1.2">1.2x (Nhanh)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="reader-wrapper">
+        <div class="column">
+            <div id="chineseText" class="chinese-content">
+                <div class="word-group" data-tooltip="Giáo viên" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">lǎo shī</span><span class="char">老师</span></div>
+                <div class="word-group" data-tooltip="Hỏi" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">wèn</span><span class="char">问</span></div>
+                <div class="word-group" data-tooltip="Năm" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">wǔ</span><span class="char">五</span></div>
+                <div class="word-group" data-tooltip="Tuổi" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">suì</span><span class="char">岁</span></div>
+                <div class="word-group" data-tooltip="Của" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">de</span><span class="char">的</span></div>
+                <div class="word-group" data-tooltip="Nhỏ" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">xiǎo</span><span class="char">小</span></div>
+                <div class="word-group" data-tooltip="Bé gái" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">nǚ hái</span><span class="char">女孩</span></div>
+                <span class="char">：</span><span class="char">“</span>
+                <div class="word-group" data-tooltip="Của con" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">nǐ de</span><span class="char">你的</span></div>
+                <div class="word-group" data-tooltip="Ba" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">bà ba</span><span class="char">爸爸</span></div>
+                <div class="word-group" data-tooltip="Là" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">shì</span><span class="char">是</span></div>
+                <div class="word-group" data-tooltip="Làm" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">zuò</span><span class="char">做</span></div>
+                <div class="word-group" data-tooltip="Gì" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">shén me</span><span class="char">什么</span></div>
+                <div class="word-group" data-tooltip="Nhấn mạnh" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">de</span><span class="char">的</span></div>
+                <span class="char">？</span><span class="char">”</span>
+                
+                <div style="width: 100%; height: 10px;"></div>
+                
+                <div class="word-group" data-tooltip="Nhỏ" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">xiǎo</span><span class="char">小</span></div>
+                <div class="word-group" data-tooltip="Bé gái" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">nǚ hái</span><span class="char">女孩</span></div>
+                <div class="word-group" data-tooltip="Nói" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">shuō</span><span class="char">说</span></div>
+                <span class="char">：</span><span class="char">“</span>
+                <div class="word-group" data-tooltip="Của con" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">wǒ de</span><span class="char">我的</span></div>
+                <div class="word-group" data-tooltip="Mẹ" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">mā ma</span><span class="char">妈妈</span></div>
+                <div class="word-group" data-tooltip="Bảo/Để" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">ràng</span><span class="char">让</span></div>
+                <div class="word-group" data-tooltip="Ba" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">bà ba</span><span class="char">爸爸</span></div>
+                <div class="word-group" data-tooltip="Làm" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">zuò</span><span class="char">做</span></div>
+                <div class="word-group" data-tooltip="Cái gì" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">shén me</span><span class="char">什么</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Ông ấy" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">tā</span><span class="char">他</span></div>
+                <div class="word-group" data-tooltip="Thì" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">jiù</span><span class="char">就</span></div>
+                <div class="word-group" data-tooltip="Làm" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">zuò</span><span class="char">做</span></div>
+                <div class="word-group" data-tooltip="Cái đó" onclick="speak(this.querySelector('.char').innerText)"><span class="pinyin">shén me</span><span class="char">什么</span></div>
+                <span class="char">。</span><span class="char">”</span>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="viet-content">
+                <p>Giáo viên hỏi bé gái năm tuổi: "Ba của con làm nghề gì?"</p>
+                <p>Bé gái trả lời: "Dạ, mẹ con bảo ba làm cái gì, thì ba làm cái đó ạ."</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="shadowing-section">
+        <h3>🎙️ Luyện Phát Âm (Shadowing) ✨</h3>
+        <p style="color: #64748b; font-size: 15px;">Nghe người bản xứ đọc ở trên, sau đó bấm micro và đọc lại nguyên câu chuyện nhé!</p>
+        
+        <button id="micBtn" class="btn-mic">
+            🎤 Nhấn để thu âm
+        </button>
+        
+        <div id="userSpeechResult" class="speech-result">
+            <span style="color: #94a3b8; font-style: italic;">Giọng đọc của bạn sẽ hiện ở đây nè...</span>
+        </div>
+        <div id="shadowingFeedback" class="feedback-text"></div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-box grammar-box">
+            <h3 style="color: #0284c7; margin-top: 0;">📘 Ngữ pháp chi tiết</h3>
+            <p>• <b>是...的 (shì...de)</b>: Cấu trúc dùng để nhấn mạnh.</p>
+            <p>• <b>让 (ràng)</b>: Câu kiêm ngữ, mang nghĩa bảo, sai bảo.</p>
+            <p>• <b>什么... 就... 什么</b>: Bất cứ cái gì... thì cái đó.</p>
+        </div>
+        <div class="info-box tip-box">
+            <h3 style="color: #db2777; margin-top: 0;">✨ Mẹo nhớ hay</h3>
+            <p>Bấm vào từng chữ để nghe phát âm chính xác nhé!</p>
+        </div>
+    </div>
+</div>
+
+<div class="nav-fixed">
+    <a href="nghe-hsk.html" class="btn btn-list">🏠 Danh sách</a>
+    <a href="toi-la-ai-nghe.html" class="btn btn-next">Bài tiếp theo ➜</a>
+</div>
+
+<script>
+    // --- PHẦN 1: TEXT TO SPEECH (GIỮ NGUYÊN) ---
+    const synth = window.speechSynthesis;
+
+    function speak(text) {
+        synth.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'zh-CN'; 
+        utterance.rate = document.getElementById('speedSelect').value;
+        synth.speak(utterance);
+    }
+
+    function playAll() {
+        const chars = document.querySelectorAll('.chinese-content .char');
+        let fullText = "";
+        chars.forEach(c => { fullText += c.innerText; });
+        speak(fullText);
+    }
+
+    function pauseSpeech() {
+        if (synth.speaking) synth.pause();
+        else if (synth.paused) synth.resume();
+    }
+
+    function stopSpeech() {
+        synth.cancel();
+    }
+
+    // --- PHẦN 2: SPEECH TO TEXT (SHADOWING) ---
+    const micBtn = document.getElementById('micBtn');
+    const resultBox = document.getElementById('userSpeechResult');
+    const feedbackText = document.getElementById('shadowingFeedback');
+
+    // Kiểm tra trình duyệt có hỗ trợ Web Speech API không
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'zh-CN'; // Nhận diện tiếng Trung
+        recognition.interimResults = false; // Chỉ lấy kết quả cuối cùng
+        recognition.maxAlternatives = 1;
+
+        let isRecording = false;
+
+        micBtn.addEventListener('click', () => {
+            if (!isRecording) {
+                // Bắt đầu thu âm
+                recognition.start();
+                isRecording = true;
+                micBtn.classList.add('recording');
+                micBtn.innerHTML = "🛑 Đang nghe... (Nhấn để dừng)";
+                resultBox.innerHTML = '<span style="color: #ec4899;">Đang lắng nghe giọng bạn... 🐰</span>';
+                feedbackText.innerHTML = "";
+            } else {
+                // Dừng thủ công
+                recognition.stop();
+            }
+        });
+
+        // Xử lý khi có kết quả trả về
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            resultBox.innerHTML = `<span style="color: var(--text-main); font-weight: 500;">${transcript}</span>`;
+            
+            // Xử lý logic so sánh đơn giản: Kiểm tra xem người dùng có đọc được các keyword không
+            // Lấy văn bản gốc (bỏ dấu câu) để so sánh
+            const chars = document.querySelectorAll('.chinese-content .char');
+            let targetText = "";
+            chars.forEach(c => { 
+                // Bỏ qua các dấu câu tiếng Trung khi gộp chuỗi
+                if(!['：','“','”','？','，','。'].includes(c.innerText)) {
+                    targetText += c.innerText; 
+                }
+            });
+
+            // Nếu câu bạn đọc chứa đoạn của câu gốc (hoặc ngược lại)
+            if (transcript.includes("老师") || transcript.includes("爸爸") || transcript.includes("什么")) {
+                feedbackText.className = "feedback-text feedback-good";
+                feedbackText.innerHTML = "✨ Giỏi quá! Bạn phát âm rất có hồn nha! 💖";
+            } else {
+                feedbackText.className = "feedback-text feedback-try";
+                feedbackText.innerHTML = "🤔 Giọng hơi nhỏ hoặc chưa chuẩn lắm, mình thử lại nha! 💪";
+            }
+        };
+
+        // Khi kết thúc thu âm (dù tự ngắt hay bấm dừng)
+        recognition.onend = () => {
+            isRecording = false;
+            micBtn.classList.remove('recording');
+            micBtn.innerHTML = "🎤 Nhấn để thu âm";
+        };
+
+        // Bắt lỗi nếu không cấp quyền mic
+        recognition.onerror = (event) => {
+            isRecording = false;
+            micBtn.classList.remove('recording');
+            micBtn.innerHTML = "🎤 Nhấn để thu âm";
+            if(event.error === 'not-allowed') {
+                resultBox.innerHTML = '<span style="color: red;">Bạn chưa cấp quyền Micro trình duyệt ơi! 😢</span>';
+            }
+        };
+
+    } else {
+        // Fallback nếu trình duyệt không hỗ trợ
+        micBtn.style.display = 'none';
+        resultBox.innerHTML = '<span style="color: red;">Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Hãy dùng Google Chrome nha! 🥺</span>';
+    }
+</script>
+
+</body>
+</html>
