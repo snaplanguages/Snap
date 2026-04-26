@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part 5 - Test 2 - 2019 | SnapEnglish</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        
+    <style>
+        :root {
+            /* Tông màu Pastel Tím/Hồng tinh tế, nhẹ nhàng và trưởng thành */
+            --primary: #a78bfa;       
+            --primary-dark: #7c3aed;
+            --secondary: #f472b6;     
+            --secondary-dark: #db2777;
+            --bg-body: #faf5ff;       
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --correct-bg: #f0fdf4;
+            --correct-text: #166534;
+            --correct-border: #bbf7d0;
+            --wrong-bg: #fef2f2;
+            --wrong-text: #991b1b;
+            --wrong-border: #fecaca;
+            --grammar-bg: #f5f3ff;
+            --grammar-border: #ddd6fe;
+            --vocab-bg: #fffbeb;
+            --vocab-border: #fde68a;
+            --header-h: 75px;
+        }
+        ::selection { background: #ddd6fe; color: #4c1d95; }
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden; 
+        }
+
+        /* --- HEADER CHÍNH --- */
+        header {
+            height: var(--header-h); background: #fff;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 40px; z-index: 1000; flex-shrink: 0;
+            position: relative;
+        }
+        
+        .brand { font-size: 22px; font-weight: 800; color: #334155; display: flex; align-items: center; gap: 10px; }
+        .brand span { background: #334155; color: white; padding: 4px 12px; border-radius: 8px; font-size: 16px; box-shadow: 0 4px 10px rgba(51, 65, 85, 0.2);}
+
+        .controls { display: flex; gap: 15px; align-items: center; }
+
+        .btn-nav-toggle {
+            background: #f8fafc; color: var(--text-main); border: 1px solid var(--border);
+            padding: 8px 20px; border-radius: 8px; font-weight: 600; font-size: 15px; 
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px;
+            font-family: inherit;
+        }
+        .btn-nav-toggle:hover { background: #f1f5f9; border-color: #cbd5e1; }
+
+        .btn-submit { 
+            background: var(--primary); color: white; border: none; padding: 9px 24px; 
+            border-radius: 8px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(167, 139, 250, 0.3); font-family: inherit;
+        }
+        .btn-submit:hover { transform: translateY(-2px); background: var(--primary-dark); }
+
+        /* --- DROPDOWN LIST --- */
+        .nav-dropdown {
+            position: absolute; top: calc(var(--header-h) + 10px); right: 40px;
+            background: #fff; border-radius: 12px; border: 1px solid var(--border);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1); width: 320px;
+            max-height: 400px; overflow-y: auto; z-index: 999;
+            padding: 20px; display: none; grid-template-columns: repeat(5, 1fr); gap: 10px;
+            opacity: 0; transform: translateY(-10px); transition: 0.3s ease;
+        }
+        .nav-dropdown.show {
+            display: grid; opacity: 1; transform: translateY(0);
+        }
+        .nav-dropdown::-webkit-scrollbar { width: 6px; }
+        .nav-dropdown::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+        .nav-dot {
+            height: 45px; border: 1px solid var(--border); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600;
+            cursor: pointer; color: var(--text-light); background: #f8fafc; transition: 0.2s;
+        }
+        .nav-dot:hover { border-color: var(--primary); color: var(--primary); }
+        .nav-dot.done { background: #f5f3ff; color: var(--primary-dark); border-color: #ddd6fe; }
+        .nav-dot.correct { background: var(--correct-bg); color: var(--correct-text); border-color: var(--correct-border); }
+        .nav-dot.wrong { background: var(--wrong-bg); color: var(--wrong-text); border-color: var(--wrong-border); }
+        .nav-dot.active { box-shadow: 0 0 0 2px rgba(167, 139, 250, 0.4); border-color: var(--primary); }
+
+        /* --- MAIN KHU VỰC CÂU HỎI --- */
+        .main-area {
+            flex: 1; width: 100%; overflow-y: auto; padding: 40px;
+            display: flex; justify-content: center; align-items: flex-start; scroll-behavior: smooth;
+        }
+        
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .question-card {
+            background: var(--bg-card);
+            width: 100%; max-width: none; 
+            border-radius: 12px;
+            padding: 35px 40px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid var(--border);
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+        .question-card.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* HEADER CỦA CÂU HỎI */
+        .q-header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 2px dashed #cbd5e1; padding-bottom: 15px; margin-bottom: 25px;
+        }
+        .q-header-left { display: flex; align-items: center; gap: 15px; }
+        .q-num { font-size: 20px; font-weight: 700; color: var(--primary-dark); }
+        
+        .timer-pill {
+            font-weight: 600; color: #f43f5e; background: #ffe4e6; 
+            padding: 6px 14px; border-radius: 20px; font-size: 14px;
+            display: flex; align-items: center; gap: 6px;
+            border: 1px solid #fecdd3;
+        }
+
+        .q-counter-pill {
+            font-weight: 600; color: var(--primary-dark); background: #f5f3ff; 
+            padding: 6px 16px; border-radius: 20px; font-size: 14px;
+        }
+
+        .q-text { 
+            font-size: 17px; line-height: 1.6; font-weight: 500; margin-bottom: 25px; 
+            color: var(--text-main); background: transparent; padding: 0; border: none;
+        }
+
+        /* CÁC ĐÁP ÁN */
+        .options { display: flex; flex-direction: column; gap: 12px; }
+        .option {
+            background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px;
+            padding: 14px 20px; font-size: 16px; font-weight: 500; cursor: pointer; transition: all 0.2s;
+            display: flex; align-items: center; justify-content: space-between; color: #475569;
+        }
+        .option:hover:not(.disabled) { background: #f8fafc; border-color: #94a3b8; }
+        .option.selected { background: #f5f3ff; border-color: var(--primary); color: var(--primary-dark); font-weight: 600; }
+        .option.disabled { cursor: default; }
+        
+        .option.correct { background: var(--correct-bg); border-color: #86efac; color: var(--correct-text); font-weight: 600; }
+        .option.wrong { background: var(--wrong-bg); border-color: #fca5a5; color: var(--wrong-text); opacity: 0.9;}
+
+        /* --- NAVIGATION BUTTONS --- */
+        .q-nav-buttons {
+            display: flex; justify-content: flex-end; margin-top: 30px;
+        }
+        .btn-nav.next { 
+            background: var(--primary); color: white; border: none; font-family: inherit;
+            box-shadow: 0 4px 10px rgba(167, 139, 250, 0.3); border-radius: 24px; 
+            padding: 10px 32px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s;
+        } 
+        .btn-nav.next:hover:not(:disabled) { background: var(--primary-dark); }
+        .btn-nav:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+
+        /* --- PHẦN GIẢI THÍCH CHI TIẾT --- */
+        .explanation-box {
+            display: none; margin-top: 40px; animation: fadeIn 0.5s ease;
+            border-top: 2px dashed #e2e8f0; padding-top: 30px;
+        }
+        .explanation-box.show { display: block; }
+        
+        .exp-main-title { font-size: 17px; font-weight: 700; color: #334155; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px;}
+        
+        .exp-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; }
+        
+        .box { padding: 18px; border-radius: 12px; border: 1px solid; font-size: 15px; line-height: 1.6; }
+        .box-title { font-weight: 700; font-size: 15px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px;}
+        
+        .box-correct { background: var(--correct-bg); border-color: var(--correct-border); color: #064e3b; }
+        .box-correct .box-title { color: var(--correct-text); }
+        
+        .box-wrong { background: var(--wrong-bg); border-color: var(--wrong-border); color: #7f1d1d; }
+        .box-wrong .box-title { color: var(--wrong-text); }
+        .box-wrong ul { margin: 0; padding-left: 20px; }
+        .box-wrong li { margin-bottom: 6px; }
+        
+        .box-grammar { background: var(--grammar-bg); border-color: var(--grammar-border); color: #4c1d95; }
+        .box-grammar .box-title { color: #5b21b6; }
+        
+        .box-vocab { background: var(--vocab-bg); border-color: var(--vocab-border); color: #78350f; }
+        .box-vocab .box-title { color: #b45309; }
+        
+        .box-trans { background: #f1f5f9; border-color: #e2e8f0; color: #475569; font-style: italic; border-left: 4px solid #cbd5e1;}
+        .box-trans .box-title { color: #64748b; font-style: normal;}
+
+        /* --- MODALS --- */
+        .custom-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 99999; }
+        .custom-modal { background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); width: 90%; max-width: 420px; text-align: center; border: 1px solid var(--border); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { 0% { transform: scale(0.95); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .custom-modal h2 { color: var(--text-main); font-size: 24px; margin-top: 0; font-weight: 800; }
+        .modal-actions { display: flex; gap: 12px; margin-top: 25px; }
+        .btn-modal { flex: 1; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; font-family: inherit; border: none; }
+        .btn-cancel { background: #f1f5f9; color: #475569; }
+        .btn-cancel:hover { background: #e2e8f0; color: #1e293b;}
+        .btn-confirm-start { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(167, 139, 250, 0.25); }
+        .btn-confirm-start:hover { background: var(--primary-dark); transform: translateY(-1px); }
+        #timeInput { width: 90px; padding: 10px; font-size: 16px; text-align: center; border: 2px solid var(--border); border-radius: 8px; outline: none; font-weight: 700; color: var(--primary-dark); font-family: inherit;}
+        #timeInput:focus { border-color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<script>
+    // Script bảo vệ mã nguồn
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.onkeydown = function(e) {
+        if(e.keyCode == 123) return false; 
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+        if(e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+        if(e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+    }
+    setInterval(function() {
+        var before = new Date().getTime();
+        debugger;
+        var after = new Date().getTime();
+        if (after - before > 100) {
+            document.body.innerHTML = "<h1 style='text-align:center; margin-top: 20%; color: #a78bfa;'>SnapEnglish - Security Alert!</h1><p style='text-align:center;'>Vui lòng không can thiệp vào mã nguồn của hệ thống.</p>";
+        }
+    }, 1000);
+</script>
+
+<div id="setupOverlay" class="custom-overlay" style="display: flex;">
+    <div class="custom-modal">
+        <h2>Sẵn sàng chưa? 🚀</h2>
+        <p style="font-size: 16px; color: #64748b; margin-bottom: 25px; line-height: 1.5;">Cài đặt thời gian làm bài Part 5<br>(Gợi ý: 15-20 phút)</p>
+        <div style="margin-bottom: 30px; display: flex; justify-content: center; align-items: center; gap: 10px;">
+            <input type="number" id="timeInput" value="20" min="1"> 
+            <span style="font-size: 16px; font-weight: 700; color: #475569;">phút</span>
+        </div>
+        <button class="btn-modal btn-confirm-start" style="width: 100%;" onclick="startTest()">BẮT ĐẦU NGAY</button>
+    </div>
+</div>
+
+<header>
+    <div class="brand"><span>SnapEnglish</span> Part 5 - Test 2 (2019)</div>
+    <div class="controls">
+        <button class="btn-nav-toggle" onclick="toggleNavDropdown()">📑 Danh sách câu</button>
+        <button class="btn-submit" id="mainSubmitBtn" onclick="askSubmit()">NỘP BÀI</button>
+    </div>
+    <div class="nav-dropdown" id="navDropdown"></div>
+</header>
+
+<div class="main-area" id="mainArea"></div>
+
+<div id="confirmOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Xác nhận nộp bài</h2>
+        <p style="font-size: 16px; color: #475569; margin-top: 15px;">Bạn có chắc chắn muốn nộp bài để xem giải thích chi tiết không?</p>
+        <div class="modal-actions">
+            <button class="btn-modal btn-cancel" onclick="closeConfirmModal()">Quay lại</button>
+            <button class="btn-modal btn-confirm-start" onclick="submitTest()">Nộp bài</button>
+        </div>
+    </div>
+</div>
+
+<div id="resultOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>🎉 Tuyệt vời!</h2>
+        <div id="resultMessage" style="margin: 25px 0; line-height: 1.6;"></div>
+        <button class="btn-modal btn-confirm-start" style="width: 100%;" onclick="closeResultModal()">Xem Giải Thích Chi Tiết</button>
+    </div>
+</div>
+
+<script>
+    // DỮ LIỆU ĐÃ ĐƯỢC CHUẨN HÓA VỚI ĐẦY ĐỦ NGỮ PHÁP & GIẢI THÍCH MỞ RỘNG (2019 Test 2)
+    const questionsData = [
+        {
+            id: 101, q: "Ms. Carpenter will be attending the conference with ____ marketing team.",
+            options: ["she", "her", "hers", "herself"], a: "her",
+            exp: {
+                correct: "Chọn đáp án <b>B. her</b>. Từ `her` (cô ấy) đi cùng với cụm danh từ phía sau tạo thành tính từ sở hữu.",
+                wrong: "<ul><li><b>(A) she</b>: cô ấy là chủ ngữ, phải đứng trước động từ.</li><li><b>(C) hers</b>: đại từ sở hữu vừa có thể đứng ở vị trí chủ ngữ, vừa có thể là tân ngữ trong câu.</li><li><b>(D) herself</b>: chính cô ấy, đứng 1 mình hoặc đi với giới từ by</li></ul>",
+                grammar: "Kiến thức về Đại từ: <b>she</b> ➡ đại từ nhân xưng chủ ngữ. <b>her</b> ➡ tính từ sở hữu. <b>hers</b> ➡ đại từ sở hữu. <b>herself</b> ➡ đại từ phản thân.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Cô Carpenter sẽ tham dự hội nghị với đội ngũ tiếp thị của cô ấy."
+            }
+        },
+        {
+            id: 102, q: "____ the last ten years, Bay City's population has grown by about 27 percent.",
+            options: ["As", "Against", "During", "Below"], a: "During",
+            exp: {
+                correct: "Chọn đáp án <b>C. During</b>. `During` mang nghĩa 'suốt/trong lúc' chỉ quãng thời gian là đáp án đúng.",
+                wrong: "<ul><li><b>(A) As</b>: (bởi vì)</li><li><b>(B) Against</b>: (chống lại, ngược lại)</li><li><b>(D) Below</b>: (bên dưới) không hợp nghĩa.</li></ul>",
+                grammar: "Sử dụng giới từ chỉ thời gian thích hợp với khoảng thời gian đã cho.",
+                vocab: "<b>As:</b> như là. <b>Against:</b> chống lại, ngược lại. <b>During:</b> trong lúc. <b>Below:</b> ở dưới, bên dưới.",
+                trans: "Suốt mười năm qua, dân số ở Bay City đã tăng khoảng 27 phần trăm."
+            }
+        },
+        {
+            id: 103, q: "Please congratulate Alan Schmit, ____ of the Leadership Award in Nursing at Knoll Hospital.",
+            options: ["won", "wins", "winning", "winner"], a: "winner",
+            exp: {
+                correct: "Chọn đáp án <b>D. winner</b>. Đây là đáp án đúng vì `winner` là danh từ giải thích và bổ nghĩa cho tên riêng phía trước.",
+                wrong: "<ul><li><b>(A) won</b>: động từ ở thì quá khứ đơn.</li><li><b>(B) wins</b>: động từ ở thì hiện tại đơn số ít.</li><li><b>(C) winning</b>: động từ thêm “ing”.</li></ul><br>Lưu ý: `win` sẽ đi kèm với N/tân ngữ chứ không có giới từ.",
+                grammar: "Sử dụng danh từ (Noun) để bổ nghĩa làm ngữ đồng vị cho danh từ riêng đứng trước. <b>winner</b> ➡ danh từ.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Xin chúc mừng Alan Schmit, người chiến thắng của Giải thưởng Lãnh đạo Điều dưỡng tại Bệnh viện Knoll."
+            }
+        },
+        {
+            id: 104, q: "Ireland's largest software producer will ____ be opening a large facility in Cork.",
+            options: ["soon", "such", "ever", "like"], a: "soon",
+            exp: {
+                correct: "Chọn đáp án <b>A. soon</b>. Đây là trạng từ bổ nghĩa cho động từ mang ý nghĩa 'sớm', là đáp án phù hợp nhất.",
+                wrong: "<ul><li><b>(B) such</b>: cấu trúc là such a/an+adj+N.</li><li><b>(C) ever</b>: thường gặp trong thì hiện tại hoàn thành – nghĩa là bao giờ.</li><li><b>(D) like</b>: đứng sai vị trí.</li></ul>",
+                grammar: "Vị trí của trạng từ chỉ thời gian trong câu. <b>soon</b> ➡ sớm. <b>such</b> ➡ như là. <b>ever</b> ➡ từng. <b>like</b> ➡ giống như.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Nhà sản xuất phần mềm lớn nhất của Ireland sẽ sớm mở một cơ sở lớn ở Cork."
+            }
+        },
+        {
+            id: 105, q: "Ashburn Bank's online service has been in high demand ____",
+            options: ["lateness", "later", "lately", "latest"], a: "lately",
+            exp: {
+                correct: "Chọn đáp án <b>C. lately</b>. Câu `lately` (gần đây) phù hợp, hơn nữa câu đã đủ thành phần cơ bản (S+V), chỉ thiếu mỗi trạng từ đặt cuối câu.",
+                wrong: "<ul><li><b>(A) lateness</b>: (N) (sự trễ).</li><li><b>(B) later</b>: (sau).</li><li><b>(D) latest</b>: (trễ nhất).</li></ul>",
+                grammar: "Từ loại cần điền: Trạng từ bổ nghĩa cho cả câu đã đủ thành phần. <b>lateness</b> ➡ danh từ. <b>later</b> ➡ tính từ so sánh hơn. <b>lately</b> ➡ trạng từ. <b>latest</b> ➡ tính từ so sánh nhất.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Dịch vụ trực tuyến của Ashburn Bank đang đáp ứng cầu cao gần đây."
+            }
+        },
+        {
+            id: 106, q: "The ____ of videos to electronic press releases can help companies showcase their products.",
+            options: ["content", "addition", "pictures", "promotion"], a: "addition",
+            exp: {
+                correct: "Chọn đáp án <b>B. addition</b>. Đáp án phù hợp nhất là câu B-addition (việc bổ sung): cấu trúc `addition of X to Y`.",
+                wrong: "<ul><li><b>(A) content</b>: không đi với giới từ “to” ở sau -> câu vô nghĩa vì nội dung không phải là thứ được thêm hay chuyển đến một đối tượng khác.</li><li><b>(C) pictures</b>: (hình ảnh) không hợp nghĩa cấu trúc.</li><li><b>(D) promotion</b>: sự xúc tiến, đẩy mạnh -> promote thường đi thẳng với tân ngữ hoặc các giới từ khác như through/for vì mục đích.</li></ul>",
+                grammar: "Cụm danh từ cố định đi với giới từ: `addition of X to Y`.",
+                vocab: "<b>content:</b> sức chứa, dung lượng. <b>addition:</b> bổ sung, sự cộng lại. <b>pictures:</b> những bức tranh. <b>promotion:</b> sự xúc tiến, đẩy mạnh.",
+                trans: "Việc bổ sung các video phát hành báo chí điện tử có thể giúp các công ty giới thiệu sản phẩm của họ."
+            }
+        },
+        {
+            id: 107, q: "Ms. Hyun is reviewing the training manual to see if updates ____.",
+            options: ["have need", "needing", "are needed", "to be needing"], a: "are needed",
+            exp: {
+                correct: "Chọn đáp án <b>C. are needed</b>. Vì `updates` (việc cập nhật) không tự thực hiện được nên ta phải dùng bị động (are needed) trong trường hợp này. Câu C là đáp án đúng.",
+                wrong: "<ul><li><b>(A) have need</b>: sai công thức. Công thức đúng là HAVE NEEDED.</li><li><b>(B) needing</b>: động từ thêm “ing” không thể làm động từ chính.</li><li><b>(D) to be needing</b>: động từ thêm “to” sai ngữ pháp mệnh đề chính.</li></ul>",
+                grammar: "Sử dụng Thể Bị Động ở thì hiện tại đơn: <b>are needed</b> ➡ động từ dạng bị động - thì hiện tại đơn.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Cô Hyun đang xem lại hướng dẫn đào tạo để xem rằng việc cập nhật có cần thiết hay không."
+            }
+        },
+        {
+            id: 108, q: "When leaving the auditorium, please exit ____ the doors on the lower level.",
+            options: ["except", "inside", "without", "through"], a: "through",
+            exp: {
+                correct: "Chọn đáp án <b>D. through</b>. Động từ `exist` (thoát ra, đi ra) qua một vật thể có không gian giới hạn (bên trong ra bên ngoài). `doors` là vật thể tạo ra lối đi (passage/opening). Đáp án đúng và hợp lý về nghĩa là câu D.",
+                wrong: "<ul><li><b>(A) except</b>: (loại trừ) không hợp nghĩa.</li><li><b>(B) inside</b>: (bên trong), -> thoát ra bên trong cánh cửa >< mâu thuẫn với nghĩa.</li><li><b>(C) without</b>: (không có) cũng bị loại.</li></ul>",
+                grammar: "Sử dụng Giới từ chỉ phương hướng, chuyển động phù hợp.",
+                vocab: "<b>except:</b> ngoại trừ. <b>inside:</b> bên trong. <b>without:</b> không có. <b>through:</b> xuyên qua, suốt.",
+                trans: "Khi rời khỏi khán phòng, xin vui lòng thoát thông qua các cửa ở tầng thấp hơn."
+            }
+        },
+        {
+            id: 109, q: "The judges for this year’s screenplay competition include ____- from Hanoivi Studios.",
+            options: ["represents", "representatives", "represented", "represent"], a: "representatives",
+            exp: {
+                correct: "Chọn đáp án <b>B. representatives</b>. Vị trí cần điền là một danh từ để phù hợp với danh từ ‘judges’ trước đó.",
+                wrong: "<ul><li>Câu A, C, D đều bị loại vì sau `include` (động từ) không thể đứng cạnh một động từ khác.</li></ul>",
+                grammar: "Từ loại cần điền là Danh từ. <b>represents</b> ➡ động từ số ít. <b>representatives</b> ➡danh từ chỉ người số nhiều (NGƯỜI ĐẠI DIỆN). <b>represented</b> ➡ động từ thêm “ed”. <b>represent</b> ➡ động từ nguyên mẫu.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Ban giám khảo của cuộc thi kịch bản năm nay bao gồm những người đại diện đến từ Hanoivi Studios."
+            }
+        },
+        {
+            id: 110, q: "I have attached my resume detailing my ____ experience in the hotel industry.",
+            options: ["extensive", "punctual", "prospective", "accepted"], a: "extensive",
+            exp: {
+                correct: "Chọn đáp án <b>A. extensive</b>. Theo nghĩa `extensive` (sâu rộng) là đáp án đúng để bổ nghĩa cho kinh nghiệm.",
+                wrong: "<ul><li><b>(B) punctual</b>: (đúng giờ).</li><li><b>(C) prospective</b>: (có triển vọng).</li><li><b>(D) accepted</b>: (được chấp nhận).</li></ul>",
+                grammar: "Từ vựng / Từ loại: Lựa chọn tính từ phù hợp ngữ cảnh.",
+                vocab: "<b>extensive:</b> rộng rãi, bao quát. <b>punctual:</b> đúng giờ, điểm. <b>prospective:</b> sắp tới. <b>accepted:</b> đã được thừa nhận, công nhận.",
+                trans: "Tôi đã đính kèm sơ yếu lý lịch của tôi cái mà rất chi tiết về kinh nghiệm sâu rộng của tôi trong ngành khách sạn."
+            }
+        },
+        {
+            id: 111, q: "Remember to check the spelling of Mr. Kamashi’s name when ____ the document.",
+            options: ["revising", "revises", "revised", "revise"], a: "revising",
+            exp: {
+                correct: "Chọn đáp án <b>A. revising</b>. Sau liên từ `when` ta cần một mệnh đề S+V hoặc V-ing (rút gọn mệnh đề đồng chủ ngữ). Như vậy câu A là đáp án đúng (sửa đổi, xem lại).",
+                wrong: "<ul><li><b>(B) revises</b>: động từ số ít (s).</li><li><b>(C) revised</b>: động từ thêm “ed” (mang nghĩa bị động, không hợp lý).</li><li><b>(D) revise</b>: động từ nguyên mẫu.</li></ul>",
+                grammar: "Rút gọn mệnh đề trạng ngữ: <b>when + V-ing</b> chủ động. <b>revising</b> ➡ động từ thêm “ing”.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Nhớ kiểm tra chính tả tên của ông Kamashi Hiện khi xem lại tài liệu."
+            }
+        },
+        {
+            id: 112, q: "Residents visited City Hall to ask ____ developers will preserve the historic properties.",
+            options: ["although", "since", "whether", "both"], a: "whether",
+            exp: {
+                correct: "Chọn đáp án <b>C. whether</b>. Cấu trúc `To ask whether S+V` (để hỏi có hay không) là đáp án đúng.",
+                wrong: "<ul><li><b>(A) although</b>: (mặc dù ALTHOUGH + S + V) sai nghĩa.</li><li><b>(B) since</b>: (bởi vì SINCE + S +V) sai nghĩa.</li><li><b>(D) both</b>: đi cùng với and.</li></ul>",
+                grammar: "Mệnh đề danh ngữ bắt đầu bằng liên từ <b>whether</b> ➡ liệu rằng. <b>both</b> ➡ cả hai (BOTH … AND ...).",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Cư dân đã đến Tòa thị chính để hỏi các nhà phát triển có bảo tồn các tài sản lịch sử hay không."
+            }
+        },
+        {
+            id: 113, q: "The Ford Group’s proposed advertising campaign is by far the most ____ we have seen so far.",
+            options: ["innovate", "innovative", "innovations", "innovatively"], a: "innovative",
+            exp: {
+                correct: "Chọn đáp án <b>B. innovative</b>. Tính từ `innovative` (đổi mới) là đáp án đúng vì đứng sau cấu trúc so sánh nhất `the most + adj`.",
+                wrong: "<ul><li>Câu <b>A</b> (động từ), câu <b>C</b> (danh từ) và câu <b>D</b> (trạng từ) thì hoàn toàn sai.</li></ul>",
+                grammar: "<b>innovate</b> ➡ động từ nguyên mẫu/động từ số nhiều. <b>innovative</b> ➡ tính từ. <b>innovations</b> ➡ danh từ số nhiều (s). <b>innovatively</b> ➡ trạng từ.<br><br><b>Mở rộng:</b><br>- the most + N: chỉ số lượng lớn hoặc số lần lớn nhất và thường đứng sau một động từ hành động, không phải động từ nối (linking verb).<br>- the most + N danh từ không đếm được + V ít.<br>- the most + N đếm được số nhiều + V nhiều.<br>- the most + N + mệnh đề quan hệ + V.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Chiến dịch quảng cáo được đề xuất của Ford Group cho đến nay thì đổi mới nhất mà chúng tôi từng thấy."
+            }
+        },
+        {
+            id: 114, q: "Solei Landscaping announced that the design for the Cherrry Hill building complex is ____ complete.",
+            options: ["almost", "nearby", "anytime", "yet"], a: "almost",
+            exp: {
+                correct: "Chọn đáp án <b>A. almost</b>. Dựa vào ngữ nghĩa của câu để chọn trạng từ phù hợp. Như vậy đáp án đúng là A.",
+                wrong: "<ul><li><b>(B) nearby</b>: (gần đây-dùng chỉ nơi chốn).</li><li><b>(C) anytime</b>: (bất kỳ thời điểm nào).</li><li><b>(D) yet</b>: (chưa) dùng trong câu phủ định.</li></ul>",
+                grammar: "Từ vựng / Trạng từ. <b>almost</b> ➡ hầu như. <b>nearby</b> ➡ gần (NEARBY + DANH TỪ). <b>anytime</b> ➡ bất cứ lúc nào. <b>yet</b> ➡ chưa (YET TO DO SOMETHING).",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Công ty Solei Landilaping thông báo rằng việc thiết kế cho khu phức hợp Cherry Hill thì gần như hoàn tất."
+            }
+        },
+        {
+            id: 115, q: "Daniel Nishida, the chief supply officer, asked that ------- be given full responsibility for approving all invoices.",
+            options: ["he", "him", "his", "himself"], a: "he",
+            exp: {
+                correct: "Chọn đáp án <b>A. he</b>. Câu A là đáp án đúng vì ta cần một chủ ngữ đứng trước động từ `be given`.",
+                wrong: "<ul><li><b>(B) him</b>: loại vì đứng sau động từ.</li><li><b>(C) his</b>: loại vì đứng trước danh từ.</li><li><b>(D) himself</b>: loại vì đi một mình hoặc đi cùng với by.</li></ul>",
+                grammar: "Cấu trúc giả định thức bày tỏ sự yêu cầu, đề nghị, đòi hỏi, cần thiết: <b>S1 + V (yêu cầu/đề nghị) + that + S2 + (should) + Vbare</b>. <br><b>he</b> ➡ đại từ nhân xưng chủ ngữ. <b>him</b> ➡ đại từ nhân xưng tân ngữ. <b>his</b> ➡ tính từ sở hữu. <b>himself</b> ➡ đại từ phản thân.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Daniel Nishida, giám đốc chuỗi cung ứng, yêu cầu rằng anh ấy phải được giao toàn bộ trách nhiệm phê duyệt tất cả các hóa đơn."
+            }
+        },
+        {
+            id: 116, q: "In preparation for Mr. Kumar’s retirement at the end of March, the Carolex Corporation will need to ____ a new facilities director.",
+            options: ["resume", "compete", "recruit", "conduct"], a: "recruit",
+            exp: {
+                correct: "Chọn đáp án <b>C. recruit</b>. Từ `recruit` (tuyển dụng ai đó) là đáp án chính xác nhất về mặt ngữ nghĩa.",
+                wrong: "<ul><li><b>(A) resume</b>: (hồi phục, bắt đầu lại).</li><li><b>(B) compete</b>: (tranh đấu).</li><li><b>(D) conduct</b>: (tiến hành) là các đáp án sai vì không hợp nghĩa.</li></ul>",
+                grammar: "Từ vựng / Động từ.",
+                vocab: "<b>resume:</b> giành lại. <b>compete:</b> cạnh tranh. <b>recruit:</b> tuyển dụng. <b>conduct:</b> hướng dẫn.",
+                trans: "Để chuẩn bị cho việc nghỉ hưu của ông Kumar vào cuối tháng 3, Tập đoàn Carolex sẽ cần tuyển dụng một giám đốc cơ sở mới."
+            }
+        },
+        {
+            id: 117, q: "The team’s contributions to the Ription Group’s marketing plan were very ____ acknowledged.",
+            options: ["favor", "favorably", "favorable", "favored"], a: "favorably",
+            exp: {
+                correct: "Chọn đáp án <b>B. favorably</b>. Vị trí trống cần điền một trạng từ. Vậy câu B-favorably (be + adv+ V3/ed) là đáp án đúng.",
+                wrong: "<ul><li>Các đáp án A (Danh từ), C (Tính từ), D (Tính từ thêm ed) đều vi phạm cấu trúc ngữ pháp cần điền trạng từ.</li></ul>",
+                grammar: "Vị trí của trạng từ trong câu bị động: `be + adv + V3/ed`. <b>favor</b> ➡ danh từ. <b>favorably</b> ➡ trạng từ. <b>favorable</b> ➡ tính từ. <b>favored</b> ➡ tính từ thêm ‘ed’.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Những đóng góp của nhóm về kế hoạch tiếp thị của tập đoàn Ription đã được công nhận một cách ưu thích"
+            }
+        },
+        {
+            id: 118, q: "____ receiving the engineering award, Ms. Kwon made a point of thanking longtime mentors.",
+            options: ["Onto", "Unlike", "About", "Upon"], a: "Upon",
+            exp: {
+                correct: "Chọn đáp án <b>D. Upon</b>. `upon` (vào lúc) là đáp án đúng.",
+                wrong: "<ul><li><b>(A) Onto</b>: (nghĩa bên trên).</li><li><b>(B) Unlike</b>: (khác với).</li><li><b>(C) About</b>: (về) mang nghĩa không thuyết phục.</li></ul>",
+                grammar: "Sử dụng giới từ đúng ngữ cảnh. <b>Onto</b> ➡ phía trên, lên trên. <b>Unlike</b> ➡ khác, không giống. <b>About</b> ➡ vào khoảng. <b>Upon</b> ➡ vào lúc.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Vào lúc nhận giải thưởng kỹ sư, cô Kwon đã gửi lời cảm ơn đến những cố vấn lâu năm."
+            }
+        },
+        {
+            id: 119, q: "Please read the list of ____ qualifications to ensure that you have the necessary education and experience for the position.",
+            options: ["slight", "equal", "obliged", "essential"], a: "essential",
+            exp: {
+                correct: "Chọn đáp án <b>D. essential</b>. Câu D-essential- (thiết yếu, cần thiết) là đáp án đúng.",
+                wrong: "<ul><li>Xét về nghĩa, câu <b>(A) slight</b> (nhẹ), câu <b>(B) equal</b> (bằng nhau), câu <b>(C) obliged</b> (bắt buộc) không hợp với ngữ cảnh của câu.</li></ul>",
+                grammar: "Từ vựng / Tính từ.",
+                vocab: "<b>slight:</b> một chút. <b>equal:</b> ngang, ngang bằng. <b>obliged:</b> biết ơn. <b>essential:</b> cần thiết.",
+                trans: "Xin vui lòng đọc danh sách các bằng cấp cần thiết để đảm bảo rằng bạn sự giáo dục và kinh nghiệm cần thiết cho vị trí này"
+            }
+        },
+        {
+            id: 120, q: "Choosing the best software tool to eliminate computer viruses is rarely simple, ____ it is important to seek expert advice.",
+            options: ["why", "then", "nor", "so"], a: "so",
+            exp: {
+                correct: "Chọn đáp án <b>D. so</b>. Từ `so` (vì thế) là đáp án đúng thể hiện kết quả.",
+                wrong: "<ul><li>Trong khi câu <b>(A) why</b> (tại sao), câu <b>(B) then</b> (sau đó) và câu <b>(C) nor</b> (cũng không) sai về nghĩa.</li></ul>",
+                grammar: "Sử dụng liên từ thể hiện kết quả. <b>why</b> ➡ tại sao, vì sao (WHY + S + V). <b>then</b> ➡ sau đó (THEN + S + V). <b>nor</b> ➡ cũng không (NEITHER ...NOR). <b>so</b> ➡ vì vậy (SO + CLAUSE).",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Chọn công cụ phần mềm tốt nhất để loại bỏ virus máy tính hiếm khi đơn giản, vì thế thật quan trọng để tìm kiếm lời khuyên từ các chuyên gia."
+            }
+        },
+        {
+            id: 121, q: "Ms.Delgado would like to meet with all loan officers ____ reviewing any more loan applications.",
+            options: ["now that", "as though", "before", "often"], a: "before",
+            exp: {
+                correct: "Chọn đáp án <b>C. before</b>. Cấu trúc `before (S+V/V-ing)` là đáp án chính xác.",
+                wrong: "<ul><li>Sau câu <b>(A) now that</b> (= because) và <b>(B) as though</b> là mệnh đề S+V.</li><li>Câu <b>(D) often</b> (thường) sai vì không có chủ ngữ phía trước.</li></ul>",
+                grammar: "<b>now that</b> ➡ vì (NOW THAT + SUBJECT + VERB). <b>as though</b> ➡ như thể là (AS THOUGH + SUBJECT + VERB). <b>before</b> ➡ trước khi. <b>often</b> ➡ thường xuyên.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Bà Delgado muốn gặp tất cả các nhân viên cho vay trước khi xem xét thêm bất kỳ đơn xin vay nào."
+            }
+        },
+        {
+            id: 122, q: "Cedar Branch Hill has a ____ as a business-friendly environment that provides efficient licensing and other legal processes.",
+            options: ["prediction", "courtesy", "reputation", "statement"], a: "reputation",
+            exp: {
+                correct: "Chọn đáp án <b>C. reputation</b>. Từ `reputation` (danh tiếng) là đáp án đúng và hợp lý.",
+                wrong: "<ul><li>Câu <b>(A) prediction</b> (dự đoán), câu <b>(B) courtesy</b> (lịch sự), câu <b>(D) statement</b> (lời tuyên bố) không hợp nghĩa.</li></ul>",
+                grammar: "Từ vựng / Danh từ.",
+                vocab: "<b>prediction:</b> sự dự đoán. <b>courtesy:</b> sự lịch sự. <b>reputation:</b> danh tiếng. <b>statement:</b> sự trình bày.",
+                trans: "Đồi Cedar Branch có danh tiếng như một doanh nghiệp thân thiện với môi trường, nó đề ra giấy phép hiệu quả và các quy trình pháp lý khác."
+            }
+        },
+        {
+            id: 123, q: "The actors held an additional rehearsal ____ perfect their performance in the final scene.",
+            options: ["considerably", "in order to", "nevertheless", "as a result of"], a: "in order to",
+            exp: {
+                correct: "Chọn đáp án <b>B. in order to</b>. Cấu trúc `in order to + V` (perfect) là đáp án đúng.",
+                wrong: "<ul><li>Câu <b>(A) considerably</b> (đáng kể), câu <b>(C) nevertheless</b> đi với S+V (tuy nhiên), câu <b>(D) as a result of</b> + V-ing/ N (kết quả là).</li></ul>",
+                grammar: "Cấu trúc chỉ mục đích: <b>in order to</b> ➡ để mà (IN ORDER TO + V). <b>considerably</b> ➡ đáng chú ý. <b>nevertheless</b> ➡ tuy nhiên. <b>as a result of</b> ➡ vì vậy.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Các diễn viên đã tổ chức một buổi tập diễn để cho thành thạo màn trình diễn trong cảnh cuối cùng"
+            }
+        },
+        {
+            id: 124, q: "RZT Technology will double the size of its Toronto laboratory to ____ the organization's rapid growth.",
+            options: ["assign", "investigate", "experience", "accommodate"], a: "accommodate",
+            exp: {
+                correct: "Chọn đáp án <b>D. accommodate</b>. Câu D-accommodate (thích hợp với) là đáp án đúng nhất nếu xét về nghĩa.",
+                wrong: "<ul><li>Câu <b>(A) assign</b> (giao việc, phân công), câu <b>(B) investigate</b> (đầu tư bỏ tiền/thời gian vào cái gì đó để sinh lời hoặc đạt mục tiêu), -> invest in rapid growth, câu <b>(C) experience</b> (trải nghiệm).</li></ul>",
+                grammar: "Từ vựng / Động từ.",
+                vocab: "<b>assign:</b> phân công. <b>investigate:</b> điều tra: để tìm ra sự thật. <b>experience:</b> trải nghiệm. <b>accommodate:</b> đáp ứng.",
+                trans: "Công nghệ RZT sẽ tăng đôi kích cỡ của phòng thí nghiệm Toronto để thích hợp với sự phát triển nhanh chóng của công ty"
+            }
+        },
+        {
+            id: 125, q: "Even though Smithton Electronics' second quarter was not ____, the company plans to invest large sums on research.",
+            options: ["profitable", "profiting", "profitability", "profitably"], a: "profitable",
+            exp: {
+                correct: "Chọn đáp án <b>A. profitable</b>. Chỗ trống cần điền sau `to be` + tính từ, câu A-profitable (adj)-sanh lời, có lãi là đáp án đúng.",
+                wrong: "<ul><li>Trong khi đó câu <b>(B) profiting</b> (V-ing), không dùng thì tiếp diễn mà chỉ cần thì quá khứ để diễn tả hành động đã xảy ra rồi, câu <b>(C) profitability</b> (N), câu <b>(D) profitably</b> (adv).</li></ul>",
+                grammar: "<b>profitable</b> ➡ tính từ. <b>profiting</b> ➡ động từ thêm “ing”. <b>profitability</b> ➡ danh từ. <b>profitably</b> ➡ trạng từ.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Mặc dù quý thứ hai của Công ty Điện tử Smithton không có sanh lời, công ty lên kế hoạch đầu tư một khoản tiền lớn vào nghiên cứu."
+            }
+        },
+        {
+            id: 126, q: "The Williamsport Hotel is an ideal venue for the conference because of its ____ to the airport.",
+            options: ["achievement", "proximity", "competence", "exception"], a: "proximity",
+            exp: {
+                correct: "Chọn đáp án <b>B. proximity</b>. Đáp án đúng là câu B-proximity (sự gần).",
+                wrong: "<ul><li>Xét về nghĩa, câu <b>(A) achievement</b> (thành tích), câu <b>(C) competence</b> (năng lực, khả năng), câu <b>(D) exception</b> (ngoại lệ) không phù hợp với ngữ cảnh câu.</li></ul>",
+                grammar: "Từ vựng / Danh từ.",
+                vocab: "<b>achievement:</b> thành tựu. <b>proximity:</b> gần. <b>competence:</b> khả năng. <b>exception:</b> sự ngoại lệ.",
+                trans: "Khách sạn Williamsport là một địa điểm lý tưởng cho hội nghị vì gần với sân bay."
+            }
+        },
+        {
+            id: 127, q: "The second training session is for employees ____ responsibilities include processing payroll forms.",
+            options: ["whose", "which", "what", "who"], a: "whose",
+            exp: {
+                correct: "Chọn đáp án <b>A. whose</b>. Cấu trúc `whose + N` (danh từ) đóng vai trò từ hạn định, mang nghĩa là của ai, của cái gì.",
+                wrong: "<ul><li>Câu <b>(B)</b> và <b>(D)</b>-(mệnh đề quan hệ who, which + V, thay thế cho chủ ngữ là người hoặc vật).</li><li>Câu <b>(C) what</b> - không là mệnh đề quan hệ.</li></ul>",
+                grammar: "Đại từ quan hệ chỉ sự sở hữu. <b>whose</b> ➡ của ai/của cái gì. <b>which</b> ➡ người nào/cái nào. <b>what</b> ➡ cái gì. <b>who</b> ➡ người nào.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Buổi đào tạo thứ hai dành cho nhân viên, những người mà trách nhiệm của họ là xử lý các bảng lươn"
+            }
+        },
+        {
+            id: 128, q: "____ poorly the high-speed printer may be functioning, it is still making copies that are adequate for our purposes.",
+            options: ["Rather", "Seldom", "However", "Thoroughly"], a: "However",
+            exp: {
+                correct: "Chọn đáp án <b>C. However</b>. Cấu trúc `however + adj + S+V+O` (dù như thế nào) là phù hợp.",
+                wrong: "<ul><li>Câu <b>(A) rather</b> (hơn là), câu <b>(B) seldom</b> (hiếm khi), <b>(D) thoroughly</b> (hoàn toàn) sai cấu trúc và ngữ nghĩa.</li></ul>",
+                grammar: "<b>Rather</b> ➡ khá (RATHER … THAN: THÀ … HƠN/THÍCH … HƠN). <b>Seldom</b> ➡ hiếm khi. <b>However</b> ➡ tuy nhiên (HOWEVER + ADJECTIVE/ADVERB + S + V). <b>Thoroughly</b> ➡ hoàn toàn.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Dù máy in tốc độ cao có thể hoạt động tệ, nó vẫn tạo ra các bản sao phù hợp với mục đích chúng ta"
+            }
+        },
+        {
+            id: 129, q: "The long-awaited Weka 2XG digital camera will finally be ____ at a product exhibition on August 16.",
+            options: ["reduced", "unveiled", "consulted", "resolved"], a: "unveiled",
+            exp: {
+                correct: "Chọn đáp án <b>B. unveiled</b>. Theo nghĩa, câu B-unveiled là đáp án đúng nhất mang nghĩa được ra mắt, tiết lộ. Tất cả đáp án thuộc dạng bị động ở tương lai.",
+                wrong: "<ul><li>Trong khi câu <b>(A) reduced</b> (được giảm), câu <b>(C) consulted</b> (được tham khảo ý kiến) và câu <b>(D) resolved</b> (được giải quyết) không phù hợp nghĩa trong ngữ cảnh này.</li></ul>",
+                grammar: "Từ vựng / Động từ Thể Bị Động.",
+                vocab: "<b>reduced:</b> giảm. <b>unveiled:</b> ra mắt. <b>consulted:</b> tư vấn. <b>resolved:</b> giải quyết.",
+                trans: "Máy ảnh kỹ thuật số Weka 2XG chờ đợi từ lâu sẽ được ra mắt tại triển lãm sản phẩm vào ngày 16 tháng 8."
+            }
+        },
+        {
+            id: 130, q: "Northeast Community Finance ____ an online system in order to shorten service lines at branch locations.",
+            options: ["has implemented", "to be implementing", "to have been implementing", "is implemented"], a: "has implemented",
+            exp: {
+                correct: "Chọn đáp án <b>A. has implemented</b>. Đáp án đúng là câu A-has implemented (have/has + V3/ed: hiện tại hoàn thành).",
+                wrong: "<ul><li>Câu <b>(B)</b> và <b>(C)</b> loại vì sau chủ ngữ “Northeast Community Finance” phải là động từ chia thì.</li><li>Câu <b>(D)</b> mang nghĩa bị động (be +V3/ed) trong khi câu hoàn toàn mang nghĩa chủ động không phù hợp.</li></ul>",
+                grammar: "<b>has implemented</b> ➡ động từ ở thì hiện tại hoàn thành. <b>to be implementing</b> ➡ động từ thêm “to”. <b>to have been implementing</b> ➡ động từ thêm “to” ở dạng hoàn thành tiếp diễn. <b>is implemented</b> ➡ động từ dạng bị động ở thì hiện tại đơn.",
+                vocab: "Không có từ vựng đặc biệt cho câu này.",
+                trans: "Cộng đồng tài chính Đông Bắc vừa thực hiện hệ thống trực tuyến để rút ngắn các tuyến dịch vụ tại các địa điểm chi nhánh."
+            }
+        }
+    ];
+
+    let currentQIndex = 0;
+    let userAnswers = new Array(questionsData.length).fill(null);
+    let isSubmitted = false;
+    let testDuration = 0;
+    let timerInterval = null;
+
+    const mainArea = document.getElementById('mainArea');
+    const navDropdown = document.getElementById('navDropdown');
+
+    function toggleNavDropdown() {
+        navDropdown.classList.toggle('show');
+    }
+
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.controls') && !event.target.closest('.nav-dropdown')) {
+            navDropdown.classList.remove('show');
+        }
+    });
+
+    function initQuiz() {
+        questionsData.forEach((q, index) => {
+            let dot = document.createElement('div');
+            dot.className = 'nav-dot';
+            dot.id = `nav-${index}`;
+            dot.innerText = index + 1;
+            dot.onclick = () => {
+                jumpToQuestion(index);
+                navDropdown.classList.remove('show'); 
+            };
+            navDropdown.appendChild(dot);
+
+            let card = document.createElement('div');
+            card.className = 'question-card';
+            card.id = `card-${index}`;
+            
+            let optionsHtml = q.options.map((opt, optIndex) => `
+                <div class="option" id="opt-${index}-${optIndex}" onclick="selectOption(${index}, '${opt}', ${optIndex})">
+                    <div style="display:flex; align-items:center;">
+                        <strong style="margin-right:15px; color: var(--primary); font-size: 18px; width: 25px;">${String.fromCharCode(65 + optIndex)}.</strong> 
+                        <span style="flex-grow: 1;">${opt}</span>
+                    </div>
+                    <span id="badge-${index}-${optIndex}" style="font-size: 14px; font-weight: 700; padding-left: 10px;"></span>
+                </div>
+            `).join('');
+
+            card.innerHTML = `
+                <div class="q-header">
+                    <div class="q-header-left">
+                        <div class="q-num">Part 5 Practice</div>
+                        <div class="timer-pill" id="card-timer-${index}">⏱ 00:00</div>
+                    </div>
+                    <div class="q-counter-pill">
+                        Câu ${index + 1} / ${questionsData.length}
+                    </div>
+                </div>
+                <div class="q-text">
+                    ${index + 101}. ${q.q}
+                </div>
+                <div class="options">
+                    ${optionsHtml}
+                </div>
+                
+                <div class="q-nav-buttons">
+                    <button class="btn-nav next" onclick="jumpToQuestion(${index + 1})" ${index === questionsData.length - 1 ? 'disabled' : ''}>Tiếp theo</button>
+                </div>
+
+                <div class="explanation-box" id="exp-${index}">
+                    <div class="exp-main-title">💡 Giải Thích Chi Tiết</div>
+                    
+                    <div class="exp-grid">
+                        <div class="box box-correct">
+                            <div class="box-title">✅ Phân Tích Đáp Án Đúng</div>
+                            ${q.exp.correct}
+                        </div>
+                        
+                        <div class="box box-wrong">
+                            <div class="box-title">❌ Vì Sao Các Đáp Án Kia Sai?</div>
+                            ${q.exp.wrong}
+                        </div>
+                        
+                        <div class="box box-grammar">
+                            <div class="box-title">📖 Cấu Trúc / Ngữ Pháp</div>
+                            ${q.exp.grammar}
+                        </div>
+
+                        <div class="box box-vocab">
+                            <div class="box-title">📚 Từ Vựng Cốt Lõi</div>
+                            ${q.exp.vocab}
+                        </div>
+                    </div>
+                    
+                    <div class="box box-trans">
+                        <div class="box-title">🌐 Dịch Nghĩa Toàn Câu:</div>
+                        "${q.exp.trans}"
+                    </div>
+                </div>
+            `;
+            mainArea.appendChild(card);
+        });
+    }
+
+    function updateCardTimers(m, s) {
+        let timeStr = `⏱ ${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        for(let i=0; i<questionsData.length; i++) {
+            let tEl = document.getElementById(`card-timer-${i}`);
+            if(tEl) tEl.innerText = timeStr;
+        }
+    }
+
+    function startTest() {
+        document.getElementById('setupOverlay').style.display = 'none';
+        let minutes = parseInt(document.getElementById('timeInput').value) || 20;
+        testDuration = minutes * 60;
+        initQuiz();
+        jumpToQuestion(0);
+        
+        timerInterval = setInterval(() => {
+            let m = Math.floor(testDuration / 60);
+            let s = testDuration % 60;
+            updateCardTimers(m, s);
+
+            if (--testDuration < 0) { 
+                clearInterval(timerInterval); 
+                executeSubmit(); 
+            }
+        }, 1000);
+    }
+
+    function jumpToQuestion(index) {
+        if (index < 0 || index >= questionsData.length) return;
+        
+        let oldCard = document.getElementById(`card-${currentQIndex}`);
+        let oldDot = document.getElementById(`nav-${currentQIndex}`);
+        if(oldCard) oldCard.classList.remove('active');
+        if(oldDot) oldDot.classList.remove('active');
+        
+        currentQIndex = index;
+        let newCard = document.getElementById(`card-${currentQIndex}`);
+        let newDot = document.getElementById(`nav-${currentQIndex}`);
+        if(newCard) newCard.classList.add('active');
+        if(newDot) newDot.classList.add('active');
+        
+        mainArea.scrollTo(0, 0);
+    }
+
+    function selectOption(qIndex, answer, optIndex) {
+        if(isSubmitted) return; 
+        
+        userAnswers[qIndex] = answer;
+        for(let i=0; i<4; i++) {
+            document.getElementById(`opt-${qIndex}-${i}`).classList.remove('selected');
+        }
+        document.getElementById(`opt-${qIndex}-${optIndex}`).classList.add('selected');
+        document.getElementById(`nav-${qIndex}`).classList.add('done');
+        
+        if(qIndex < questionsData.length - 1) {
+            setTimeout(() => jumpToQuestion(qIndex + 1), 350);
+        }
+    }
+
+    function askSubmit() {
+        if(isSubmitted) return;
+        document.getElementById('confirmOverlay').style.display = 'flex';
+    }
+
+    function closeConfirmModal() {
+        document.getElementById('confirmOverlay').style.display = 'none';
+    }
+    
+    function closeResultModal() {
+        document.getElementById('resultOverlay').style.display = 'none';
+        jumpToQuestion(0);
+        navDropdown.classList.add('show'); 
+    }
+
+    function submitTest() {
+        document.getElementById('confirmOverlay').style.display = 'none';
+        executeSubmit();
+    }
+
+    function executeSubmit() {
+        if(isSubmitted) return;
+        isSubmitted = true;
+        clearInterval(timerInterval);
+        document.getElementById("mainSubmitBtn").style.display = 'none';
+
+        let score = 0;
+        
+        questionsData.forEach((q, index) => {
+            let uAns = userAnswers[index];
+            let isCorrect = uAns === q.a;
+            if(isCorrect) score++;
+
+            let unAnsweredWarning = "";
+            if (!uAns) {
+                unAnsweredWarning = `<div style="background: #fffbeb; color: #b45309; padding: 12px 18px; border-radius: 8px; margin-bottom: 20px; font-weight: 700; border: 1px solid #fde68a;">⚠️ Bạn đã bỏ trống câu này!</div>`;
+            }
+
+            for(let i=0; i<4; i++) {
+                let optEl = document.getElementById(`opt-${index}-${i}`);
+                let badgeEl = document.getElementById(`badge-${index}-${i}`);
+                optEl.classList.add('disabled');
+                
+                let optText = q.options[i];
+                if (optText === q.a) {
+                    optEl.classList.add('correct'); 
+                    if (optText === uAns) {
+                        badgeEl.innerHTML = "✅ Chính xác";
+                        badgeEl.style.color = "var(--correct-text)";
+                    } else {
+                        badgeEl.innerHTML = "👈 Đáp án đúng";
+                        badgeEl.style.color = "var(--correct-text)";
+                    }
+                } else if (optText === uAns) {
+                    optEl.classList.add('wrong'); 
+                    badgeEl.innerHTML = "❌ Bạn chọn sai";
+                    badgeEl.style.color = "var(--wrong-text)";
+                }
+            }
+
+            let expBox = document.getElementById(`exp-${index}`);
+            expBox.classList.add('show');
+            if(unAnsweredWarning) {
+                expBox.insertAdjacentHTML('afterbegin', unAnsweredWarning);
+            }
+
+            let dot = document.getElementById(`nav-${index}`);
+            dot.classList.remove('done', 'active');
+            if (isCorrect) dot.classList.add('correct');
+            else dot.classList.add('wrong');
+        });
+
+        document.getElementById('resultMessage').innerHTML = `
+            <strong style="font-size: 38px; color: var(--primary-dark); display: block; margin-bottom: 15px;">${score} / ${questionsData.length}</strong>
+            <p style="font-size: 16px; color: #64748b; font-weight: 500;">Bạn đã hoàn thành bài kiểm tra!<br>Hãy xem danh sách câu hỏi để đọc phần Giải Thích siêu chi tiết nhé.</p>
+        `;
+        document.getElementById('resultOverlay').style.display = 'flex';
+
+        // Đồng bộ điểm Firebase
+        if (window.luuDiemTOEICLenFirebase) {
+            window.luuDiemTOEICLenFirebase(questionsData.length, score, "ETS 2019 - Test 2", "Reading", "Part 5");
+        }
+    }
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    function showInGameToast(msg) {
+        let toast = document.createElement("div");
+        toast.innerText = msg;
+        toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:var(--primary-dark); color:white; padding:15px 20px; border-radius:8px; font-weight:600; font-family:'Be Vietnam Pro',sans-serif; z-index:99999; box-shadow:0 10px 30px rgba(124, 58, 237, 0.3); transform:translateY(100px); opacity:0; transition:all 0.4s ease;";
+        document.body.appendChild(toast);
+        
+        setTimeout(() => { toast.style.transform = "translateY(0)"; toast.style.opacity = "1"; }, 100);
+        setTimeout(() => { toast.style.transform = "translateY(100px)"; toast.style.opacity = "0"; }, 3500);
+        setTimeout(() => { toast.remove(); }, 4000);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+        } else {
+            showInGameToast("⚠️ Bạn đang chơi dưới dạng Khách, điểm sẽ không lưu lên kho!");
+        }
+    });
+
+    function calculateToeicScore(skill, correct, total) {
+        let percentage = correct / total;
+        let maxScore = (skill === 'Listening' || skill === 'Reading') ? 495 : 200;
+        let step = (skill === 'Listening' || skill === 'Reading') ? 5 : 10;
+        let estimated = Math.round((percentage * maxScore) / step) * step;
+        if (estimated > maxScore) return maxScore;
+        if (estimated < 5 && (skill === 'Listening' || skill === 'Reading')) return 5;
+        if (estimated < 0) return 0;
+        return estimated;
+    }
+
+    window.luuDiemTOEICLenFirebase = async function(tongSoCau, soCauDung, tenBai, kyNang, tenPart) {
+        if (!window.currentUserUid) return; 
+
+        let diemQuyDoi = calculateToeicScore(kyNang, soCauDung, tongSoCau);
+        let thoiGianHienTai = "--";
+        let inputPhut = parseInt(document.getElementById('timeInput').value) || 20; 
+        let tongThoiGianGoc = inputPhut * 60;
+
+        if (typeof testDuration !== 'undefined') {
+            let thoiGianDaLam = tongThoiGianGoc - testDuration;
+            if (thoiGianDaLam < 0) thoiGianDaLam = 0; 
+            
+            let m = Math.floor(thoiGianDaLam / 60);
+            let s = thoiGianDaLam % 60;
+            thoiGianHienTai = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+        let timestamp = Date.now();
+        let docId = window.currentUserUid + "_toeic_" + timestamp;
+        
+        try {
+            await setDoc(doc(db, "user_toeic_scores", docId), {
+                email: window.currentUserEmail,
+                skill: kyNang,
+                testName: tenBai,
+                partName: tenPart,
+                timeTaken: thoiGianHienTai,
+                totalQ: tongSoCau,
+                correctQ: soCauDung,
+                score: diemQuyDoi,
+                date: new Date().toLocaleDateString('vi-VN'),
+                timestamp: timestamp
+            });
+            showInGameToast("☁️ Đã đồng bộ điểm số lên Máy Chủ!");
+        } catch (error) {
+            console.error(error);
+        }
+    }
+</script>
+</body>
+</html>
