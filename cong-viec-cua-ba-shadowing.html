@@ -320,25 +320,23 @@
         synth.cancel();
     }
 
-    // --- PHẦN 2: SPEECH TO TEXT (SHADOWING) ---
+    // --- PHẦN 2: SPEECH TO TEXT (SHADOWING NÂNG CẤP) ---
     const micBtn = document.getElementById('micBtn');
     const resultBox = document.getElementById('userSpeechResult');
     const feedbackText = document.getElementById('shadowingFeedback');
 
-    // Kiểm tra trình duyệt có hỗ trợ Web Speech API không
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (SpeechRecognition) {
         const recognition = new SpeechRecognition();
-        recognition.lang = 'zh-CN'; // Nhận diện tiếng Trung
-        recognition.interimResults = false; // Chỉ lấy kết quả cuối cùng
+        recognition.lang = 'zh-CN'; 
+        recognition.interimResults = false; 
         recognition.maxAlternatives = 1;
 
         let isRecording = false;
 
         micBtn.addEventListener('click', () => {
             if (!isRecording) {
-                // Bắt đầu thu âm
                 recognition.start();
                 isRecording = true;
                 micBtn.classList.add('recording');
@@ -346,60 +344,86 @@
                 resultBox.innerHTML = '<span style="color: #ec4899;">Đang lắng nghe giọng bạn... 🐰</span>';
                 feedbackText.innerHTML = "";
             } else {
-                // Dừng thủ công
                 recognition.stop();
             }
         });
 
-        // Xử lý khi có kết quả trả về
+        // Xử lý logic so sánh KHẮC KHE hơn
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
-            resultBox.innerHTML = `<span style="color: var(--text-main); font-weight: 500;">${transcript}</span>`;
             
-            // Xử lý logic so sánh đơn giản: Kiểm tra xem người dùng có đọc được các keyword không
-            // Lấy văn bản gốc (bỏ dấu câu) để so sánh
+            // 1. Lấy toàn bộ chữ gốc trên màn hình, bỏ đi dấu câu
             const chars = document.querySelectorAll('.chinese-content .char');
             let targetText = "";
             chars.forEach(c => { 
-                // Bỏ qua các dấu câu tiếng Trung khi gộp chuỗi
-                if(!['：','“','”','？','，','。'].includes(c.innerText)) {
-                    targetText += c.innerText; 
+                let text = c.innerText.trim();
+                if(!['：','“','”','？','，','。'].includes(text) && text !== "") {
+                    targetText += text; 
                 }
             });
 
-            // Nếu câu bạn đọc chứa đoạn của câu gốc (hoặc ngược lại)
-            if (transcript.includes("老师") || transcript.includes("爸爸") || transcript.includes("什么")) {
+            // 2. Thuật toán so sánh theo thứ tự chữ
+            let tempTranscript = transcript;
+            let resultHTML = `<div style="margin-bottom: 10px; color: #64748b; font-size: 15px;">Máy nghe được: <em>"${transcript}"</em></div>`;
+            resultHTML += `<div style="font-size: 20px; letter-spacing: 2px; line-height: 1.8; padding-top: 10px; border-top: 1px dashed #fce7f3;">`;
+            
+            let correctCount = 0;
+
+            for (let char of targetText) {
+                let matchIndex = tempTranscript.indexOf(char);
+                if (matchIndex !== -1) {
+                    // Đọc đúng (Màu xanh)
+                    resultHTML += `<span style="color: #10b981; font-weight: 600;">${char}</span>`;
+                    // Cắt bỏ phần đã khớp để ép người học phải đọc đúng thứ tự
+                    tempTranscript = tempTranscript.substring(matchIndex + 1);
+                    correctCount++;
+                } else {
+                    // Đọc sai, nhảy chữ hoặc thiếu âm (Màu đỏ, gạch dưới)
+                    resultHTML += `<span style="color: #ef4444; font-weight: 600; text-decoration: underline; margin: 0 2px;">${char}</span>`;
+                }
+            }
+            resultHTML += "</div>";
+
+            // In kết quả phân tích ra màn hình
+            resultBox.innerHTML = resultHTML;
+
+            // 3. Tính điểm phần trăm và đưa ra nhận xét
+            let score = Math.round((correctCount / targetText.length) * 100);
+
+            if (score === 100) {
                 feedbackText.className = "feedback-text feedback-good";
-                feedbackText.innerHTML = "✨ Giỏi quá! Bạn phát âm rất có hồn nha! 💖";
+                feedbackText.innerHTML = `💯 Đỉnh quá! Chuẩn 100% không lệch một âm nào! 🎉`;
+            } else if (score >= 80) {
+                feedbackText.className = "feedback-text feedback-good";
+                feedbackText.innerHTML = `✨ Rất tốt! Bạn đạt ${score}%. Tập trung xíu xiu vào mấy chữ <span style="color:#ef4444">màu đỏ</span> là hoàn hảo nha! 💖`;
+            } else if (score >= 50) {
+                feedbackText.className = "feedback-text feedback-try";
+                feedbackText.innerHTML = `💪 Ổn nè, bạn đạt ${score}%. Những chữ <span style="color:#ef4444">màu đỏ</span> máy nghe chưa ra, hãy phát âm chậm và rõ hơn nhé!`;
             } else {
                 feedbackText.className = "feedback-text feedback-try";
-                feedbackText.innerHTML = "🤔 Giọng hơi nhỏ hoặc chưa chuẩn lắm, mình thử lại nha! 💪";
+                feedbackText.innerHTML = `🥺 Được ${score}% rồi. Đoạn này hơi líu lưỡi nhỉ? Bạn nghe lại người bản xứ đọc rồi mình thử lại nghen!`;
             }
         };
 
-        // Khi kết thúc thu âm (dù tự ngắt hay bấm dừng)
         recognition.onend = () => {
             isRecording = false;
             micBtn.classList.remove('recording');
             micBtn.innerHTML = "🎤 Nhấn để thu âm";
         };
 
-        // Bắt lỗi nếu không cấp quyền mic
         recognition.onerror = (event) => {
             isRecording = false;
             micBtn.classList.remove('recording');
             micBtn.innerHTML = "🎤 Nhấn để thu âm";
             if(event.error === 'not-allowed') {
-                resultBox.innerHTML = '<span style="color: red;">Bạn chưa cấp quyền Micro trình duyệt ơi! 😢</span>';
+                resultBox.innerHTML = '<span style="color: red;">Bạn chưa cấp quyền Micro nha! 😢</span>';
             }
         };
 
     } else {
-        // Fallback nếu trình duyệt không hỗ trợ
         micBtn.style.display = 'none';
-        resultBox.innerHTML = '<span style="color: red;">Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Hãy dùng Google Chrome nha! 🥺</span>';
+        resultBox.innerHTML = '<span style="color: red;">Trình duyệt của bạn không hỗ trợ nhận diện giọng nói. Bạn hãy dùng Google Chrome nhé! 🥺</span>';
     }
 </script>
-
 </body>
 </html>
