@@ -1,0 +1,433 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shadowing Practice | SnapEnglish</title>
+<style>
+  /* Cài đặt toàn màn hình, màu pastel và font chữ khoa học */
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e2eafc 100%);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+    overflow: hidden;
+  }
+
+  .container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+  }
+
+  /* Bố cục 2/3 Trái - 1/3 Phải */
+  .left-col {
+    width: 66.66%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    box-sizing: border-box;
+    gap: 20px;
+  }
+
+  .right-col {
+    width: 33.33%;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  /* Bố cục dọc cho cột trái: Video 2/3 - Record 1/3 */
+  .video-wrapper {
+    height: 66.66%;
+    width: 100%;
+    border-radius: 24px;
+    overflow: hidden;
+  }
+
+  .record-wrapper {
+    height: 33.33%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  /* Hiệu ứng Glassmorphism tinh tế (Cute yet mature) */
+  .glass {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+  }
+
+  /* Styles cho UI Tiếng Anh phần Recording */
+  .record-wrapper h3 {
+    margin: 0 0 10px 0;
+    color: #555;
+    font-size: 1.4em;
+  }
+
+  .record-btn {
+    background: linear-gradient(135deg, #ffb6c1, #ffc0cb);
+    border: none;
+    padding: 14px 36px;
+    border-radius: 30px;
+    color: #fff;
+    font-size: 1.1em;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 182, 193, 0.6);
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 15px;
+  }
+
+  .record-btn:active {
+    transform: scale(0.96);
+  }
+
+  .record-btn.recording {
+    background: linear-gradient(135deg, #ff6b81, #ff8499);
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 107, 129, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 107, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 107, 129, 0); }
+  }
+
+  .result-box {
+    width: 90%;
+    min-height: 45px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    font-style: italic;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .score-box {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #4CAF50;
+  }
+
+  /* Script Song Ngữ */
+  .script-line {
+    padding: 15px 20px;
+    border-radius: 16px;
+    transition: 0.3s;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.4);
+  }
+
+  .script-line:hover {
+    background: rgba(255, 255, 255, 0.7);
+  }
+
+  .script-line.active {
+    background: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    transform: scale(1.02);
+    border-left: 5px solid #ffb6c1;
+  }
+
+  .en-text {
+    font-size: 1.15em;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.5;
+  }
+
+  .vi-text {
+    font-size: 0.95em;
+    color: #777;
+    margin-top: 8px;
+    line-height: 1.4;
+  }
+
+  .word {
+    transition: color 0.1s, text-shadow 0.1s;
+  }
+
+  /* Hiệu ứng phát sáng từng chữ */
+  .word.highlight-word {
+    color: #d81b60;
+    text-shadow: 0 0 10px rgba(216, 27, 96, 0.3);
+  }
+</style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="left-col">
+      <div class="video-wrapper glass">
+        <div id="ytplayer"></div>
+      </div>
+      
+      <div class="record-wrapper glass">
+        <h3>Shadowing Evaluation</h3>
+        <button id="recordBtn" class="record-btn">Hold to Speak</button>
+        <div id="resultText" class="result-box">Your voice will appear here...</div>
+        <div id="scoreText" class="score-box">Accuracy: 0%</div>
+      </div>
+    </div>
+
+    <div class="right-col glass" id="script-container">
+      </div>
+  </div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    // Dữ liệu mẫu lấy từ file phân tích (có mốc thời gian đến từng từ)
+    const transcriptData = [
+      { 
+        start: 8.48, end: 16.55, 
+        vi: "Xin chào tất cả mọi người, và chào mừng trở lại với kênh Mister English, nơi việc học tiếng Anh trở nên dễ dàng và thú vị.",
+        words: [
+          {word: "Hello,", start: 8.48, end: 9.2}, {word: "everyone,", start: 9.2, end: 9.92}, {word: "and", start: 9.92, end: 10.08},
+          {word: "welcome", start: 10.08, end: 10.64}, {word: "back", start: 10.64, end: 10.88}, {word: "to", start: 10.88, end: 11.52},
+          {word: "mister", start: 11.52, end: 12.08}, {word: "English", start: 12.08, end: 12.56}, {word: "channel,", start: 12.56, end: 13.12},
+          {word: "where", start: 13.49, end: 13.73}, {word: "learning", start: 13.73, end: 14.29}, {word: "English", start: 14.29, end: 14.77},
+          {word: "is", start: 14.77, end: 15.09}, {word: "easy", start: 15.09, end: 15.65}, {word: "and", start: 15.65, end: 15.89}, {word: "fun.", start: 15.89, end: 16.45}
+        ]
+      },
+      { 
+        start: 16.51, end: 17.75, 
+        vi: "Tôi là Emily.",
+        words: [
+          {word: "I'm", start: 16.61, end: 16.93}, {word: "Emily.", start: 16.93, end: 17.65}
+        ]
+      },
+      { 
+        start: 17.95, end: 19.09, 
+        vi: "Xin chào, Emily.",
+        words: [
+          {word: "Hello,", start: 18.05, end: 18.53}, {word: "Emily.", start: 18.53, end: 19.09}
+        ]
+      },
+      { 
+        start: 19.09, end: 23.51, 
+        vi: "Và xin chào tất cả các bạn đang lắng nghe ở nhà, trong xe hơi, hoặc có lẽ tại nơi làm việc.",
+        words: [
+          {word: "And", start: 19.09, end: 19.25}, {word: "hello", start: 19.25, end: 19.57}, {word: "to", start: 19.57, end: 19.81},
+          {word: "all", start: 19.81, end: 19.97}, {word: "our", start: 19.97, end: 20.13}, {word: "friends", start: 20.13, end: 20.45},
+          {word: "listening", start: 20.45, end: 20.85}, {word: "at", start: 20.85, end: 21.09}, {word: "home,", start: 21.09, end: 21.49},
+          {word: "or", start: 21.49, end: 21.65}, {word: "in", start: 21.65, end: 21.81}, {word: "the", start: 21.81, end: 21.89},
+          {word: "car,", start: 21.89, end: 22.37}, {word: "or", start: 22.37, end: 22.53}, {word: "maybe", start: 22.53, end: 22.77},
+          {word: "at", start: 22.77, end: 22.93}, {word: "work.", start: 22.93, end: 23.41}
+        ]
+      },
+      { 
+        start: 23.47, end: 25.51, 
+        vi: "Thật tuyệt vời khi được ở đây cùng các bạn hôm nay.",
+        words: [
+          {word: "It", start: 23.57, end: 23.73}, {word: "is", start: 23.73, end: 23.89}, {word: "so", start: 23.89, end: 24.13},
+          {word: "good", start: 24.13, end: 24.37}, {word: "to", start: 24.37, end: 24.53}, {word: "be", start: 24.53, end: 24.69},
+          {word: "here", start: 24.69, end: 24.85}, {word: "with", start: 24.85, end: 25.01}, {word: "you", start: 25.01, end: 25.17},
+          {word: "today.", start: 25.17, end: 25.41}
+        ]
+      }
+    ];
+
+    // Render Script lên DOM
+    const scriptContainer = document.getElementById('script-container');
+    
+    transcriptData.forEach((line, index) => {
+      const div = document.createElement('div');
+      div.className = 'script-line';
+      div.id = 'line-' + index;
+      
+      // Xây dựng dòng Tiếng Anh với từng thẻ span bọc mỗi từ
+      const enDiv = document.createElement('div');
+      enDiv.className = 'en-text';
+      
+      line.words.forEach((w, wIdx) => {
+        const span = document.createElement('span');
+        span.className = 'word';
+        span.id = `word-${index}-${wIdx}`;
+        span.innerText = w.word + " ";
+        enDiv.appendChild(span);
+      });
+
+      // Vietsub
+      const viDiv = document.createElement('div');
+      viDiv.className = 'vi-text';
+      viDiv.innerText = line.vi;
+
+      div.appendChild(enDiv);
+      div.appendChild(viDiv);
+
+      // Bấm vào để nhảy Video tới đoạn tương ứng
+      div.onclick = () => {
+        if(player && player.seekTo) {
+          player.seekTo(line.start, true);
+          player.playVideo();
+        }
+      };
+
+      scriptContainer.appendChild(div);
+    });
+
+    // YouTube Logic
+    let player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('ytplayer', {
+        height: '100%',
+        width: '100%',
+        videoId: 'zgAeBUE1Mpg', // Lấy theo ID người dùng cung cấp
+        playerVars: {
+          'playsinline': 1,
+          'rel': 0
+        },
+        events: {
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+
+    let checkInterval;
+    let currentLineIndex = -1;
+
+    function onPlayerStateChange(event) {
+      if (event.data == YT.PlayerState.PLAYING) {
+        checkInterval = setInterval(updateHighlight, 100);
+      } else {
+        clearInterval(checkInterval);
+      }
+    }
+
+    function updateHighlight() {
+      const time = player.getCurrentTime();
+      let foundLine = -1;
+
+      // Tìm câu đang được nói
+      for (let i = 0; i < transcriptData.length; i++) {
+        if (time >= transcriptData[i].start && time <= transcriptData[i].end) {
+          foundLine = i;
+          break;
+        }
+      }
+
+      // Highlight cấp độ câu
+      if (foundLine !== -1) {
+        if (currentLineIndex !== foundLine) {
+          if (currentLineIndex !== -1) {
+            document.getElementById('line-' + currentLineIndex).classList.remove('active');
+            // Xóa phát sáng các từ cũ
+            const prevWords = document.querySelectorAll(`#line-${currentLineIndex} .word`);
+            prevWords.forEach(w => w.classList.remove('highlight-word'));
+          }
+          const activeLine = document.getElementById('line-' + foundLine);
+          activeLine.classList.add('active');
+          
+          // Cuộn tự động
+          activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          currentLineIndex = foundLine;
+        }
+
+        // Highlight cấp độ từ (Phát sáng chữ hiện tại)
+        const words = transcriptData[currentLineIndex].words;
+        words.forEach((w, idx) => {
+          const span = document.getElementById(`word-${currentLineIndex}-${idx}`);
+          if (time >= w.start && time <= w.end) {
+            span.classList.add('highlight-word');
+          } else {
+            span.classList.remove('highlight-word');
+          }
+        });
+      }
+    }
+
+    // Web Speech API cho phần Thu âm và tính %
+    const recordBtn = document.getElementById('recordBtn');
+    const resultText = document.getElementById('resultText');
+    const scoreText = document.getElementById('scoreText');
+
+    let recognition;
+    if ('webkitSpeechRecognition' in window) {
+      recognition = new webkitSpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US'; // English Only Quiz
+
+      recognition.onresult = function(event) {
+        const spoken = event.results[0][0].transcript;
+        resultText.innerText = `"${spoken}"`;
+        calculateScore(spoken);
+      };
+
+      recognition.onerror = function(event) {
+        resultText.innerText = "Error recognizing speech. Try again.";
+      };
+
+      recordBtn.onmousedown = () => {
+        if(player && player.pauseVideo) player.pauseVideo(); // Tạm dừng khi nói
+        recognition.start();
+        recordBtn.innerText = "Listening...";
+        recordBtn.classList.add('recording');
+        resultText.innerText = "...";
+      };
+      
+      recordBtn.onmouseup = () => {
+        recognition.stop();
+        recordBtn.innerText = "Hold to Speak";
+        recordBtn.classList.remove('recording');
+      };
+      
+      // Xử lý màn hình cảm ứng
+      recordBtn.ontouchstart = recordBtn.onmousedown;
+      recordBtn.ontouchend = recordBtn.onmouseup;
+
+    } else {
+      resultText.innerText = "Web Speech API is not supported in this browser. Please use Chrome.";
+    }
+
+    // Logic chấm điểm % cơ bản
+    function calculateScore(spoken) {
+      if (currentLineIndex === -1) {
+        scoreText.innerText = "Please select a sentence!";
+        scoreText.style.color = "#ff6b81";
+        return;
+      }
+      
+      // Lấy câu gốc tiếng Anh
+      const targetSentence = transcriptData[currentLineIndex].words.map(w => w.word).join(" ");
+      const targetText = targetSentence.toLowerCase().replace(/[^\w\s]/gi, '');
+      const spokenText = spoken.toLowerCase().replace(/[^\w\s]/gi, '');
+      
+      const targetWords = targetText.split(' ');
+      const spokenWords = spokenText.split(' ');
+      
+      let matches = 0;
+      targetWords.forEach(word => {
+        if (spokenWords.includes(word)) matches++;
+      });
+      
+      let percentage = Math.round((matches / targetWords.length) * 100);
+      if (percentage > 100) percentage = 100;
+      
+      scoreText.innerText = `Accuracy: ${percentage}%`;
+      scoreText.style.color = percentage >= 80 ? "#4CAF50" : (percentage >= 50 ? "#FF9800" : "#ff6b81");
+    }
+  </script>
+</body>
+</html>
