@@ -1,0 +1,1896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shadowing Practice | SnapEnglish</title>
+  <link rel="icon" type="image/png" href="ảnh.png">
+<style>
+  :root {
+    --vi-display: block;
+    --primary-pastel: #fbc2eb;
+    --secondary-pastel: #a6c1ee;
+    --glass-bg: rgba(255, 255, 255, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.8);
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    /* Đổi sang min-height để màn hình thấp vẫn cuộn được toàn trang */
+    min-height: 100vh; 
+    box-sizing: border-box;
+    background: linear-gradient(135deg, var(--primary-pastel) 0%, var(--secondary-pastel) 100%);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+    /* Bỏ overflow: hidden để không bị cắt xén nội dung */
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .container {
+    display: flex;
+    width: 100vw;
+    /* Đảm bảo container co giãn theo nội dung nếu cần */
+    height: 100vh; 
+    min-height: 700px; /* Thêm chiều cao tối thiểu */
+    flex-direction: row;
+  }
+
+  .left-col {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    box-sizing: border-box;
+    gap: 24px;
+  }
+
+  .right-col {
+    width: 40%;
+    padding: 24px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  .top-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    margin-bottom: 10px;
+  }
+
+  .top-controls h2 {
+    margin: 0;
+    font-size: 1.4em;
+    color: #444;
+  }
+
+  .toggle-btn {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #555;
+    transition: all 0.2s;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+
+  .toggle-btn:hover {
+    background: #f0f0f0;
+  }
+
+  .video-wrapper {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 24px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .video-wrapper iframe {
+    width: 100%;
+    height: 100%;
+  }
+
+  .record-wrapper {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row; /* Chuyển thành hàng ngang */
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 25px;
+    box-sizing: border-box;
+    gap: 20px; /* Khoảng cách giữa các thành phần */
+    overflow: hidden; /* Xóa sổ thanh cuộn */
+    min-height: 90px;
+  }
+
+  .record-btn {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+    border: none;
+    padding: 14px 30px;
+    border-radius: 30px;
+    color: #444;
+    font-size: 1.1em;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 154, 158, 0.4);
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 0; /* Xóa khoảng cách thừa */
+    white-space: nowrap; /* Chống rớt dòng chữ trên nút */
+    flex-shrink: 0;
+  }
+
+  .record-btn:active {
+    transform: scale(0.96);
+  }
+
+  .record-btn.recording {
+    background: linear-gradient(135deg, #ff6a88 0%, #ff99ac 100%);
+    color: white;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 106, 136, 0.6); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 106, 136, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 106, 136, 0); }
+  }
+
+  .result-box {
+    flex-grow: 1; /* Tự động giãn ra chiếm hết không gian ở giữa */
+    min-height: 50px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 16px;
+    padding: 10px 20px;
+    margin-bottom: 0; /* Xóa khoảng cách thừa */
+    font-style: italic;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .score-box {
+    font-size: 1.6em;
+    font-weight: 800;
+    color: #4CAF50;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .script-container {
+    overflow-y: auto;
+    padding-right: 10px;
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .script-container::-webkit-scrollbar {
+    width: 6px;
+  }
+  .script-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+  }
+  .script-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+  }
+
+  .script-line {
+    padding: 16px 20px;
+    border-radius: 18px;
+    transition: 0.3s ease;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid transparent;
+  }
+
+  .script-line:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .script-line.active {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transform: scale(1.02);
+    border-left: 6px solid #ff9a9e;
+    border-right: 1px solid rgba(255,255,255,0.8);
+    border-top: 1px solid rgba(255,255,255,0.8);
+    border-bottom: 1px solid rgba(255,255,255,0.8);
+  }
+
+  .script-line.active .en-text {
+    color: #d81b60;
+  }
+
+  .en-text {
+    font-size: 1.15em;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.5;
+    transition: color 0.3s ease;
+  }
+
+  .vi-text {
+    font-size: 0.95em;
+    color: #666;
+    margin-top: 8px;
+    line-height: 1.4;
+    display: var(--vi-display);
+  }
+
+  @media (max-width: 992px) {
+    .container {
+      flex-direction: column;
+      height: auto;
+      min-height: 100vh;
+    }
+    .script-line {
+      /* 56.25vw là tỷ lệ chuẩn 16:9 của video, cộng thêm khoảng 160px an toàn cho khu vực nút ghi âm */
+      scroll-margin-top: calc(56.25vw + 280px); 
+    }
+    /* Cố định cụm Video và Nút ghi âm ở trên cùng */
+    .left-col {
+      width: 100%;
+      height: auto;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      /* Thêm nền gradient trùng với body để che kịch bản cuộn bên dưới khe hở */
+      background: linear-gradient(135deg, var(--primary-pastel) 0%, var(--secondary-pastel) 100%);
+      padding: 12px; /* Thu nhỏ padding để chừa không gian cho phần đọc kịch bản */
+      gap: 12px;
+      /* Thêm bóng đổ nhẹ để tạo ranh giới rõ ràng với phần chữ cuộn bên dưới */
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+    }
+
+    .right-col {
+      width: 100%;
+      height: auto;
+      padding: 12px;
+    }
+
+    .record-wrapper {
+      flex-direction: row; 
+      flex-wrap: wrap; /* Cho phép các thành phần rớt dòng nếu thiếu chỗ */
+      justify-content: center;
+      gap: 10px;
+      padding: 12px;
+      min-height: auto;
+    }
+
+    .record-btn {
+      width: 100%; /* Kéo dài nút ghi âm để dễ thao tác trên điện thoại */
+      margin: 0;
+    }
+
+    .result-box {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 0.9em; /* Thu nhỏ chữ một chút cho gọn */
+    }
+
+    .score-box {
+      font-size: 1.2em;
+    }
+
+    .script-container {
+      /* Bỏ giới hạn chiều cao để phần chữ cuộn mượt mà theo trang web */
+      max-height: none; 
+      overflow-y: visible;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="left-col">
+      <div class="video-wrapper glass">
+        <div id="ytplayer"></div>
+      </div>
+      
+      <div class="record-wrapper glass">
+        <button id="recordBtn" class="record-btn">Click to Speak</button>
+        <div id="resultText" class="result-box">Your voice will appear here...</div>
+        <div id="scoreText" class="score-box">Accuracy: 0%</div>
+      </div>
+    </div>
+
+    <div class="right-col glass">
+      <div class="top-controls">
+        <h2>Transcript</h2>
+        <button class="toggle-btn" onclick="toggleTranslation()">Toggle Translation</button>
+      </div>
+      <div class="script-container" id="script-container"></div>
+    </div>
+  </div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    // 1. DÁN TOÀN BỘ TEXT TỪ FILE .SRT VÀO GIỮA 2 DẤU MẶC KÉP NGƯỢC (`) DƯỚI ĐÂY
+    // Không cần xóa các tag , hệ thống sẽ tự động dọn dẹp giúp bạn.
+    const rawSrt = `
+1
+00:00:00,640 --> 00:00:04,657
+Hello, everyone, and welcome to another episode of English and Comfort, 
+Xin chào tất cả mọi người và chào mừng đến với một tập khác của English and Comfort,
+
+
+2
+00:00:04,657 --> 00:00:08,920
+your cozy English podcast for learning English.
+podcast tiếng Anh ấm áp của bạn để học tiếng Anh.
+
+
+3
+00:00:08,920 --> 00:00:10,080
+Hi, Anna.
+Chào Anna.
+
+
+4
+00:00:10,080 --> 00:00:11,039
+Hi, Mark.
+Chào Mark.
+
+
+5
+00:00:11,039 --> 00:00:16,060
+Today, we are going to show you how to improve your English speaking skills with shadowing.
+Hôm nay, chúng tôi sẽ chỉ cho bạn cách cải thiện kỹ năng nói tiếng Anh với shadowing.
+
+
+6
+00:00:16,060 --> 00:00:17,415
+That's right.
+Đúng vậy.
+
+
+7
+00:00:17,415 --> 00:00:20,195
+Today is all about shadowing practice.
+Hôm nay là tất cả về luyện tập shadowing.
+
+
+8
+00:00:20,195 --> 00:00:23,795
+If you want to speak English smoothly and naturally, 
+Nếu bạn muốn nói tiếng Anh trôi chảy và tự nhiên,
+
+
+9
+00:00:23,795 --> 00:00:26,575
+this is the most useful way to do it.
+đây là cách hữu ích nhất để làm điều đó.
+
+
+10
+00:00:26,575 --> 00:00:30,214
+So, Mark, first, let's explain shadowing.
+Vậy, Mark, trước tiên, hãy giải thích shadowing.
+
+
+11
+00:00:30,214 --> 00:00:31,735
+What exactly is it?
+Nó chính xác là gì vậy?
+
+
+12
+00:00:32,250 --> 00:00:35,970
+Shadowing is actually a very simple technique.
+Shadowing thực ra là một kỹ thuật rất đơn giản.
+
+
+13
+00:00:35,970 --> 00:00:39,889
+You listen to a native speaker and you repeat what they say,
+Bạn lắng nghe người bản xứ nói và lặp lại những gì họ nói,
+
+
+14
+00:00:39,889 --> 00:00:46,390
+but you repeat it almost at the exact same time, like a shadow.
+nhưng bạn lặp lại gần như cùng một lúc, giống như một cái bóng.
+
+
+15
+00:00:46,390 --> 00:00:47,450
+Right?
+Đúng không?
+
+
+16
+00:00:47,405 --> 00:00:50,876
+Just like a shadow follows you when you walk outside, 
+Giống như cách một cái bóng đi theo bạn khi bạn đi ra ngoài,
+
+
+17
+00:00:50,876 --> 00:00:53,765
+your voice follows the speaker's voice.
+giọng nói của bạn đi theo giọng nói của người nói.
+
+
+18
+00:00:53,765 --> 00:00:55,205
+That's right.
+Đúng vậy.
+
+
+19
+00:00:55,205 --> 00:00:57,925
+You don't just read words from a paper.
+Bạn không chỉ đọc chữ từ giấy.
+
+
+20
+00:00:57,925 --> 00:01:01,125
+You listen carefully, and you copy the sound.
+Bạn lắng nghe cẩn thận và bắt chước âm thanh.
+
+
+21
+00:01:01,125 --> 00:01:03,070
+And why is it so effective?
+Và tại sao nó lại hiệu quả đến vậy?
+
+
+22
+00:01:03,070 --> 00:01:05,249
+Why does it work so well?
+Tại sao nó lại hoạt động tốt như thế?
+
+
+23
+00:01:05,249 --> 00:01:10,650
+Well, because when we learn English, we often just read quietly.
+Vì khi học tiếng Anh, chúng ta thường chỉ đọc thầm.
+
+
+24
+00:01:10,810 --> 00:01:13,689
+Or we listen quietly.
+Hoặc nghe một cách thụ động.
+
+
+25
+00:01:13,690 --> 00:01:17,369
+But to speak well, you have to train your mouth muscles.
+Nhưng để nói tốt, bạn phải luyện tập các cơ miệng.
+
+
+26
+00:01:17,505 --> 00:01:21,624
+Your mouth needs to get used to the new shapes and sounds.
+Miệng của bạn cần làm quen với các hình dạng và âm thanh mới.
+
+
+27
+00:01:21,624 --> 00:01:22,545
+Yeah.
+Đúng vậy.
+
+
+28
+00:01:22,545 --> 00:01:23,624
+That's right.
+Chính xác.
+
+
+29
+00:01:23,624 --> 00:01:26,505
+Shadowing connects your brain to your mouth.
+Shadowing kết nối não bộ với miệng của bạn.
+
+
+30
+00:01:26,505 --> 00:01:31,184
+You copy the rhythm, the tone, and the pronunciation all at once.
+Bạn sao chép nhịp điệu, ngữ điệu và phát âm cùng một lúc.
+
+
+31
+00:01:31,180 --> 00:01:33,940
+It really builds confidence too.
+Nó thực sự giúp xây dựng sự tự tin nữa.
+
+
+32
+00:01:33,940 --> 00:01:36,539
+When you practice saying the words out loud,
+Khi bạn luyện tập nói từ ngữ thành tiếng,
+
+
+33
+00:01:36,539 --> 00:01:38,700
+they come out much easier when you
+chúng sẽ trôi chảy hơn nhiều khi bạn
+
+
+34
+00:01:38,700 --> 00:01:41,400
+actually need to use them in real life.
+thực sự cần sử dụng chúng trong cuộc sống.
+
+
+35
+00:01:41,400 --> 00:01:43,259
+I completely agree.
+Tôi hoàn toàn đồng ý.
+
+
+36
+00:01:43,575 --> 00:01:47,054
+So today, we wanna do this together.
+Vì vậy hôm nay, chúng ta muốn làm điều này cùng nhau.
+
+
+37
+00:01:47,054 --> 00:01:52,015
+We are going to do a lot of shadowing practice right now in this episode.
+Chúng ta sẽ thực hành rất nhiều kỹ thuật shadowing ngay trong tập này.
+
+
+38
+00:01:52,015 --> 00:01:58,255
+This episode is going to be nice and easy and also slow and clear.
+Tập này sẽ dễ dàng, thoải mái và cũng chậm rãi, rõ ràng.
+
+
+39
+00:01:58,255 --> 00:02:01,220
+How this will work is very simple.
+Cách thức hoạt động rất đơn giản.
+
+
+40
+00:02:01,220 --> 00:02:04,855
+I will say a phrase or Anna will say a phrase, 
+Tôi sẽ nói một cụm từ hoặc Anna sẽ nói một cụm từ,
+
+
+41
+00:02:04,855 --> 00:02:08,500
+and then we will leave a silent pause.
+và sau đó chúng tôi sẽ để một khoảng lặng im.
+
+
+42
+00:02:08,500 --> 00:02:11,719
+During that pause, we want you to speak out loud,
+Trong khoảng lặng đó, chúng tôi muốn bạn nói to lên,
+
+
+43
+00:02:11,885 --> 00:02:16,545
+Repeat what you just heard, and try to copy how we sound.
+Lặp lại những gì bạn vừa nghe, và cố gắng bắt chước cách chúng tôi phát âm.
+
+
+44
+00:02:16,545 --> 00:02:17,805
+Don't be shy.
+Đừng ngại ngùng.
+
+
+45
+00:02:17,805 --> 00:02:20,664
+Just speak out loud wherever you are.
+Cứ nói to lên dù bạn đang ở đâu.
+
+
+46
+00:02:20,664 --> 00:02:24,685
+Let's start with some very simple everyday greetings.
+Hãy bắt đầu với một vài lời chào hàng ngày rất đơn giản.
+
+
+47
+00:02:24,685 --> 00:02:25,545
+Ready?
+Sẵn sàng chưa?
+
+
+48
+00:02:25,545 --> 00:02:26,764
+I'm ready.
+Tôi sẵn sàng rồi.
+
+
+49
+00:02:27,130 --> 00:02:28,649
+Here we go.
+Chúng ta bắt đầu nhé.
+
+
+50
+00:02:28,649 --> 00:02:30,489
+Listen and repeat.
+Nghe và lặp lại.
+
+
+51
+00:02:30,730 --> 00:02:32,010
+Good morning.
+Chào buổi sáng.
+
+
+52
+00:02:32,010 --> 00:02:33,609
+How are you today?
+Hôm nay bạn thế nào?
+
+
+53
+00:02:36,010 --> 00:02:37,849
+I'm doing great.
+Tôi rất tốt.
+
+
+54
+00:02:37,849 --> 00:02:38,730
+Thank you.
+Cảm ơn.
+
+
+55
+00:02:40,745 --> 00:02:43,765
+Let's do that one more time.
+Hãy làm lại một lần nữa.
+
+
+56
+00:02:43,765 --> 00:02:46,665
+Focus on the flow of the words.
+Tập trung vào dòng chảy của các từ.
+
+
+57
+00:02:46,745 --> 00:02:48,185
+Good morning.
+Chào buổi sáng.
+
+
+58
+00:02:48,185 --> 00:02:49,385
+How are you today?
+Hôm nay bạn thế nào?
+
+
+59
+00:02:52,440 --> 00:02:54,280
+I'm doing great.
+Tôi rất tốt.
+
+
+60
+00:02:54,280 --> 00:02:55,399
+Thank you.
+Cảm ơn.
+
+
+61
+00:02:57,560 --> 00:02:58,999
+Nice.
+Tuyệt.
+
+
+62
+00:02:58,999 --> 00:03:02,560
+Now let's try some common questions in English.
+Giờ hãy thử một số câu hỏi thông dụng trong tiếng Anh.
+
+
+63
+00:03:02,560 --> 00:03:05,565
+You use these all the time in daily life.
+Bạn dùng những câu này suốt trong cuộc sống hằng ngày.
+
+
+64
+00:03:05,565 --> 00:03:07,785
+Listen and repeat.
+Nghe và lặp lại.
+
+
+65
+00:03:07,865 --> 00:03:09,865
+What time is it?
+Mấy giờ rồi?
+
+
+66
+00:03:11,385 --> 00:03:14,665
+Do you know where the station is?
+Bạn có biết ga ở đâu không?
+
+
+67
+00:03:16,905 --> 00:03:19,464
+Can I have a coffee, please?
+Tôi có thể xin một ly cà phê không?
+
+
+68
+00:03:21,950 --> 00:03:24,990
+How much does this cost?
+Cái này giá bao nhiêu?
+
+
+69
+00:03:27,550 --> 00:03:30,190
+Where is the nearest bathroom?
+Nhà vệ sinh gần nhất ở đâu?
+
+
+70
+00:03:32,605 --> 00:03:34,424
+Very good.
+Rất tốt.
+
+
+71
+00:03:34,424 --> 00:03:35,245
+See?
+Thấy không?
+
+
+72
+00:03:35,245 --> 00:03:38,485
+It's easy, but it is so helpful.
+Dễ mà, nhưng lại rất hữu ích.
+
+
+73
+00:03:38,485 --> 00:03:41,204
+You're training your mouth right now.
+Bạn đang luyện miệng ngay bây giờ đấy.
+
+
+74
+00:03:41,204 --> 00:03:41,885
+Yeah.
+Đúng vậy.
+
+
+75
+00:03:41,885 --> 00:03:44,444
+And you might even feel a little silly at first.
+Và lúc đầu bạn có thể cảm thấy hơi ngớ ngẩn.
+
+
+76
+00:03:44,790 --> 00:03:48,980
+When I try to speak a new language out loud in my room alone, 
+Khi tôi cố gắng nói một ngôn ngữ mới thật to một mình trong phòng,
+
+
+77
+00:03:48,980 --> 00:03:50,790
+I feel so funny.
+tôi cảm thấy rất buồn cười.
+
+
+78
+00:03:50,790 --> 00:03:51,869
+Right.
+Đúng rồi.
+
+
+79
+00:03:51,869 --> 00:03:54,810
+But you have to push past that feeling.
+Nhưng bạn phải vượt qua cảm giác đó.
+
+
+80
+00:03:54,810 --> 00:03:56,469
+Nobody is listening.
+Không ai đang nghe đâu.
+
+
+81
+00:03:56,469 --> 00:03:58,470
+It is just you and us.
+Chỉ có bạn và chúng tôi thôi.
+
+
+82
+00:03:58,710 --> 00:04:00,255
+Let's do a few more.
+Hãy làm thêm vài câu nữa.
+
+
+83
+00:04:00,255 --> 00:04:04,474
+Let's practice expressing your feelings or reacting to things.
+Hãy thực hành diễn đạt cảm xúc hoặc phản ứng với sự việc.
+
+
+84
+00:04:04,474 --> 00:04:07,335
+This makes you sound very natural.
+Điều này giúp bạn nghe rất tự nhiên.
+
+
+85
+00:04:07,255 --> 00:04:09,415
+Listen and repeat.
+Nghe và lặp lại.
+
+
+86
+00:04:09,735 --> 00:04:12,454
+I am really tired today.
+Hôm nay tôi thực sự mệt.
+
+
+87
+00:04:15,970 --> 00:04:19,250
+That sounds like a great idea.
+Nghe có vẻ là một ý tưởng tuyệt vời.
+
+
+88
+00:04:21,490 --> 00:04:24,690
+I am so excited for the weekend.
+Tôi rất háo hức cho cuối tuần.
+
+
+89
+00:04:27,345 --> 00:04:29,185
+Oh, no.
+Ôi, không.
+
+
+90
+00:04:29,185 --> 00:04:31,345
+I'm sorry to hear that.
+Tôi rất tiếc khi nghe điều đó.
+
+
+91
+00:04:33,585 --> 00:04:36,785
+I don't really feel like cooking tonight.
+Tối nay tôi thực sự không có hứng nấu ăn.
+
+
+92
+00:04:39,600 --> 00:04:40,960
+Wow.
+Ồ.
+
+
+93
+00:04:40,960 --> 00:04:42,960
+That is amazing.
+Thật tuyệt vời.
+
+
+94
+00:04:45,200 --> 00:04:47,280
+Great job, everyone.
+Làm tốt lắm, mọi người.
+
+
+95
+00:04:47,280 --> 00:04:50,080
+Doing this makes the language stick in your head.
+Làm việc này giúp ngôn ngữ in sâu vào đầu bạn.
+
+
+96
+00:04:50,080 --> 00:04:51,265
+It really does.
+Đúng là vậy.
+
+
+97
+00:04:51,265 --> 00:04:53,405
+So let's keep going.
+Vậy hãy tiếp tục nào.
+
+
+98
+00:04:53,405 --> 00:04:55,785
+Let's talk about daily routines.
+Hãy nói về các thói quen hàng ngày.
+
+
+99
+00:04:55,785 --> 00:04:58,225
+Things you do every single morning.
+Những việc bạn làm mỗi sáng.
+
+
+100
+00:04:58,225 --> 00:04:59,585
+Good idea.
+Ý hay đó.
+
+
+101
+00:04:59,585 --> 00:05:02,325
+Let's shadow some morning habits.
+Chúng ta hãy cùng luyện nói theo một số thói quen buổi sáng.
+
+
+102
+00:05:02,325 --> 00:05:04,205
+Listen and repeat.
+Hãy nghe và lặp lại.
+
+
+103
+00:05:04,630 --> 00:05:07,590
+I wake up at 07:00.
+Tôi thức dậy lúc 7 giờ.
+
+
+104
+00:05:11,510 --> 00:05:15,430
+I usually just have toast for breakfast.
+Tôi thường chỉ ăn bánh mì nướng cho bữa sáng.
+
+
+105
+00:05:19,365 --> 00:05:22,405
+I need to brush my teeth.
+Tôi cần đánh răng.
+
+
+106
+00:05:24,805 --> 00:05:28,165
+I am running a little late today.
+Hôm nay tôi hơi trễ một chút.
+
+
+107
+00:05:31,700 --> 00:05:34,900
+Did you remember to lock the door?
+Bạn có nhớ khóa cửa không?
+
+
+108
+00:05:38,340 --> 00:05:42,725
+You know, Mark, a lot of our listeners use English for work.
+Bạn biết không, Mark, rất nhiều thính giả của chúng ta sử dụng tiếng Anh cho công việc.
+
+
+109
+00:05:42,725 --> 00:05:43,485
+Yeah.
+Ừ.
+
+
+110
+00:05:43,485 --> 00:05:45,105
+That's very common.
+Điều đó rất phổ biến.
+
+
+111
+00:05:45,105 --> 00:05:48,804
+Office language is super useful to practice out loud.
+Tiếng Anh văn phòng rất hữu ích để luyện tập nói to ra.
+
+
+112
+00:05:48,804 --> 00:05:51,565
+So let's do a few work phrases.
+Vậy hãy cùng thực hành một vài cụm từ công việc.
+
+
+113
+00:05:51,565 --> 00:05:53,564
+Listen and repeat.
+Nghe và lặp lại.
+
+
+114
+00:05:53,724 --> 00:05:55,885
+When does the meeting start?
+Cuộc họp bắt đầu khi nào?
+
+
+115
+00:05:59,530 --> 00:06:02,410
+Can you send me that email?
+Bạn có thể gửi tôi email đó được không?
+
+
+116
+00:06:04,650 --> 00:06:07,770
+I have a lot of work to do today.
+Hôm nay tôi có rất nhiều việc phải làm.
+
+
+117
+00:06:10,345 --> 00:06:13,224
+Let's take a short break.
+Chúng ta hãy nghỉ ngơi một chút.
+
+
+118
+00:06:15,225 --> 00:06:18,504
+I will finish this by tomorrow.
+Tôi sẽ hoàn thành việc này trước ngày mai.
+
+
+119
+00:06:21,000 --> 00:06:23,500
+You guys are doing great.
+Các bạn đang làm rất tốt.
+
+
+120
+00:06:23,500 --> 00:06:28,160
+Now you might be wondering, how often should I do this practice?
+Giờ có lẽ bạn đang tự hỏi, tôi nên thực hành điều này bao lâu một lần?
+
+
+121
+00:06:28,160 --> 00:06:30,380
+That is a really good question.
+Đó là một câu hỏi rất hay.
+
+
+122
+00:06:30,380 --> 00:06:33,040
+I think you should try to do it every day,
+Tôi nghĩ bạn nên cố gắng thực hiện mỗi ngày,
+
+
+123
+00:06:33,040 --> 00:06:36,294
+but you don't need to do it for a long time.
+nhưng bạn không cần làm trong thời gian dài.
+
+
+124
+00:06:36,294 --> 00:06:37,055
+Right.
+Đúng vậy.
+
+
+125
+00:06:37,055 --> 00:06:38,175
+Don't do it for an hour.
+Đừng làm suốt một tiếng đồng hồ.
+
+
+126
+00:06:38,175 --> 00:06:40,635
+Your mouth will actually get too tired.
+Miệng bạn sẽ thực sự mỏi quá mức.
+
+
+127
+00:06:40,635 --> 00:06:41,695
+Yeah.
+Ừ.
+
+
+128
+00:06:41,695 --> 00:06:42,695
+Literally.
+Thật đấy.
+
+
+129
+00:06:42,695 --> 00:06:49,134
+Your jaw and your tongue will feel tired because you are making new sounds that your mouth isn't used to.
+Hàm và lưỡi bạn sẽ cảm thấy mỏi vì bạn đang tạo ra âm thanh mới mà miệng chưa quen.
+
+
+130
+00:06:49,049 --> 00:06:52,190
+Just five or ten minutes a day is perfect.
+Chỉ năm hay mười phút mỗi ngày là hoàn hảo.
+
+
+131
+00:06:52,190 --> 00:06:54,530
+Consistency is the key.
+Sự kiên trì là chìa khóa.
+
+
+132
+00:06:54,530 --> 00:07:00,010
+Doing a little bit every day is much better than doing a lot once a week.
+Làm một chút mỗi ngày tốt hơn nhiều so với làm nhiều một lần mỗi tuần.
+
+
+133
+00:07:00,010 --> 00:07:01,370
+For sure.
+Chắc chắn rồi.
+
+
+134
+00:07:01,395 --> 00:07:06,955
+And remember when you are shadowing, it's not just about saying the correct words.
+Và hãy nhớ khi bạn đang tập shadowing, không chỉ là nói đúng từ.
+
+
+135
+00:07:06,955 --> 00:07:09,035
+It's about how you say them.
+Mà còn là cách bạn nói chúng.
+
+
+136
+00:07:09,035 --> 00:07:10,935
+What do you mean by that?
+Ý bạn là sao?
+
+
+137
+00:07:10,935 --> 00:07:13,655
+Well, pay attention to the tone.
+À, hãy chú ý đến ngữ điệu.
+
+
+138
+00:07:13,655 --> 00:07:17,315
+Does the speaker's voice go up, or does it go down?
+Giọng nói của người nói lên cao, hay đi xuống?
+
+
+139
+00:07:17,260 --> 00:07:18,380
+Oh, right.
+Ồ, đúng rồi.
+
+
+140
+00:07:18,380 --> 00:07:20,100
+Like when you ask a question.
+Như khi bạn hỏi một câu hỏi.
+
+
+141
+00:07:20,100 --> 00:07:22,440
+If I say, are you hungry?
+Nếu tôi nói, bạn có đói không?
+
+
+142
+00:07:22,440 --> 00:07:25,180
+My voice goes up at the very end.
+Giọng tôi lên cao ở cuối câu.
+
+
+143
+00:07:25,099 --> 00:07:27,200
+Let's try shadow that.
+Hãy thử bắt chước điều đó.
+
+
+144
+00:07:27,200 --> 00:07:29,260
+Listen and repeat.
+Lắng nghe và lặp lại.
+
+
+145
+00:07:29,179 --> 00:07:30,940
+Are you hungry?
+Bạn có đói không?
+
+
+146
+00:07:32,805 --> 00:07:35,365
+See how the voice goes up?
+Thấy giọng lên cao chưa?
+
+
+147
+00:07:35,365 --> 00:07:36,725
+Try it again.
+Thử lại lần nữa.
+
+
+148
+00:07:36,724 --> 00:07:38,805
+Are you hungry?
+Bạn có đói không?
+
+
+149
+00:07:40,405 --> 00:07:41,985
+Perfect!
+Hoàn hảo!
+
+
+150
+00:07:41,985 --> 00:07:44,685
+And rhythm is also very important.
+Và nhịp điệu cũng rất quan trọng.
+
+
+151
+00:07:44,685 --> 00:07:46,845
+English has a specific rhythm.
+Tiếng Anh có một nhịp điệu đặc trưng.
+
+
+152
+00:07:46,845 --> 00:07:51,340
+Some words are said fast, and some words are stretched out and longer.
+Một số từ được nói nhanh, và một số từ được kéo dài hơn.
+
+
+153
+00:07:51,340 --> 00:07:52,339
+Yeah.
+Đúng vậy.
+
+
+154
+00:07:52,339 --> 00:07:55,959
+Like if I say, I would love a cup of tea.
+Như nếu tôi nói, tôi rất muốn một tách trà.
+
+
+155
+00:07:55,959 --> 00:07:59,140
+The word love is louder and longer.
+Từ love được nói to hơn và dài hơn.
+
+
+156
+00:07:59,604 --> 00:08:02,085
+Let's try shadowing that rhythm.
+Hãy thử shadowing nhịp điệu đó.
+
+
+157
+00:08:02,085 --> 00:08:03,925
+Listen and repeat.
+Nghe và lặp lại.
+
+
+158
+00:08:04,005 --> 00:08:06,805
+I would love a cup of tea.
+I would love a cup of tea.
+
+
+159
+00:08:08,565 --> 00:08:12,084
+Let's do another one with a strong rhythm.
+Hãy làm một câu khác với nhịp mạnh.
+
+
+160
+00:08:13,020 --> 00:08:16,380
+I can't believe it's already Friday.
+I can't believe it's already Friday.
+
+
+161
+00:08:19,340 --> 00:08:20,780
+Good.
+Tốt.
+
+
+162
+00:08:20,780 --> 00:08:24,439
+Copying that rhythm helps you sound much more natural.
+Bắt chước nhịp điệu đó giúp bạn nghe tự nhiên hơn nhiều.
+
+
+163
+00:08:24,439 --> 00:08:28,115
+It stops you from sounding flat, like a robot.
+Nó ngăn bạn nghe đều đều, như một con robot.
+
+
+164
+00:08:28,115 --> 00:08:30,935
+You sound human, you sound comfortable.
+Bạn nghe như người thật, bạn nghe thoải mái.
+
+
+165
+00:08:30,935 --> 00:08:33,455
+Let's do another round of practice.
+Hãy làm một vòng luyện tập nữa.
+
+
+166
+00:08:33,455 --> 00:08:37,715
+This time, let's pretend we are traveling or going to a restaurant.
+Lần này, hãy giả vờ chúng ta đang du lịch hoặc đi đến nhà hàng.
+
+
+167
+00:08:37,730 --> 00:08:40,050
+Listen and repeat.
+Nghe và lặp lại.
+
+
+168
+00:08:40,130 --> 00:08:43,170
+I would like a table for two, please.
+Tôi muốn một bàn cho hai người.
+
+
+169
+00:08:46,930 --> 00:08:49,250
+Can I see the menu?
+Tôi có thể xem thực đơn được không?
+
+
+170
+00:08:51,745 --> 00:08:54,864
+This food is delicious.
+Món này rất ngon.
+
+
+171
+00:08:56,945 --> 00:08:59,664
+Could we get the check, please?
+Cho chúng tôi thanh toán được không?
+
+
+172
+00:09:02,400 --> 00:09:03,920
+Excuse me.
+Xin lỗi.
+
+
+173
+00:09:03,920 --> 00:09:05,760
+Where is the train station?
+Ga tàu ở đâu vậy?
+
+
+174
+00:09:08,880 --> 00:09:11,840
+I am looking for a taxi.
+Tôi đang tìm taxi.
+
+
+175
+00:09:14,815 --> 00:09:16,355
+Great.
+Tuyệt.
+
+
+176
+00:09:16,355 --> 00:09:19,595
+Another tip for shadowing is to use headphones.
+Một mẹo nữa cho kỹ thuật shadowing là sử dụng tai nghe.
+
+
+177
+00:09:19,595 --> 00:09:21,575
+Oh, definitely.
+Ồ, chắc chắn rồi.
+
+
+178
+00:09:21,575 --> 00:09:27,935
+Because when you wear headphones, you can hear the native speaker's pronunciation much more clearly.
+Vì khi bạn đeo tai nghe, bạn có thể nghe phát âm của người bản ngữ rõ hơn nhiều.
+
+
+179
+00:09:27,850 --> 00:09:31,370
+You catch all the little sounds in the background.
+Bạn sẽ bắt được tất cả những âm thanh nhỏ ở phía sau.
+
+
+180
+00:09:31,449 --> 00:09:33,490
+I totally agree.
+Tôi hoàn toàn đồng ý.
+
+
+181
+00:09:33,490 --> 00:09:37,790
+And it's also helpful to repeat the same audio many times.
+Và việc lặp lại cùng một đoạn âm thanh nhiều lần cũng rất hữu ích.
+
+
+182
+00:09:37,790 --> 00:09:40,145
+Don't just do it once and move on.
+Đừng chỉ làm một lần rồi bỏ qua.
+
+
+183
+00:09:40,145 --> 00:09:41,305
+Yeah.
+Ừ.
+
+
+184
+00:09:41,305 --> 00:09:44,405
+Listen to this podcast episode again tomorrow.
+Hãy nghe lại tập podcast này vào ngày mai.
+
+
+185
+00:09:44,405 --> 00:09:49,084
+The more you repeat the same phrases, the more automatic they become.
+Bạn càng lặp lại cùng một cụm từ nhiều lần, chúng càng trở nên tự động hơn.
+
+
+186
+00:09:49,084 --> 00:09:51,925
+It's like building muscle memory.
+Giống như xây dựng trí nhớ cơ bắp vậy.
+
+
+187
+00:09:51,925 --> 00:09:54,525
+Let's try a little bit of a challenge now.
+Bây giờ hãy thử một chút thử thách nhé.
+
+
+188
+00:09:54,579 --> 00:09:56,019
+A challenge?
+Thử thách ư?
+
+
+189
+00:09:56,019 --> 00:09:57,920
+Like longer sentences?
+Như là những câu dài hơn chăng?
+
+
+190
+00:09:57,920 --> 00:09:58,740
+Yeah.
+Ừ.
+
+
+191
+00:09:58,740 --> 00:10:00,619
+Just a little bit longer.
+Chỉ lâu hơn một chút thôi.
+
+
+192
+00:10:00,619 --> 00:10:04,020
+Take a deep breath, listen, and repeat.
+Hãy hít một hơi thật sâu, lắng nghe, và lặp lại.
+
+
+193
+00:10:04,740 --> 00:10:09,779
+If it rains tomorrow, we will just stay inside and watch a movie.
+Nếu mai trời mưa, chúng ta sẽ chỉ ở trong nhà và xem phim.
+
+
+194
+00:10:16,445 --> 00:10:20,044
+Let's try another longer one.
+Hãy thử một câu dài hơn nữa nhé.
+
+
+195
+00:10:20,845 --> 00:10:26,205
+I was thinking about going to the park but it is too cold outside.
+Tôi đang nghĩ đến việc đi công viên nhưng bên ngoài quá lạnh.
+
+
+196
+00:10:32,620 --> 00:10:34,620
+Great job!
+Làm tốt lắm!
+
+
+197
+00:10:34,620 --> 00:10:38,140
+You can always pause the video if you need more time to say it.
+Bạn luôn có thể tạm dừng video nếu cần thêm thời gian để nói.
+
+
+198
+00:10:38,555 --> 00:10:44,095
+Now I want us to do one final round of practice before we finish.
+Bây giờ tôi muốn chúng ta thực hành một vòng cuối cùng trước khi kết thúc.
+
+
+199
+00:10:44,095 --> 00:10:47,395
+Let's do a short back and forth conversation.
+Hãy làm một đoạn hội thoại ngắn qua lại.
+
+
+200
+00:10:47,395 --> 00:10:49,914
+You can shadow both of us.
+Bạn có thể shadow cả hai chúng tôi.
+
+
+201
+00:10:50,314 --> 00:10:51,435
+Hi, Mark.
+Chào Mark.
+
+
+202
+00:10:51,435 --> 00:10:53,035
+What are you doing this weekend?
+Cuối tuần này bạn định làm gì?
+
+
+203
+00:10:56,640 --> 00:11:00,640
+I think I am just going to relax at home.
+Tôi nghĩ tôi sẽ chỉ thư giãn ở nhà thôi.
+
+
+204
+00:11:04,400 --> 00:11:06,640
+That sounds nice.
+Nghe hay đấy.
+
+
+205
+00:11:06,640 --> 00:11:09,200
+I need to catch up on some sleep too.
+Tôi cũng cần bù đắp một chút giấc ngủ.
+
+
+206
+00:11:13,885 --> 00:11:17,245
+We both had a very busy week.
+Cả hai chúng ta đều có một tuần rất bận rộn.
+
+
+207
+00:11:20,780 --> 00:11:22,380
+Hey, Anna.
+Này, Anna.
+
+
+208
+00:11:22,380 --> 00:11:24,780
+Did you finish that book I lent you?
+Bạn đã đọc xong cuốn sách tôi cho mượn chưa?
+
+
+209
+00:11:27,900 --> 00:11:29,660
+Not yet.
+Chưa đâu.
+
+
+210
+00:11:29,660 --> 00:11:32,299
+I only read the first two chapters.
+Tôi mới chỉ đọc hai chương đầu thôi.
+
+
+211
+00:11:35,995 --> 00:11:37,755
+No worries.
+Đừng lo.
+
+
+212
+00:11:37,755 --> 00:11:39,595
+Take your time with it.
+Cứ từ từ với nó.
+
+
+213
+00:11:42,875 --> 00:11:44,795
+And that's it.
+Và thế là xong.
+
+
+214
+00:11:44,795 --> 00:11:46,635
+Great work today, everyone.
+Hôm nay làm rất tốt, mọi người.
+
+
+215
+00:11:46,699 --> 00:11:49,940
+We hope you enjoyed practicing with us.
+Chúng tôi hy vọng các bạn thích luyện tập cùng chúng tôi.
+
+
+216
+00:11:49,940 --> 00:11:54,660
+Shadowing really is the best way to improve your English speaking skills.
+Shadowing thực sự là cách tốt nhất để cải thiện kỹ năng nói tiếng Anh của bạn.
+
+
+217
+00:11:54,660 --> 00:11:59,940
+Make sure to save this video so you can come back and practice with us again tomorrow.
+Hãy nhớ lưu video này để bạn có thể quay lại và luyện tập cùng chúng tôi vào ngày mai.
+
+
+218
+00:11:59,940 --> 00:12:05,801
+And be sure to subscribe to English in Comfort for more everyday conversations
+Và đừng quên đăng ký kênh English in Comfort để có thêm những cuộc trò chuyện hàng ngày
+
+
+219
+00:12:05,801 --> 00:12:09,505
+and useful speaking and listening practice.
+và bài luyện nói và nghe hữu ích.
+
+
+220
+00:12:09,505 --> 00:12:13,445
+Let us know in the comments how your practice went today.
+Hãy cho chúng tôi biết trong phần bình luận buổi luyện tập hôm nay của bạn diễn ra thế nào.
+
+
+221
+00:12:13,445 --> 00:12:15,965
+Did you find it easy or difficult?
+Bạn thấy nó dễ hay khó?
+
+
+222
+00:12:15,939 --> 00:12:18,500
+We would love to read your thoughts.
+Chúng tôi rất muốn đọc suy nghĩ của bạn.
+
+
+223
+00:12:18,500 --> 00:12:20,140
+Thank you for listening.
+Cảm ơn bạn đã lắng nghe.
+
+
+224
+00:12:20,140 --> 00:12:24,580
+Keep practicing, keep improving, and take care, everyone.
+Hãy tiếp tục luyện tập, tiếp tục tiến bộ và giữ gìn sức khỏe nhé, mọi người.
+
+    `;
+
+    // 2. BỘ PHÂN TÍCH TỰ ĐỘNG (Auto-Parser)
+    function parseSRT(text) {
+      // Tự động dọn dẹp các tag rác
+      const cleanText = text.replace(/\\s*/g, '').trim();
+      const lines = cleanText.split('\n').map(l => l.trim()).filter(l => l !== '');
+      
+      const result = [];
+      let currentItem = null;
+      const timeRegex = /(\d{2}):(\d{2}):(\d{2}),(\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2}),(\d{3})/;
+
+      function toSec(h, m, s, ms) {
+        return parseInt(h) * 3600 + parseInt(m) * 60 + parseInt(s) + parseInt(ms) / 1000;
+      }
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const t = line.match(timeRegex);
+
+        if (t) {
+          if (currentItem && currentItem.en) result.push(currentItem);
+          currentItem = {
+            start: toSec(t[1], t[2], t[3], t[4]),
+            end: toSec(t[5], t[6], t[7], t[8]),
+            en: "",
+            vi: ""
+          };
+        } else if (currentItem) {
+          // Bỏ qua các số thứ tự phân đoạn của SRT
+          if (/^\d+$/.test(line) && i + 1 < lines.length && lines[i+1].match(timeRegex)) continue;
+          
+          if (!currentItem.en) {
+            currentItem.en = line;
+          } else if (!currentItem.vi) {
+            currentItem.vi = line;
+          } else {
+            currentItem.vi += " " + line;
+          }
+        }
+      }
+      if (currentItem && currentItem.en) result.push(currentItem);
+      return result;
+    }
+
+    const transcriptData = parseSRT(rawSrt);
+
+    // 3. UI Tương tác
+    let showTranslation = true;
+    function toggleTranslation() {
+      showTranslation = !showTranslation;
+      document.documentElement.style.setProperty('--vi-display', showTranslation ? 'block' : 'none');
+    }
+
+    const scriptContainer = document.getElementById('script-container');
+    
+    // Đẩy dữ liệu ra màn hình
+    transcriptData.forEach((line, index) => {
+      const div = document.createElement('div');
+      div.className = 'script-line';
+      div.id = 'line-' + index;
+      
+      const enDiv = document.createElement('div');
+      enDiv.className = 'en-text';
+      enDiv.innerText = line.en;
+
+      const viDiv = document.createElement('div');
+      viDiv.className = 'vi-text';
+      viDiv.innerText = line.vi || " "; // Xử lý câu không có tiếng Việt
+
+      div.appendChild(enDiv);
+      div.appendChild(viDiv);
+
+      div.onclick = () => {
+        if(player && player.seekTo && line.start !== null) {
+          player.seekTo(line.start, true);
+          player.playVideo();
+        }
+      };
+
+      scriptContainer.appendChild(div);
+    });
+
+    // 4. API YouTube & Xử lý nháy sáng câu
+    let player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('ytplayer', {
+        height: '100%',
+        width: '100%',
+        videoId: '8Y3jWdhbB_g', 
+        playerVars: { 'autoplay': 0, 'controls': 1 },
+        events: {
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+
+    let checkInterval;
+    let currentLineIndex = -1;
+
+    function onPlayerStateChange(event) {
+      if (event.data == YT.PlayerState.PLAYING) {
+        checkInterval = setInterval(updateHighlight, 200);
+      } else {
+        clearInterval(checkInterval);
+      }
+    }
+
+    function updateHighlight() {
+      if(!player || !player.getCurrentTime) return;
+      const time = player.getCurrentTime();
+      let foundLine = -1;
+
+      for (let i = 0; i < transcriptData.length; i++) {
+        if (time >= transcriptData[i].start && time <= transcriptData[i].end) {
+          foundLine = i;
+          break;
+        }
+      }
+
+      if (foundLine !== -1 && currentLineIndex !== foundLine) {
+        if (currentLineIndex !== -1) {
+          document.getElementById('line-' + currentLineIndex).classList.remove('active');
+        }
+        const activeLine = document.getElementById('line-' + foundLine);
+        activeLine.classList.add('active');
+       
+        // Căn lề mượt mà, phân biệt theo kích thước màn hình
+        if (window.innerWidth <= 992) {
+          // Trên điện thoại: Cuộn dòng chữ lên sát mí trên cùng (start)
+          activeLine.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          // Trên máy tính: Vẫn giữ nguyên cuộn ra giữa màn hình (center)
+          activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        currentLineIndex = foundLine;
+      }
+    }
+
+    // 5. Chức năng nhận diện giọng nói (Shadowing Evaluation)
+    const recordBtn = document.getElementById('recordBtn');
+    const resultText = document.getElementById('resultText');
+    const scoreText = document.getElementById('scoreText');
+
+    let recognition;
+    let isRecording = false;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRec();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = function(event) {
+        const spoken = event.results[0][0].transcript;
+        resultText.innerText = `"${spoken}"`;
+        calculateScore(spoken);
+      };
+
+      recognition.onerror = function(event) {
+        resultText.innerText = "Error recognizing speech. Try again.";
+        resetRecordButton();
+      };
+
+      recognition.onend = function() {
+        if (isRecording) resetRecordButton();
+      };
+
+      recordBtn.onclick = () => {
+        if (!isRecording) {
+          if(player && player.pauseVideo) player.pauseVideo();
+          recognition.start();
+          isRecording = true;
+          recordBtn.innerText = "Stop & Evaluate";
+          recordBtn.classList.add('recording');
+          resultText.innerText = "Listening...";
+        } else {
+          recognition.stop();
+          resetRecordButton();
+        }
+      };
+    } else {
+      resultText.innerText = "Speech API not supported. Please use Chrome/Edge.";
+    }
+
+    function resetRecordButton() {
+      isRecording = false;
+      recordBtn.innerText = "Click to Speak";
+      recordBtn.classList.remove('recording');
+    }
+
+    function calculateScore(spoken) {
+      if (currentLineIndex === -1) {
+        scoreText.innerText = "Please select a sentence!";
+        scoreText.style.color = "#ff6a88";
+        return;
+      }
+      
+      const targetText = transcriptData[currentLineIndex].en.toLowerCase().replace(/[^\w\s]/gi, '');
+      const spokenText = spoken.toLowerCase().replace(/[^\w\s]/gi, '');
+      
+      const targetWords = targetText.split(' ').filter(w => w);
+      const spokenWords = spokenText.split(' ').filter(w => w);
+      
+      let matches = 0;
+      targetWords.forEach(word => {
+        if (spokenWords.includes(word)) matches++;
+      });
+      
+      let percentage = Math.round((matches / targetWords.length) * 100);
+      if (percentage > 100) percentage = 100;
+      
+      scoreText.innerText = `Accuracy: ${percentage}%`;
+      scoreText.style.color = percentage >= 80 ? "#4CAF50" : (percentage >= 50 ? "#FF9800" : "#ff6a88");
+    }
+  </script>
+</body>
+</html>
