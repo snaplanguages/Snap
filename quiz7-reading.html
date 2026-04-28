@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passage 1 Test 3 | SnapEnglish</title>
+  <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Amethyst Theme - Tím thạch anh (Sang trọng, thư giãn mắt) */
+            --primary: #7c3aed; 
+            --primary-dark: #5b21b6; 
+            --accent: #c4b5fd;
+            --bg-body: #f5f3ff;
+            --border-color: #ddd6fe;
+            --text-color: #1e293b;
+            --highlight-color: #fef08a;
+            --correct: #16a34a;
+            --wrong: #dc2626;
+            --exp-bg: #faf5ff;
+            --header-h: 65px;
+            --footer-h: 70px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-color);
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* --- OVERLAY & MODALS --- */
+        .custom-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center;
+            z-index: 99999;
+        }
+        
+        .setup-modal {
+            background: white; padding: 40px 40px; border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(124, 58, 237, 0.15);
+            width: 90%; max-width: 450px; text-align: center;
+            border: 2px solid var(--accent);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .setup-modal h2 { font-family: 'Lora', serif; color: var(--primary-dark); font-size: 28px; margin-top: 0; }
+        
+        #timeInputBox { display: block; margin: 25px 0; }
+        #timeInput { 
+            width: 100px; padding: 10px; font-size: 18px; text-align: center; 
+            border: 2px solid #cbd5e1; border-radius: 10px; font-family: inherit;
+            color: var(--primary-dark); font-weight: bold; outline: none; transition: 0.2s;
+        }
+        #timeInput:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2); }
+        
+        .start-btn {
+            background: var(--primary); color: white; border: none; padding: 12px 35px;
+            border-radius: 50px; font-size: 16px; font-weight: 700; cursor: pointer;
+            transition: 0.3s; display: inline-block; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        }
+        .start-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4); }
+
+        .modal-actions { display: flex; gap: 15px; margin-top: 25px; justify-content: center; }
+        .btn-cancel {
+            background: #f1f5f9; color: #475569; border: 2px solid #cbd5e1; padding: 12px 20px;
+            border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; flex: 1;
+        }
+        .btn-cancel:hover { background: #e2e8f0; border-color: #94a3b8; }
+        .btn-confirm {
+            background: var(--primary); color: white; border: none; padding: 12px 20px;
+            border-radius: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; flex: 1;
+            box-shadow: 0 4px 0 var(--primary-dark);
+        }
+        .btn-confirm:active { transform: translateY(4px); box-shadow: none; }
+
+        /* HEADER */
+        header {
+            height: var(--header-h); background: #fff;
+            border-bottom: 1px solid var(--border-color);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 25px; z-index: 100;
+        }
+        .brand { font-size: 20px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .brand span { background: var(--primary); color: white; padding: 4px 10px; border-radius: 8px; font-size: 14px; }
+        
+        .timer-box { font-family: monospace; font-size: 18px; font-weight: 700; color: #b91c1c; background: #fef2f2; padding: 6px 15px; border-radius: 8px; border: 1px solid #fecaca;}
+        .btn-submit { 
+            background: var(--primary); color: white; border: none; padding: 8px 25px; 
+            border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px;
+            box-shadow: 0 4px 0 var(--primary-dark); transition: 0.2s;
+        }
+        .btn-submit:active { transform: translateY(4px); box-shadow: none; }
+
+        /* LAYOUT */
+        .container { display: flex; height: calc(100vh - var(--header-h) - var(--footer-h)); width: 100%; max-width: 100%; }
+        .pane { flex: 1; padding: 35px; overflow-y: auto; position: relative; scroll-behavior: smooth; }
+        .pane-left { border-right: 2px solid var(--border-color); background: #fff; font-size: 16px; line-height: 1.8; text-align: justify; }
+        .pane-right { background: #f8fafc; }
+        
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 5px; }
+
+        /* CONTENT */
+        .passage-title { text-align: center; color: var(--primary-dark); margin-bottom: 25px; font-family: 'Lora', serif; border-bottom: 2px dashed var(--accent); padding-bottom: 15px;}
+        .paragraph { margin-bottom: 20px; }
+        .paragraph-label { color: var(--primary); font-weight: 800; font-size: 1.1em; margin-right: 5px; }
+        .passage-intro { font-style: italic; background: #f1f5f9; padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent); margin-bottom: 25px;}
+
+        /* EVIDENCE HIGHLIGHTS */
+        .ev-box { 
+            padding: 2px 4px; border-radius: 6px; 
+            transition: all 0.4s ease; 
+            border: 2px solid transparent;
+            background-color: transparent;
+            color: inherit;
+        }
+        .ev-box.focus-blink {
+            border-color: var(--primary-dark) !important;
+            transform: scale(1.02); 
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2) !important; 
+            background-color: var(--highlight-color) !important;
+            z-index: 10; position: relative;
+        }
+
+        /* QUESTIONS */
+        .question-section { padding: 25px; border: 1px solid var(--border-color); background: #fff; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
+        .instruction { color: var(--primary-dark); font-weight: 700; margin-bottom: 20px; font-size: 16px; background: #ede9fe; padding: 12px 15px; border-radius: 8px; border-left: 4px solid var(--primary);}
+
+        .q-row { display: flex; align-items: baseline; margin-bottom: 18px; font-size: 16px; }
+        .q-num { font-weight: bold; min-width: 30px; color: var(--primary); }
+        .q-content { flex: 1; }
+
+        .input-gap {
+            display: inline-block; width: 140px; height: 32px;
+            border: 2px solid #cbd5e1; border-radius: 6px; 
+            text-align: center; font-weight: 700; color: var(--primary-dark);
+            font-size: 15px; margin: 0 5px; vertical-align: middle; transition: 0.2s;
+        }
+        .input-gap:focus { border-color: var(--primary); outline: none; }
+        .input-gap.filled { background: #ede9fe; border-color: var(--primary); }
+
+        select.input-select {
+            padding: 8px; border: 2px solid #cbd5e1; border-radius: 8px;
+            font-size: 15px; cursor: pointer; font-weight: 600; color: var(--text-color); outline: none; margin-top: 8px;
+        }
+        select.input-select:focus { border-color: var(--primary); }
+
+        /* EXPLANATION BOX (NÂNG CẤP) */
+        .exp-box {
+            display: none; background: #fff;
+            border: 2px solid var(--border-color); border-left: 6px solid var(--primary);
+            padding: 20px; margin-top: 15px; margin-bottom: 15px; border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.08); 
+            animation: slideUp 0.4s ease-out;
+        }
+        .exp-box.show { display: block; }
+        .exp-title { 
+            font-weight: 800; color: var(--primary-dark); font-size: 18px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 2px dashed var(--border-color); padding-bottom: 10px; margin-bottom: 12px;
+        }
+        .locate-btn {
+            background: #ede9fe; border: 1px solid var(--accent); color: var(--primary-dark);
+            padding: 6px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.2s;
+        }
+        .locate-btn:hover { background: var(--primary); color: white; }
+        
+        .exp-section { margin-bottom: 12px; font-size: 15px; line-height: 1.6; color: #334155; }
+        .exp-label { font-weight: 700; color: var(--primary-dark); display: inline-block; width: 100px; }
+        .exp-translate { background: #f8fafc; padding: 10px; border-radius: 6px; border-left: 3px solid #cbd5e1; font-style: italic; margin-top: 5px; }
+        .exp-keywords { background: #fffbeb; padding: 10px; border-radius: 6px; border: 1px dashed #fde68a; margin-top: 5px;}
+        .exp-detail { margin-top: 5px; }
+        .exp-keyword-match { color: #b45309; font-weight: 600; }
+
+        @keyframes slideUp { from { transform: translateY(15px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* FOOTER */
+        footer {
+            height: var(--footer-h); background: #fff; border-top: 2px solid var(--border-color);
+            display: flex; align-items: center; padding: 0 25px; gap: 15px; z-index: 100;
+        }
+        .palette-scroller { flex: 1; display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; align-items: center;}
+        .nav-dot {
+            min-width: 38px; height: 38px; border: 2px solid #e2e8f0; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: bold;
+            cursor: pointer; color: #94a3b8; background: white; transition: 0.2s; flex-shrink: 0;
+        }
+        .nav-dot.done { background: #ede9fe; color: var(--primary-dark); border-color: var(--accent); }
+        .nav-dot:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* HIGHLIGHT MENU */
+        .highlight { background-color: var(--highlight-color); cursor: pointer; border-radius: 3px; padding: 2px 0;}
+        #ctxMenu {
+            position: absolute; display: none; background: white; 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12); border-radius: 10px; 
+            font-size: 15px; z-index: 99999; border: 1px solid #eee; min-width: 160px; overflow: hidden;
+        }
+        #ctxMenu button {
+            background: none; border: none; padding: 12px 18px; 
+            width: 100%; text-align: left; cursor: pointer; display: block; font-weight: 600; color: #444;
+        }
+        #ctxMenu button:hover { background: #f8fafc; color: var(--primary-dark); }
+        #ctxMenu button.delete:hover { background: #fef2f2; color: var(--wrong); }
+
+        .feedback { display: inline-block; margin-left: 10px; font-weight: bold; font-size: 15px; }
+        .correct { color: var(--correct); }
+        .wrong { color: var(--wrong); }
+
+    </style>
+</head>
+<body>
+
+<div id="setupOverlay" class="custom-overlay">
+    <div class="setup-modal">
+        <h2>Reading Library ✨</h2>
+        <p style="font-size: 16px; color: #64748b; margin-bottom: 20px;">Hãy cài đặt thời gian để bắt đầu luyện tập Passage 1 nhé!</p>
+        <div id="timeInputBox">
+            <label style="font-size: 16px; font-weight: bold; color: #475569;">Thời gian (phút): </label>
+            <input type="number" id="timeInput" value="20" min="5" max="60">
+        </div>
+        <button class="start-btn" onclick="askReady()">Sẵn sàng (OK)</button>
+    </div>
+</div>
+
+<div id="startConfirmOverlay" class="custom-overlay">
+    <div class="custom-modal setup-modal">
+        <h2>Xác nhận bắt đầu</h2>
+        <p id="startConfirmMsg" style="font-size: 16px; color: #475569; margin-bottom: 20px; white-space: pre-line;"></p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeStartConfirmModal()">Huỷ</button>
+            <button class="btn-confirm" onclick="startTestActual()">OK</button>
+        </div>
+    </div>
+</div>
+
+<header>
+    <div class="brand"><span>SnapEnglish</span> Passage 1 Test 3</div>
+    <div style="display:flex; align-items:center; gap:15px;">
+        <div class="timer-box">⏱ <span id="timer">00:00</span></div>
+        <button class="btn-submit" onclick="submitTest(true)">NỘP BÀI</button>
+    </div>
+</header>
+
+<div class="container" id="mainContainer">
+    <div class="pane pane-left" id="passagePane">
+        <h2 class="passage-title">Biomimetic Design</h2>
+        <div id="passageText">
+            <div class="passage-intro">
+                What has fins like a whale, skin like a lizard, and eyes like a moth? The future of engineering. Andrew Parker, an evolutionary biologist, knelt in the baking red sand of the Australian outback just south of Alice Springs and eased the right hind leg of a thorny devil into a dish of water.
+            </div>
+
+            <p class="paragraph"><span class="paragraph-label">A.</span> “Its back is completely drenched!” Sure enough, after 30 seconds, water from the dish had picked up the lizard’s leg and was glistening all over its prickly hide. In a few seconds more the water reached its mouth, and the lizard began to smack its jaws with evident satisfaction. It was, in essence, drinking through its foot. Given more time, the thorny devil can perform this same conjuring trick on a patch of damp sand – a vital competitive advantage in the desert. <span id="ev-1" class="ev-box">Parker had come here to discover precisely how it does this, not from purely biological interest, but with a concrete purpose in mind: to make a thorny-devil-inspired device that will help people collect lifesaving water in the desert.</span> “The water’s spreading out incredibly fast!” he said, as drops from his eyedropper fell onto the lizard’s back and vanished, like magic. <span id="ev-2" class="ev-box">“Its skin is far more hydrophobic than I thought.</span> There may well be hidden capillaries, channeling the water into the mouth.”</p>
+            
+            <p class="paragraph"><span class="paragraph-label">B.</span> <span id="ev-3" class="ev-box">Parker’s work is only a small part of an increasingly vigorous, global biomimetics movement. Engineers in Bath, England, and West Chester, Pennsylvania, are pondering the bumps on the leading edges of humpback whale flukes to learn how to make airplane wings for more agile flight. In Berlin, Germany, the fingerlike primary feathers of raptors are inspiring engineers to develop wings that change shape aloft</span> to reduce drag and increase fuel efficiency. Architects in Zimbabwe are studying how termites regulate temperature, humidity, and airflow in their mounds in order to build more comfortable buildings, while Japanese medical researchers are reducing the pain of an injection by using hypodermic needles edged with tiny serrations, like those on a mosquito’s proboscis, minimizing nerve stimulation.</p>
+            
+            <p class="paragraph"><span class="paragraph-label">C.</span> Ronald Fearing, a professor of electrical engineering at the University of California, Berkeley, has taken on one of the biggest challenges of all: to create a miniature robotic fly that is swift, small, and maneuverable enough for use in surveillance or search-and-rescue operations. Fearing made his own, one of which he held up with tweezers for me to see, a gossamer wand some 11 millimeters long and not much thicker than a cat’s whisker. <span id="ev-8" class="ev-box">Fearing has been forced to manufacture many of the other minute components of his fly in the same way, using a micromachining laser and a rapid prototyping system</span> that allows him to design his minuscule parts in a computer, automatically cut and cure them overnight, and assemble them by hand the next day under a microscope.</p>
+            
+            <p class="paragraph"><span class="paragraph-label">D.</span> With the micro laser he cuts the fly’s wings out of a two-micron polyester sheet so delicate that it crumples if you breathe on it and must be reinforced with carbon-fiber spars. The wings on his current model flap at 275 times per second – faster than the insect’s own wings – and make the blowfly’s signature buzz. “Carbon fiber outperforms fly chitin,” he said, with a trace of self-satisfaction. He pointed out a protective plastic box on the lab bench, which contained the fly-bot itself, <span id="ev-9" class="ev-box">a delicate, origami-like framework of black carbon-fiber struts and hairlike wires that, not surprisingly, looks nothing like a real fly.</span> A month later it achieved liftoff in a controlled flight on a boom. Fearing expects the fly-bot to hover in two or three years, and eventually to bank and dive with flylike virtuosity.</p>
+            
+            <p class="paragraph"><span class="paragraph-label">E.</span> Stanford University roboticist Mark Cutkosky designed a gecko-insured climber that he christened Stickybot. <span id="ev-4" class="ev-box">In reality, gecko feet aren’t sticky – they’re dry and smooth to the touch – and owe their remarkable adhesion to some two billion spatula-tipped filaments per square centimeter on their toe pads, each filament only a hundred nanometers thick. These filaments are so small, in fact, that they interact at the molecular level with the surface on which the gecko walks, tapping into the low-level van der Waals forces generated by molecules’ fleeting positive and negative charges</span>, which pull any two adjacent objects together. To make the toe pads for Stickybot, Cutkosky and doctoral student Sangbae Kim, the robot’s lead designer, produced a urethane fabric with tiny bristles that end in 30-micrometer points. Though not as flexible or adherent as the gecko itself, they hold the 500-gram robot on a vertical surface.</p>
+            
+            <p class="paragraph"><span class="paragraph-label">F.</span> Cutkosky endowed his robot with seven-segmented toes that drag and release just like the lizard’s, and a gecko-like stride that snugs it to the wall. He also crafted Stickybot’s legs and feet with a process he calls shape deposition manufacturing (SDM), which combines a range of metals, polymers, and fabrics to create the same smooth gradation from stiff to flexible that is present in the lizard’s limbs and absent in most man-made materials. SDM also allows him to embed actuators, sensors, and other specialized structures that make Stickybot climb better. Then he noticed in a paper on gecko anatomy that the lizard had to branch tendons to distribute its weight evenly across the entire surface of its toes. Eureka. “When I saw that, I thought, wow, that’s great!” <span id="ev-10" class="ev-box">He subsequently embedded a branching polyester cloth “tendon” in his robot’s limbs to distribute its load in the same way.</span></p>
+            
+            <p class="paragraph"><span class="paragraph-label">G.</span> Stickybot now walks up vertical surfaces of glass, plastic, and glazed ceramic tile, though it will be some time before it can keep up with a gecko. For the moment it can walk only on smooth surfaces, at a mere four centimeters per second, a fraction of the speed of its biological role model. <span id="ev-11" class="ev-box">The dry adhesive on Stickybot‘s toes isn’t self-cleaning like the lizard’s either, so it rapidly clogs with dirt.</span> “There are a lot of things about the gecko that we simply had to ignore,” Cutkosky says. Still, a number of real-world applications are in the offing. <span id="ev-12" class="ev-box">The Department of Defense’s Defense Advanced Research Projects Agency (DARPA), which funds the project, has it in mind for surveillance</span>: an automaton that could slink up a building and perch there for hours or days, monitoring the terrain below. Cutkosky hypothesizes a range of civilian uses. “I’m trying to get robots to go places where they’ve never gone before,” he told me. “I would like to see Stickybot have a real-world function, whether it’s a toy or another application. <span id="ev-13" class="ev-box">Sure, it would be great if it eventually has a lifesaving or humanitarian role…”</span></p>
+            
+            <p class="paragraph"><span class="paragraph-label">H.</span> <span id="ev-6" class="ev-box">For all the power of the biomimetics paradigm, and the brilliant people who practice it, bio-inspiration has led to surprisingly few mass-produced products</span> and arguably only one household word – <span id="ev-7" class="ev-box">Velcro, which was invented in 1948 by Swiss chemist George de Mestral, by copying the way cockleburs clung to his dog’s coat.</span> In addition to Cutkosky‘s lab, five other high-powered research teams are currently trying to mimic gecko adhesion, and so far none has come close to matching the lizard’s strong, directional, self-cleaning grip. Likewise, scientists have yet to meaningfully re-create the abalone nanostructure that accounts for the strength of its shell, and several well-funded biotech companies have gone bankrupt trying to make artificial spider silk.</p>
+        </div>
+    </div>
+
+    <div class="pane pane-right" id="questionPane">
+        
+        <div class="question-section" id="q-group-1">
+            <div class="instruction">Câu 1-7: Các nhận định sau đây có đồng tình với thông tin trong Bài đọc không?</div>
+            
+            <div class="q-row" id="q-1">
+                <span class="q-num">1.</span>
+                <span class="q-content">
+                    Andrew Parker failed to make effective water device which can be used in desert.<br>
+                    <select class="input-select" id="ans-1" onchange="updateNav(1)">
+                        <option value="">Chọn...</option>
+                        <option value="TRUE">TRUE</option>
+                        <option value="FALSE">FALSE</option>
+                        <option value="NOT GIVEN">NOT GIVEN</option>
+                    </select>
+                    <span id="fb-1" class="feedback"></span>
+                </span>
+            </div>
+            <div id="exp-1"></div>
+
+            <div class="q-row" id="q-2">
+                <span class="q-num">2.</span>
+                <span class="q-content">
+                    Skin of lizard is easy to get wet when it contacts water.<br>
+                    <select class="input-select" id="ans-2" onchange="updateNav(2)">
+                        <option value="">Chọn...</option>
+                        <option value="TRUE">TRUE</option>
+                        <option value="FALSE">FALSE</option>
+                        <option value="NOT GIVEN">NOT GIVEN</option>
+                    </select>
+                    <span id="fb-2" class="feedback"></span>
+                </span>
+            </div>
+            <div id="exp-2"></div>
+
+            <div class="q-row" id="q-3">
+                <span class="q-num">3.</span>
+                <span class="q-content">
+                    Scientists apply inspiration from nature into many artificial engineering.<br>
+                    <select class="input-select" id="ans-3" onchange="updateNav(3)">
+                        <option value="">Chọn...</option>
+                        <option value="TRUE">TRUE</option>
+                        <option value="FALSE">FALSE</option>
+                        <option value="NOT GIVEN">NOT GIVEN</option>
+                    </select>
+                    <span id="fb-3" class="feedback"></span>
+                </span>
+            </div>
+            <div id="exp-3"></div>
+
+            <div class="q-row" id="q-4">
+                <span class="q-num">4.</span>
+                <span class="q-content">
+                    Tiny and thin hair under gecko’s feet allows it to stick to the surface of object.<br>
+                    <select class="input-select" id="ans-4" onchange="updateNav(4)">
+                        <option value="">Chọn...</option>
+                        <option value="TRUE">TRUE</option>
+                        <option value="FALSE">FALSE</option>
+                        <option value="NOT GIVEN">NOT GIVEN</option>
+                    </select>
+                    <span id="fb-4" class="feedback"></span>
+                </span>
+            </div>
+            <div id="exp-4"></div>
+
+            <div class="q-row" id="q-5">
+                <span class="q-num">5.</span>
+                <span class="q-content">
+                    When gecko climbs downward, its feet release a certain kind of chemical to make them adhesive.<br>
+                    <select class="input-select" id="ans-5" onchange="updateNav(5)">
+                        <option value="">Chọn...</option>
+                        <option value="TRUE">TRUE</option>
+                        <option value="FALSE">FALSE</option>
+                        <option value="NOT GIVEN">NOT GIVEN</option>
+                    </select>
+                    <span id="fb-5" class="feedback"></span>
+                </span>
+            </div>
+            <div id="exp-5"></div>
+
+            <div class="q-row" id="q-6">
+                <span class="q-num">6.</span>
+                <span class="q-content">
+                    Famous cases stimulate a large number of successful products of biomimetics in real life.<br>
+                    <select class="input-select" id="ans-6" onchange="updateNav(6)">
+                        <option value="">Chọn...</option>
+                        <option value="TRUE">TRUE</option>
+                        <option value="FALSE">FALSE</option>
+                        <option value="NOT GIVEN">NOT GIVEN</option>
+                    </select>
+                    <span id="fb-6" class="feedback"></span>
+                </span>
+            </div>
+            <div id="exp-6"></div>
+
+            <div class="q-row" id="q-7">
+                <span class="q-num">7.</span>
+                <span class="q-content">
+                    Velcro is well-known for its bionics design.<br>
+                    <select class="input-select" id="ans-7" onchange="updateNav(7)">
+                        <option value="">Chọn...</option>
+                        <option value="TRUE">TRUE</option>
+                        <option value="FALSE">FALSE</option>
+                        <option value="NOT GIVEN">NOT GIVEN</option>
+                    </select>
+                    <span id="fb-7" class="feedback"></span>
+                </span>
+            </div>
+            <div id="exp-7"></div>
+        </div>
+
+        <div class="question-section" id="q-group-2">
+            <div class="instruction">Câu 8-10: Điền vào chỗ trống.<br>Viết <strong>KHÔNG QUÁ BA TỪ VÀ/HOẶC MỘT SỐ</strong> từ đoạn văn cho mỗi câu hỏi về robot dưới đây.</div>
+            
+            <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px dashed #cbd5e1; line-height: 2.2; font-size: 16px;">
+                Ronald Fearing was required to fabricate tiny components for his robotic fly 
+                <b>8.</b> <input type="text" class="input-gap" style="width: 160px;" id="ans-8" oninput="updateNav(8)"> <span id="fb-8" class="feedback"></span> 
+                by specialized techniques.<br><br>
+                The robotic fly’s main structure outside is made of 
+                <b>9.</b> <input type="text" class="input-gap" style="width: 160px;" id="ans-9" oninput="updateNav(9)"> <span id="fb-9" class="feedback"></span> 
+                and long and thin wires which make it unlike fly at all.<br><br>
+                Cutkosky applied an artificial material in Stickybot’s 
+                <b>10.</b> <input type="text" class="input-gap" id="ans-10" oninput="updateNav(10)"> <span id="fb-10" class="feedback"></span> 
+                as a tendon to split pressure like lizard’s does.
+            </div>
+            <div id="fb-container-8-10" style="display:flex; flex-direction:column; gap:10px; margin-top: 15px;"></div>
+        </div>
+
+        <div class="question-section" id="q-group-3">
+            <div class="instruction">Câu 11-13: Điền vào chỗ trống.<br>Viết <strong>KHÔNG QUÁ BA TỪ VÀ/HOẶC MỘT SỐ</strong> từ đoạn văn cho mỗi câu hỏi về robot dưới đây.</div>
+            
+            <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px dashed #cbd5e1; line-height: 2.2; font-size: 16px;">
+                Stickybot’s feet doesn’t have 
+                <b>11.</b> <input type="text" class="input-gap" id="ans-11" oninput="updateNav(11)"> <span id="fb-11" class="feedback"></span> 
+                function which makes it only be able to walk on smooth surface.<br><br>
+                DARPA is planning to use stickybot for 
+                <b>12.</b> <input type="text" class="input-gap" id="ans-12" oninput="updateNav(12)"> <span id="fb-12" class="feedback"></span>.<br><br>
+                Cutkosky assumes that stickybot finally has potential in 
+                <b>13.</b> <input type="text" class="input-gap" id="ans-13" oninput="updateNav(13)"> <span id="fb-13" class="feedback"></span> 
+                or other human-related activities.
+            </div>
+            <div id="fb-container-11-13" style="display:flex; flex-direction:column; gap:10px; margin-top: 15px;"></div>
+        </div>
+
+    </div>
+</div>
+
+<div id="confirmOverlay" class="custom-overlay">
+    <div class="custom-modal setup-modal">
+        <h2>Xác nhận nộp bài</h2>
+        <p style="font-size: 16px; color: #475569; margin-bottom: 15px;">Bạn có chắc chắn muốn nộp bài để xem đáp án và giải thích chi tiết không?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmModal()">Quay lại</button>
+            <button class="btn-confirm" onclick="executeSubmit()">Nộp bài</button>
+        </div>
+    </div>
+</div>
+
+<div id="resultOverlay" class="custom-overlay">
+    <div class="custom-modal setup-modal">
+        <h2>🎉 Tuyệt vời!</h2>
+        <div id="resultMessage" style="margin: 20px 0; line-height: 1.8;"></div>
+        <button class="btn-confirm" style="width: 100%; margin-top: 10px;" onclick="closeResultModal()">Xem giải thích chi tiết</button>
+    </div>
+</div>
+
+<div id="ctxMenu">
+    <button onclick="doHighlight()">🖍 Bôi vàng Highlight tự do</button>
+    <button onclick="removeHighlight()" class="delete">🗑 Xóa Highlight</button>
+</div>
+
+<footer>
+    <div style="font-size:14px; font-weight:bold; color:#64748b; text-transform:uppercase;">Điều hướng nhanh:</div>
+    <div class="palette-scroller" id="navPalette"></div>
+</footer>
+
+<script>
+    // --- STATE & DATA ---
+    let testDuration = 0; 
+    let timerInterval = null;
+    let isSubmitted = false;
+
+    const correctAnswers = {
+        1: "NOT GIVEN", 2: "FALSE", 3: "TRUE", 4: "FALSE", 5: "NOT GIVEN",
+        6: "FALSE", 7: "TRUE", 
+        8: ["THE SAME WAY", "IN THE SAME WAY"], 
+        9: ["CARBON-FIBER", "CARBON FIBER"], 
+        10: ["LIMBS", "LEGS AND FEET", "LEGS AND FEETS"], 
+        11: "SELF-CLEANING", 12: "SURVEILLANCE", 13: ["LIFESAVING", "A LIFESAVING"]
+    };
+
+    const explanations = {
+        1: { 
+            translation: "Andrew Parker đã thất bại trong việc chế tạo thiết bị lấy nước hiệu quả có thể sử dụng trên sa mạc.", 
+            keywords: "<span class='exp-keyword-match'>failed to make >< a concrete purpose in mind: to make</span>",
+            exp: "Đoạn A nói Parker có mục đích tạo ra một thiết bị lấy nước (concrete purpose in mind: to make a thorny-devil-inspired device...), nhưng KHÔNG hề đề cập đến việc ông ấy đã chế tạo thành công hay thất bại (failed). => <b>NOT GIVEN</b>", 
+            colorClass: "ev-1" 
+        },
+        2: { 
+            translation: "Da của thằn lằn dễ bị ướt khi tiếp xúc với nước.", 
+            keywords: "<span class='exp-keyword-match'>easy to get wet >< far more hydrophobic</span>",
+            exp: "Đoạn A trích lời: 'Its skin is far more hydrophobic than I thought.' (Da nó kỵ nước hơn tôi tưởng nhiều). Hydrophobic (kỵ nước) ngược lại hoàn toàn với 'easy to get wet' (dễ ướt). => <b>FALSE</b>", 
+            colorClass: "ev-2" 
+        },
+        3: { 
+            translation: "Các nhà khoa học áp dụng cảm hứng từ tự nhiên vào nhiều công trình kỹ thuật nhân tạo.", 
+            keywords: "<span class='exp-keyword-match'>apply inspiration from nature = global biomimetics movement, inspiring engineers...</span>",
+            exp: "Đoạn B mô tả phong trào mô phỏng sinh học (biomimetics), nơi kỹ sư nghiên cứu cá voi lưng gù để chế tạo cánh máy bay, hoặc kiến trúc sư nghiên cứu tổ mối. => <b>TRUE</b>", 
+            colorClass: "ev-3" 
+        },
+        4: { 
+            translation: "Lớp lông mỏng và nhỏ xíu dưới chân tắc kè giúp nó dính chặt vào bề mặt vật thể.", 
+            keywords: "<span class='exp-keyword-match'>hair / stick >< aren’t sticky... interact at the molecular level (van der Waals forces)</span>",
+            exp: "Đoạn E khẳng định thực tế chân tắc kè 'aren't sticky' (không dính) và cũng không phải do lông móc vào. Chúng bám được là nhờ lực van der Waals ở cấp độ phân tử (interact at the molecular level). => <b>FALSE</b>", 
+            colorClass: "ev-4" 
+        },
+        5: { 
+            translation: "Khi tắc kè trèo xuống, chân nó tiết ra một loại hóa chất nhất định để làm cho chúng dính.", 
+            keywords: "Không tìm thấy thông tin 'chemical'.",
+            exp: "Khắp bài đọc mô tả nguyên lý vật lý (lực van der Waals, SDM, gân vải...) nhưng KHÔNG HỀ có bất kỳ thông tin nào nói về việc tắc kè tiết ra hóa chất (chemical) khi trèo xuống. => <b>NOT GIVEN</b>", 
+            colorClass: "ev-5" 
+        },
+        6: { 
+            translation: "Các trường hợp nổi tiếng thúc đẩy một lượng lớn các sản phẩm thành công của công nghệ mô phỏng sinh học trong đời thực.", 
+            keywords: "<span class='exp-keyword-match'>a large number of successful products >< surprisingly few mass-produced products</span>",
+            exp: "Đoạn H nêu rõ: '...bio-inspiration has led to surprisingly few mass-produced products...' (cảm hứng sinh học đáng ngạc nhiên là chỉ dẫn đến rất ít sản phẩm được sản xuất hàng loạt). Ngược với 'a large number'. => <b>FALSE</b>", 
+            colorClass: "ev-6" 
+        },
+        7: { 
+            translation: "Velcro nổi tiếng với thiết kế phỏng sinh học (bionics).", 
+            keywords: "<span class='exp-keyword-match'>well-known = household word</span><br><span class='exp-keyword-match'>bionics design = copying the way cockleburs clung...</span>",
+            exp: "Đoạn H xác nhận Velcro là cái tên nổi tiếng quen thuộc (only one household word) được tạo ra bằng cách sao chép cách những quả ké bám vào lông chó (bionics design). => <b>TRUE</b>", 
+            colorClass: "ev-7" 
+        },
+        8: { 
+            translation: "Ronald Fearing đã phải chế tạo các thành phần siêu nhỏ cho ruồi robot của mình [theo cùng một cách / in the same way] bằng các kỹ thuật chuyên dụng.", 
+            keywords: "<span class='exp-keyword-match'>required to fabricate = forced to manufacture</span>",
+            exp: "Đoạn C ghi: 'Fearing has been forced to manufacture many of the other minute components of his fly in the same way, using a micromachining laser...'", 
+            colorClass: "ev-8" 
+        },
+        9: { 
+            translation: "Cấu trúc chính bên ngoài của con ruồi robot được làm bằng [sợi carbon / carbon-fiber] và các sợi dây dài, mỏng khiến nó trông không giống ruồi chút nào.", 
+            keywords: "<span class='exp-keyword-match'>main structure outside = framework of</span>",
+            exp: "Đoạn D ghi: '...a delicate, origami-like framework of black carbon-fiber struts and hairlike wires that, not surprisingly, looks nothing like a real fly.'", 
+            colorClass: "ev-9" 
+        },
+        10: { 
+            translation: "Cutkosky áp dụng vật liệu nhân tạo vào [tứ chi / limbs] của Stickybot làm gân để phân chia áp lực giống như thằn lằn.", 
+            keywords: "<span class='exp-keyword-match'>tendon to split pressure = 'tendon' to distribute its load</span>",
+            exp: "Đoạn F ghi: 'He subsequently embedded a branching polyester cloth tendon in his robot’s limbs to distribute its load in the same way.' Điền 'limbs' hoặc 'legs and feet'.", 
+            colorClass: "ev-10" 
+        },
+        11: { 
+            translation: "Chân của Stickybot không có chức năng [tự làm sạch / self-cleaning] nên nó chỉ đi được trên bề mặt nhẵn.", 
+            keywords: "<span class='exp-keyword-match'>doesn't have ... function = isn't ... like the lizard's</span>",
+            exp: "Đoạn G chỉ ra: 'The dry adhesive on Stickybot‘s toes isn’t self-cleaning like the lizard’s either, so it rapidly clogs with dirt.'", 
+            colorClass: "ev-11" 
+        },
+        12: { 
+            translation: "DARPA đang có kế hoạch sử dụng stickybot để [giám sát / surveillance].", 
+            keywords: "<span class='exp-keyword-match'>planning to use = has it in mind for</span>",
+            exp: "Đoạn G nêu rõ: '...DARPA, which funds the project, has it in mind for surveillance...'", 
+            colorClass: "ev-12" 
+        },
+        13: { 
+            translation: "Cutkosky cho rằng cuối cùng stickybot có tiềm năng trong vai trò [cứu người / lifesaving] hoặc các hoạt động khác liên quan đến con người.", 
+            keywords: "<span class='exp-keyword-match'>potential in ... activities = eventually has a ... role</span>",
+            exp: "Cuối đoạn G: 'Sure, it would be great if it eventually has a lifesaving or humanitarian role...'", 
+            colorClass: "ev-13" 
+        }
+    };
+
+    const startQ = 1; const endQ = 13; const totalQuestions = 13;
+
+    // --- INIT ---
+    window.onload = function() {
+        renderPalette();
+        document.getElementById('setupOverlay').style.display = 'flex';
+    }
+
+    function askReady() {
+        let minutes = parseInt(document.getElementById('timeInput').value);
+        if(isNaN(minutes) || minutes < 1) minutes = 20; 
+        document.getElementById('startConfirmMsg').innerText = `Bạn đã cài đặt thời gian là ${minutes} phút.\nSẵn sàng bắt đầu chưa?`;
+        document.getElementById('startConfirmOverlay').style.display = 'flex';
+    }
+
+    function closeStartConfirmModal() { document.getElementById('startConfirmOverlay').style.display = 'none'; }
+
+    function startTestActual() {
+        document.getElementById('startConfirmOverlay').style.display = 'none';
+        let minutes = parseInt(document.getElementById('timeInput').value);
+        if(isNaN(minutes) || minutes < 1) minutes = 20;
+        testDuration = minutes * 60;
+        
+        document.getElementById('setupOverlay').style.display = 'none';
+        startTimer();
+    }
+
+    function renderPalette() {
+        const nav = document.getElementById("navPalette");
+        for (let i = startQ; i <= endQ; i++) {
+            let dot = document.createElement("div");
+            dot.className = "nav-dot"; dot.id = `nav-${i}`; dot.innerText = i;
+            dot.onclick = () => {
+                let targetId = `ans-${i}`;
+                let el = document.getElementById(targetId);
+                if(i <= 7 && el) el = el.closest('.q-row');
+                
+                if(el) {
+                    el.scrollIntoView({behavior:"smooth", block:"center"});
+                    el.style.backgroundColor = "var(--highlight-color)";
+                    setTimeout(() => el.style.backgroundColor = "", 1000);
+                }
+            };
+            nav.appendChild(dot);
+        }
+    }
+
+    function updateNav(id) {
+        let nav = document.getElementById(`nav-${id}`);
+        if (!nav) return;
+        let el = document.getElementById(`ans-${id}`);
+        let val = el ? el.value : "";
+        
+        if (val && val.trim() !== "") nav.classList.add("done");
+        else nav.classList.remove("done");
+    }
+
+    // --- DRAG & DROP CHO KHOẢNG TRỐNG NẾU CẦN (KHÔNG DÙNG TỚI Ở BÀI NÀY NHƯNG GIỮ LOGIC) ---
+    function allowDrop(ev) { ev.preventDefault(); ev.target.classList.add("drag-over"); }
+    document.addEventListener("dragleave", (e) => { if (e.target.classList.contains("input-gap")) e.target.classList.remove("drag-over"); });
+    function drop(ev) {
+        ev.preventDefault(); ev.target.classList.remove("drag-over");
+        let val = ev.dataTransfer.getData("text");
+        if (val) {
+            ev.target.value = val; ev.target.classList.add("filled");
+            let id = ev.target.id.split('-')[1]; updateNav(id);
+        }
+    }
+
+    // --- TIMER ---
+    function startTimer() {
+        let display = document.getElementById("timer");
+        timerInterval = setInterval(function () {
+            let m = Math.floor(testDuration / 60);
+            let s = testDuration % 60;
+            display.textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            if (--testDuration < 0) { clearInterval(timerInterval); executeSubmit(); }
+        }, 1000);
+    }
+
+    // --- SUBMIT & EXPLANATIONS ---
+    function submitTest(manual) {
+        if (isSubmitted) return;
+        if (manual) document.getElementById('confirmOverlay').style.display = 'flex';
+        else executeSubmit();
+    }
+
+    function closeConfirmModal() { document.getElementById('confirmOverlay').style.display = 'none'; }
+    function closeResultModal() { document.getElementById('resultOverlay').style.display = 'none'; }
+
+    function executeSubmit() {
+        document.getElementById('confirmOverlay').style.display = 'none';
+        isSubmitted = true;
+        clearInterval(timerInterval);
+        document.querySelectorAll('input, select').forEach(el => el.disabled = true);
+        
+        let score = 0;
+        const fillBlankExpContainer1 = document.getElementById('fb-container-8-10');
+        const fillBlankExpContainer2 = document.getElementById('fb-container-11-13');
+        if(fillBlankExpContainer1) fillBlankExpContainer1.innerHTML = "";
+        if(fillBlankExpContainer2) fillBlankExpContainer2.innerHTML = "";
+
+        for (let i = startQ; i <= endQ; i++) {
+            let userAns = "";
+            let el = document.getElementById(`ans-${i}`);
+            if (el) userAns = el.value.trim().toUpperCase();
+
+            let correctAnswer = correctAnswers[i];
+            let isCorrect = false;
+
+            if (Array.isArray(correctAnswer)) {
+                isCorrect = correctAnswer.includes(userAns);
+            } else {
+                isCorrect = (userAns === correctAnswer);
+            }
+
+            if (isCorrect) score++;
+
+            let fb = document.getElementById(`fb-${i}`);
+            let correctStr = Array.isArray(correctAnswer) ? correctAnswer[0] : correctAnswer;
+            if (fb) {
+                fb.innerText = isCorrect ? "✓" : `✗ (${correctStr})`;
+                fb.className = isCorrect ? "feedback correct" : "feedback wrong";
+            }
+
+            // --- NÂNG CẤP HIỂN THỊ GIẢI THÍCH ---
+            if(explanations[i]) {
+                let expData = explanations[i];
+                let htmlContent = `
+                    <div class="exp-box show">
+                        <div class="exp-title">
+                            💡 Giải thích Câu ${i}
+                            ${expData.colorClass ? `<button class="locate-btn" onclick="scrollToEvidence('${expData.colorClass}')">📍 Xem dẫn chứng</button>` : ''}
+                        </div>
+                        
+                        <div class="exp-section">
+                            <span class="exp-label">👉 Dịch nghĩa:</span> 
+                            <div class="exp-translate">${expData.translation}</div>
+                        </div>
+
+                        ${expData.keywords ? `
+                        <div class="exp-section">
+                            <span class="exp-label">🔑 Từ khóa:</span> 
+                            <div class="exp-keywords">${expData.keywords}</div>
+                        </div>` : ''}
+
+                        <div class="exp-section">
+                            <span class="exp-label">🧠 Phân tích:</span> 
+                            <div class="exp-detail">${expData.exp}</div>
+                        </div>
+                    </div>`;
+
+                if (i >= 8 && i <= 10) {
+                    if(fillBlankExpContainer1) fillBlankExpContainer1.innerHTML += htmlContent;
+                } else if (i >= 11 && i <= 13) {
+                    if(fillBlankExpContainer2) fillBlankExpContainer2.innerHTML += htmlContent;
+                } else {
+                    let expContainer = document.getElementById(`exp-${i}`);
+                    if(expContainer) expContainer.innerHTML = htmlContent;
+                }
+            }
+
+            let nav = document.getElementById(`nav-${i}`);
+            if(nav) {
+                nav.style.background = isCorrect ? "#dcfce7" : "#fef2f2";
+                nav.style.color = isCorrect ? "#16a34a" : "#dc2626";
+                nav.style.borderColor = isCorrect ? "#86efac" : "#fca5a5";
+            }
+        }
+
+        // Color ev-boxes in Passage
+        const pastelColors = ['#fef08a','#bfdbfe','#bbf7d0','#fbcfe8','#ddd6fe','#fed7aa','#e9d5ff','#a7f3d0','#fecaca'];
+        document.querySelectorAll('.ev-box').forEach((el, index) => {
+            el.style.backgroundColor = pastelColors[index % pastelColors.length];
+            el.style.color = "#0f172a";
+        });
+
+        // Calculate Band and Upload
+        let timeTaken = Math.round(((parseInt(document.getElementById('timeInput').value) * 60) - testDuration) / 60) || 1;
+        if(window.luuDiemLenFirebase) window.luuDiemLenFirebase(score, timeTaken);
+
+        document.getElementById('resultMessage').innerHTML = `
+            <strong style="font-size: 26px; color: var(--primary-dark); display: block; margin-bottom: 10px;">Số câu đúng: ${score}/${totalQuestions}</strong>
+            <p style="font-size: 16px; color: #475569;">Kết quả của bạn đã được đồng bộ an toàn lên hệ thống IELTS Tracker!</p>
+        `;
+        setTimeout(() => { document.getElementById('resultOverlay').style.display = 'flex'; }, 500);
+    }
+
+    function scrollToEvidence(id) {
+        const evElement = document.getElementById(id);
+        if(evElement) {
+            evElement.scrollIntoView({behavior: "smooth", block: "center"});
+            evElement.classList.remove("focus-blink");
+            void evElement.offsetWidth;
+            evElement.classList.add("focus-blink");
+            setTimeout(() => evElement.classList.remove("focus-blink"), 1500);
+        }
+    }
+
+    // --- HIGHLIGHT SYSTEM ---
+    const container = document.getElementById("mainContainer");
+    const menu = document.getElementById("ctxMenu");
+    let targetEl = null; let selectedRange = null;
+
+    container.addEventListener("contextmenu", (e) => {
+        if (!e.target.closest('.pane')) return;
+        e.preventDefault();
+        targetEl = null; selectedRange = null; menu.style.display = "none";
+        
+        if (e.target.classList.contains("highlight")) {
+            targetEl = e.target;
+            showMenu(e.pageX, e.pageY, "remove"); return;
+        }
+
+        let sel = window.getSelection();
+        if (sel.toString().trim().length > 0 && container.contains(sel.anchorNode)) {
+            selectedRange = sel.getRangeAt(0).cloneRange();
+            showMenu(e.pageX, e.pageY, "add");
+        }
+    });
+
+    document.addEventListener("click", (e) => { if (!menu.contains(e.target)) menu.style.display = "none"; });
+
+    function showMenu(x, y, mode) {
+        menu.style.display = "block";
+        let mw = menu.offsetWidth; let mh = menu.offsetHeight;
+        menu.style.left = (x + mw > window.innerWidth ? window.innerWidth - mw - 10 : x) + "px";
+        menu.style.top = (y + mh > window.innerHeight ? window.innerHeight - mh - 10 : y) + "px";
+        menu.children[0].style.display = (mode === "add") ? "block" : "none";
+        menu.children[1].style.display = (mode === "remove") ? "block" : "none";
+    }
+
+    function doHighlight() {
+        if (selectedRange) {
+            let span = document.createElement("span"); span.className = "highlight";
+            try { selectedRange.surroundContents(span); } catch(e){}
+            window.getSelection().removeAllRanges();
+        }
+        menu.style.display = "none";
+    }
+
+    function removeHighlight() {
+        if (targetEl) {
+            let text = document.createTextNode(targetEl.textContent);
+            targetEl.parentNode.replaceChild(text, targetEl);
+            container.normalize();
+        }
+        menu.style.display = "none";
+    }
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+        }
+    });
+
+    // Helper: Tính điểm Band Ielts (Quy đổi hệ 40 câu)
+    function calculateIeltsBand(correct, total) {
+        let normalizedCorrect = (correct / total) * 40;
+        if (normalizedCorrect >= 39) return 9.0;
+        if (normalizedCorrect >= 37) return 8.5;
+        if (normalizedCorrect >= 35) return 8.0;
+        if (normalizedCorrect >= 33) return 7.5;
+        if (normalizedCorrect >= 30) return 7.0;
+        if (normalizedCorrect >= 27) return 6.5;
+        if (normalizedCorrect >= 23) return 6.0;
+        if (normalizedCorrect >= 19) return 5.5;
+        if (normalizedCorrect >= 15) return 5.0;
+        if (normalizedCorrect >= 13) return 4.5;
+        if (normalizedCorrect >= 10) return 4.0;
+        if (normalizedCorrect >= 8) return 3.5;
+        if (normalizedCorrect >= 6) return 3.0;
+        return 2.5;
+    }
+
+    window.luuDiemLenFirebase = async function(diemSo, timeTakenMinutes) {
+        if (!window.currentUserUid) return;
+        
+        let tongSoCau = 13; 
+        let bandScore = calculateIeltsBand(diemSo, tongSoCau);
+        let timestamp = Date.now();
+        let idLuotThi = window.currentUserUid + "_ielts_" + timestamp;
+
+        try {
+            await setDoc(doc(db, "user_ielts_scores", idLuotThi), {
+                email: window.currentUserEmail,
+                skill: "Reading",
+                testName: "Test 3",
+                partName: "Passage 1",
+                timeTaken: timeTakenMinutes.toString(),
+                correctQ: diemSo,
+                totalQ: tongSoCau,
+                bandScore: bandScore,
+                date: new Date().toLocaleDateString("vi-VN"),
+                timestamp: timestamp
+            });
+            console.log("Đã đẩy điểm thành công lên IELTS Tracker!");
+        } catch(e) {
+            console.error("Lỗi khi lưu điểm: ", e);
+        }
+    }
+</script>
+</body>
+</html>
