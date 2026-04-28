@@ -434,9 +434,9 @@
         <div class="q-block">
             <div class="instruction">
                 <u>Questions 9-13:</u> Do the following statements agree with the information given in Reading Passage?<br><br>
-                <b><strong>TRUE</strong> if the statement agrees with the information<br>
-                <b><strong>FALSE</strong> if the statement contradicts the information<br>
-                <b><strong>NOT GIVEN</strong> if there is no information on this
+                <strong>TRUE</strong> if the statement agrees with the information<br>
+                <strong>FALSE</strong> if the statement contradicts the information<br>
+                <strong>NOT GIVEN</strong> if there is no information on this
             </div>
             <div id="render-q9-13"></div>
         </div>
@@ -926,23 +926,40 @@
 
     window.luuDiemLenFirebase = async function(diemSo) {
         if (!window.currentUserUid) return;
+        
         let tongSoCau = 13; 
         let phanTram = Math.round((diemSo / tongSoCau) * 100);
         let idLuotThi = window.currentUserUid + "_" + Date.now();
-try {
+
+        // 1. Tính toán thời gian làm bài (Dựa trên tổng thời gian trừ đi testDuration còn lại)
+        let totalTimeSet = (parseInt(document.getElementById('timeInput').value) || 60) * 60;
+        let timeTakenSeconds = totalTimeSet - testDuration;
+        let mins = Math.floor(timeTakenSeconds / 60);
+        let secs = timeTakenSeconds % 60;
+        let timeTakenMinutes = `${mins}:${secs < 10 ? '0'+secs : secs}`;
+
+        // 2. Khai báo các biến còn thiếu
+        let bandScore = "N/A"; // Bạn có thể viết logic tính Band IELTS riêng, tạm thời để N/A vì bài chỉ có 13 câu
+        let timestamp = Date.now();
+
+        try {
             await setDoc(doc(db, "user_ielts_scores", idLuotThi), {
                 email: window.currentUserEmail,
                 skill: "Reading",
                 testName: "Test 1",
-                partName: "Passage 1",
-                timeTaken: timeTakenMinutes.toString(),
+                partName: "Passage 1", 
+                timeTaken: timeTakenMinutes,
                 correctQ: diemSo,
                 totalQ: tongSoCau,
                 bandScore: bandScore,
                 date: new Date().toLocaleDateString("en-US"),
                 timestamp: timestamp
             });
-    }
+            console.log("Đã lưu điểm thành công!");
+        } catch (error) {
+            console.error("Lỗi khi lưu điểm lên Firebase: ", error);
+        }
+    };
 </script>
 </body>
 </html>
