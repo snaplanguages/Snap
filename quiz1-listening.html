@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="ảnh.png">
-    <title>Part 1 Test 1 | SnapEnglish </title>
+    <title>Part 1 Test 1 | SnapEnglish</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
 
@@ -26,7 +26,7 @@
             color: var(--text-main);
         }
 
-        /* Full width container as requested */
+        /* Container full width as requested */
         .container {
             width: 100%;
             box-sizing: border-box;
@@ -63,12 +63,55 @@
             margin-bottom: 30px;
         }
 
-        /* Custom Audio Player */
+        /* Audio Player & Controls */
+        #audio-section {
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px dashed var(--secondary-color);
+        }
+
         audio {
             width: 100%;
             border-radius: 50px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+            outline: none;
+        }
+
+        .custom-audio-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .btn-skip {
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 2px solid var(--primary-color);
+            background: white;
+            color: var(--primary-color);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-skip:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(106, 17, 203, 0.2);
+        }
+
+        #mock-msg {
+            display: none;
+            color: var(--primary-color);
+            font-weight: 700;
+            text-align: center;
+            font-size: 1.1em;
+            padding: 10px;
         }
 
         /* Data Tables */
@@ -153,7 +196,7 @@
             box-shadow: 0 8px 20px rgba(106, 17, 203, 0.4);
         }
 
-        /* Modals (Pop-ups) */
+        /* Modals */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -178,16 +221,14 @@
             padding: 40px;
             border-radius: 20px;
             text-align: center;
-            max-width: 400px;
+            max-width: 450px;
             width: 90%;
             transform: scale(0.8);
             transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             box-shadow: 0 20px 50px rgba(0,0,0,0.2);
         }
 
-        .modal-overlay.active .modal-box {
-            transform: scale(1);
-        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
 
         .modal-box h3 { margin-top: 0; color: var(--primary-color); font-size: 1.5em; }
         .modal-box p { color: #636e72; margin-bottom: 30px; line-height: 1.6; }
@@ -196,14 +237,18 @@
             display: flex;
             gap: 15px;
             justify-content: center;
+            flex-wrap: wrap;
         }
 
-        .btn-primary { background: var(--secondary-color); flex: 1;}
-        .btn-secondary { background: #b2bec3; flex: 1;}
+        .btn-primary { background: var(--secondary-color); flex: 1; min-width: 140px;}
+        .btn-secondary { background: #b2bec3; flex: 1; min-width: 140px;}
+        .btn-outline { background: transparent; border: 2px solid var(--secondary-color); color: var(--secondary-color); flex: 1; min-width: 140px; }
+        
         .btn-primary:hover { background: #0984e3; }
         .btn-secondary:hover { background: #636e72; }
+        .btn-outline:hover { background: var(--secondary-color); color: white; }
 
-        /* Hidden during exam mode */
+        /* Results Split Screen */
         #result-section {
             display: none;
             margin-top: 40px;
@@ -227,12 +272,19 @@
             border: 2px dashed var(--secondary-color);
         }
 
+        .split-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
         .transcript-box {
             background: white;
             padding: 25px;
             border-radius: 15px;
             box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-            max-height: 600px;
+            max-height: 700px;
             overflow-y: auto;
             line-height: 1.8;
             color: #2d3436;
@@ -249,6 +301,12 @@
             color: #d35400;
         }
         
+        .explanation-col {
+            max-height: 700px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
         .explanation-item {
             background: #fff;
             padding: 20px;
@@ -276,8 +334,10 @@
             margin: 10px 0;
         }
 
-        .explanation-item .reason {
-            font-size: 0.95em;
+        .explanation-item .reason { font-size: 0.95em; line-height: 1.6; }
+
+        @media (max-width: 900px) {
+            .split-layout { grid-template-columns: 1fr; }
         }
 
     </style>
@@ -286,33 +346,43 @@
 
     <div id="startModal" class="modal-overlay active">
         <div class="modal-box">
-            <h3>✨ Welcome! ✨</h3>
-            <p>Are you ready to conquer SnapEnglish's Listening Part 1? Find a quiet space and get your pen and paper ready!</p>
+            <h3>✨ Welcome to SnapEnglish! ✨</h3>
+            <p>Sẵn sàng chinh phục IELTS Listening Part 1 chưa? Hãy chọn chế độ bạn muốn bắt đầu nhé!</p>
             <div class="modal-buttons">
-                <button class="btn btn-primary" onclick="startQuiz()">Start Now 🎧</button>
+                <button class="btn btn-outline" onclick="startQuiz('practice')">📘 Luyện Tập</button>
+                <button class="btn btn-primary" onclick="startQuiz('mock')">⏱ Thi Thử Tính Điểm</button>
             </div>
         </div>
     </div>
 
     <div id="submitModal" class="modal-overlay">
         <div class="modal-box">
-            <h3>Submit Test? 📝</h3>
-            <p>Have you double-checked all your answers? Make sure you haven't left any boxes blank!</p>
+            <h3>Nộp Bài? 📝</h3>
+            <p>Bạn đã kiểm tra kỹ các đáp án chưa? Đảm bảo không bỏ trống ô nào nhé!</p>
             <div class="modal-buttons">
-                <button class="btn btn-secondary" onclick="closeSubmitModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="confirmSubmit()">Submit</button>
+                <button class="btn btn-secondary" onclick="closeSubmitModal()">Hủy Bỏ</button>
+                <button class="btn btn-primary" onclick="confirmSubmit()">Chắc chắn Nộp</button>
             </div>
         </div>
     </div>
 
     <div class="container blur-content" id="mainContainer">
         <h1 class="brand-title">SnapEnglish</h1>
-        <h2 class="test-title">🎧 Part 1 - Test 1</h2>
+        <h2 class="test-title">🎧 Part 1 - Test 1 (0:00 - 8:13)</h2>
         
-        <audio id="testAudio" controls data-start="0" data-end="493">
-            <source src="https://raw.githubusercontent.com/snaplanguages/SnapEnglish-audioieltslistening01/1f5e120d9f5c3c2598b4ffea2baf89c6a33ba1ae/IELTS%20Listening%20Test%201.mp3" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
+        <div id="audio-section">
+            <div id="mock-msg">
+                ⏳ Đang trong chế độ Thi Thử. Audio đang tự động phát, hãy tập trung lắng nghe!
+            </div>
+            <audio id="testAudio" controls data-start="0" data-end="493">
+                <source src="https://raw.githubusercontent.com/snaplanguages/SnapEnglish-audioieltslistening01/1f5e120d9f5c3c2598b4ffea2baf89c6a33ba1ae/IELTS%20Listening%20Test%201.mp3" type="audio/mpeg">
+                Trình duyệt của bạn không hỗ trợ audio.
+            </audio>
+            <div class="custom-audio-controls" id="customControls">
+                <button class="btn-skip" onclick="skipAudio(-5)">⏪ Lùi 5s</button>
+                <button class="btn-skip" onclick="skipAudio(5)">Tiến 5s ⏩</button>
+            </div>
+        </div>
 
         <h2>Question 1-5</h2>
         <p>Complete the table below. Write <strong>ONE WORD OR A NUMBER</strong>.</p>
@@ -380,124 +450,157 @@
             </tr>
         </table>
 
-        <button class="btn btn-submit" id="submitBtn" onclick="openSubmitModal()">📩 Submit SnapEnglish Test</button>
+        <button class="btn btn-submit" id="submitBtn" onclick="openSubmitModal()">📩 Nộp Bài (Submit)</button>
 
         <div id="result-section">
             <div class="score-board" id="scoreDisplay"></div>
             
-            <h2 style="color: var(--primary-color);">📖 Tapescript</h2>
-            <div class="transcript-box">
-                <p><strong>MAN:</strong> Greek Island Holidays, can I help you?</p>
-                <p><strong>WOMAN:</strong> Yes, I hope so. I have a friend who's just come back from Corfu and she's recommended some apartments in Arilas. She thought they might be on your list.</p>
-                <p><strong>MAN:</strong> Arilas, Arilas, let me see. Can you give me the names?</p>
-                <p><strong>WOMAN:</strong> Yes, the first's Rose Garden Apartments...</p>
-                <p><em>...[Initial introductory dialogue]...</em></p>
-                
-                <p><strong>MAN:</strong> That's right. And it isn't far from the beach, either - only <mark class="hl">300 metres</mark> (1), and only around half a kilometre to some shops...</p>
-                
-                <p><strong>WOMAN:</strong> ...Something to do with sun... Sunshine, is it?</p>
-                <p><strong>MAN:</strong> I think you meant the <mark class="hl">Sunshade</mark> Apartments. (2) They're on a mountainside.</p>
+            <div class="split-layout">
+                <div>
+                    <h2 style="color: var(--primary-color);">📖 Tapescript</h2>
+                    <div class="transcript-box">
+                        <p><strong>MAN:</strong> Greek Island Holidays, can I help you?</p>
+                        <p><strong>WOMAN:</strong> Yes, I hope so. I have a friend who's just come back from Corfu and she's recommended some apartments in Arilas. She thought they might be on your list.</p>
+                        <p><strong>MAN:</strong> Arilas, Arilas, let me see. Can you give me the names?</p>
+                        <p><strong>WOMAN:</strong> Yes, the first's Rose Garden Apartments...</p>
+                        <p><em>...[Phần mở đầu]...</em></p>
+                        
+                        <p><strong>MAN:</strong> That's right. And it isn't far from the beach, either - only <mark class="hl">300 metres</mark> (1), and only around half a kilometre to some shops...</p>
+                        
+                        <p><strong>WOMAN:</strong> ...Something to do with sun... Sunshine, is it?</p>
+                        <p><strong>MAN:</strong> I think you meant the <mark class="hl">Sunshade</mark> Apartments. (2) They're on a mountainside.</p>
 
-                <p><strong>MAN:</strong> Actually it's quite reasonable. It's an older style house with Greek paintings in every room, and a <mark class="hl">balcony</mark> (3) outside.</p>
-                
-                <p><strong>WOMAN:</strong> Sound nice. What are the views like?</p>
-                <p><strong>MAN:</strong> Well, there are <mark class="hl">forests</mark> all round (4) and they hide a supermarket just down the road...</p>
-                
-                <p><strong>WOMAN:</strong> And the price?</p>
-                <p><strong>MAN:</strong> <mark class="hl">￡319</mark> at that time (5), but if you leave it till November it goes down by 40%.</p>
+                        <p><strong>MAN:</strong> Actually it's quite reasonable. It's an older style house with Greek paintings in every room, and a <mark class="hl">balcony</mark> (3) outside.</p>
+                        
+                        <p><strong>WOMAN:</strong> Sound nice. What are the views like?</p>
+                        <p><strong>MAN:</strong> Well, there are <mark class="hl">forests</mark> all round (4) and they hide a supermarket just down the road...</p>
+                        
+                        <p><strong>WOMAN:</strong> And the price?</p>
+                        <p><strong>MAN:</strong> <mark class="hl">￡319</mark> at that time (5), but if you leave it till November it goes down by 40%.</p>
 
-                <p><strong>MAN:</strong> We can improve on that, Ms Nash. For Greek Island holidays, our maximum is <mark class="hl">￡10,000</mark> (6)</p>
-                
-                <p><strong>MAN:</strong> It's still sensible to have good cover. Now, if you go to hospital, we allow ￡600.</p>
-                <p><strong>WOMAN:</strong> Yes, mine's similar.</p>
-                <p><strong>MAN:</strong> And we also allow a <mark class="hl">relative</mark> to travel to your holiday resort. (7)</p>
-                
-                <p><strong>MAN:</strong> And what happens if you don't get on the plane?</p>
-                <p><strong>WOMAN:</strong> Nothing, as far as I can see on this form.</p>
-                <p><strong>MAN:</strong> Don't you have <mark class="hl">missed</mark> departure? (8)</p>
+                        <p><strong>MAN:</strong> We can improve on that, Ms Nash. For Greek Island holidays, our maximum is <mark class="hl">￡10,000</mark> (6)</p>
+                        
+                        <p><strong>MAN:</strong> It's still sensible to have good cover. Now, if you go to hospital, we allow ￡600.</p>
+                        <p><strong>WOMAN:</strong> Yes, mine's similar.</p>
+                        <p><strong>MAN:</strong> And we also allow a <mark class="hl">relative</mark> to travel to your holiday resort. (7)</p>
+                        
+                        <p><strong>MAN:</strong> And what happens if you don't get on the plane?</p>
+                        <p><strong>WOMAN:</strong> Nothing, as far as I can see on this form.</p>
+                        <p><strong>MAN:</strong> Don't you have <mark class="hl">missed</mark> departure? (8)</p>
 
-                <p><strong>MAN:</strong> We pay up to ￡1,000 for that, depending on the reason. And we're particularly generous about loss of personal belongings - up to ￡3,000, but not more than ￡500 for a single <mark class="hl">item</mark>. (9)</p>
+                        <p><strong>MAN:</strong> We pay up to ￡1,000 for that, depending on the reason. And we're particularly generous about loss of personal belongings - up to ￡3,000, but not more than ￡500 for a single <mark class="hl">item</mark>. (9)</p>
 
-                <p><strong>WOMAN:</strong> OK - thanks very much... Your name is?</p>
-                <p><strong>MAN:</strong> Ben - <mark class="hl">Ludlow</mark>. That's L-U-D-L-O-W. (10) I'm the Assistant Manager here.</p>
-            </div>
+                        <p><strong>WOMAN:</strong> OK - thanks very much... Your name is?</p>
+                        <p><strong>MAN:</strong> Ben - <mark class="hl">Ludlow</mark>. That's L-U-D-L-O-W. (10) I'm the Assistant Manager here.</p>
+                    </div>
+                </div>
 
-            <h2 style="color: var(--primary-color); margin-top: 30px;">💡 Detailed Answer Explanations</h2>
-            
-            <div class="explanation-item">
-                <h4>🎯 Question 1: 300</h4>
-                <div class="quote">"And it isn't far from the beach, either - only <mark class="hl">300 metres</mark>..."</div>
-                <div class="reason"><strong>Explanation:</strong> The question asks for the distance to the beach (meters from beach). The man confirms that the apartments are not far from the beach, specifically "only 300 metres". The number to enter is <strong>300</strong>.</div>
-            </div>
+                <div>
+                    <h2 style="color: var(--primary-color);">💡 Giải thích chi tiết</h2>
+                    <div class="explanation-col">
+                        <div class="explanation-item">
+                            <h4>🎯 Câu 1: 300</h4>
+                            <div class="quote">"And it isn't far from the beach, either - only <mark class="hl">300 metres</mark>..."</div>
+                            <div class="reason"><strong>Giải thích:</strong> Câu hỏi cần tìm thông tin về khoảng cách đến bãi biển (meters from beach). Người đàn ông xác nhận rằng khu căn hộ không xa bãi biển, cụ thể là "chỉ 300 mét". Từ cần điền là <strong>300</strong>.</div>
+                        </div>
 
-            <div class="explanation-item">
-                <h4>🎯 Question 2: sunshade</h4>
-                <div class="quote">"Something to do with sun... Sunshine, is it? / I think you meant the <mark class="hl">Sunshade</mark> Apartments."</div>
-                <div class="reason"><strong>Explanation:</strong> The woman forgets the exact name of the apartment (guessing Sunshine), but the man corrects her, stating the name is <strong>Sunshade</strong>. This correctly precedes the word "Apartments" in the table.</div>
-            </div>
+                        <div class="explanation-item">
+                            <h4>🎯 Câu 2: sunshade</h4>
+                            <div class="quote">"Something to do with sun... Sunshine, is it? / I think you meant the <mark class="hl">Sunshade</mark> Apartments."</div>
+                            <div class="reason"><strong>Giải thích:</strong> Người phụ nữ quên mất tên chính xác của khu căn hộ và đoán là "Sunshine". Ngay sau đó, người đàn ông đã sửa lại tên chính xác là <strong>Sunshade</strong>.</div>
+                        </div>
 
-            <div class="explanation-item">
-                <h4>🎯 Question 3: balcony</h4>
-                <div class="quote">"...with Greek paintings in every room, and a <mark class="hl">balcony</mark> outside."</div>
-                <div class="reason"><strong>Explanation:</strong> The prompt says "Greek paintings and...". In the audio, the man describes The Grand apartments as having Greek paintings in every room and a <strong>balcony</strong> outside.</div>
-            </div>
+                        <div class="explanation-item">
+                            <h4>🎯 Câu 3: balcony</h4>
+                            <div class="quote">"...with Greek paintings in every room, and a <mark class="hl">balcony</mark> outside."</div>
+                            <div class="reason"><strong>Giải thích:</strong> Đề bài hỏi khu The Grand có "Greek paintings and...". Trong audio, người đàn ông mô tả khu này có những bức tranh Hy Lạp ở mỗi phòng và một chiếc <strong>ban công (balcony)</strong> ở bên ngoài.</div>
+                        </div>
 
-            <div class="explanation-item">
-                <h4>🎯 Question 4: forest / forests</h4>
-                <div class="quote">"What are the views like? / Well, there are <mark class="hl">forests</mark> all round..."</div>
-                <div class="reason"><strong>Explanation:</strong> The keyword here is "Overlooking". The woman asks what the views are like, and the man answers that there are <strong>forests</strong> all around. Both singular and plural forms are acceptable.</div>
-            </div>
+                        <div class="explanation-item">
+                            <h4>🎯 Câu 4: forest / forests</h4>
+                            <div class="quote">"What are the views like? / Well, there are <mark class="hl">forests</mark> all round..."</div>
+                            <div class="reason"><strong>Giải thích:</strong> Từ khóa ở đây là "Overlooking" (Nhìn ra hướng). Người phụ nữ hỏi cảnh quan ở đó thế nào, người đàn ông trả lời rằng có <strong>rừng (forests)</strong> bao quanh. Cả dạng số ít hay số nhiều đều được chấp nhận.</div>
+                        </div>
 
-            <div class="explanation-item">
-                <h4>🎯 Question 5: 319</h4>
-                <div class="quote">"And the price? / <mark class="hl">￡319</mark> at that time"</div>
-                <div class="reason"><strong>Explanation:</strong> When asked about the price (cost), the man confirms it is <strong>319</strong> pounds. The pound symbol (£) is already provided on the test sheet, so you only need to write the number.</div>
-            </div>
+                        <div class="explanation-item">
+                            <h4>🎯 Câu 5: 319</h4>
+                            <div class="quote">"And the price? / <mark class="hl">￡319</mark> at that time"</div>
+                            <div class="reason"><strong>Giải thích:</strong> Khi được hỏi về mức giá (cost), người đàn ông xác nhận mức giá là <strong>319</strong> bảng. Ký hiệu bảng Anh (£) đã có sẵn trên tờ giấy thi, bạn chỉ cần điền con số.</div>
+                        </div>
 
-            <div class="explanation-item">
-                <h4>🎯 Question 6: 10,000 / 10000</h4>
-                <div class="quote">"If the holiday's cancelled... our maximum is <mark class="hl">￡10,000</mark>"</div>
-                <div class="reason"><strong>Explanation:</strong> Under the Cancellation insurance category, the man states that the maximum coverage limit for Greek Island holidays is <strong>10,000</strong> pounds.</div>
-            </div>
+                        <div class="explanation-item">
+                            <h4>🎯 Câu 6: 10,000 / 10000</h4>
+                            <div class="quote">"If the holiday's cancelled... our maximum is <mark class="hl">￡10,000</mark>"</div>
+                            <div class="reason"><strong>Giải thích:</strong> Trong mục bảo hiểm Hủy bỏ (Cancellation), người đàn ông nói rõ hạn mức bồi thường tối đa cho các kỳ nghỉ ở Đảo Hy Lạp là <strong>10,000</strong> bảng.</div>
+                        </div>
 
-            <div class="explanation-item">
-                <h4>🎯 Question 7: relative</h4>
-                <div class="quote">"And we also allow a <mark class="hl">relative</mark> to travel to your holiday resort."</div>
-                <div class="reason"><strong>Explanation:</strong> The insurance allows a <strong>relative</strong> to travel to your holiday resort if you have to go to the hospital. The sentence structure in the audio perfectly aligns with the summary table.</div>
-            </div>
+                        <div class="explanation-item">
+                            <h4>🎯 Câu 7: relative</h4>
+                            <div class="quote">"And we also allow a <mark class="hl">relative</mark> to travel to your holiday resort."</div>
+                            <div class="reason"><strong>Giải thích:</strong> Phía bảo hiểm cho phép một <strong>người thân (relative)</strong> di chuyển đến khu nghỉ dưỡng của bạn trong trường hợp bạn phải nhập viện. </div>
+                        </div>
 
-            <div class="explanation-item">
-                <h4>🎯 Question 8: missed</h4>
-                <div class="quote">"Don't you have <mark class="hl">missed</mark> departure?"</div>
-                <div class="reason"><strong>Explanation:</strong> The man brings up the scenario of not getting on the plane. The official insurance term he uses for this situation is <strong>missed</strong> departure.</div>
-            </div>
+                        <div class="explanation-item">
+                            <h4>🎯 Câu 8: missed</h4>
+                            <div class="quote">"Don't you have <mark class="hl">missed</mark> departure?"</div>
+                            <div class="reason"><strong>Giải thích:</strong> Người đàn ông đặt tình huống "chuyện gì xảy ra nếu bạn không kịp lên máy bay". Thuật ngữ bảo hiểm chính thức mà anh ấy sử dụng cho trường hợp này là <strong>lỡ chuyến bay (missed departure)</strong>.</div>
+                        </div>
 
-            <div class="explanation-item">
-                <h4>🎯 Question 9: item</h4>
-                <div class="quote">"...up to ￡3,000, but not more than ￡500 for a single <mark class="hl">item</mark>."</div>
-                <div class="reason"><strong>Explanation:</strong> Total compensation for personal belongings is up to £3000, but is capped at £500 for a single <strong>item</strong>. The phrase "one item" in the question is synonymous with "a single item" heard in the audio.</div>
-            </div>
+                        <div class="explanation-item">
+                            <h4>🎯 Câu 9: item</h4>
+                            <div class="quote">"...up to ￡3,000, but not more than ￡500 for a single <mark class="hl">item</mark>."</div>
+                            <div class="reason"><strong>Giải thích:</strong> Tổng tiền bồi thường cho đồ đạc cá nhân lên tới £3000, nhưng giới hạn tối đa £500 cho <strong>một món đồ (a single item)</strong>. Cụm "one item" trong câu hỏi đồng nghĩa với "a single item" trong audio.</div>
+                        </div>
 
-            <div class="explanation-item">
-                <h4>🎯 Question 10: Ludlow</h4>
-                <div class="quote">"Ben - <mark class="hl">Ludlow</mark>. That's L-U-D-L-O-W."</div>
-                <div class="reason"><strong>Explanation:</strong> The woman asks for his name, and the assistant manager replies that it is Ben <strong>Ludlow</strong>, and proceeds to clearly spell it out as L-U-D-L-O-W.</div>
+                        <div class="explanation-item">
+                            <h4>🎯 Câu 10: Ludlow</h4>
+                            <div class="quote">"Ben - <mark class="hl">Ludlow</mark>. That's L-U-D-L-O-W."</div>
+                            <div class="reason"><strong>Giải thích:</strong> Người phụ nữ hỏi tên anh ấy, và trợ lý quản lý trả lời anh là Ben <strong>Ludlow</strong>, sau đó anh đánh vần rất rõ ràng từng chữ cái L-U-D-L-O-W.</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // --- MODAL POPUP LOGIC ---
+        // --- MODAL & MODE LOGIC ---
         const startModal = document.getElementById('startModal');
         const submitModal = document.getElementById('submitModal');
         const mainContainer = document.getElementById('mainContainer');
         const audio = document.getElementById("testAudio");
+        const customControls = document.getElementById("customControls");
+        const mockMsg = document.getElementById("mock-msg");
 
-        function startQuiz() {
+        let currentMode = 'practice';
+
+        function startQuiz(mode) {
+            currentMode = mode;
             startModal.classList.remove('active');
             mainContainer.classList.remove('blur-content');
-            // Auto-play audio
-            audio.play().catch(e => console.log("Browser blocked autoplay, user interaction required."));
+            
+            if (mode === 'mock') {
+                audio.style.display = 'none'; // Hide native controls
+                customControls.style.display = 'none'; // Hide custom controls
+                mockMsg.style.display = 'block'; // Show mock message
+                // Auto-play audio for mock test
+                audio.play().catch(e => console.log("Trình duyệt chặn Autoplay. Cần người dùng tương tác."));
+            } else {
+                audio.style.display = 'block'; // Show native controls
+                customControls.style.display = 'flex'; // Show custom skip controls
+                mockMsg.style.display = 'none';
+            }
+        }
+
+        // --- CUSTOM AUDIO CONTROLS (+/- 5s) ---
+        function skipAudio(seconds) {
+            const startTime = parseInt(audio.getAttribute("data-start")) || 0;
+            let newTime = audio.currentTime + seconds;
+            
+            if (newTime < startTime) {
+                newTime = startTime;
+            }
+            audio.currentTime = newTime;
         }
 
         function openSubmitModal() {
@@ -543,6 +646,11 @@
             closeSubmitModal(); // Close confirmation popup
             document.getElementById('submitBtn').style.display = 'none'; // Hide submit button
             
+            // Show audio controls back if they were hidden in mock mode so user can review
+            audio.style.display = 'block';
+            customControls.style.display = 'flex';
+            mockMsg.style.display = 'none';
+            
             let score = 0;
             const keys = Object.keys(answers);
             document.querySelectorAll(".correct-hint").forEach(el => el.remove());
@@ -574,9 +682,9 @@
 
             // Display Score
             const scoreBoard = document.getElementById("scoreDisplay");
-            scoreBoard.innerHTML = `🏆 Completed! Your score: <span style="color:#d63031;">${score}</span> / ${keys.length}`;
+            scoreBoard.innerHTML = `🏆 Hoàn thành! Điểm của bạn: <span style="color:#d63031;">${score}</span> / ${keys.length}`;
             
-            // Display Transcript and Explanations
+            // Display Transcript and Explanations Spllit Screen
             const resultSection = document.getElementById("result-section");
             resultSection.style.display = "block";
             
@@ -585,7 +693,7 @@
 
             // Auto-scroll to results
             setTimeout(() => {
-                scoreBoard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                scoreBoard.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 300);
         }
     </script>
