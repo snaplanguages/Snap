@@ -1817,6 +1817,10 @@ Sole Assortment will serve women who work in the surrounding area.</span> Becaus
     // LƯU TRỮ TRẠNG THÁI
     let currentPassageIdx = 0;
 
+    // Lấy dữ liệu user từ localStorage ngay tại đây
+    const savedAnswersJSON = localStorage.getItem('snapEnglish_userAnswers');
+    const userAnswers = savedAnswersJSON ? JSON.parse(savedAnswersJSON) : {};
+
     // HÀM RENDER (TẠO GIAO DIỆN HTML) TỪ DỮ LIỆU
     function renderPassage(idx) {
         const data = reviewData[idx];
@@ -1832,7 +1836,10 @@ Sole Assortment will serve women who work in the surrounding area.</span> Becaus
         let qHtml = '';
         data.questions.forEach(q => {
             let optsHtml = '';
+            let correctAnswer = ''; // Biến để lưu đáp án đúng
+
             q.options.forEach(opt => {
+                if(opt.isCorrect) correctAnswer = opt.key; // Xác định đáp án đúng (A, B, C, D)
                 let statusClass = opt.isCorrect ? 'is-correct' : '';
                 let checkIcon = opt.isCorrect ? '✅' : '';
                 
@@ -1844,13 +1851,29 @@ Sole Assortment will serve women who work in the surrounding area.</span> Becaus
                 `;
             });
 
+            // --- BẮT ĐẦU: HIỂN THỊ ĐÁP ÁN CỦA NGƯỜI DÙNG ---
+            let resultHtml = '';
+            if (savedAnswersJSON) { // Chỉ hiển thị nếu người dùng có làm bài
+                let userAnswer = userAnswers[q.id];
+                let bg, text, border, msg;
+                if (!userAnswer) {
+                    bg = '#f1f3f5'; text = '#6c757d'; border = '#dee2e6'; msg = 'Bạn chưa chọn đáp án ⚪';
+                } else if (userAnswer === correctAnswer) {
+                    bg = '#e8f5e9'; text = '#2e7d32'; border = '#c8e6c9'; msg = `Bạn đã chọn: <strong>(${userAnswer})</strong> <span style="margin-left: 8px;">✅ Đúng</span>`;
+                } else {
+                    bg = '#ffebee'; text = '#c62828'; border = '#ffcdd2'; msg = `Bạn đã chọn: <strong>(${userAnswer})</strong> <span style="margin-left: 8px;">❌ Sai</span>`;
+                }
+                resultHtml = `<div style="margin: 15px 0 10px 0; font-weight: 700; padding: 10px 15px; border-radius: 8px; font-size: 15px; display: inline-block; background-color: ${bg}; color: ${text}; border: 1px solid ${border};">${msg}</div>`;
+            }
+            // --- KẾT THÚC ---
+
             qHtml += `
                 <div class="q-card">
                     <div class="q-text">Câu ${q.id}: ${q.qEng}</div>
                     <div class="q-text-vi">${q.qVie}</div>
                     <div class="options-container">${optsHtml}</div>
                     
-                    <div class="exp-box">
+                    ${resultHtml} <div class="exp-box">
                         <div class="exp-header">
                             <div class="exp-title">💡 Giải thích Câu ${q.id}</div>
                             <button class="btn-locate" onclick="scrollToEvidence('${q.evidenceId}')">📍 Xem dẫn chứng</button>
@@ -1873,7 +1896,9 @@ Sole Assortment will serve women who work in the surrounding area.</span> Becaus
             { bg: '#caffbf', text: '#1f4d1f' }, // Xanh lá pastel
             { bg: '#9bf6ff', text: '#16565c' }, // Xanh dương pastel
             { bg: '#a0c4ff', text: '#1c3666' }, // Xanh biển pastel
-            { bg: '#bdb2ff', text: '#352666' }  // Tím pastel
+            { bg: '#bdb2ff', text: '#352666' }, // Tím pastel
+            { bg: '#ffc6ff', text: '#661a66' }, // Hồng pastel
+            { bg: '#e2f0cb', text: '#3e5222' }  // Xanh rêu pastel
         ];
 
         const colorMap = {};
@@ -1894,11 +1919,10 @@ Sole Assortment will serve women who work in the surrounding area.</span> Becaus
             el.style.border = 'none';
         });
 
-        // Cập nhật nút điều hướng
+        // Cập nhật trạng thái nút
         document.getElementById('btn-prev').disabled = idx === 0;
         document.getElementById('btn-next').disabled = idx === reviewData.length - 1;
     }
-
     // HÀM ĐIỀU HƯỚNG
     function navigate(dir) {
         let newIdx = currentPassageIdx + dir;
