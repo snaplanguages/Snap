@@ -824,15 +824,15 @@ let testDuration = 0;
                         <div class="options">`;
             
             for (const [key, value] of Object.entries(q.options)) {
-                const isSelected = userAnswers[q.id] === key;
-                html += `
-                    <label class="option-label ${isSelected ? 'selected' : ''}">
-                        <input type="radio" name="q${q.id}" value="${key}" 
-                               ${isSelected ? 'checked' : ''} 
-                               onchange="selectAnswer(${q.id}, '${key}')">
-                        <b>${key}.</b> &nbsp; ${value}
-                    </label>
-                `;
+            const isSelected = userAnswers[q.id] === key;
+            html += `
+                <label class="option-label ${isSelected ? 'selected' : ''}" onclick="selectAnswer(${q.id}, '${key}')">
+                    <input type="radio" name="q${q.id}" value="${key}" 
+                           ${isSelected ? 'checked' : ''}>
+                    <b>${key}.</b> &nbsp; ${value}
+                </label>
+            `;
+        }
             }
             html += `</div></div>`;
         });
@@ -877,27 +877,30 @@ let testDuration = 0;
         isSubmitted = true;
         clearInterval(timerInterval);
         
-        // 1. CHẤM ĐIỂM (Chỉ dùng 1 biến correctCount duy nhất)
+        // 1. CHẤM ĐIỂM
         let correctCount = 0;
         quizData.forEach(passage => {
             passage.questions.forEach(q => {
-                // Kiểm tra đáp án người dùng chọn có khớp với đáp án đúng không
-                if (userAnswers[q.id] === q.correct) {
+                // Đảm bảo câu hỏi có đáp án đúng và khớp với lựa chọn
+                if (q.correct && userAnswers[q.id] === q.correct) {
                     correctCount++;
                 }
             });
         });
 
+        // Debug: In ra console để kiểm tra xem máy tính có nhận đáp án không
+        console.log("Đáp án người dùng chọn:", userAnswers);
+        console.log("Số câu đúng:", correctCount);
+
         // 2. LƯU LẠI ĐÁP ÁN CHO TRANG GIẢI THÍCH
         localStorage.setItem('snapEnglish_userAnswers', JSON.stringify(userAnswers));
         
         // 3. HIỂN THỊ ĐIỂM LÊN GIAO DIỆN
-        // Đếm lại tổng số câu hỏi cho chắc chắn
         const totalQs = quizData.reduce((acc, curr) => acc + curr.questions.length, 0); 
         document.getElementById('score-display').innerText = correctCount + " / " + totalQs;
         document.getElementById('result-overlay').style.display = 'flex';
         
-        // 4. ĐỒNG BỘ ĐIỂM LÊN FIREBASE
+        // 4. ĐỒNG BỘ LÊN FIREBASE (Phải dùng đúng biến correctCount ở vị trí thứ 2)
         if (window.luuDiemTOEICLenFirebase) {
             window.luuDiemTOEICLenFirebase(totalQs, correctCount, "ETS 2018 - Test 2", "Reading", "Part 7");
         }
