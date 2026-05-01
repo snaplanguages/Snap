@@ -166,6 +166,23 @@
         .mc-option:hover { background: #f5eff2; border-color: #dcd6db; }
         .mc-option input { margin-right: 12px; transform: scale(1.3); accent-color: var(--primary); }
 
+        /* --- MAP IMAGE STYLES --- */
+        .map-container {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: #faf8f9;
+            border-radius: 15px;
+            border: 2px dashed var(--border);
+        }
+        .map-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border: 2px solid #e1d5e2;
+        }
+
         /* --- DRAG AND DROP STYLES --- */
         .drag-palette { display: flex; gap: 15px; margin-bottom: 25px; flex-wrap: wrap; background: #faf8f9; padding: 20px; border-radius: 15px; border: 2px dashed var(--border); }
         .drag-item {
@@ -265,7 +282,7 @@
         <div class="audio-controls" id="audioContainer">
             <button class="skip-btn" id="btn-backward" onclick="skipAudio(-10)">-10</button>
             <audio id="testAudio" controls controlsList="nodownload">
-                <source src="https://raw.githubusercontent.com/snaplanguages/SnapEnglish-audioieltslistening01/1f5e120d9f5c3c2598b4ffea2baf89c6a33ba1ae/IELTS%20Listening%20Test%202.mp3" type="audio/mpeg">
+                <source src="https://github.com/snaplanguages/SnapEnglish-audioieltslistening01/blob/1f5e120d9f5c3c2598b4ffea2baf89c6a33ba1ae/IELTS%20Listening%20Test%202.mp3?raw=true" type="audio/mpeg">
                 Trình duyệt của bạn không hỗ trợ audio.
             </audio>
             <button class="skip-btn" id="btn-forward" onclick="skipAudio(10)">+10</button>
@@ -366,6 +383,11 @@
 
             <div class="instruction" style="margin-top:40px;">Questions 17-20: Label the map below. Drag and drop the correct letter A-I into the boxes.</div>
             
+            <!-- THÊM BẢN ĐỒ VÀO ĐÂY -->
+            <div class="map-container">
+                <img src="https://lh5.googleusercontent.com/ygWeMZTkpM3cC5yqbjb3cSPm4i6YCCT6_-QvGTTiIKEQjUq0g3qPRZyyMq4vZdN-WNf8pGYXmJ49HXxQdqlDjEKg_ZReeWjHsqa_BUoi8jV9LgQsA9zRasCpDzRDrIqDpuQNZl7qVTGeQYhViDeytys" alt="Hinchingbrooke Park Map" class="map-image">
+            </div>
+
             <div class="drag-palette">
                 <div class="drag-item" draggable="true" data-val="A">A</div>
                 <div class="drag-item" draggable="true" data-val="B">B</div>
@@ -779,6 +801,63 @@
             if(score >= 23) return "6.0"; if(score >= 18) return "5.5";
             if(score >= 16) return "5.0"; if(score >= 13) return "4.5";
             if(score >= 10) return "4.0"; return "< 4.0";
+        }
+    </script>
+
+    <!-- FIREBASE INTEGRATION FOR SCORE TRACKER -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+            authDomain: "snapenglish-cb6e2.firebaseapp.com",
+            projectId: "snapenglish-cb6e2",
+            storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+            messagingSenderId: "373152038413",
+            appId: "1:373152038413:web:19284622571390f8585f44"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        function showSyncToast(msg) {
+            let toast = document.createElement("div");
+            toast.innerText = msg;
+            toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:#ff477e; color:white; padding:12px 25px; border-radius:50px; font-weight:bold; font-family:'Quicksand',sans-serif; z-index:99999; box-shadow:0 8px 20px rgba(0,0,0,0.15); transform:translateY(100px); opacity:0; transition:all 0.5s ease;";
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.transform = "translateY(0)"; toast.style.opacity = "1"; }, 100);
+            setTimeout(() => { toast.style.transform = "translateY(100px)"; toast.style.opacity = "0"; }, 3500);
+            setTimeout(() => { document.body.removeChild(toast); }, 4000); 
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.currentUserUid = user.uid;
+                window.currentUserEmail = user.email;
+            }
+        });
+
+        window.luuDiemIELTSFullTest = async function(diemSo, bandScore, tenBai) {
+            if (!window.currentUserUid) return;
+            let timestamp = Date.now();
+            let docId = window.currentUserUid + "_ielts_" + timestamp; 
+
+            await setDoc(doc(db, "user_ielts_scores", docId), {
+                email: window.currentUserEmail,
+                skill: "Listening",
+                testName: tenBai,
+                partName: "Full Test",
+                correctQ: diemSo,
+                totalQ: 40,
+                bandScore: parseFloat(bandScore),
+                date: new Date().toLocaleDateString("vi-VN"),
+                timeTaken: "", 
+                timestamp: timestamp
+            });
+            showSyncToast("☁️ Đã đồng bộ Band " + bandScore + " lên Tracker!");
         }
     </script>
 </body>
