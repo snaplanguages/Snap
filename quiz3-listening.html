@@ -1,234 +1,591 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Part 3 Test 1</title>
-  <link rel="icon" type="image/png" href="ảnh.png">
+    <title>Part 3 - Test 1 | SnapEnglish</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <style>
-        /* GIỮ NGUYÊN CSS + AUDIO UI XANH LÁ */
-        body { font-family: Poppins, sans-serif; padding: 20px; background: #e3f2fd; text-align: left; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
-        .btn { padding: 10px 15px; margin-top: 20px; background: #64b5f6; border: none; cursor: pointer; border-radius: 5px; font-size: 14px; color: white; display: block; transition: 0.3s; }
-        .btn:hover { background: #42a5f5; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid black; padding: 10px; text-align: left; }
-        input[type="text"] { min-width: 80px; padding: 3px; border: 1px solid #ccc; border-radius: 3px; }
-        .highlight { background-color: yellow; }
-        .correct-hint { color: blue; font-size: 0.85em; margin-left: 5px; font-weight: bold; }
-        .context-menu { display: none; position: absolute; background: white; border: 1px solid #ccc; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); padding: 5px; z-index: 1000; }
-        .context-menu button { display: block; width: 100%; border: none; background: none; padding: 5px; cursor: pointer; text-align: left; }
-        .context-menu button:hover { background: #f2f2f2; }
+        :root {
+            /* Matcha & Cream Palette */
+            --primary: #88b04b;      
+            --primary-dark: #6a8a3a;
+            --accent: #ff9f89;       
+            --bg-body: #f7f9f4;      
+            --bg-pane: #ffffff;
+            --text-main: #4a4a4a;
+            --text-light: #888;
+            --border: #e0e5df;
+            --highlight: #fff59d;    
+            --correct: #6a994e;
+            --wrong: #bc4749;
+            --exp-bg: #f1f8e9;       
+            --header-h: 70px;
+            --footer-h: 80px;
+        }
 
-        /* 🎵 PART 3 - MÀU XANH LÁ */
-        .audio-controls { 
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e6cf 100%); 
-            padding: 20px; 
-            border-radius: 10px; 
-            margin-bottom: 20px; 
-            text-align: center;
-            color: white;
-            box-shadow: 0 4px 20px rgba(86, 171, 47, 0.3);
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Quicksand', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            width: 100%;
         }
-        .audio-controls audio { width: 100%; margin-bottom: 15px; border-radius: 8px; }
-        .part-timer { 
-            background: rgba(255,255,255,0.95); 
-            padding: 12px 25px; 
-            border-radius: 30px; 
-            font-size: 20px; 
-            font-weight: bold;
-            color: #2d8a3e;
-            display: inline-block;
-            margin: 10px 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+        /* --- OVERLAY & MODAL --- */
+        #setupOverlay, .custom-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
         }
-        .nav-buttons { margin-top: 15px; }
-        .nav-btn { 
-            background: rgba(255,255,255,0.9); 
-            border: 2px solid white; 
-            color: #2d8a3e; 
-            padding: 12px 24px; 
-            margin: 0 8px; 
-            border-radius: 30px; 
-            cursor: pointer; 
-            font-size: 15px;
-            text-decoration: none;
-            transition: 0.3s;
-            font-weight: 500;
+        .custom-overlay { display: none; z-index: 99999; }
+        
+        .setup-modal, .custom-modal {
+            background: white; padding: 40px; border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(136, 176, 75, 0.15);
+            width: 90%; max-width: 500px; text-align: center;
+            border: 2px solid var(--border);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .nav-btn:hover { background: white; color: #56ab2f; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(86, 171, 47, 0.3); }
+        
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .setup-modal h2, .custom-modal h2 { 
+            font-family: 'Lora', serif; color: var(--primary-dark); font-size: 28px; margin-top: 0; 
+        }
+        
+        .mode-btn {
+            display: block; width: 100%; padding: 15px; margin: 15px 0;
+            border-radius: 15px; font-size: 18px; font-weight: 700; cursor: pointer;
+            transition: 0.3s; font-family: inherit;
+        }
+        .mode-practice { background: #fff0eb; color: #d87059; border: 2px solid #ffccbc; }
+        .mode-practice:hover, .mode-practice.selected { background: var(--accent); color: white; border-color: var(--accent); }
+        .mode-mock { background: #e8f5e9; color: var(--primary-dark); border: 2px solid #c8e6c9; }
+        .mode-mock:hover, .mode-mock.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        .start-btn {
+            background: var(--primary); color: white; border: none; padding: 12px 35px;
+            border-radius: 50px; font-size: 18px; font-weight: 700; cursor: pointer;
+            margin-top: 20px; transition: 0.3s; display: none; box-shadow: 0 5px 15px rgba(136, 176, 75, 0.3);
+        }
+        .start-btn:hover { transform: translateY(-3px); }
+
+        .modal-actions { display: flex; gap: 15px; margin-top: 25px; justify-content: center; }
+        .btn-cancel { background: #f5f5f5; color: #666; border: 2px solid #ddd; padding: 12px 20px; border-radius: 15px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.2s; font-family: inherit; flex: 1; }
+        .btn-cancel:hover { background: #e0e0e0; border-color: #ccc; }
+        .btn-confirm { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 15px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.2s; font-family: inherit; flex: 1; box-shadow: 0 4px 0 var(--primary-dark); }
+        .btn-confirm:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- HEADER & CUSTOM AUDIO --- */
+        header {
+            height: var(--header-h); background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 30px; z-index: 100;
+        }
+        
+        .brand { font-size: 24px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .brand span { background: var(--primary); color: white; padding: 4px 10px; border-radius: 10px; font-size: 16px; }
+
+        .audio-controls { display: flex; align-items: center; gap: 10px; background: #edf2ea; padding: 5px 15px; border-radius: 30px; }
+        
+        .play-pause-btn {
+            background: var(--primary); color: white; border: none; border-radius: 50%;
+            width: 35px; height: 35px; cursor: pointer; display: flex; justify-content: center; align-items: center;
+            font-size: 14px; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .play-pause-btn:hover { background: var(--primary-dark); }
+        
+        .skip-btn {
+            background: white; border: 2px solid var(--border); border-radius: 50%;
+            width: 32px; height: 32px; cursor: pointer; font-weight: bold; color: var(--primary-dark);
+            display: flex; justify-content: center; align-items: center; transition: 0.2s; font-size: 12px;
+        }
+        .skip-btn:hover { border-color: var(--primary); background: var(--primary); color: white; }
+        
+        .progress-bar {
+            -webkit-appearance: none; width: 130px; height: 6px; background: #c1d5a4; 
+            border-radius: 5px; outline: none; cursor: pointer;
+        }
+        .progress-bar::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; 
+            background: var(--primary-dark); cursor: pointer; transition: 0.2s;
+        }
+        .progress-bar::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        
+        .time-display { font-weight: 700; color: var(--primary-dark); font-size: 14px; min-width: 40px; text-align: center; }
+        .hidden { display: none !important; }
+
+        .btn-submit { 
+            background: var(--primary); color: white; border: none; padding: 10px 25px; 
+            border-radius: 15px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.2s;
+            font-family: inherit; box-shadow: 0 4px 0 var(--primary-dark);
+        }
+        .btn-submit:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- LAYOUT FULL WIDTH --- */
+        .container { 
+            display: flex; flex-direction: column;
+            height: calc(100vh - var(--header-h) - var(--footer-h)); 
+            width: 100%; max-width: 100%; 
+            margin: 0; padding: 20px 50px;
+            overflow-y: auto; scroll-behavior: smooth;
+        }
+
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-thumb { background: #d0d6cc; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        .tab-content { display: block; animation: fadeIn 0.3s; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.02); }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- CONTENT STYLES --- */
+        h2 { color: var(--primary-dark); margin-top: 0; font-size: 28px; font-family: 'Lora', serif; }
+        h3 { color: #555; border-bottom: 2px solid #edf2ea; padding-bottom: 5px; margin-top: 30px; font-size: 22px; }
+        p { margin-bottom: 20px; font-size: 18px; line-height: 1.8; }
+        ul { font-size: 18px; line-height: 1.8; color: var(--text-main); margin-bottom: 20px; }
+        li { margin-bottom: 10px; }
+        
+        .instruction {
+            background: #e8f5e9; color: #2e7d32; padding: 15px; border-radius: 12px;
+            font-weight: 600; font-size: 16px; margin-bottom: 25px; border: 2px dashed #a5d6a7;
+        }
+
+        .custom-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+        .custom-table th { background: var(--primary); color: white; padding: 15px; text-align: left; font-size: 18px; }
+        .custom-table td { border-bottom: 1px solid #eee; padding: 15px; font-size: 18px; vertical-align: middle; }
+
+        input[type="text"] {
+            border: 2px solid #dce0dd; border-radius: 8px; padding: 8px 15px;
+            font-family: inherit; font-size: 18px; color: var(--primary-dark);
+            outline: none; background: white; transition: 0.2s; font-weight: 600; width: 180px;
+        }
+        input[type="text"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(136, 176, 75, 0.15); }
+        input[type="text"].correct-input { border-color: var(--correct); color: var(--correct); background: #f1f8e9; }
+        input[type="text"].wrong-input { border-color: var(--wrong); color: var(--wrong); background: #ffebee; }
+
+        .lightbulb {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: #d87059; font-weight: bold; text-decoration: none;
+            margin-top: 20px; padding: 12px 25px; background: #fff0eb;
+            border-radius: 20px; transition: 0.2s; border: 2px solid #ffccbc;
+        }
+        .lightbulb:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+        /* --- FOOTER --- */
+        footer {
+            height: var(--footer-h); background: #fff; border-top: 2px solid var(--border);
+            display: flex; flex-direction: column; justify-content: center; padding: 0 30px;
+            z-index: 100; position: fixed; bottom: 0; width: 100%;
+        }
+        .nav-scroller { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; align-items: center; justify-content: center; }
+        .nav-dot {
+            min-width: 40px; height: 40px; border: 2px solid #eee; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600;
+            cursor: pointer; color: #999; background: white; transition: 0.2s; flex-shrink: 0;
+        }
+        .nav-dot:hover { border-color: var(--primary); color: var(--primary); }
+        .nav-dot.done { background: #edf2ea; color: var(--primary-dark); border-color: #c1d5a4; }
+        .nav-dot.correct { background: var(--correct); color: white; border-color: var(--correct); }
+        .nav-dot.incorrect { background: var(--wrong); color: white; border-color: var(--wrong); }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>🎧 Part 3 Test 1</h1>
-        
-        <!-- 🎵 AUDIO PART 3 (5:40 - 8:25 = 340s - 505s) -->
-        <div class="audio-controls">
-            <audio id="part3Audio" preload="metadata">
-                <source src="https://drive.google.com/uc?export=download&id=17jmlMUtZO_blYFEdgQrqR7eZIhgdeX3o" type="audio/mpeg">
-                Trình duyệt không hỗ trợ audio!
-            </audio>
+    <div id="setupOverlay">
+        <div class="setup-modal">
+            <h2> Chào mừng đến với Listening Library ✨</h2>
+            <p style="font-size: 18px; color: #666; margin-bottom: 25px;">Bạn hãy chọn chế độ:</p>
             
-            <div class="part-timer" id="timer">05:40 / 08:25</div>
+            <button class="mode-btn mode-practice" onclick="selectMode('practice')">🎯 Luyện tập</button>
+            <button class="mode-btn mode-mock" onclick="selectMode('mock')">🏆 Thi thử</button>
             
-            <div class="nav-buttons">
-                <button class="nav-btn" onclick="playPart3()">🔄 Nghe lại Part 3</button>
-                <a href="player.html" class="nav-btn">🎛️ Player đầy đủ</a>
-                <a href="part2.html" class="nav-btn">⬅️ Part 2</a>
-                <a href="part4.html" class="nav-btn">➡️ Part 4</a>
-            </div>
+            <button class="start-btn" id="startBtn" onclick="askReady()">Sẵn sàng</button>
         </div>
-
-        <!-- Context menu của bạn -->
-        <div id="contextMenu" class="context-menu">
-            <button onclick="toggleHighlight()">Thêm/Xóa Highlight</button>
-        </div>
-
-        <!-- Questions GIỮ NGUYÊN 100% -->
-        <h2>Questions 21-30</h2>
-        <p>Complete the notes below. Write <strong>NO MORE THAN TWO WORDS OR A NUMBER</strong>.</p>
-        <center><strong>Study Skills Tutorial – Caroline Benning</strong></center>
-        
-        <p>Dissertation topic: the <strong>21.</strong> <input type="text" id="answer-21"></p>
-        
-        <p>Strengths:</p>
-        <ul>
-            <li><strong>22.</strong> <input type="text" id="answer-22"></li>
-            <li>computer modelling</li>
-        </ul>
-        
-        <p>Weaknesses:</p>
-        <ul>
-            <li>lack of background information</li>
-            <li>poor <strong>23.</strong> <input type="text" id="answer-23"> skills</li>
-        </ul>
-
-        <table>
-            <tr><th>Possible strategy</th><th>Benefits</th><th>Problems</th></tr>
-            <tr><td>peer group discussion</td><td>increases <strong>24.</strong> <input type="text" id="answer-24"></td><td>dissertations tend to contain the same <strong>25.</strong> <input type="text" id="answer-25"></td></tr>
-            <tr><td>use the <strong>26.</strong> <input type="text" id="answer-26"> service</td><td>provides structured programme</td><td>limited <strong>27.</strong> <input type="text" id="answer-27"></td></tr>
-            <tr><td>consult study skills books</td><td>are a good source of reference</td><td>can be too <strong>28.</strong> <input type="text" id="answer-28"></td></tr>
-        </table>
-
-        <p>Recommendations:</p>
-        <ul>
-            <li>use a card index</li>
-            <li>read all notes <strong>29.</strong> <input type="text" id="answer-29"></li>
-        </ul>
-        
-        <p>Next tutorial date: <strong>30.</strong> <input type="text" id="answer-30"> January</p>
-
-        <button class="btn" onclick="submitQuiz()">📩 Nộp bài</button>
-        <p id="score" style="font-weight: bold; margin-top: 15px;"></p>
     </div>
 
-    <!-- 🎵 JAVASCRIPT PART 3 (340s - 505s) -->
-    <script>
-        // 🎵 AUDIO LOGIC PART 3
-        const audio = document.getElementById('part3Audio');
-        const timer = document.getElementById('timer');
-        const PART3_START = 340;  // 5:40
-        const PART3_END = 505;    // 8:25
+    <div id="startConfirmOverlay" class="custom-overlay">
+        <div class="custom-modal">
+            <h2>Confirm Start</h2>
+            <p id="startConfirmMsg" style="font-size: 18px; color: #555; margin-bottom: 20px; white-space: pre-line;"></p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('startConfirmOverlay')">Hủy</button>
+                <button class="btn-confirm" onclick="startTestActual()">Bắt đầu</button>
+            </div>
+        </div>
+    </div>
 
-        function formatTime(seconds) {
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    <div id="submitModal" class="custom-overlay">
+        <div class="custom-modal">
+            <h2>Xác nhận nộp bài?</h2>
+            <p style="font-size: 18px; color: #555; margin-bottom: 10px;">Bạn có chắc chắn nộp bài không?</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('submitModal')">Quay lại </button>
+                <button class="btn-confirm" onclick="evaluateTest()">Nộp</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultOverlay" class="custom-overlay">
+        <div class="custom-modal">
+            <h2>🎉 Chúc mừng!</h2>
+            <p style="font-size: 16px; color: #666;">Bạn đã hoàn thành bài.</p>
+            <div id="resultMessage" style="margin: 20px 0; line-height: 1.8;"></div>
+            <button class="btn-confirm" style="width: 100%; margin-top: 10px;" onclick="closeModal('resultOverlay')">Xem chi tiết</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="brand">
+            <span>SnapEnglish</span> Test 1 IELTS Listening - Part 3
+        </div>
+        
+        <!-- AUDIO CUSTOM PLAYER (Chỉ hiện 5 phút 31 giây) -->
+        <div class="audio-controls" id="audioContainer">
+            <button class="skip-btn" id="btn-backward" onclick="skipAudio(-10)">-10</button>
+            <button class="play-pause-btn" id="playPauseBtn" onclick="togglePlay()">▶</button>
+            <span class="time-display" id="currentTimeDisplay">0:00</span>
+            <input type="range" class="progress-bar" id="audioProgress" value="0" min="0" max="331" step="1" onchange="seekAudio(this.value)">
+            <span class="time-display">/ 5:31</span>
+            <button class="skip-btn" id="btn-forward" onclick="skipAudio(10)">+10</button>
+            
+            <audio id="testAudio" class="hidden" preload="auto">
+                <source src="https://raw.githubusercontent.com/snaplanguages/SnapEnglish-audioieltslistening01/1f5e120d9f5c3c2598b4ffea2baf89c6a33ba1ae/IELTS%20Listening%20Test%201.mp3" type="audio/mpeg">
+            </audio>
+        </div>
+
+        <button class="btn-submit" id="topSubmitBtn" onclick="requestSubmit()">NỘP BÀI</button>
+    </header>
+
+    <div class="container">
+        <div id="part3" class="tab-content active">
+            <h2>Part 3: Questions 21-30</h2>
+            <div class="instruction">Questions 21-30: Complete the notes below. Write <strong>NO MORE THAN TWO WORDS OR A NUMBER</strong>.</div>
+            
+            <div style="background: white; padding: 30px; border-radius: 12px; border: 2px solid var(--border);">
+                <h3 style="margin-top: 0; color: var(--primary-dark);">Study Skills Tutorial - Caroline Benning</h3>
+                <p>Dissertation topic: the <strong>(21)</strong> <input type="text" id="q21" oninput="markAnswered(21)"></p>
+                
+                <p><strong>Strengths:</strong></p>
+                <ul>
+                    <li><strong>(22)</strong> <input type="text" id="q22" oninput="markAnswered(22)"></li>
+                    <li>Computer modeling</li>
+                </ul>
+
+                <p><strong>Weaknesses:</strong></p>
+                <ul>
+                    <li>Lack of background information</li>
+                    <li>Poor <strong>(23)</strong> <input type="text" id="q23" oninput="markAnswered(23)"> skills</li>
+                </ul>
+                
+                <table class="custom-table" style="margin-top: 30px;">
+                    <thead><tr><th>Possible strategy</th><th>Benefits</th><th>Problems</th></tr></thead>
+                    <tbody>
+                        <tr><td>Peer group discussion</td><td>Increase <strong>(24)</strong> <input type="text" id="q24" oninput="markAnswered(24)"></td><td>Dissertations tend to contain the same <strong>(25)</strong> <input type="text" id="q25" oninput="markAnswered(25)"></td></tr>
+                        <tr><td>Use the <strong>(26)</strong> <input type="text" id="q26" oninput="markAnswered(26)"> service</td><td>Provides structured programme</td><td>Limited <strong>(27)</strong> <input type="text" id="q27" oninput="markAnswered(27)"></td></tr>
+                        <tr><td>Consult study skill books</td><td>Are a good source of reference</td><td>Can be too <strong>(28)</strong> <input type="text" id="q28" oninput="markAnswered(28)"></td></tr>
+                    </tbody>
+                </table>
+
+                <p><strong>Recommendations:</strong></p>
+                <ul>
+                    <li>Use a card index</li>
+                    <li>Read all notes <strong>(29)</strong> <input type="text" id="q29" oninput="markAnswered(29)"></li>
+                </ul>
+                
+                <p>Next tutorial date: <strong>(30)</strong> <input type="text" id="q30" oninput="markAnswered(30)"> January</p>
+            </div>
+            
+            <a href="quiz3-listening-answers.html" id="lb3" class="lightbulb hidden" target="_blank">💡 Xem giải thích chi tiết Part 3</a>
+        </div>
+        <div style="height: 100px;"></div>
+    </div>
+
+    <footer>
+        <div style="font-size:14px; font-weight:bold; color:var(--text-light); text-transform:uppercase; margin-bottom:5px; text-align:center;">Navigation Panel</div>
+        <div class="nav-scroller" id="navPalette"></div>
+    </footer>
+
+    <script>
+        // Đáp án của Part 3 (Câu 21 - 30)
+        const answerKey = {
+            21: ["fishing industry"], 22: ["statistics"], 23: ["note-taking"],
+            24: ["confidence"], 25: ["ideas"], 26: ["student support"], 
+            27: ["places"], 28: ["general"], 29: ["3 times"], 30: ["25"]
+        };
+
+        let mode = '';
+        const audio = document.getElementById('testAudio');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const audioProgress = document.getElementById('audioProgress');
+        const currentTimeDisplay = document.getElementById('currentTimeDisplay');
+        let isSubmitted = false;
+        
+        // Thời gian audio bắt đầu lúc 14:52 và kết thúc lúc 20:23
+        const START_TIME = 892; // 14 phút 52 giây
+        const END_TIME = 1223;  // 20 phút 23 giây
+        const DURATION = 331;   // 5 phút 31 giây
+
+        // Custom Player Logic
+        function togglePlay() {
+            if(audio.paused) {
+                audio.play();
+                playPauseBtn.innerHTML = "⏸";
+            } else {
+                audio.pause();
+                playPauseBtn.innerHTML = "▶";
+            }
         }
 
-        audio.addEventListener('timeupdate', () => {
-            const current = Math.floor(audio.currentTime);
-            const relativeTime = current - PART3_START;
-            timer.textContent = `${formatTime(current)} / ${formatTime(PART3_END)}`;
-            
-            // Auto pause khi hết Part 3
-            if (current >= PART3_END) {
+        function seekAudio(value) {
+            // Giá trị của thanh chạy được cộng bù vào START_TIME
+            audio.currentTime = START_TIME + parseInt(value);
+        }
+
+        function skipAudio(seconds) {
+            let newTime = audio.currentTime + seconds;
+            if (newTime < START_TIME) newTime = START_TIME;
+            if (newTime > END_TIME) newTime = END_TIME;
+            audio.currentTime = newTime;
+        }
+
+        audio.addEventListener('timeupdate', function() {
+            // Không làm gì nếu audio chưa tới đoạn Part 3
+            if (audio.currentTime < START_TIME && audio.currentTime > 0) {
+                audio.currentTime = START_TIME;
+            }
+
+            if (audio.currentTime >= END_TIME && !isSubmitted) {
                 audio.pause();
-                audio.currentTime = PART3_START;
-                timer.textContent = `${formatTime(PART3_START)} / ${formatTime(PART3_END)}`;
+                playPauseBtn.innerHTML = "▶";
+                audioProgress.value = DURATION;
+                
+                if (mode === 'mock') {
+                    evaluateTest();
+                }
+            } else {
+                // Thanh progress hiển thị giá trị đã trừ đi offset
+                let currentProgress = audio.currentTime - START_TIME;
+                if(currentProgress < 0) currentProgress = 0;
+                audioProgress.value = currentProgress;
+                
+                // Format mm:ss
+                let mins = Math.floor(currentProgress / 60);
+                let secs = Math.floor(currentProgress % 60);
+                currentTimeDisplay.innerText = mins + ":" + (secs < 10 ? "0" : "") + secs;
             }
         });
 
-        function playPart3() {
-            audio.currentTime = PART3_START;
-            audio.play();
+        // Initialize Navigation Drawer Footer (Cho câu 21 - 30)
+        const navPalette = document.getElementById('navPalette');
+        for (let i = 21; i <= 30; i++) {
+            let dot = document.createElement("div");
+            dot.className = "nav-dot"; dot.id = `nav-${i}`; dot.innerText = i;
+            dot.onclick = () => {
+                let el = document.getElementById('q'+i);
+                if(el) {
+                    el.scrollIntoView({behavior: "smooth", block: "center"});
+                    el.style.transition = "background 0.5s";
+                    let originalBg = el.style.background;
+                    el.style.background = "var(--highlight)";
+                    setTimeout(() => el.style.background = originalBg, 1000);
+                }
+            };
+            navPalette.appendChild(dot);
         }
 
-        // Auto play khi load
-        window.addEventListener('load', () => {
-            setTimeout(() => playPart3(), 500);
-        });
+        function selectMode(selectedMode) {
+            mode = selectedMode;
+            document.querySelector('.mode-practice').classList.toggle('selected', mode === 'practice');
+            document.querySelector('.mode-mock').classList.toggle('selected', mode === 'mock');
+            document.getElementById('startBtn').style.display = 'inline-block';
+        }
 
-        // 🎯 LOGIC CHẤM ĐIỂM GIỮ NGUYÊN
-        const answers = {
-            "answer-21": "fishing industry",
-            "answer-22": "statistics",
-            "answer-23": "note-taking",
-            "answer-24": "confidence",
-            "answer-25": "ideas",
-            "answer-26": "student support",
-            "answer-27": "places",
-            "answer-28": "general",
-            "answer-29": ["3 times", "three times"],
-            "answer-30": ["25", "twenty-five"]
-        };
+        function askReady() {
+            let msg = mode === 'mock' 
+                ? "Bạn đã chọn chế độ Thi Thử.\nAudio sẽ tự động phát.\nBài kiểm tra sẽ tự động nộp khi hết audio.\nBạn đã sẵn sàng chưa?" 
+                : "Bạn đã chọn chế độ Luyện Tập.\nBạn có thể tự điều chỉnh audio.\nBạn đã sẵn sàng chưa?";
+            document.getElementById('startConfirmMsg').innerText = msg;
+            document.getElementById('startConfirmOverlay').style.display = 'flex';
+        }
 
-        function submitQuiz() {
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function startTestActual() {
+            closeModal('startConfirmOverlay');
+            document.getElementById('setupOverlay').style.display = 'none';
+            
+            // Luôn ép audio bắt đầu đúng 14:52 khi mới nhấn nút Start
+            audio.currentTime = START_TIME; 
+
+            if(mode === 'mock') {
+                document.getElementById('btn-backward').classList.add('hidden');
+                document.getElementById('btn-forward').classList.add('hidden');
+                audioProgress.disabled = true; // Không cho tua khi thi thử
+                audio.play();
+                playPauseBtn.innerHTML = "⏸";
+                playPauseBtn.disabled = true; 
+            }
+        }
+
+        function markAnswered(qNum) {
+            if(isSubmitted) return;
+            const navCircle = document.getElementById('nav-' + qNum);
+            const textInput = document.getElementById('q' + qNum);
+            
+            if(textInput && textInput.value.trim() !== '') {
+                navCircle.classList.add('done');
+            } else {
+                navCircle.classList.remove('done');
+            }
+        }
+
+        function requestSubmit() {
+            if (mode === 'practice') {
+                document.getElementById('submitModal').style.display = 'flex';
+            } else {
+                evaluateTest();
+            }
+        }
+
+        // Quy đổi Band Score cho 10 câu
+        function calculateBandPartial(correct, total) {
+            let normalizedCorrect = (correct / total) * 40;
+            if (normalizedCorrect >= 39) return 9.0;
+            if (normalizedCorrect >= 37) return 8.5;
+            if (normalizedCorrect >= 35) return 8.0;
+            if (normalizedCorrect >= 32) return 7.5;
+            if (normalizedCorrect >= 30) return 7.0;
+            if (normalizedCorrect >= 26) return 6.5;
+            if (normalizedCorrect >= 23) return 6.0;
+            if (normalizedCorrect >= 20) return 5.5;
+            if (normalizedCorrect >= 16) return 5.0;
+            if (normalizedCorrect >= 13) return 4.5;
+            if (normalizedCorrect >= 10) return 4.0;
+            if (normalizedCorrect >= 8) return 3.5;
+            if (normalizedCorrect >= 6) return 3.0;
+            return 2.5;
+        }
+
+        function evaluateTest() {
+            isSubmitted = true;
+            closeModal('submitModal');
+            document.getElementById('topSubmitBtn').classList.add('hidden');
+            audio.pause();
+            playPauseBtn.innerHTML = "▶";
+            
+            document.querySelectorAll('input').forEach(el => el.disabled = true);
+            
             let score = 0;
-            document.querySelectorAll(".correct-hint").forEach(el => el.remove());
 
-            for (let id in answers) {
-                let input = document.getElementById(id);
-                if (input) {
-                    let val = input.value.trim().toLowerCase();
-                    let correctList = Array.isArray(answers[id]) ? answers[id] : [answers[id]];
-                    let correctLower = correctList.map(a => a.toLowerCase());
+            for(let i = 21; i <= 30; i++) {
+                let userAnswer = '';
+                const textInput = document.getElementById('q' + i);
+                if(textInput) userAnswer = textInput.value.trim().toLowerCase();
+                
+                const navCircle = document.getElementById('nav-' + i);
+                navCircle.classList.remove('done');
 
-                    if (correctLower.includes(val) && val !== "") {
-                        score++;
-                        input.style.color = "green";
-                        input.style.fontWeight = "bold";
-                    } else {
-                        input.style.color = "red";
-                        let hint = document.createElement("span");
-                        hint.className = "correct-hint";
-                        hint.innerHTML = `➔ ${correctList[0]}`;
-                        input.parentNode.insertBefore(hint, input.nextSibling);
+                const correctAnswers = answerKey[i].map(a => a.toLowerCase());
+                
+                if(correctAnswers.includes(userAnswer)) {
+                    score++;
+                    navCircle.classList.add('correct');
+                    if(textInput) textInput.classList.add('correct-input');
+                } else {
+                    navCircle.classList.add('incorrect');
+                    if(textInput) {
+                        textInput.classList.add('wrong-input');
+                        textInput.value = (userAnswer ? userAnswer + " " : "") + "✓ " + answerKey[i][0];
                     }
                 }
             }
-            document.getElementById("score").innerHTML = `🎯 Bạn trả lời đúng ${score} / 10 câu.`;
+
+            let calculatedBand = calculateBandPartial(score, 10);
+
+            document.getElementById('resultMessage').innerHTML = `
+                <strong style="font-size: 26px; color: var(--accent); display: block; margin-bottom: 10px;">Correct: ${score}/10</strong>
+            `;
+            
+            if(window.luuDiemIELTSFullTest) {
+                window.luuDiemIELTSFullTest(score, calculatedBand, "Test 1");
+            }
+            
+            document.getElementById('lb3').classList.remove('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('resultOverlay').style.display = 'flex';
+            }, 500);
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+            authDomain: "snapenglish-cb6e2.firebaseapp.com",
+            projectId: "snapenglish-cb6e2",
+            storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+            messagingSenderId: "373152038413",
+            appId: "1:373152038413:web:19284622571390f8585f44"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        function showSyncToast(msg) {
+            let toast = document.createElement("div");
+            toast.innerText = msg;
+            toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:#ff477e; color:white; padding:12px 25px; border-radius:50px; font-weight:bold; font-family:'Quicksand',sans-serif; z-index:99999; box-shadow:0 8px 20px rgba(0,0,0,0.15); transform:translateY(100px); opacity:0; transition:all 0.5s ease;";
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.transform = "translateY(0)"; toast.style.opacity = "1"; }, 100);
+            setTimeout(() => { toast.style.transform = "translateY(100px)"; toast.style.opacity = "0"; }, 3500);
+            setTimeout(() => { document.body.removeChild(toast); }, 4000); 
         }
 
-        // Highlight logic của bạn
-        let selectedRange;
-        document.addEventListener("mouseup", () => {
-            let selection = window.getSelection();
-            if (!selection.isCollapsed) selectedRange = selection.getRangeAt(0);
-        });
-        document.addEventListener("contextmenu", (e) => {
-            if (window.getSelection().toString()) {
-                e.preventDefault();
-                let menu = document.getElementById("contextMenu");
-                menu.style.display = "block";
-                menu.style.top = e.pageY + "px";
-                menu.style.left = e.pageX + "px";
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.currentUserUid = user.uid;
+                window.currentUserEmail = user.email;
             }
         });
-        document.addEventListener("click", () => document.getElementById("contextMenu").style.display = "none");
 
-        function toggleHighlight() {
-            if (!selectedRange) return;
-            let span = document.createElement("span");
-            span.className = "highlight";
-            if (selectedRange.startContainer.parentElement.className === "highlight") {
-                selectedRange.startContainer.parentElement.replaceWith(selectedRange.startContainer.textContent);
-            } else {
-                selectedRange.surroundContents(span);
-            }
-            window.getSelection().removeAllRanges();
+        window.luuDiemIELTSFullTest = async function(diemSo, bandScore, tenBai) {
+            if (!window.currentUserUid) return;
+            let timestamp = Date.now();
+            let docId = window.currentUserUid + "_ielts_" + timestamp; 
+
+            await setDoc(doc(db, "user_ielts_scores", docId), {
+                email: window.currentUserEmail,
+                skill: "Listening",
+                testName: tenBai,
+                partName: "Part 3",
+                correctQ: diemSo,
+                totalQ: 10,
+                bandScore: parseFloat(bandScore),
+                date: new Date().toLocaleDateString("vi-VN"),
+                timeTaken: "", 
+                timestamp: timestamp
+            });
+            showSyncToast("☁️ Đã đồng bộ điểm (" + diemSo + "/10) lên Tracker!");
         }
     </script>
 </body>
