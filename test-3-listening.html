@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Listening Test 3 | SnapEnglish</title>
+  <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Soft Lavender & Peach Palette - Youthful, Cute, Mature */
+            --primary: #8b78e6;      
+            --primary-dark: #5a4b99;
+            --accent: #ff9f7f;       
+            --bg-body: #f8f7fc;      
+            --bg-pane: #ffffff;
+            --text-main: #4a4a4a;
+            --text-light: #888;
+            --border: #e2def0;
+            --highlight: #fff0eb;    
+            --correct: #20b2aa;      /* Light Sea Green cho trẻ trung */
+            --wrong: #ff6b6b;
+            --exp-bg: #f3f0fa;       
+            --header-h: 70px;
+            --footer-h: 80px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Quicksand', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        /* --- OVERLAY & MODAL --- */
+        #setupOverlay, .custom-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+        }
+        .custom-overlay { display: none; z-index: 99999; }
+        
+        .setup-modal, .custom-modal {
+            background: white; padding: 40px; border-radius: 25px;
+            box-shadow: 0 15px 40px rgba(139, 120, 230, 0.15);
+            width: 90%; max-width: 500px; text-align: center;
+            border: 2px solid var(--border);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .setup-modal h2, .custom-modal h2 { 
+            font-family: 'Lora', serif; color: var(--primary-dark); font-size: 28px; margin-top: 0; 
+        }
+        
+        .mode-btn {
+            display: block; width: 100%; padding: 15px; margin: 15px 0;
+            border-radius: 15px; font-size: 18px; font-weight: 700; cursor: pointer;
+            transition: 0.3s; font-family: inherit;
+        }
+        .mode-practice { background: #fff5f2; color: #e67550; border: 2px solid #ffd4c4; }
+        .mode-practice:hover, .mode-practice.selected { background: var(--accent); color: white; border-color: var(--accent); }
+        .mode-mock { background: #f3f0fa; color: var(--primary-dark); border: 2px solid #ded8f5; }
+        .mode-mock:hover, .mode-mock.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        .start-btn {
+            background: var(--primary); color: white; border: none; padding: 12px 35px;
+            border-radius: 50px; font-size: 18px; font-weight: 700; cursor: pointer;
+            margin-top: 20px; transition: 0.3s; display: none; box-shadow: 0 5px 15px rgba(139, 120, 230, 0.3);
+        }
+        .start-btn:hover { transform: translateY(-3px); }
+
+        .modal-actions { display: flex; gap: 15px; margin-top: 25px; justify-content: center; }
+        .btn-cancel { background: #f5f5f5; color: #666; border: 2px solid #ddd; padding: 12px 20px; border-radius: 15px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.2s; font-family: inherit; flex: 1; }
+        .btn-cancel:hover { background: #e0e0e0; border-color: #ccc; }
+        .btn-confirm { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 15px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.2s; font-family: inherit; flex: 1; box-shadow: 0 4px 0 var(--primary-dark); }
+        .btn-confirm:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- HEADER --- */
+        header {
+            height: var(--header-h); background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 30px; z-index: 100;
+        }
+        
+        .brand { font-size: 24px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .brand span { background: var(--primary); color: white; padding: 4px 10px; border-radius: 10px; font-size: 16px; }
+
+        .audio-controls { display: flex; align-items: center; gap: 15px; background: #f3f0fa; padding: 5px 15px; border-radius: 30px; }
+        audio { height: 35px; outline: none; }
+        .skip-btn {
+            background: white; border: 2px solid var(--border); border-radius: 50%;
+            width: 35px; height: 35px; cursor: pointer; font-weight: bold; color: var(--primary-dark);
+            display: flex; justify-content: center; align-items: center; transition: 0.2s;
+        }
+        .skip-btn:hover { border-color: var(--primary); background: var(--primary); color: white; }
+        .hidden { display: none !important; }
+
+        .btn-submit { 
+            background: var(--accent); color: white; border: none; padding: 10px 25px; 
+            border-radius: 15px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.2s;
+            font-family: inherit; box-shadow: 0 4px 0 #d97d5f;
+        }
+        .btn-submit:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- LAYOUT FULL WIDTH --- */
+        .container { 
+            display: flex; flex-direction: column;
+            height: calc(100vh - var(--header-h) - var(--footer-h)); 
+            width: 100%; max-width: 100%; 
+            margin: 0; padding: 30px 60px;
+            overflow-y: auto; scroll-behavior: smooth;
+        }
+
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-thumb { background: #dcd8eb; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        .tabs { display: flex; gap: 10px; margin-bottom: 25px; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+        .tab {
+            padding: 10px 25px; font-size: 18px; font-weight: 700; color: var(--text-light);
+            cursor: pointer; border-radius: 15px; transition: 0.3s; border: 2px solid transparent;
+        }
+        .tab.active { background: #f3f0fa; color: var(--primary-dark); border-color: var(--primary); }
+
+        .tab-content { display: none; animation: fadeIn 0.3s; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.03); }
+        .tab-content.active { display: block; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- CONTENT STYLES --- */
+        h2 { color: var(--primary-dark); margin-top: 0; font-size: 28px; font-family: 'Lora', serif; }
+        h3 { color: #555; border-bottom: 2px solid #f3f0fa; padding-bottom: 5px; margin-top: 30px; font-size: 22px; }
+        p { margin-bottom: 20px; font-size: 18px; line-height: 1.8; }
+        
+        .instruction {
+            background: #fff5f2; color: #d6643e; padding: 15px; border-radius: 12px;
+            font-weight: 600; font-size: 16px; margin-bottom: 25px; border: 2px dashed #ffc7b3;
+        }
+
+        input[type="text"] {
+            border: 2px solid #e2def0; border-radius: 8px; padding: 8px 15px;
+            font-family: inherit; font-size: 18px; color: var(--primary-dark);
+            outline: none; background: white; transition: 0.2s; font-weight: 600; width: 220px;
+        }
+        input[type="text"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139, 120, 230, 0.15); }
+        input[type="text"].correct-input { border-color: var(--correct); color: var(--correct); background: #f0fbf9; }
+        input[type="text"].wrong-input { border-color: var(--wrong); color: var(--wrong); background: #fff0f0; }
+
+        .mc-option { display: block; margin: 10px 0; cursor: pointer; padding: 12px; border-radius: 10px; transition: background 0.2s; font-size: 18px; border: 1px solid transparent; }
+        .mc-option:hover { background: #f3f0fa; border-color: #dcd8eb; }
+        .mc-option input[type="radio"], .mc-option input[type="checkbox"] { margin-right: 12px; transform: scale(1.3); accent-color: var(--primary); }
+
+        .notes-box {
+            background: #faf9fd; padding: 30px; border-radius: 15px; border: 2px solid var(--border); line-height: 2; font-size: 18px;
+        }
+        .notes-box ul { list-style-type: square; margin-left: 20px; color: #555; }
+        .notes-box li { margin-bottom: 10px; }
+
+        /* --- EXPLANATION BOX --- */
+        .explanation {
+            background: var(--exp-bg); border-left: 5px solid var(--accent);
+            padding: 15px 20px; margin-top: 10px; border-radius: 0 12px 12px 0;
+            font-size: 17px; color: var(--primary-dark); font-weight: 500;
+            display: none; animation: fadeIn 0.4s; line-height: 1.6;
+        }
+        .explanation strong { color: var(--primary); }
+
+        /* --- FOOTER --- */
+        footer {
+            height: var(--footer-h); background: #fff; border-top: 2px solid var(--border);
+            display: flex; flex-direction: column; justify-content: center; padding: 0 30px;
+            z-index: 100; position: fixed; bottom: 0; width: 100%;
+        }
+        .nav-scroller { display: flex; gap: 10px; overflow-x: auto; padding: 10px 0; align-items: center; }
+        .nav-dot {
+            min-width: 40px; height: 40px; border: 2px solid #eee; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600;
+            cursor: pointer; color: #999; background: white; transition: 0.2s; flex-shrink: 0;
+        }
+        .nav-dot:hover { border-color: var(--primary); color: var(--primary); }
+        .nav-dot.done { background: #f3f0fa; color: var(--primary-dark); border-color: #dcd8eb; }
+        .nav-dot.correct { background: var(--correct); color: white; border-color: var(--correct); }
+        .nav-dot.incorrect { background: var(--wrong); color: white; border-color: var(--wrong); }
+    </style>
+</head>
+<body>
+
+    <div id="setupOverlay">
+        <div class="setup-modal">
+            <h2>Chào mừng đến với Listening Library ✨</h2>
+            <p style="font-size: 18px; color: #666; margin-bottom: 25px;">Bạn hãy chọn chế độ:</p>
+            
+            <button class="mode-btn mode-practice" onclick="selectMode('practice')">🎯 Luyện tập</button>
+            <button class="mode-btn mode-mock" onclick="selectMode('mock')">🏆 Thi thử</button>
+            
+            <button class="start-btn" id="startBtn" onclick="askReady()">Sẵn sàng</button>
+        </div>
+    </div>
+
+    <div id="startConfirmOverlay" class="custom-overlay">
+        <div class="custom-modal">
+            <h2>Xác nhận bắt đầu</h2>
+            <p id="startConfirmMsg" style="font-size: 18px; color: #555; margin-bottom: 20px; white-space: pre-line;"></p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('startConfirmOverlay')">Hủy</button>
+                <button class="btn-confirm" onclick="startTestActual()">Bắt đầu</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="submitModal" class="custom-overlay">
+        <div class="custom-modal">
+            <h2>Xác nhận nộp bài?</h2>
+            <p style="font-size: 18px; color: #555; margin-bottom: 10px;">Bạn có chắc chắn nộp bài không?</p>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('submitModal')">Quay lại</button>
+                <button class="btn-confirm" onclick="evaluateTest()">Nộp</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resultOverlay" class="custom-overlay">
+        <div class="custom-modal">
+            <h2>🎉 Chúc mừng!</h2>
+            <p style="font-size: 16px; color: #666;">Bạn đã hoàn thành bài.</p>
+            <div id="resultMessage" style="margin: 20px 0; line-height: 1.8;"></div>
+            <button class="btn-confirm" style="width: 100%; margin-top: 10px;" onclick="closeModal('resultOverlay')">Xem chi tiết</button>
+        </div>
+    </div>
+
+    <header>
+        <div class="brand">
+            <span>SnapEnglish</span> Test 3 IELTS Listening
+        </div>
+        
+        <div class="audio-controls" id="audioContainer">
+            <button class="skip-btn" id="btn-backward" onclick="skipAudio(-10)">-10</button>
+            <audio id="testAudio" controls controlsList="nodownload">
+                <source src="https://raw.githubusercontent.com/snaplanguages/SnapEnglish-audioieltslistening01/56bf69609919720f6d6a438375dd9a96596660de/IELTS%20Listening%20Test%203.mp3" type="audio/mpeg">
+                Trình duyệt của bạn không hỗ trợ audio.
+            </audio>
+            <button class="skip-btn" id="btn-forward" onclick="skipAudio(10)">+10</button>
+        </div>
+
+        <button class="btn-submit" id="topSubmitBtn" onclick="requestSubmit()">NỘP BÀI</button>
+    </header>
+
+    <div class="container" id="mainContainer">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab(1)">Part 1</div>
+            <div class="tab" onclick="switchTab(2)">Part 2</div>
+            <div class="tab" onclick="switchTab(3)">Part 3</div>
+            <div class="tab" onclick="switchTab(4)">Part 4</div>
+        </div>
+
+        <!-- PART 1 -->
+        <div id="part1" class="tab-content active">
+            <h2>Part 1: Questions 1-10</h2>
+            <div class="instruction">Complete the notes below. Write <strong>NO MORE THAN THREE WORDS AND/OR A NUMBER</strong> for each answer.</div>
+            
+            <div class="notes-box">
+                <h3 style="text-align:center; color:var(--primary-dark); margin-top:0;">Job Inquiry</h3>
+                <p>Work at: a restaurant</p>
+                <p>Type of work: <strong>(1)</strong> <input type="text" id="q1" oninput="markAnswered(1)"></p>
+                <div id="e1" class="explanation"></div>
+                
+                <p>Number of hours per week: 12 hours<br>Would need work permit</p>
+                
+                <p>Work in the: <strong>(2)</strong> <input type="text" id="q2" oninput="markAnswered(2)"> branch</p>
+                <div id="e2" class="explanation"></div>
+
+                <p>Nearest bus stop: next to <strong>(3)</strong> <input type="text" id="q3" oninput="markAnswered(3)"></p>
+                <div id="e3" class="explanation"></div>
+
+                <p>Pay: <strong>(4)</strong> <input type="text" id="q4" oninput="markAnswered(4)"> £ an hour</p>
+                <div id="e4" class="explanation"></div>
+
+                <p>Extra benefits: a free dinner</p>
+                
+                <p>Extra pay when you work on <strong>(5)</strong> <input type="text" id="q5" oninput="markAnswered(5)"></p>
+                <div id="e5" class="explanation"></div>
+
+                <p>Transport home when you work <strong>(6)</strong> <input type="text" id="q6" oninput="markAnswered(6)"></p>
+                <div id="e6" class="explanation"></div>
+
+                <p>Qualities required:<br>
+                - <strong>(7)</strong> <input type="text" id="q7" oninput="markAnswered(7)"><br>
+                <div id="e7" class="explanation"></div>
+                - Ability to <strong>(8)</strong> <input type="text" id="q8" oninput="markAnswered(8)"></p>
+                <div id="e8" class="explanation"></div>
+
+                <p>Interview arranged for: Thursday <strong>(9)</strong> <input type="text" id="q9" oninput="markAnswered(9)"></p>
+                <div id="e9" class="explanation"></div>
+
+                <p>Ask for: Samira <strong>(10)</strong> <input type="text" id="q10" oninput="markAnswered(10)"> at 6 pm</p>
+                <div id="e10" class="explanation"></div>
+            </div>
+        </div>
+
+        <!-- PART 2 -->
+        <div id="part2" class="tab-content">
+            <h2>Part 2: Questions 11-20</h2>
+            <div class="instruction">Questions 11-16: Complete the notes below. Write <strong>ONE WORD AND/OR A NUMBER</strong> for each answer.</div>
+            
+            <div class="notes-box">
+                <h3 style="color:var(--primary-dark); margin-top:0;">SPORTS WORLD</h3>
+                <ul>
+                    <li>a new <strong>(11)</strong> <input type="text" id="q11" oninput="markAnswered(11)"> of an international sports goods company</li>
+                    <div id="e11" class="explanation"></div>
+                    <li>located in the shopping centre to the <strong>(12)</strong> <input type="text" id="q12" oninput="markAnswered(12)"> of Bradcaster</li>
+                    <div id="e12" class="explanation"></div>
+                    <li>has sports <strong>(13)</strong> <input type="text" id="q13" oninput="markAnswered(13)"> and equipment on floors 1-3</li>
+                    <div id="e13" class="explanation"></div>
+                    <li>can get you any item within <strong>(14)</strong> <input type="text" id="q14" oninput="markAnswered(14)"> days</li>
+                    <div id="e14" class="explanation"></div>
+                    <li>shop specialises in equipment for <strong>(15)</strong> <input type="text" id="q15" oninput="markAnswered(15)"></li>
+                    <div id="e15" class="explanation"></div>
+                    <li>has a special section which just sells <strong>(16)</strong> <input type="text" id="q16" oninput="markAnswered(16)"></li>
+                    <div id="e16" class="explanation"></div>
+                </ul>
+            </div>
+
+            <div class="instruction" style="margin-top:40px;">Questions 17 and 18: Choose the correct letter, A, B or C.</div>
+            
+            <p><strong>17. A champion athlete will be in the shop</strong></p>
+            <label class="mc-option"><input type="radio" name="q17" value="A" onchange="markAnswered(17)"> A. on Saturday morning only</label>
+            <label class="mc-option"><input type="radio" name="q17" value="B" onchange="markAnswered(17)"> B. all day Saturday</label>
+            <label class="mc-option"><input type="radio" name="q17" value="C" onchange="markAnswered(17)"> C. for the whole weekend</label>
+            <div id="e17" class="explanation"></div>
+
+            <p style="margin-top:25px;"><strong>18. The first person to answer 20 quiz questions correctly will win</strong></p>
+            <label class="mc-option"><input type="radio" name="q18" value="A" onchange="markAnswered(18)"> A. gym membership</label>
+            <label class="mc-option"><input type="radio" name="q18" value="B" onchange="markAnswered(18)"> B. a video</label>
+            <label class="mc-option"><input type="radio" name="q18" value="C" onchange="markAnswered(18)"> C. a calendar</label>
+            <div id="e18" class="explanation"></div>
+
+            <div class="instruction" style="margin-top:40px;">Questions 19 and 20: Choose TWO letters, A-E.<br><span style="font-size:14px; color:#555;">(Bạn chỉ được chọn tối đa 2 đáp án)</span></div>
+            <p><strong>Which TWO pieces of information does the speaker give about the fitness test?</strong></p>
+            <div id="checkboxGroup1920">
+                <label class="mc-option"><input type="checkbox" name="q19_20" value="A"> A. You need to reserve a place</label>
+                <label class="mc-option"><input type="checkbox" name="q19_20" value="B"> B. It is free to account holders</label>
+                <label class="mc-option"><input type="checkbox" name="q19_20" value="C"> C. You get advice on how to improve your health</label>
+                <label class="mc-option"><input type="checkbox" name="q19_20" value="D"> D. It takes place in a special clinic</label>
+                <label class="mc-option"><input type="checkbox" name="q19_20" value="E"> E. It is cheaper this month</label>
+            </div>
+            <div id="e19" class="explanation"></div>
+        </div>
+
+        <!-- PART 3 -->
+        <div id="part3" class="tab-content">
+            <h2>Part 3: Questions 21-30</h2>
+            <div class="instruction">Choose the correct letter, A, B or C.</div>
+            
+            <h3>Course Feedback</h3>
+            
+            <p><strong>21. One reason why Spiros felt happy about his marketing presentation was that</strong></p>
+            <label class="mc-option"><input type="radio" name="q21" value="A" onchange="markAnswered(21)"> A. he was not nervous</label>
+            <label class="mc-option"><input type="radio" name="q21" value="B" onchange="markAnswered(21)"> B. his style was good</label>
+            <label class="mc-option"><input type="radio" name="q21" value="C" onchange="markAnswered(21)"> C. the presentation was the best in his group</label>
+            <div id="e21" class="explanation"></div>
+
+            <p style="margin-top:25px;"><strong>22. What surprised Hiroko about the other students' presentations?</strong></p>
+            <label class="mc-option"><input type="radio" name="q22" value="A" onchange="markAnswered(22)"> A. Their presentations were not interesting</label>
+            <label class="mc-option"><input type="radio" name="q22" value="B" onchange="markAnswered(22)"> B. They found their presentations stressful</label>
+            <label class="mc-option"><input type="radio" name="q22" value="C" onchange="markAnswered(22)"> C. They didn't look at the audience enough</label>
+            <div id="e22" class="explanation"></div>
+
+            <p style="margin-top:25px;"><strong>23. After she gave her presentation, Hiroko felt</strong></p>
+            <label class="mc-option"><input type="radio" name="q23" value="A" onchange="markAnswered(23)"> A. delighted</label>
+            <label class="mc-option"><input type="radio" name="q23" value="B" onchange="markAnswered(23)"> B. dissatisfied</label>
+            <label class="mc-option"><input type="radio" name="q23" value="C" onchange="markAnswered(23)"> C. embarrassed</label>
+            <div id="e23" class="explanation"></div>
+
+            <p style="margin-top:25px;"><strong>24. How does Spiros feel about his performance in tutorials?</strong></p>
+            <label class="mc-option"><input type="radio" name="q24" value="A" onchange="markAnswered(24)"> A. not very happy</label>
+            <label class="mc-option"><input type="radio" name="q24" value="B" onchange="markAnswered(24)"> B. really pleased</label>
+            <label class="mc-option"><input type="radio" name="q24" value="C" onchange="markAnswered(24)"> C. fairly confident</label>
+            <div id="e24" class="explanation"></div>
+
+            <p style="margin-top:25px;"><strong>25. Why can the other students participate so easily in discussions?</strong></p>
+            <label class="mc-option"><input type="radio" name="q25" value="A" onchange="markAnswered(25)"> A. They are polite to each other</label>
+            <label class="mc-option"><input type="radio" name="q25" value="B" onchange="markAnswered(25)"> B. They agree to take turns in speaking</label>
+            <label class="mc-option"><input type="radio" name="q25" value="C" onchange="markAnswered(25)"> C. They know each other well</label>
+            <div id="e25" class="explanation"></div>
+
+            <p style="margin-top:25px;"><strong>26. Why is Hiroko feeling more positive about tutorials now?</strong></p>
+            <label class="mc-option"><input type="radio" name="q26" value="A" onchange="markAnswered(26)"> A. She finds the other students' opinions more interesting</label>
+            <label class="mc-option"><input type="radio" name="q26" value="B" onchange="markAnswered(26)"> B. She is making more of a contribution</label>
+            <label class="mc-option"><input type="radio" name="q26" value="C" onchange="markAnswered(26)"> C. The tutor includes her in the discussion</label>
+            <div id="e26" class="explanation"></div>
+
+            <p style="margin-top:25px;"><strong>27. To help her understand lectures, Hiroko</strong></p>
+            <label class="mc-option"><input type="radio" name="q27" value="A" onchange="markAnswered(27)"> A. consulted reference materials</label>
+            <label class="mc-option"><input type="radio" name="q27" value="B" onchange="markAnswered(27)"> B. had extra tutorials with her lecturers</label>
+            <label class="mc-option"><input type="radio" name="q27" value="C" onchange="markAnswered(27)"> C. borrowed lecture notes from other students</label>
+            <div id="e27" class="explanation"></div>
+
+            <p style="margin-top:25px;"><strong>28. What does Spiros think of his reading skills?</strong></p>
+            <label class="mc-option"><input type="radio" name="q28" value="A" onchange="markAnswered(28)"> A. He reads faster than he used to</label>
+            <label class="mc-option"><input type="radio" name="q28" value="B" onchange="markAnswered(28)"> B. It still takes him a long time to read</label>
+            <label class="mc-option"><input type="radio" name="q28" value="C" onchange="markAnswered(28)"> C. He tends to struggle with new vocabulary</label>
+            <div id="e28" class="explanation"></div>
+
+            <p style="margin-top:25px;"><strong>29. What is Hiroko's subject area?</strong></p>
+            <label class="mc-option"><input type="radio" name="q29" value="A" onchange="markAnswered(29)"> A. environmental studies</label>
+            <label class="mc-option"><input type="radio" name="q29" value="B" onchange="markAnswered(29)"> B. health education</label>
+            <label class="mc-option"><input type="radio" name="q29" value="C" onchange="markAnswered(29)"> C. engineering</label>
+            <div id="e29" class="explanation"></div>
+
+            <p style="margin-top:25px;"><strong>30. Hiroko thinks that in the reading classes the students should</strong></p>
+            <label class="mc-option"><input type="radio" name="q30" value="A" onchange="markAnswered(30)"> A. learn more vocabulary</label>
+            <label class="mc-option"><input type="radio" name="q30" value="B" onchange="markAnswered(30)"> B. read more in their own subject areas</label>
+            <label class="mc-option"><input type="radio" name="q30" value="C" onchange="markAnswered(30)"> C. develop better reading strategies</label>
+            <div id="e30" class="explanation"></div>
+        </div>
+
+        <!-- PART 4 -->
+        <div id="part4" class="tab-content">
+            <h2>Part 4: Questions 31-40</h2>
+            <div class="instruction">Complete the notes below. Write <strong>NO MORE THAN THREE WORDS</strong>.</div>
+            
+            <div class="notes-box">
+                <h3 style="text-align:center; color:var(--primary-dark); margin-top:0;">Mass Strandings of Whales and Dolphins</h3>
+                
+                <p>Mass strandings: situations where groups of whales, dolphins, etc. swim onto the beach and die.</p>
+                <p>Common in areas where the <strong>(31)</strong> <input type="text" id="q31" oninput="markAnswered(31)"> can change quickly.</p>
+                <div id="e31" class="explanation"></div>
+
+                <h4 style="color: var(--accent);">Several other theories:</h4>
+                
+                <p><strong>Parasites</strong><br>
+                e.g. some parasites can affect marine animals' <strong>(32)</strong> <input type="text" id="q32" oninput="markAnswered(32)">, which they depend on for navigation.</p>
+                <div id="e32" class="explanation"></div>
+
+                <p><strong>Toxins</strong><br>
+                Poisons from <strong>(33)</strong> <input type="text" id="q33" oninput="markAnswered(33)"> or are commonly consumed by whales.<br>
+                e.g. Cape Cod (1988) - whales were killed by saxitoxin.</p>
+                <div id="e33" class="explanation"></div>
+
+                <p><strong>Accidental Strandings</strong><br>
+                Animals may follow prey ashore, e.g. Thurston (1995).<br>
+                Unlikely because the majority of animals were not <strong>(34)</strong> <input type="text" id="q34" oninput="markAnswered(34)"> when they stranded.</p>
+                <div id="e34" class="explanation"></div>
+
+                <p><strong>Human Activity</strong><br>
+                <strong>(35)</strong> <input type="text" id="q35" oninput="markAnswered(35)"> from military tests are linked to some recent strandings.</p>
+                <div id="e35" class="explanation"></div>
+
+                <p>The Bahamas (2000) stranding was unusual because the whales:<br>
+                - were all <strong>(36)</strong> <input type="text" id="q36" oninput="markAnswered(36)"><br>
+                <div id="e36" class="explanation"></div>
+                - were not in a <strong>(37)</strong> <input type="text" id="q37" oninput="markAnswered(37)"></p>
+                <div id="e37" class="explanation"></div>
+
+                <p><strong>Group Behaviour</strong><br>
+                - More standings in the most <strong>(38)</strong> <input type="text" id="q38" oninput="markAnswered(38)"> species of whales.<br>
+                <div id="e38" class="explanation"></div>
+                - 1994 dolphin stranding - only the <strong>(39)</strong> <input type="text" id="q39" oninput="markAnswered(39)"> was ill.</p>
+                <div id="e39" class="explanation"></div>
+
+                <p><strong>Further Reading</strong><br>
+                Marine Mammals Ashore (Connor) - gives information about stranding <strong>(40)</strong> <input type="text" id="q40" oninput="markAnswered(40)"></p>
+                <div id="e40" class="explanation"></div>
+            </div>
+        </div>
+        <div style="height: 100px;"></div>
+    </div>
+
+    <footer>
+        <div style="font-size:14px; font-weight:bold; color:var(--text-light); text-transform:uppercase; margin-bottom:5px;">Navigation Panel</div>
+        <div class="nav-scroller" id="navPalette"></div>
+    </footer>
+
+    <script>
+        const answerKey = {
+            1: ["answer phone", "answering phone"], 2: ["hillsdunne road"], 3: ["library"], 4: ["4.45"], 5: ["national holidays"],
+            6: ["after 11 o'clock", "after 11'o clock", "after 11 o clock"], 7: ["clear voice"], 8: ["think quickly"], 9: ["22 october", "22nd october", "october 22"], 10: ["manuja"],
+            11: ["branch"], 12: ["west"], 13: ["clothing"], 14: ["10", "ten"], 15: ["running"], 16: ["bags"], 
+            17: ["a"], 18: ["a"], 
+            // 19, 20 are handled specially by the script
+            21: ["b"], 22: ["c"], 23: ["b"], 24: ["a"], 25: ["c"], 26: ["b"], 27: ["a"], 28: ["b"], 29: ["c"], 30: ["b"], 
+            31: ["tide", "tides"], 32: ["hearing", "ear", "ears"], 33: ["plants and animals"], 34: ["feeding"], 35: ["noise", "noises"], 
+            36: ["healthy"], 37: ["group"], 38: ["social"], 39: ["leader"], 40: ["network", "networks"]
+        };
+
+        const explanationsData = {
+            1: "Người nữ nói: 'It's answering the phone.' Loại công việc là trực điện thoại.",
+            2: "Người nữ nói: 'we have two branches the one we're recruiting for is in Hillsdunne Road.' (Chi nhánh tuyển dụng nằm ở Hillsdunne Road).",
+            3: "Bến xe bus gần nhất nằm cạnh thư viện: 'just beside the library.'",
+            4: "Mức lương được đưa ra là £4.45 một giờ.",
+            5: "Công ty trả thêm lương khi làm việc vào các ngày lễ quốc gia: 'extra pay for working on national holidays.'",
+            6: "Được hỗ trợ đưa về nhà khi làm việc sau 11 giờ: 'after 11 o'clock'.",
+            7: "Yêu cầu chất giọng rõ ràng: 'we want a clear voice.'",
+            8: "Yêu cầu có khả năng suy nghĩ nhanh nhạy: 'able to think quickly.'",
+            9: "Buổi phỏng vấn diễn ra vào thứ Năm, ngày 22 tháng 10: '22nd of October.' (Không điền tonight/tomorrow vì là bẫy).",
+            10: "Gặp người tên là Samira Manuja.",
+            11: "Sports World chuẩn bị mở thêm một chi nhánh mới: 'another branch in the area.'",
+            12: "Nằm ở trung tâm mua sắm phía Tây Bradcaster: 'to the west of Bradcaster.'",
+            13: "Ba tầng đầu có rất nhiều quần áo và dụng cụ thể thao: 'sports clothing as well as equipment'.",
+            14: "Có thể nhận hàng trong vòng 10 ngày (ten days). 14 ngày là bẫy của cửa hàng khác.",
+            15: "Cửa hàng đặc biệt tập trung vào dụng cụ cho môn chạy bộ: 'focus on running.'",
+            16: "Có một khu vực riêng biệt chỉ dành để bán túi thể thao: 'sports bags'.",
+            17: "(A) Vận động viên vô địch Paul King chỉ ở cửa hàng cho tới trưa (midday = morning only).",
+            18: "(A) Người đầu tiên trả lời đúng toàn bộ câu hỏi sẽ nhận được thẻ thành viên phòng gym.",
+            19: "(A) Cần đặt chỗ trước (make a booking) và (E) Phí rẻ hơn trong tháng này (half price for this month only). Việc miễn phí bài test cho người có tài khoản là sai, người có tài khoản chỉ được đặc quyền khác.",
+            21: "(B) Spiros cảm thấy phong cách thuyết trình của mình khá chuyên nghiệp (his style was good).",
+            22: "(C) Hiroko ngạc nhiên vì sinh viên khác chỉ đọc ghi chú và không giao tiếp bằng mắt đủ với khán giả.",
+            23: "(B) Sau khi xong, Hiroko không cảm thấy thỏa mãn (dissatisfied).",
+            24: "(A) Spiros không thấy hài lòng với sự thể hiện của mình trong các bài giảng.",
+            25: "(C) Các sinh viên khác đã quen và hiểu rõ thói quen của nhau.",
+            26: "(B) Hiroko đang đóng góp nhiều hơn khi được hỏi ý kiến.",
+            27: "(A) Hiroko phải tìm đọc các sách, tạp chí và danh sách tài liệu tham khảo.",
+            28: "(B) Tốc độ đọc của Spiros vẫn còn chậm, tốn nhiều thời gian.",
+            29: "(C) Hiroko muốn tập trung vào lĩnh vực của mình là ngành kỹ sư (engineering).",
+            30: "(B) Sinh viên nên đọc nhiều hơn về lĩnh vực học tập của chính họ.",
+            31: "Thường xảy ra ở những nơi mà thủy triều (tides) thay đổi đột ngột.",
+            32: "Ký sinh trùng có thể tác động tới thính giác (hearing) hoặc tai (ears), bộ phận dùng để định vị.",
+            33: "Độc tố bắt nguồn từ thực vật hoặc động vật (plants and animals).",
+            34: "Kiểm tra cho thấy đa số động vật không phải đang ăn (feeding) khi chúng mắc cạn.",
+            35: "Tiếng ồn (noises) từ các thí nghiệm quân sự có liên quan đến mắc cạn.",
+            36: "Tất cả các con cá voi mắc cạn đều khỏe mạnh (healthy).",
+            37: "Những con mắc cạn cách xa nhau chứ không đi theo bầy (group).",
+            38: "Nhiều vụ mắc cạn xảy ra ở các loài cá voi có tập tính xã hội (social) cao.",
+            39: "Chỉ có con đầu đàn (leader) là bị ốm.",
+            40: "Cung cấp thêm thông tin về các mạng lưới (networks) mắc cạn."
+        };
+
+        let mode = '';
+        const audio = document.getElementById('testAudio');
+        let isSubmitted = false;
+
+        // Initialize Navigation Drawer
+        const navPalette = document.getElementById('navPalette');
+        for (let i = 1; i <= 40; i++) {
+            let dot = document.createElement("div");
+            dot.className = "nav-dot"; dot.id = `nav-${i}`; dot.innerText = i;
+            dot.onclick = () => {
+                let part = i <= 10 ? 1 : i <= 20 ? 2 : i <= 30 ? 3 : 4;
+                switchTab(part);
+                setTimeout(() => {
+                    let el = document.getElementById('q'+i);
+                    if(!el && document.getElementsByName('q'+i).length > 0) el = document.getElementsByName('q'+i)[0].parentNode;
+                    // For checkbox group 19-20
+                    if(i === 19 || i === 20) el = document.getElementById('checkboxGroup1920');
+                    
+                    if(el) {
+                        el.scrollIntoView({behavior: "smooth", block: "center"});
+                        el.style.transition = "background 0.5s";
+                        let originalBg = el.style.background;
+                        el.style.background = "var(--highlight)";
+                        setTimeout(() => el.style.background = originalBg, 1000);
+                    }
+                }, 100);
+            };
+            navPalette.appendChild(dot);
+        }
+
+        // Logic Checkbox Q19-20 (Max 2 selections)
+        const checkboxes1920 = document.querySelectorAll('input[name="q19_20"]');
+        checkboxes1920.forEach(cb => {
+            cb.addEventListener('change', function() {
+                if(isSubmitted) return;
+                const checked = document.querySelectorAll('input[name="q19_20"]:checked');
+                if (checked.length > 2) {
+                    this.checked = false; // Prevent checking more than 2
+                }
+                
+                // Update nav dots based on how many are selected
+                const cLen = document.querySelectorAll('input[name="q19_20"]:checked').length;
+                const nav19 = document.getElementById('nav-19');
+                const nav20 = document.getElementById('nav-20');
+                
+                if(cLen > 0) nav19.classList.add('done'); else nav19.classList.remove('done');
+                if(cLen > 1) nav20.classList.add('done'); else nav20.classList.remove('done');
+            });
+        });
+
+        function selectMode(selectedMode) {
+            mode = selectedMode;
+            document.querySelector('.mode-practice').classList.toggle('selected', mode === 'practice');
+            document.querySelector('.mode-mock').classList.toggle('selected', mode === 'mock');
+            document.getElementById('startBtn').style.display = 'inline-block';
+        }
+
+        function askReady() {
+            let msg = mode === 'mock' 
+                ? "Bạn đã chọn chế độ Thi Thử.\nAudio sẽ tự động phát.\nBài kiểm tra sẽ kết thúc sau audio kết thúc 1 phút.\nBạn đã sẵn sàng chưa?" 
+                : "Bạn đã chọn chế độ Luyện Tập.\nBạn có thể tự điều chỉnh audio.\nBạn đã sẵn sàng chưa?";
+            document.getElementById('startConfirmMsg').innerText = msg;
+            document.getElementById('startConfirmOverlay').style.display = 'flex';
+        }
+
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        function startTestActual() {
+            closeModal('startConfirmOverlay');
+            document.getElementById('setupOverlay').style.display = 'none';
+            
+            if(mode === 'mock') {
+                document.getElementById('btn-backward').classList.add('hidden');
+                document.getElementById('btn-forward').classList.add('hidden');
+                audio.removeAttribute('controls');
+                audio.play();
+                audio.onended = () => { setTimeout(() => { if(!isSubmitted) evaluateTest(); }, 60000); };
+            }
+        }
+
+        function skipAudio(seconds) { audio.currentTime += seconds; }
+
+        function switchTab(tabNum) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('part' + tabNum).classList.add('active');
+            document.querySelectorAll('.tab')[tabNum-1].classList.add('active');
+            document.getElementById('mainContainer').scrollTop = 0;
+        }
+
+        function markAnswered(qNum) {
+            if(isSubmitted) return;
+            const navCircle = document.getElementById('nav-' + qNum);
+            let answered = false;
+            
+            const textInput = document.getElementById('q' + qNum);
+            if(textInput && textInput.value.trim() !== '') answered = true;
+            
+            const radios = document.getElementsByName('q' + qNum);
+            for(let r of radios) { if(r.checked) answered = true; }
+
+            if(answered) navCircle.classList.add('done');
+            else navCircle.classList.remove('done');
+        }
+
+        function requestSubmit() {
+            if (mode === 'practice') { document.getElementById('submitModal').style.display = 'flex'; } 
+            else { evaluateTest(); }
+        }
+
+        function evaluateTest() {
+            isSubmitted = true;
+            closeModal('submitModal');
+            document.getElementById('topSubmitBtn').classList.add('hidden');
+            audio.pause();
+            
+            document.querySelectorAll('input').forEach(el => el.disabled = true);
+            
+            let score = 0;
+
+            for(let i = 1; i <= 40; i++) {
+                if (i === 19 || i === 20) continue; // Skip checkboxes, handled below
+
+                let userAnswer = '';
+                const textInput = document.getElementById('q' + i);
+                if(textInput) userAnswer = textInput.value.trim().toLowerCase();
+                
+                const radios = document.getElementsByName('q' + i);
+                for(let r of radios) { if(r.checked) userAnswer = r.value.toLowerCase(); }
+
+                const navCircle = document.getElementById('nav-' + i);
+                navCircle.classList.remove('done');
+
+                const correctAnswers = answerKey[i].map(a => a.toLowerCase());
+                
+                if(correctAnswers.includes(userAnswer)) {
+                    score++;
+                    navCircle.classList.add('correct');
+                    if(textInput) textInput.classList.add('correct-input');
+                } else {
+                    navCircle.classList.add('incorrect');
+                    if(textInput) {
+                        textInput.classList.add('wrong-input');
+                        textInput.value = (userAnswer ? userAnswer + " " : "") + "✓ " + answerKey[i][0];
+                    } else if (radios.length > 0) {
+                        let correctRadio = document.querySelector(`input[name="q${i}"][value="${answerKey[i][0]}"]`);
+                        if(correctRadio) {
+                            correctRadio.parentNode.style.backgroundColor = "var(--exp-bg)";
+                            correctRadio.parentNode.style.border = "2px solid var(--correct)";
+                        }
+                    }
+                }
+
+                // Show Explanation
+                const expBox = document.getElementById('e' + i);
+                if(expBox && explanationsData[i]) {
+                    expBox.innerHTML = `💡 <strong>Giải thích:</strong> ${explanationsData[i]}`;
+                    expBox.style.display = 'block';
+                }
+            }
+
+            // --- SPECIAL EVALUATION FOR Q19-20 (Checkboxes) ---
+            let q1920_answers = Array.from(document.querySelectorAll('input[name="q19_20"]:checked')).map(e => e.value.toLowerCase());
+            let correct1920 = ['a', 'e'];
+            let matchedCount = 0;
+            
+            q1920_answers.forEach(ans => {
+                if(correct1920.includes(ans)) matchedCount++;
+            });
+
+            // Update Score & Nav Dots
+            const nav19 = document.getElementById('nav-19');
+            const nav20 = document.getElementById('nav-20');
+            nav19.classList.remove('done'); nav20.classList.remove('done');
+
+            if(matchedCount > 0) { score++; nav19.classList.add('correct'); } else { nav19.classList.add('incorrect'); }
+            if(matchedCount > 1) { score++; nav20.classList.add('correct'); } else { nav20.classList.add('incorrect'); }
+
+            // Visual feedback for checkboxes
+            document.querySelectorAll('input[name="q19_20"]').forEach(cb => {
+                let val = cb.value.toLowerCase();
+                if(correct1920.includes(val)) {
+                    cb.parentNode.style.backgroundColor = "var(--exp-bg)";
+                    cb.parentNode.style.border = "2px solid var(--correct)";
+                } else if(cb.checked) {
+                    cb.parentNode.style.border = "2px solid var(--wrong)";
+                }
+            });
+            
+            document.getElementById('e19').innerHTML = `💡 <strong>Giải thích Q19-20:</strong> ${explanationsData[19]}`;
+            document.getElementById('e19').style.display = 'block';
+            // ----------------------------------------------------
+
+            document.getElementById('resultMessage').innerHTML = `
+                <strong style="font-size: 26px; color: var(--accent); display: block; margin-bottom: 10px;">Correct: ${score}/40</strong>
+                <strong style="font-size: 26px; color: var(--primary);">Band Score: ${calculateBand(score)}</strong>
+            `;
+            
+            if(window.luuDiemIELTSFullTest) {
+                window.luuDiemIELTSFullTest(score, calculateBand(score), "Test 3");
+            }
+            
+            setTimeout(() => { document.getElementById('resultOverlay').style.display = 'flex'; }, 500);
+        }
+
+        function calculateBand(score) {
+            if(score >= 39) return "9.0"; if(score >= 37) return "8.5";
+            if(score >= 35) return "8.0"; if(score >= 32) return "7.5";
+            if(score >= 30) return "7.0"; if(score >= 26) return "6.5";
+            if(score >= 23) return "6.0"; if(score >= 18) return "5.5";
+            if(score >= 16) return "5.0"; if(score >= 13) return "4.5";
+            if(score >= 10) return "4.0"; return "< 4.0";
+        }
+    </script>
+
+    <!-- FIREBASE INTEGRATION FOR SCORE TRACKER -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+            authDomain: "snapenglish-cb6e2.firebaseapp.com",
+            projectId: "snapenglish-cb6e2",
+            storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+            messagingSenderId: "373152038413",
+            appId: "1:373152038413:web:19284622571390f8585f44"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        function showSyncToast(msg) {
+            let toast = document.createElement("div");
+            toast.innerText = msg;
+            toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:#ff477e; color:white; padding:12px 25px; border-radius:50px; font-weight:bold; font-family:'Quicksand',sans-serif; z-index:99999; box-shadow:0 8px 20px rgba(0,0,0,0.15); transform:translateY(100px); opacity:0; transition:all 0.5s ease;";
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.transform = "translateY(0)"; toast.style.opacity = "1"; }, 100);
+            setTimeout(() => { toast.style.transform = "translateY(100px)"; toast.style.opacity = "0"; }, 3500);
+            setTimeout(() => { document.body.removeChild(toast); }, 4000); 
+        }
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                window.currentUserUid = user.uid;
+                window.currentUserEmail = user.email;
+            }
+        });
+
+        window.luuDiemIELTSFullTest = async function(diemSo, bandScore, tenBai) {
+            if (!window.currentUserUid) return;
+            let timestamp = Date.now();
+            let docId = window.currentUserUid + "_ielts_" + timestamp; 
+
+            await setDoc(doc(db, "user_ielts_scores", docId), {
+                email: window.currentUserEmail,
+                skill: "Listening",
+                testName: tenBai,
+                partName: "Full Test",
+                correctQ: diemSo,
+                totalQ: 40,
+                bandScore: parseFloat(bandScore),
+                date: new Date().toLocaleDateString("vi-VN"),
+                timeTaken: "", 
+                timestamp: timestamp
+            });
+            showSyncToast("☁️ Đã đồng bộ Band " + bandScore + " lên Tracker!");
+        }
+    </script>
+</body>
+</html>
