@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="vi">  
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part 6 - Test 3 - 2019 | SnapEnglish</title>
+     <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Tông màu mới: Thạch anh tím & Hồng cam */
+            --bg-gradient-1: #eef2ff; 
+            --bg-gradient-2: #f3e8ff; 
+            --bg-gradient-3: #ffe4e6; 
+            --text-dark: #312e81; 
+            --text-light: #6b7280;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            
+            --primary-btn: #8b5cf6; 
+            --primary-btn-hover: #7c3aed; 
+            --accent-btn: #f43f5e; 
+            --accent-btn-hover: #e11d48; 
+            --highlight-bg: #ede9fe; 
+            
+            --correct-bg: #f0fdf4;
+            --correct-text: #166534;
+            --correct-border: #bbf7d0;
+            --wrong-bg: #fef2f2;
+            --wrong-text: #991b1b;
+            --wrong-border: #fecaca;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Be Vietnam Pro', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 50%, var(--bg-gradient-3) 100%);
+            color: var(--text-dark);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        ::selection { background: #c4b5fd; color: #1e1b4b; }
+
+        .full-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #ddd6fe;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+            position: relative; 
+        }
+
+        .brand { font-size: 22px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 10px; }
+        .brand span { background: linear-gradient(to right, #8b5cf6, #f43f5e); color: white; padding: 4px 12px; border-radius: 8px; font-size: 16px; box-shadow: 0 2px 10px rgba(139, 92, 246, 0.3);}
+
+        .header-controls { display: flex; align-items: center; gap: 15px; }
+
+        .btn-nav-toggle {
+            background: #f8fafc; color: var(--text-dark); border: 2px solid #e2e8f0;
+            padding: 8px 18px; border-radius: 10px; font-weight: 600; font-size: 15px; 
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-nav-toggle:hover { background: #f1f5f9; border-color: #cbd5e1; }
+
+        .timer-box { font-size: 16px; font-weight: 700; color: var(--primary-btn-hover); background: #fff; padding: 8px 18px; border-radius: 10px; border: 2px solid #ddd6fe; }
+
+        .progress-indicator { font-weight: 600; color: var(--accent-btn-hover); background: #fff; padding: 8px 18px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        .nav-dropdown {
+            position: absolute; top: calc(100% + 10px); right: 2rem;
+            background: #fff; border-radius: 16px; border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15); width: 300px;
+            max-height: 400px; overflow-y: auto; z-index: 999;
+            padding: 20px; display: none; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            opacity: 0; transform: translateY(-10px); transition: 0.3s ease;
+        }
+        .nav-dropdown.show { display: grid; opacity: 1; transform: translateY(0); }
+        .nav-dropdown::-webkit-scrollbar { width: 6px; }
+        .nav-dropdown::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+        .nav-dot {
+            height: 45px; border: 2px solid #e2e8f0; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700;
+            cursor: pointer; color: var(--text-light); background: #f8fafc; transition: 0.2s;
+        }
+        .nav-dot:hover { border-color: var(--primary-btn); color: var(--primary-btn); }
+        .nav-dot.done { background: var(--highlight-bg); color: var(--primary-btn-hover); border-color: var(--primary-btn); }
+        .nav-dot.correct { background: var(--correct-bg); color: var(--correct-text); border-color: var(--correct-border); }
+        .nav-dot.wrong { background: var(--wrong-bg); color: var(--wrong-text); border-color: var(--wrong-border); }
+        .nav-dot.active { box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3); border-color: var(--primary-btn); }
+
+        .main-content { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            flex: 1; 
+            overflow: hidden; 
+            transition: all 0.5s ease;
+        }
+        .main-content.submitted-layout {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .scroll-col {
+            padding: 2.5rem; 
+            overflow-y: auto; 
+            height: 100%;
+        }
+
+        .scroll-col::-webkit-scrollbar { width: 8px; }
+        .scroll-col::-webkit-scrollbar-track { background: transparent; }
+        .scroll-col::-webkit-scrollbar-thumb { background: rgba(139, 92, 246, 0.3); border-radius: 10px; }
+        .scroll-col::-webkit-scrollbar-thumb:hover { background: rgba(139, 92, 246, 0.6); }
+
+        .passage-col { border-right: 2px dashed #ddd6fe; background: rgba(255,255,255,0.3); font-size: 1.15rem; line-height: 1.8; color: #334155; }
+        .translation-col { border-right: 2px dashed #ddd6fe; background: rgba(255,255,255,0.5); font-size: 1.15rem; line-height: 1.8; color: #1e293b; display: none; }
+        .main-content.submitted-layout .translation-col { display: block; animation: slideIn 0.5s ease; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .passage-col p, .translation-col p { margin-bottom: 1.2rem; }
+        .translation-header { font-weight: 700; color: #b45309; margin-bottom: 1rem; font-size: 1.3rem; border-bottom: 2px solid #fcd34d; padding-bottom: 0.5rem; display: inline-block;}
+
+        .question-block {
+            background: rgba(255, 255, 255, 0.95); padding: 1.8rem; border-radius: 16px;
+            margin-bottom: 1.8rem; border: 1px solid #e2e8f0; transition: transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+        .question-block:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.08); }
+
+        .question-title { font-weight: 700; margin-bottom: 1.2rem; color: var(--primary-btn-hover); font-size: 1.2rem; }
+
+        .options { display: flex; flex-direction: column; gap: 0.8rem; }
+
+        .option-label {
+            display: flex; align-items: center; cursor: pointer; padding: 1rem 1.2rem;
+            background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; transition: all 0.3s ease; font-size: 1.05rem;
+        }
+        .option-label:hover:not(.disabled) { background: #f8fafc; border-color: var(--primary-btn); }
+        .option-label input[type="radio"] { margin-right: 1.2rem; accent-color: var(--primary-btn-hover); transform: scale(1.3); }
+        .option-label.selected { background: var(--highlight-bg); border-color: var(--primary-btn); color: var(--primary-btn-hover); }
+        .option-label.disabled { cursor: default; }
+        
+        .option-label.correct { background: var(--correct-bg); border-color: var(--correct-border); color: var(--correct-text); font-weight: 600; }
+        .option-label.wrong { background: var(--wrong-bg); border-color: var(--wrong-border); color: var(--wrong-text); opacity: 0.85; }
+
+        .option-text-en { font-weight: 600; margin-right: 8px; }
+        .option-text-vi { color: #64748b; font-style: italic; font-size: 0.95em; }
+
+        .explanation-box {
+            margin-top: 20px; padding: 20px; background: #f8fafc; border-radius: 12px;
+            border: 1px dashed #cbd5e1; font-size: 1rem; color: #475569; display: none; line-height: 1.7;
+        }
+        .explanation-box.show { display: block; animation: fadeIn 0.5s ease; }
+        .explanation-box b { color: var(--primary-btn-hover); }
+
+        .footer {
+            padding: 1rem 2rem; border-top: 1px solid #ddd6fe;
+            display: flex; justify-content: space-between; background: rgba(255, 255, 255, 0.7);
+        }
+
+        .btn { padding: 0.8rem 2rem; border: none; border-radius: 10px; font-size: 1.05rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-prev { background: #ffffff; color: var(--text-dark); border: 1px solid #cbd5e1; }
+        .btn-prev:hover { background: #f1f5f9; border-color: #94a3b8; }
+        .btn-next { background: var(--primary-btn); color: #fff; }
+        .btn-next:hover { background: var(--primary-btn-hover); box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
+        .btn-submit { background: var(--accent-btn); color: #fff; }
+        .btn-submit:hover { background: var(--accent-btn-hover); box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3); }
+
+        .vocab-btn {
+            position: fixed;
+            bottom: 30px; left: 30px;
+            width: 65px; height: 65px;
+            background: linear-gradient(135deg, #fcd34d, #fb923c);
+            border-radius: 50%; display: none; align-items: center; justify-content: center;
+            font-size: 30px; box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
+            cursor: pointer; z-index: 1000; border: 4px solid #fff;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: float 3s ease-in-out infinite;
+        }
+        .vocab-btn:hover { transform: scale(1.15) rotate(10deg); }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        .result-overlay, .custom-overlay { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            z-index: 99999; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; 
+        }
+        .result-overlay.active, .custom-overlay.active { opacity: 1; pointer-events: all; }
+        .custom-overlay[style*="display: flex;"] { opacity: 1; pointer-events: all; }
+
+        .custom-modal { 
+            background: white; padding: 40px; border-radius: 20px; 
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2); width: 90%; max-width: 480px; text-align: center; 
+            border: 2px solid #ddd6fe; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        
+        .custom-modal h2 { color: var(--primary-btn-hover); font-size: 26px; margin-top: 0; margin-bottom: 15px;}
+        .result-score { font-size: 3.8rem; font-weight: 800; color: var(--text-dark); margin-bottom: 2rem; text-shadow: 2px 2px 0px #e0e7ff; }
+
+        .modal-actions { display: flex; gap: 15px; margin-top: 30px; justify-content: center; }
+        .modal-actions button { flex: 1; padding: 14px; border-radius: 12px; font-weight: 700; font-size: 16px; border: none; cursor: pointer; transition: 0.2s;}
+        .btn-cancel { background: #f1f5f9; color: #475569; }
+        .btn-cancel:hover { background: #e2e8f0; }
+        .btn-confirm { background: var(--primary-btn); color: white; }
+        .btn-confirm:hover { background: var(--primary-btn-hover); }
+
+        #timeInputBox { margin: 30px 0; }
+        #timeInput { width: 100px; padding: 12px; font-size: 18px; text-align: center; border: 2px solid #e2e8f0; border-radius: 10px; outline: none; font-weight: 700; color: var(--primary-btn); transition: 0.3s;}
+        #timeInput:focus { border-color: var(--primary-btn); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2); }
+
+        .vocab-modal {
+            background: #fff; width: 90%; max-width: 600px; max-height: 80vh;
+            border-radius: 20px; padding: 30px; overflow-y: auto; text-align: left;
+            position: relative; border: 3px solid #fcd34d;
+        }
+        .vocab-modal h2 { text-align: center; color: #b45309; margin-bottom: 20px; font-size: 24px; display: flex; align-items: center; justify-content: center; gap: 10px;}
+        .vocab-list { list-style: none; padding: 0; }
+        .vocab-list li { 
+            padding: 12px 15px; border-bottom: 1px dashed #e2e8f0; display: flex; flex-direction: column;
+        }
+        .vocab-list li:last-child { border-bottom: none; }
+        .vocab-word { font-weight: 700; color: var(--primary-btn-hover); font-size: 1.1rem;}
+        .vocab-meaning { color: #475569; margin-top: 4px; }
+        .close-vocab {
+            position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 24px; color: #94a3b8; cursor: pointer; transition: 0.2s;
+        }
+        .close-vocab:hover { color: #f43f5e; }
+        
+        .vocab-modal::-webkit-scrollbar { width: 8px; }
+        .vocab-modal::-webkit-scrollbar-thumb { background: #fcd34d; border-radius: 10px; }
+
+    </style>
+</head>
+<body>
+
+<div id="setupOverlay" class="custom-overlay" style="display: flex;">
+    <div class="custom-modal">
+        <h2>Chào mừng đến Part 6 ✨</h2>
+        <p style="font-size: 16px; color: #64748b;">ETS 2019 - Test 3</p>
+        <div id="timeInputBox">
+            <label style="font-size: 18px; font-weight: bold; color: #334155;">Thời gian (phút): </label>
+            <input type="number" id="timeInput" value="15" min="1" max="60">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-confirm" onclick="askReady()">Sẵn sàng (OK)</button>
+        </div>
+    </div>
+</div>
+
+<div id="startConfirmOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Xác nhận bắt đầu</h2>
+        <p id="startConfirmMsg" style="font-size: 17px; color: #475569; margin-bottom: 20px; white-space: pre-line; line-height: 1.6;"></p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeStartConfirmModal()">Huỷ</button>
+            <button class="btn-confirm" onclick="startTestActual()">Bắt đầu</button>
+        </div>
+    </div>
+</div>
+
+<div class="full-container">
+    <div class="header">
+        <div class="brand"><span>SnapEnglish</span> Part 6 - Test 3 - 2019</div>
+        <div class="header-controls">
+            <div class="timer-box">⏱ <span id="timer">00:00</span></div>
+            <button class="btn-nav-toggle" onclick="toggleNavDropdown()">📑 Danh sách câu</button>
+            <div class="progress-indicator" id="progress-text">Đoạn 1 / 4</div>
+        </div>
+        <div class="nav-dropdown" id="navDropdown"></div>
+    </div>
+
+    <div class="main-content" id="mainLayout">
+        <div class="scroll-col passage-col" id="passage-container"></div>
+        <div class="scroll-col translation-col" id="translation-container"></div>
+        <div class="scroll-col question-col" id="questions-container"></div>
+    </div>
+
+    <div class="footer">
+        <button class="btn btn-prev" id="btn-prev" onclick="changePassage(-1)" style="display: none;">Quay lại</button>
+        <div style="display: flex; gap: 1rem; margin-left: auto;">
+            <button class="btn btn-next" id="btn-next" onclick="changePassage(1)">Tiếp theo</button>
+            <button class="btn btn-submit" id="btn-submit" onclick="askSubmit()">Nộp bài</button>
+        </div>
+    </div>
+
+    <div class="result-overlay" id="result-overlay">
+        <div class="custom-modal">
+            <h2>Hoàn thành xuất sắc! 🌟</h2>
+            <div class="result-score"><span id="score-correct">0</span> / <span id="score-total">16</span></div>
+            <p style="margin-bottom: 2rem; color: #64748b; font-size: 1.1rem;">Bây giờ giao diện sẽ được chia làm 3 cột và hiển thị nút Bóng Đèn Từ Vựng để bạn học sâu hơn nhé!</p>
+            <button class="btn-confirm" style="width: 100%; padding: 1rem; font-size: 1.1rem;" onclick="closeResult()">Xem lại bài & Giải thích</button>
+        </div>
+    </div>
+</div>
+
+<div id="confirmOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Xác nhận nộp bài</h2>
+        <p style="font-size: 17px; color: #475569; margin-bottom: 10px; line-height: 1.6;">Bạn có chắc chắn muốn nộp bài để xem đáp án, phân tích chi tiết và học từ vựng không?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmModal()">Quay lại</button>
+            <button class="btn-submit" onclick="submitQuiz()" style="flex:1; border:none; border-radius:12px; font-weight:700; font-size:16px; cursor:pointer;">Nộp bài</button>
+        </div>
+    </div>
+</div>
+
+<div class="vocab-btn" id="vocabBtn" onclick="openVocab()" title="Xem từ vựng quan trọng">💡</div>
+<div id="vocabOverlay" class="custom-overlay">
+    <div class="vocab-modal">
+        <button class="close-vocab" onclick="closeVocab()">✖</button>
+        <h2>💡 Từ Vựng & Cấu Trúc Đáng Nhớ</h2>
+        <ul class="vocab-list">
+            <li><span class="vocab-word">Lease (n/v)</span><span class="vocab-meaning">Hợp đồng thuê, cho thuê.</span></li>
+            <li><span class="vocab-word">Cuisine (n)</span><span class="vocab-meaning">Ẩm thực, phong cách nấu nướng.</span></li>
+            <li><span class="vocab-word">Catch on (phrasal verb)</span><span class="vocab-meaning">Trở nên phổ biến, được ưa chuộng.</span></li>
+            <li><span class="vocab-word">Inventory control (n)</span><span class="vocab-meaning">Sự kiểm soát hàng tồn kho.</span></li>
+            <li><span class="vocab-word">Shortage (n)</span><span class="vocab-meaning">Sự thiếu hụt (hàng hóa, nhân sự...).</span></li>
+            <li><span class="vocab-word">Implement (v)</span><span class="vocab-meaning">Thực hiện, thi hành (một kế hoạch, quy trình).</span></li>
+            <li><span class="vocab-word">Deduct (v)</span><span class="vocab-meaning">Khấu trừ, trừ đi (tiền bạc).</span></li>
+            <li><span class="vocab-word">Designate (v)</span><span class="vocab-meaning">Chỉ định, bổ nhiệm.</span></li>
+            <li><span class="vocab-word">Alternate (adj/v)</span><span class="vocab-meaning">Thay thế, luân phiên.</span></li>
+            <li><span class="vocab-word">Enhancement (n)</span><span class="vocab-meaning">Sự nâng cấp, sự cải thiện.</span></li>
+            <li><span class="vocab-word">Proceeds (n)</span><span class="vocab-meaning">Tiền thu được (từ một sự kiện, giao dịch).</span></li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        // PASSAGE 1: Câu 131 - 134
+        {
+            passage: `<p>(3 September) - Five years ago, Brian Trang signed a five-year lease to open his restaurant, Trang's Bistro, at 30 Luray Place. Mr. Trang admits that the first two years of operation were quite <b>(131)______</b>. "We offer spicy food from Vietnam's central region," he explains. "We didn't do well at first <b>(132)______</b> the cuisine is based on unfamiliar herbs and hot flavors. It took a while to catch on with customers." But Mr. Trang was confident the food would gain in popularity, and he was correct. <b>(133)______</b> Mr. Trang has just signed another five-year lease, and he is planning <b>(134)______</b> the space.</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p>(3 tháng 9) - Năm năm trước, Brian Trang đã ký hợp đồng thuê năm năm để mở nhà hàng của mình, Trang's Bistro, tại 30 Luray Place. Ông Trang thừa nhận rằng hai năm đầu hoạt động khá <b>(131) khó khăn (thách thức)</b>. "Chúng tôi cung cấp thực phẩm cay từ khu vực miền Trung của Việt Nam," ông giải thích. "Chúng tôi đã không làm tốt lúc đầu <b>(132) bởi vì</b> ẩm thực dựa trên các loại thảo mộc lạ và hương vị nóng. Phải mất một thời gian để bắt kịp với khách hàng." Nhưng ông Trang tự tin rằng món ăn sẽ trở nên phổ biến, và ông đã đúng. <b>(133) Việc đặt chỗ tại Trang's Bistro bây giờ phải được thực hiện trước một tuần.</b> Ông Trang vừa ký một hợp đồng thuê năm năm khác, và ông đang lên kế hoạch <b>(134) để cải tạo</b> không gian.</p>`,
+            questions: [
+                {
+                    id: 131,
+                    text: "131.",
+                    options: [
+                        { text: "A. competitive (cạnh tranh)", correct: false },
+                        { text: "B. potential (tiềm năng)", correct: false },
+                        { text: "C. challenging (thách thức)", correct: true },
+                        { text: "D. rewarding (bổ ích)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Ở phía sau có nói “We didn't do well at first”, tức là cần một tính từ trong chỗ trống mang nghĩa tiêu cực, không tốt. Chỉ có câu C – challenging (khó khăn, thử thách) thỏa điều kiện đó, nên câu C đúng."
+                },
+                {
+                    id: 132,
+                    text: "132.",
+                    options: [
+                        { text: "A. because (bởi vì)", correct: true },
+                        { text: "B. unless (trừ khi)", correct: false },
+                        { text: "C. despite (mặc dù)", correct: false },
+                        { text: "D. besides (bên cạnh đó)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Ở câu sau có nói “It took a while to catch on” tức là diễn tả hậu quả của sự khó khăn, như vậy câu trước cần phải mang nội dung nói về nguyên nhân dẫn tới sự khó khăn; vế trước chỗ trống lại là “We didn't do well at first” tức là sự khó khăn, như vậy sau chỗ trống phải là nguyên nhân cho khó khăn đó. Giới từ nối quan hệ nhân-quả là “because”, vậy nên câu A đúng."
+                },
+                {
+                    id: 133,
+                    text: "133.",
+                    options: [
+                        { text: "A. Originally from Hue, Mr. Trang moved to London at age five with his family. (Xuất thân từ Huế, anh Trang chuyển đến London lúc 5 tuổi cùng gia đình.)", correct: false },
+                        { text: "B. Reservations at Trang's Bistro must now be made a week in advance. (Việc đặt chỗ tại Trang's Bistro bây giờ phải được thực hiện trước một tuần.)", correct: true },
+                        { text: "C. This situation was not expected to last so long. (Tình trạng này không được mong đợi sẽ kéo dài quá lâu.)", correct: false },
+                        { text: "D. The restaurant will relocate in March. (Nhà hàng sẽ chuyển địa điểm vào tháng 3.)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Câu trước đó nói “…the food would gain in popularity, and he was correct”, như vậy câu trong chỗ trống cần phải liên quan tới sự “correct” (đúng đắn/thành công) đó.<br><ul><li>Câu A nói về quá khứ của Mr. Trang.</li><li>Câu C nói về “this situation” nhưng “not… last so long”, tức là không logic với sự thành công.</li><li>Câu D nói về việc di dời nhà hàng trong tương lai.</li></ul>Chỉ có câu B có nội dung phù hợp với câu trước, vì “reservation… must now be made… in advance” tức là thể hiện sự đông đúc bán đắt của nhà hàng. Vậy nên câu B đúng."
+                },
+                {
+                    id: 134,
+                    text: "134.",
+                    options: [
+                        { text: "A. renovate (đổi mới)", correct: false },
+                        { text: "B. being renovated (đang được cải tạo)", correct: false },
+                        { text: "C. renovates (cải tạo)", correct: false },
+                        { text: "D. to renovate (để cải tạo)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Chúng ta có cấu trúc ngữ pháp “be planning + to V0” (lên kế hoạch để làm gì), vậy nên câu D đúng."
+                }
+            ]
+        },
+        
+        // PASSAGE 2: Câu 135 - 138
+        {
+            passage: `<p>This manual provides guidelines for inventory control at Malanta facilities. Our advanced manufacturing procedures depend on <b>(135)______</b> inventory control. Only by maintaining a precise flow of inventory <b>(136)______</b> minimize costs and ensure prompt shipments. To achieve this goal, we must avoid shortages. When stock is in the correct location at the time it is ordered, shipments are made at regular shipping costs and within estimated time frames. <b>(137)______</b>. Therefore, the procedures in this manual must always be faithfully <b>(138)______</b>.</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p>Cuốn sổ tay này cung cấp các hướng dẫn về kiểm soát hàng tồn kho tại các cơ sở của Malanta. Các quy trình sản xuất tiên tiến của chúng tôi phụ thuộc vào việc kiểm soát hàng tồn kho <b>(135) chính xác</b>. Chỉ bằng cách duy trì một luồng hàng tồn kho chính xác <b>(136) chúng ta mới có thể</b> giảm thiểu chi phí và đảm bảo giao hàng kịp thời. Để đạt được mục tiêu này, chúng ta phải tránh tình trạng thiếu hụt. Khi hàng hóa ở đúng vị trí vào thời điểm được đặt, các lô hàng sẽ được thực hiện với chi phí vận chuyển thông thường và trong khung thời gian ước tính. <b>(137) Tuy nhiên, điều này không thể thực hiện được khi tình trạng thiếu hụt bất ngờ xảy ra</b>. Do đó, các quy trình trong sổ tay này phải luôn được <b>(138) thực hiện</b> một cách nghiêm ngặt.</p>`,
+            questions: [
+                {
+                    id: 135,
+                    text: "135.",
+                    options: [
+                        { text: "A. accurate (chính xác)", correct: true },
+                        { text: "B. seasonal (theo mùa)", correct: false },
+                        { text: "C. expensive (đắt tiền)", correct: false },
+                        { text: "D. industrialized (công nghiệp hóa)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Trong văn bản có các từ “inventory control”, “precise flow”, “ensure”, “correct location” là thể hiện sự chính xác. Chỉ có câu A – accurate nghĩa là “chính xác”, vậy nên câu A đúng.<br>Các đáp án khác sai vì:<ul><li><b>B</b>: Việc kiểm soát hàng tồn kho chỉ theo mùa sẽ không giúp ích cho một quy trình sản xuất tiên tiến cần sự duy trì liên tục.</li><li><b>C</b>: Không ai muốn một hệ thống kiểm soát đắt tiền, người ta chỉ muốn hệ thống hiệu quả.</li><li><b>D</b>: Từ này thường dùng cho một nền kinh tế, không dùng để mô tả tính chất của việc kiểm soát hàng tồn kho.</li></ul>"
+                },
+                {
+                    id: 136,
+                    text: "136.",
+                    options: [
+                        { text: "A. is able to (có thể)", correct: false },
+                        { text: "B. to be able (có thể)", correct: false },
+                        { text: "C. our ability to (khả năng của chúng tôi)", correct: false },
+                        { text: "D. are we able to (chúng ta có thể)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đây là dạng cấu trúc đảo ngữ của “Only” (“Only…” + trợ động từ + S + V…). Cụ thể ở đây là “Only by + V-ing/ Noun + trợ động từ + S + V” (Chỉ bằng cách...). Chỉ có câu D (đưa trợ động từ 'are' lên trước chủ ngữ 'we') là đúng cấu trúc đó nên câu D đúng."
+                },
+                {
+                    id: 137,
+                    text: "137.",
+                    options: [
+                        { text: "A. We have calculated the costs for you. (Chúng tôi đã tính toán chi phí cho bạn.)", correct: false },
+                        { text: "B. Please allow at least two weeks for delivery. (Vui lòng đợi ít nhất hai tuần để giao hàng.)", correct: false },
+                        { text: "C. Unfortunately, some items are currently not in stock. (Thật không may, một số mặt hàng hiện không có trong kho.)", correct: false },
+                        { text: "D. However, this is not possible when unexpected shortages occur. (Tuy nhiên, điều này không thể thực hiện được khi tình trạng thiếu hụt bất ngờ xảy ra.)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Câu trước đó đang nói về “stock is in correct location”, còn câu sau đó nói về “procedures”, như vậy câu trong chỗ trống buộc phải nói về việc “inventory control” theo cả bài.<br><ul><li>Câu A nói về “cost”, không liên quan đến việc hướng dẫn quy trình kiểm soát kho.</li><li>Câu B nói về thời gian “delivery”, đây là câu thông báo cho khách hàng, không phù hợp trong một bản hướng dẫn nội bộ (manual) cho nhân viên.</li><li>Câu C cũng là thông báo trạng thái đơn hàng.</li></ul>Chỉ có câu D nói về “unexpected shortages” là liên quan chặt chẽ mạch văn nhất.<br><i>MẸO: Viễn cảnh tốt -> Nguy cơ (chỗ trống) -> Giải pháp/Yêu cầu.</i>"
+                },
+                {
+                    id: 138,
+                    text: "138.",
+                    options: [
+                        { text: "A. implemented (thực hiện)", correct: true },
+                        { text: "B. reproduced (sao chép)", correct: false },
+                        { text: "C. corrected (đã sửa)", correct: false },
+                        { text: "D. recorded (được ghi lại)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Xét trong nội dung văn bản, “procedure” (quy trình) được yêu cầu đảm bảo, tức là phải tiến hành đúng như được chỉ dẫn, chứ không hề nói về việc “reproduce” hay “correct” hay “record”, nên không chọn câu B, C, D. “Thực thi/áp dụng chỉ dẫn” là “implement”, vậy nên câu A đúng."
+                }
+            ]
+        },
+
+        // PASSAGE 3: Câu 139 - 142
+        {
+            passage: `<p>To: Alan Porto &lt;aporto@silverwing.ky&gt;<br>From: Tuchman's Billing &lt;billing@tuchmans.ky&gt;<br>Subject: Autopay<br>Date: 19 February</p><p>Dear Mr. Porto:</p><p>Congratulations on your recent <b>(139)______</b> in Tuchman's Autopay system. Thank you for signing up for this convenient billing system. Your automatic payments will begin with the next billing cycle on 1 March. <b>(140)______</b>. Your statements will come to you electronically and your payment will be deducted from your designated bank account. You may <b>(141)______</b> the account from which the funds are withdrawn. Simply log in to the My Account section on our Web site https://www.tuchmans.ky, select Autopay, and follow the instructions to enter the alternate account information. Please contact customer service if you have <b>(142)______</b> using Tuchman's Autopay.</p><p>Tuchman's Billing Department</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p>Tới: Alan Porto &lt;aporto@silverwing.ky&gt;<br>Từ: Thanh toán của Tuchman &lt;billing@tuchmans.ky&gt;<br>Chủ đề: Tự động thanh toán<br>Ngày: 19 tháng 2</p><p>Ông Porto thân mến:</p><p>Chúc mừng việc <b>(139) đăng ký</b> gần đây của ông vào hệ thống Autopay của Tuchman. Cảm ơn ông đã đăng ký hệ thống thanh toán thuận tiện này. Thanh toán tự động của ông sẽ bắt đầu với chu kỳ thanh toán tiếp theo vào ngày 1 tháng Ba. <b>(140) Ông sẽ không còn nhận được hóa đơn qua đường bưu điện.</b> Báo cáo của ông sẽ đến với ông bằng đường điện tử và khoản thanh toán của ông sẽ được khấu trừ từ tài khoản ngân hàng được chỉ định của ông. Ông có thể <b>(141) thay đổi</b> tài khoản mà tiền được rút. Chỉ cần đăng nhập vào phần Tài Khoản Của Tôi trên trang web của chúng tôi https://www.tuchmans.ky, chọn Autopay và làm theo hướng dẫn để nhập thông tin tài khoản thay thế. Vui lòng liên hệ với dịch vụ khách hàng nếu ông gặp <b>(142) bất kỳ khó khăn nào</b> khi sử dụng Autopay của Tuchman.</p><p>Phòng thanh toán của Tuchman</p>`,
+            questions: [
+                {
+                    id: 139,
+                    text: "139.",
+                    options: [
+                        { text: "A. enroll (ghi danh)", correct: false },
+                        { text: "B. enrolled (đã đăng ký)", correct: false },
+                        { text: "C. enrolls (ghi danh)", correct: false },
+                        { text: "D. enrollment (sự đăng ký)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Chỗ trống nằm sau tính từ sở hữu 'your' và tính từ 'recent', vậy nên cần một danh từ để tạo thành cụm danh từ. Đồng thời sau đó là giới từ “in”, nên câu D (danh từ enrollment) là chính xác."
+                },
+                {
+                    id: 140,
+                    text: "140.",
+                    options: [
+                        { text: "A. Our billing clerks are happy to serve you. (Nhân viên thanh toán của chúng tôi rất vui được phục vụ bạn.)", correct: false },
+                        { text: "B. You will no longer receive a bill by post. (Bạn sẽ không còn nhận được hóa đơn qua đường bưu điện nữa.)", correct: true },
+                        { text: "C. We appreciate our loyal customers. (Chúng tôi đánh giá cao những khách hàng trung thành của mình.)", correct: false },
+                        { text: "D. Take advantage of our special offers. (Tận dụng các ưu đãi đặc biệt của chúng tôi.)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Cả câu trước đó và sau đó đều vẫn đang nói về việc thanh toán tự động (báo cáo đến bằng đường điện tử), chỉ có câu B có nội dung cùng chủ đề và phù hợp hoàn toàn với hai câu đó, nên câu B đúng."
+                },
+                {
+                    id: 141,
+                    text: "141.",
+                    options: [
+                        { text: "A. own (sở hữu)", correct: false },
+                        { text: "B. settle (giải quyết)", correct: false },
+                        { text: "C. open (mở)", correct: false },
+                        { text: "D. change (thay đổi)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Ở câu sau có nói “…to enter the alternate account information”, nghĩa là “nhập thông tin tài khoản THAY THẾ”, như vậy đang nói về việc thay đổi. Như vậy câu D đúng."
+                },
+                {
+                    id: 142,
+                    text: "142.",
+                    options: [
+                        { text: "A. any difficulties (bất kỳ khó khăn nào)", correct: true },
+                        { text: "B. more difficult (khó khăn hơn)", correct: false },
+                        { text: "C. the difficulty (sự khó khăn)", correct: false },
+                        { text: "D. too difficult (quá khó)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Ở chỗ trống cần một danh từ làm tân ngữ, vậy nên loại câu B và D (là tính từ). Chưa có “difficulty” nào được nhắc tới trong bài trước đó, vì vậy việc dùng mạo từ xác định 'the' trong “the difficulty” sẽ trở nên tối nghĩa. Vậy câu A đúng."
+                }
+            ]
+        },
+
+        // PASSAGE 4: Câu 143 - 146
+        {
+            passage: `<p>12 December<br>Lenny Howe<br>222 Easton Boulevard<br>Port Douglas QLD 4877</p><p>Dear Mr. Howe,</p><p>The Irwin Neighbourhood Association is proud to <b>(143)______</b> a summer event called Park Fest, to be held at Fern Park on 10 January, from 1 P.M. to 8 P.M. Park Fest will feature numerous family-friendly activities and a delicious picnic dinner to be served at 6 P.M. A per person fee of ten dollars will be collected. The proceeds will <b>(144)______</b> go towards a park enhancement project. The plan is to hire a contractor to landscape the park grounds, while a smaller portion will be spent on an advertising campaign. This event <b>(145)______</b> to be great fun. <b>(146)______</b>.</p><p>Regards,<br>Faye Mason-Jones<br>Director, Irwin Neighbourhood Association</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p>Ngày 12 tháng 12<br>Lenny Howe<br>Đại lộ 222 Easton<br>Cảng Douglas QLD 4877</p><p>Thưa ông Howe,</p><p>Hiệp hội khu phố Irwin tự hào <b>(143) thông báo</b> một sự kiện mùa hè có tên Park Fest, sẽ được tổ chức tại Công viên Fern vào ngày 10 tháng 1, từ 1 giờ chiều đến 8 giờ tối. Park Fest sẽ có nhiều hoạt động thân thiện với gia đình và bữa tối dã ngoại ngon miệng được phục vụ vào 6 giờ tối. Một khoản phí mười đô la cho mỗi người sẽ được thu. Số tiền thu được sẽ <b>(144) chủ yếu</b> hướng tới dự án nâng cấp công viên. Kế hoạch là thuê một nhà thầu để tạo cảnh quan cho công viên, trong khi một phần nhỏ hơn sẽ được chi cho chiến dịch quảng cáo. Sự kiện này <b>(145) hứa hẹn</b> sẽ rất vui. <b>(146) Chúng tôi hy vọng bạn sẽ có thể tham dự.</b></p><p>Trân trọng,<br>Faye Mason-Jones<br>Giám đốc, Hiệp hội khu phố Irwin</p>`,
+            questions: [
+                {
+                    id: 143,
+                    text: "143.",
+                    options: [
+                        { text: "A. announce (thông báo)", correct: true },
+                        { text: "B. admit (thừa nhận)", correct: false },
+                        { text: "C. recall (nhớ lại)", correct: false },
+                        { text: "D. state (trình bày)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Sự kiện trong văn bản chưa từng xuất hiện, vậy nên không thể chọn C – recall. Người viết thể hiện là “proud” (tự hào), vậy nên không thể chọn B – admit. Và đó là một “summer event” mang tính vui nhộn chứ không mang tính trang nghiêm tuyên thệ nên không chọn D – state. Vậy nên câu A (thông báo) đúng."
+                },
+                {
+                    id: 144,
+                    text: "144.",
+                    options: [
+                        { text: "A. entirely (hoàn toàn)", correct: false },
+                        { text: "B. often (thường xuyên)", correct: false },
+                        { text: "C. primarily (chủ yếu)", correct: true },
+                        { text: "D. together (cùng nhau)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Trong chỗ trống cần một trạng từ bổ nghĩa cho động từ 'go', vậy nên không thể chọn D. Ở câu sau có nói “a smaller portion”, vậy nghĩa là “the proceeds” được chia ra, phần nhỏ cho quảng cáo, phần lớn (chủ yếu) cho dự án, nên không thể chọn A – entirely (hoàn toàn). Vậy nên câu C đúng."
+                },
+                {
+                    id: 145,
+                    text: "145.",
+                    options: [
+                        { text: "A. promise (lời hứa/hứa hẹn - V nguyên thể)", correct: false },
+                        { text: "B. promises (hứa hẹn - V-es)", correct: true },
+                        { text: "C. promising (đầy hứa hẹn)", correct: false },
+                        { text: "D. promised (đã hứa)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Trước chỗ trống là chủ ngữ số ít 'This event', vậy nên động từ phải chia số ít, không thể chọn A. Không có trợ động từ “be” vậy nên không thể chọn C (V-ing đứng một mình). Đây là sự kiện sắp diễn ra nên không dùng thì quá khứ D. Vậy nên câu B đúng."
+                },
+                {
+                    id: 146,
+                    text: "146.",
+                    options: [
+                        { text: "A. You can help by disposing of all rubbish. (Bạn có thể giúp đỡ bằng cách vứt bỏ tất cả rác thải.)", correct: false },
+                        { text: "B. The park was established 75 years ago. (Công viên được thành lập cách đây 75 năm.)", correct: false },
+                        { text: "C. We hope you will be able to attend. (Chúng tôi hy vọng bạn sẽ có thể tham dự.)", correct: true },
+                        { text: "D. Fern Park (Công viên dương xỉ)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Ở câu trước nói 'Sự kiện này hứa hẹn sẽ rất vui', đồng thời đây là một lá thư mời tham dự sự kiện (Park Fest). Vì vậy, một lời chốt lại như câu C 'Chúng tôi hy vọng bạn sẽ có thể tham dự' là hoàn toàn logic, lịch sự và tự nhiên nhất."
+                }
+            ]
+        }
+    ];
+
+    let currentPassageIndex = 0;
+    let selectedAnswers = {};
+    let isSubmitted = false;
+    let timerInterval;
+    let timeLeft = 0;
+
+    function initQuiz() {
+        renderPassage();
+        renderNavDots();
+        updateNavigation();
+    }
+
+    function renderPassage() {
+        const data = quizData[currentPassageIndex];
+        
+        document.getElementById('passage-container').innerHTML = data.passage;
+        document.getElementById('translation-container').innerHTML = data.translation;
+        
+        let html = '';
+        data.questions.forEach((q) => {
+            html += `
+                <div class="question-block" id="q-block-${q.id}">
+                    <div class="question-title">${q.text}</div>
+                    <div class="options">
+            `;
+            
+            q.options.forEach((opt, idx) => {
+                const isChecked = selectedAnswers[q.id] === idx ? 'checked' : '';
+                const disabled = isSubmitted ? 'disabled' : '';
+                let statusClass = '';
+                
+                if (isSubmitted) {
+                    if (opt.correct) statusClass = 'correct';
+                    else if (selectedAnswers[q.id] === idx) statusClass = 'wrong';
+                }
+                
+                let enText = opt.text;
+                let viText = "";
+                let match = opt.text.match(/(.*)\s\((.*)\)$/);
+                if(match) {
+                    enText = match[1];
+                    viText = match[2];
+                }
+
+                html += `
+                    <label class="option-label ${isChecked ? 'selected' : ''} ${statusClass} ${disabled}">
+                        <input type="radio" name="q${q.id}" value="${idx}" ${isChecked} ${disabled} onchange="selectAnswer(${q.id}, ${idx})">
+                        <span class="option-text-en">${enText}</span>
+                        ${(viText && isSubmitted) ? `<span class="option-text-vi">- ${viText}</span>` : ''}
+                    </label>
+                `;
+            });
+            
+            html += `</div>
+                <div class="explanation-box" id="exp-${q.id}">${q.explanation}</div>
+            </div>`;
+        });
+        
+        document.getElementById('questions-container').innerHTML = html;
+        document.getElementById('progress-text').innerText = `Đoạn ${currentPassageIndex + 1} / ${quizData.length}`;
+        
+        if (isSubmitted) {
+            data.questions.forEach(q => {
+                document.getElementById(`exp-${q.id}`).classList.add('show');
+            });
+        }
+    }
+
+    function selectAnswer(qId, optIdx) {
+        if (isSubmitted) return;
+        selectedAnswers[qId] = optIdx;
+        renderPassage();
+        renderNavDots();
+    }
+
+    function changePassage(dir) {
+        currentPassageIndex += dir;
+        renderPassage();
+        updateNavigation();
+    }
+
+    function updateNavigation() {
+        document.getElementById('btn-prev').style.display = currentPassageIndex === 0 ? 'none' : 'block';
+        if (currentPassageIndex === quizData.length - 1) {
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-submit').style.display = 'block';
+        } else {
+            document.getElementById('btn-next').style.display = 'block';
+            document.getElementById('btn-submit').style.display = 'none';
+        }
+    }
+
+    function renderNavDots() {
+        let html = '';
+        quizData.forEach((p, pIdx) => {
+            p.questions.forEach(q => {
+                let cls = 'nav-dot';
+                if (isSubmitted) {
+                    const selected = selectedAnswers[q.id];
+                    if (selected !== undefined && q.options[selected].correct) cls += ' correct';
+                    else cls += ' wrong';
+                } else if (selectedAnswers[q.id] !== undefined) {
+                    cls += ' done';
+                }
+                if (pIdx === currentPassageIndex) cls += ' active';
+                
+                html += `<div class="${cls}" onclick="goToQuestion(${pIdx}, ${q.id})">${q.id}</div>`;
+            });
+        });
+        document.getElementById('navDropdown').innerHTML = html;
+    }
+
+    function goToQuestion(pIdx, qId) {
+        if (pIdx !== currentPassageIndex) {
+            currentPassageIndex = pIdx;
+            renderPassage();
+            updateNavigation();
+            renderNavDots();
+        }
+        document.getElementById(`q-block-${qId}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('navDropdown').classList.remove('show');
+    }
+
+    function toggleNavDropdown() {
+        document.getElementById('navDropdown').classList.toggle('show');
+    }
+
+    function askReady() {
+        const timeInput = document.getElementById('timeInput').value;
+        timeLeft = timeInput * 60;
+        document.getElementById('setupOverlay').style.display = 'none';
+        document.getElementById('startConfirmMsg').innerText = `Bạn có ${timeInput} phút để hoàn thành Part 6.\nChúc bạn làm bài tốt!`;
+        document.getElementById('startConfirmOverlay').classList.add('active');
+    }
+
+    function closeStartConfirmModal() {
+        document.getElementById('startConfirmOverlay').classList.remove('active');
+        document.getElementById('setupOverlay').style.display = 'flex';
+    }
+
+    function startTestActual() {
+        document.getElementById('startConfirmOverlay').classList.remove('active');
+        startTimer();
+        initQuiz();
+    }
+
+    function startTimer() {
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                submitQuiz();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+        const s = (timeLeft % 60).toString().padStart(2, '0');
+        document.getElementById('timer').innerText = `${m}:${s}`;
+    }
+
+    function askSubmit() {
+        document.getElementById('confirmOverlay').classList.add('active');
+    }
+
+    function closeConfirmModal() {
+        document.getElementById('confirmOverlay').classList.remove('active');
+    }
+
+    function submitQuiz() {
+        clearInterval(timerInterval);
+        isSubmitted = true;
+        closeConfirmModal();
+        
+        let correctCount = 0;
+        let totalCount = 0; 
+        
+        quizData.forEach(p => {
+            p.questions.forEach(q => {
+                totalCount++;
+                if (selectedAnswers[q.id] !== undefined && q.options[selectedAnswers[q.id]].correct) {
+                    correctCount++;
+                }
+            });
+        });
+        
+        document.getElementById('score-correct').innerText = correctCount;
+        document.getElementById('score-total').innerText = totalCount;
+        document.getElementById('result-overlay').classList.add('active');
+        
+        if(window.luuDiemTOEICLenFirebase) {
+            window.luuDiemTOEICLenFirebase(totalCount, correctCount, "ETS 2019 - Test 3", "Reading", "Part 6");
+        }
+       
+        document.getElementById('mainLayout').classList.add('submitted-layout');
+        document.getElementById('vocabBtn').style.display = 'flex';
+        
+        currentPassageIndex = 0;
+        renderPassage();
+        updateNavigation();
+        renderNavDots();
+    } 
+
+    function closeResult() {
+        document.getElementById('result-overlay').classList.remove('active');
+    }
+
+    function openVocab() {
+        document.getElementById('vocabOverlay').classList.add('active');
+    }
+
+    function closeVocab() {
+        document.getElementById('vocabOverlay').classList.remove('active');
+    }
+
+</script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    function showInGameToast(msg) {
+        let toast = document.createElement("div");
+        toast.innerText = msg;
+        toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:#0284c7; color:white; padding:15px 20px; border-radius:12px; font-weight:bold; font-family:'Be Vietnam Pro',sans-serif; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0; transition:all 0.4s ease;";
+        document.body.appendChild(toast);
+        
+        setTimeout(() => { toast.style.transform = "translateY(0)"; toast.style.opacity = "1"; }, 100);
+        setTimeout(() => { toast.style.transform = "translateY(100px)"; toast.style.opacity = "0"; }, 3500);
+        setTimeout(() => { toast.remove(); }, 4000);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+        } else {
+            showInGameToast("⚠️ Bạn đang chơi dưới dạng Khách, điểm sẽ không lưu lên kho!");
+        }
+    });
+
+    function calculateToeicScore(skill, correct, total) {
+        let percentage = correct / total;
+        let maxScore = (skill === 'Listening' || skill === 'Reading') ? 495 : 200;
+        let step = (skill === 'Listening' || skill === 'Reading') ? 5 : 10;
+        let estimated = Math.round((percentage * maxScore) / step) * step;
+        if (estimated > maxScore) return maxScore;
+        if (estimated < 5) return 5;
+        return estimated;
+    }
+
+    window.luuDiemTOEICLenFirebase = async function(tongSoCau, soCauDung, tenBai, kyNang, tenPart) {
+        if (!window.currentUserUid) return; 
+
+        let diemQuyDoi = calculateToeicScore(kyNang, soCauDung, tongSoCau);
+        let thoiGianHienTai = "--";
+        let inputPhut = parseInt(document.getElementById('timeInput').value) || 15; 
+        let tongThoiGianGoc = inputPhut * 60;
+
+        if (typeof timeLeft !== 'undefined') {
+            let thoiGianDaLam = tongThoiGianGoc - timeLeft;
+            if (thoiGianDaLam < 0) thoiGianDaLam = 0; 
+            
+            let m = Math.floor(thoiGianDaLam / 60);
+            let s = thoiGianDaLam % 60;
+            thoiGianHienTai = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+        let timestamp = Date.now();
+        let docId = window.currentUserUid + "_toeic_" + timestamp;
+        
+        try {
+            await setDoc(doc(db, "user_toeic_scores", docId), {
+                email: window.currentUserEmail,
+                skill: kyNang,           
+                testName: tenBai,        
+                partName: tenPart,       
+                timeTaken: thoiGianHienTai,
+                totalQ: tongSoCau,
+                correctQ: soCauDung,
+                score: diemQuyDoi,       
+                date: new Date().toLocaleDateString('vi-VN'),
+                timestamp: timestamp
+            });
+            showInGameToast("☁️ Đã đồng bộ điểm số lên Máy Chủ!");
+        } catch (error) {
+            console.error(error);
+        }
+    }
+</script>
+</body>
+</html>
