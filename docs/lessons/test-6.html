@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading Full Test 6 | SnapEnglish</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Theme Chuyên nghiệp - Xanh Đại dương nhạt */
+            --primary: #0284c7; 
+            --primary-dark: #0369a1; 
+            --accent: #bae6fd;
+            --bg-body: #f0f9ff;
+            --bg-pane: #ffffff;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --border-color: #e0f2fe;
+            --highlight-color: #fef08a;
+            --correct: #16a34a;
+            --wrong: #dc2626;
+            --exp-bg: #f0fdf4;
+            --header-h: 70px;
+            --footer-h: 80px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            font-size: 16px;
+        }
+
+        /* --- OVERLAY & MODAL --- */
+        #setupOverlay, .custom-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+        }
+        .setup-modal, .custom-modal {
+            background: white; padding: 35px; border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(2, 132, 199, 0.15);
+            width: 90%; max-width: 500px; text-align: center;
+            border: 2px solid var(--accent);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 90vh; overflow-y: auto;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .setup-modal h2, .custom-modal h2 { color: var(--primary-dark); font-size: 24px; margin-top: 0; font-weight: 700; }
+        .mode-btn {
+            display: block; width: 100%; padding: 14px; margin: 12px 0;
+            border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: 0.3s; font-family: inherit;
+        }
+        .mode-practice { background: #fef2f2; color: #b91c1c; border: 2px solid #fecaca; }
+        .mode-practice:hover, .mode-practice.selected { background: #ef4444; color: white; border-color: #ef4444; }
+        .mode-mock { background: #f0f9ff; color: var(--primary-dark); border: 2px solid #bae6fd; }
+        .mode-mock:hover, .mode-mock.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .mode-history { background: #f8fafc; color: #475569; border: 2px solid #cbd5e1; }
+        .mode-history:hover { background: #e2e8f0; border-color: #94a3b8; color: #1e293b; }
+        
+        #timeInputBox { display: none; margin: 20px 0; }
+        #timeInput { 
+            width: 90px; padding: 8px; font-size: 16px; text-align: center; 
+            border: 2px solid #cbd5e1; border-radius: 8px; font-family: inherit; outline: none;
+            color: var(--primary-dark); font-weight: bold;
+        }
+        #timeInput:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2); }
+        
+        .start-btn {
+            background: var(--primary); color: white; border: none; padding: 12px 30px;
+            border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer;
+            margin-top: 15px; transition: 0.3s; display: none; box-shadow: 0 5px 15px rgba(2, 132, 199, 0.3);
+        }
+        .start-btn:hover { transform: translateY(-2px); }
+
+        .modal-actions { display: flex; gap: 15px; margin-top: 20px; justify-content: center; }
+        .btn-cancel, .btn-confirm {
+            padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; font-family: inherit; flex: 1; border: none;
+        }
+        .btn-cancel { background: #f1f5f9; color: #475569; border: 2px solid #cbd5e1; }
+        .btn-cancel:hover { background: #e2e8f0; }
+        .btn-confirm { background: var(--primary); color: white; box-shadow: 0 4px 0 var(--primary-dark); }
+        .btn-confirm:active { transform: translateY(4px); box-shadow: none; }
+
+        /* Lịch sử Table */
+        .table-wrapper { width: 100%; overflow-x: auto; border-radius: 10px; border: 1px solid var(--border-color); margin-top: 15px; }
+        #historyTable { width: 100%; border-collapse: collapse; min-width: 400px; background: white;}
+        #historyTable th { background: #f1f5f9; color: var(--primary-dark); padding: 12px; font-weight: 600; font-size: 14px;}
+        #historyTable td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; vertical-align: middle;}
+        #historyTable tr:hover { background: #f8fafc; }
+
+        /* --- HEADER --- */
+        header {
+            height: var(--header-h); background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; z-index: 100;
+        }
+        
+        .brand { font-size: 20px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .brand span { background: var(--primary); color: white; padding: 4px 8px; border-radius: 8px; font-size: 14px; }
+
+        .tab-container { display: flex; background: #f1f5f9; padding: 4px; border-radius: 20px; gap: 4px; overflow-x: auto;}
+        .tab-btn {
+            border: none; background: transparent; padding: 8px 18px; font-size: 15px;
+            font-family: inherit; font-weight: 600; color: var(--text-light);
+            cursor: pointer; border-radius: 15px; transition: all 0.3s; white-space: nowrap;
+        }
+        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        .controls { display: flex; gap: 15px; align-items: center; }
+        .timer-box { 
+            font-family: monospace; font-weight: 700; color: #b91c1c; 
+            background: #fef2f2; padding: 8px 15px; border-radius: 10px; font-size: 18px; border: 1px solid #fecaca;
+        }
+        .btn-submit { 
+            background: var(--primary); color: white; border: none; padding: 8px 20px; 
+            border-radius: 10px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s;
+            font-family: inherit; box-shadow: 0 3px 0 var(--primary-dark); white-space: nowrap;
+        }
+        .btn-submit:active { transform: translateY(3px); box-shadow: none; }
+
+        /* --- LAYOUT --- */
+        .container { 
+            display: flex; 
+            height: calc(100vh - var(--header-h) - var(--footer-h)); 
+            width: 100%;
+        }
+
+        .pane {
+            flex: 1; padding: 30px 40px; overflow-y: auto;
+            position: relative; scroll-behavior: smooth;
+        }
+        .pane-left { 
+            background: #fff; border-right: 2px solid var(--border-color); 
+            font-size: 16px; line-height: 1.7; text-align: justify; color: #334155;
+        }
+        .pane-right { background: #f8fafc; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- CONTENT STYLES --- */
+        .passage-title { text-align: center; color: var(--primary-dark); margin-bottom: 20px; border-bottom: 2px dashed var(--accent); padding-bottom: 12px; font-size: 24px; font-weight: 700;}
+        .paragraph { margin-bottom: 18px; }
+        .paragraph-label { color: var(--primary); font-weight: 700; font-size: 1.05em; margin-right: 5px; }
+        
+        .passage-content, .question-group { display: none; animation: fadeIn 0.3s; }
+        .passage-content.active, .question-group.active { display: block; }
+        .question-group { padding-bottom: 40px; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* EVIDENCE HIGHLIGHTS */
+        .ev-box { 
+            padding: 1px 3px; border-radius: 4px; 
+            transition: all 0.4s ease; 
+            border: 2px solid transparent;
+            background-color: transparent;
+            color: inherit;
+        }
+        .ev-box.focus-blink {
+            border-color: var(--primary-dark) !important;
+            transform: scale(1.02); 
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2) !important; 
+            background-color: var(--highlight-color) !important;
+            z-index: 10; position: relative;
+        }
+
+        /* --- QUESTIONS UI --- */
+        .question-section { padding: 20px; border: 1px solid var(--border-color); background: #fff; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
+        .instruction { color: var(--primary-dark); font-weight: 600; margin-bottom: 15px; font-size: 15px; background: #e0f2fe; padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary);}
+
+        .q-row { display: flex; align-items: baseline; margin-bottom: 15px; font-size: 15px; }
+        .q-num { font-weight: bold; min-width: 30px; color: var(--primary); }
+        .q-content { flex: 1; line-height: 1.7; }
+
+        .input-gap {
+            display: inline-block; width: 140px; height: 32px;
+            border: 2px solid #cbd5e1; border-radius: 6px; 
+            text-align: center; font-weight: 600; color: var(--primary-dark);
+            font-size: 15px; margin: 0 5px; vertical-align: middle; transition: 0.2s; font-family: inherit;
+        }
+        .input-gap:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); }
+
+        select.input-select {
+            padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 6px;
+            font-size: 15px; cursor: pointer; font-weight: 500; color: var(--text-main); outline: none; margin-top: 6px; margin-right: 8px; font-family: inherit;
+        }
+        select.input-select:focus { border-color: var(--primary); }
+
+        .mcq-item { margin-bottom: 20px; }
+        .mcq-question { font-weight: 600; margin-bottom: 10px; font-size: 15px; display: flex; align-items: baseline;}
+        .mcq-option { display: block; padding: 10px; cursor: pointer; border-radius: 8px; margin-bottom: 5px; border: 1px solid transparent; transition: 0.2s; font-size: 15px;}
+        .mcq-option:hover { background: #f8fafc; border-color: #cbd5e1; }
+        .mcq-option input { margin-right: 10px; transform: scale(1.1);}
+
+        /* Tùy chỉnh bảng table */
+        .q-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .q-table th { text-align: left; padding: 12px; background: #f1f5f9; color: var(--primary-dark); border-bottom: 2px solid var(--border-color); }
+        .q-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+        .q-table td.center { text-align: center; }
+
+        /* --- EXPLANATION BOX --- */
+        .exp-box {
+            display: none; background: #fff;
+            border: 2px solid var(--border-color); border-left: 5px solid var(--primary);
+            padding: 15px; margin-top: 10px; margin-bottom: 15px; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.08); 
+            animation: slideUp 0.3s ease-out;
+        }
+        .exp-box.show { display: block; }
+        .exp-title { 
+            font-weight: 700; color: var(--primary-dark); font-size: 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; margin-bottom: 10px;
+        }
+        .locate-btn {
+            background: #e0f2fe; border: 1px solid var(--accent); color: var(--primary-dark);
+            padding: 4px 10px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; font-family: inherit;
+        }
+        .locate-btn:hover { background: var(--primary); color: white; }
+        
+        .exp-section { margin-bottom: 10px; font-size: 15px; line-height: 1.5; color: #334155; }
+        .exp-label { font-weight: 600; color: var(--primary-dark); display: inline-block; white-space: nowrap; margin-bottom: 5px; }
+        .exp-translate { background: #f8fafc; padding: 8px; border-radius: 4px; border-left: 3px solid #cbd5e1; font-style: italic; margin-top: 4px; }
+        .exp-keywords { background: #fffbeb; padding: 8px; border-radius: 4px; border: 1px dashed #fde68a; margin-top: 4px;}
+        .exp-detail { margin-top: 4px; }
+        .exp-keyword-match { color: #b45309; font-weight: 600; }
+
+        @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* --- FOOTER --- */
+        footer {
+            height: var(--footer-h); background: #fff; border-top: 1px solid var(--border-color);
+            display: flex; align-items: center; padding: 0 20px; gap: 15px; z-index: 100;
+        }
+        .palette-scroller { flex: 1; display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; align-items: center;}
+        .nav-dot {
+            min-width: 36px; height: 36px; border: 2px solid #e2e8f0; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold;
+            cursor: pointer; color: #94a3b8; background: white; transition: 0.2s; flex-shrink: 0;
+        }
+        .nav-dot.done { background: #e0f2fe; color: var(--primary-dark); border-color: var(--accent); }
+        .nav-dot:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* HIGHLIGHT MENU */
+        .highlight { background-color: var(--highlight-color); cursor: pointer; border-radius: 2px; padding: 1px 0;}
+        #ctxMenu {
+            position: absolute; display: none; background: white; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12); border-radius: 8px; 
+            font-size: 14px; z-index: 99999; border: 1px solid #eee; min-width: 140px; overflow: hidden;
+        }
+        #ctxMenu button {
+            background: none; border: none; padding: 10px 15px; 
+            width: 100%; text-align: left; cursor: pointer; display: block; font-weight: 600; color: #444; font-family: inherit;
+        }
+        #ctxMenu button:hover { background: #f8fafc; color: var(--primary-dark); }
+        #ctxMenu button.delete:hover { background: #fef2f2; color: var(--wrong); }
+
+        .feedback { display: inline-block; font-weight: bold; font-size: 15px; margin-left: 8px; }
+        .correct { color: var(--correct); }
+        .wrong { color: var(--wrong); }
+
+        @media (max-width: 768px) {
+            .container { flex-direction: column; }
+            .pane { height: 50%; padding: 20px; }
+            .pane-left { border-right: none; border-bottom: 2px solid var(--border-color); }
+            header { padding: 10px; height: auto; flex-wrap: wrap; gap: 10px;}
+            .tab-container { width: 100%; order: 3; justify-content: space-between;}
+            .controls { order: 2; }
+            .setup-modal { padding: 25px 20px; }
+            .input-gap { width: 100%; margin: 5px 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="setupOverlay">
+    <div class="setup-modal" id="setupContent">
+        <h2>Chào mừng đến với Reading Library ✨</h2>
+        <p style="font-size: 15px; color: #64748b; margin-bottom: 20px;">Hôm nay bạn muốn rèn luyện theo cách nào?</p>
+        
+        <button class="mode-btn mode-practice" onclick="selectMode('practice')">🎯 Luyện Tập</button>
+        <button class="mode-btn mode-mock" onclick="selectMode('mock')">🏆 Thi Thử (Full Test)</button>
+        <button class="mode-btn mode-history" onclick="openHistoryTab()">🕒 Xem Lịch Sử</button>
+        
+        <div id="timeInputBox">
+            <label style="font-size: 15px; font-weight: bold; color: #475569;">Cài đặt thời gian (phút): </label>
+            <input type="number" id="timeInput" value="60" min="10" max="180">
+        </div>
+        
+        <button class="start-btn" id="startBtn" onclick="askReady()">Sẵn sàng (OK)</button>
+    </div>
+
+    <div class="setup-modal" id="historyContent" style="display: none;">
+        <h2>Lịch Sử Làm Bài</h2>
+        <div id="historyLoading" style="text-align: center; color: var(--text-light); margin: 15px 0;">Đang tải dữ liệu...</div>
+        
+        <div class="table-wrapper">
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Ngày làm</th>
+                        <th>Kết quả</th>
+                        <th>Band</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn-cancel" style="width: auto;" onclick="backToMenu()">Quay lại Menu</button>
+        </div>
+    </div>
+</div>
+
+<div id="startConfirmOverlay" class="custom-overlay" style="display: none;">
+    <div class="custom-modal">
+        <h2>Xác nhận bắt đầu</h2>
+        <p id="startConfirmMsg" style="font-size: 15px; color: #475569; margin-bottom: 15px; white-space: pre-line;"></p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeStartConfirmModal()">Huỷ</button>
+            <button class="btn-confirm" onclick="startTestActual()">OK</button>
+        </div>
+    </div>
+</div>
+
+<header>
+    <div class="brand">
+        <span>SnapEnglish</span> Test 6
+    </div>
+    
+    <div class="tab-container">
+        <button class="tab-btn active" onclick="switchTab(1)">Passage 1</button>
+        <button class="tab-btn" onclick="switchTab(2)">Passage 2</button>
+        <button class="tab-btn" onclick="switchTab(3)">Passage 3</button>
+    </div>
+
+    <div class="controls">
+        <div class="timer-box">⏱ <span id="timer">00:00</span></div>
+        <button class="btn-submit" id="btnSubmitMain" onclick="submitTest(true)">NỘP BÀI</button>
+    </div>
+</header>
+
+<div class="container" id="mainContainer">
+    
+    <div class="pane pane-left" id="passagePane">
+        
+        <div id="text-p1" class="passage-content active">
+            <h2 class="passage-title">Anxiety</h2>
+            
+            <p class="paragraph">Anxiety is a common experience that can be a useful motivator or even lifesaver in situations that are objectively dangerous. However, when the anxiety is out of proportion to the danger inherent in a given situation, is persistent and is markedly disabling, an anxiety disorder can be developed.</p>
+
+            <p class="paragraph">Anxiety is an emotion that all people experience from time to time, and we do that for very good reasons. It has been built into us; we have inherited it from our evolutionary past, because, in general, anxiety has a survival function. If there is a real danger for a primitive man, then anxiety kicks in in an adaptive way. We freeze, we stop doing whatever we were doing, we devote all of your attention to the danger, and our bodies react with a big release of adrenalin, an increase in blood flow to the muscles, getting us ready to run as fast as we can or fight as fiercely as we can.</p>
+
+            <p class="paragraph"><span id="ev-1" class="ev-box">So some anxiety is adaptive</span>, not only for primitive man, but in modern society as well. It helps us to focus on things when we have deadlines and, if someone is driving too fast when we cross the road, <span id="ev-1-part2" class="ev-box">it helps us to jump out of the way quickly.</span> So, there is nothing wrong with anxiety in general, and in fact, we would have difficulties if we did not experience it to some extent, but of course <span id="ev-2" class="ev-box">it can get problematic if the danger is one that is imagined rather than real, or the danger is something that is exaggerated.</span> In those cases, particularly if the perceived danger is out of proportion to the real danger, and it is persistent and disabling, then there is a danger of an anxiety disorder. <span id="ev-3" class="ev-box">About 17 per cent of the population will have an anxiety disorder at some stage in their life.</span></p>
+
+            <p class="paragraph">Anxiety can be caused in a variety of different ways, but any mental disorder is always difficult to diagnose. Scientists are looking at what role genes play in the development of these disorders and are also investigating the effects of environmental factors, such as pollution, physical and psychological stress, and diet.</p>
+
+            <p class="paragraph">Several parts of the brain are key actors in the production of fear and anxiety. Using brain imaging technology and neurochemical techniques, <span id="ev-4" class="ev-box">scientists have discovered that the amygdala plays a significant role in most anxiety disorders.</span> By learning more about how the brain creates fear and anxiety, scientists may be able to devise better treatments for these disorders.</p>
+
+            <p class="paragraph">Anxiety disorders are a very costly problem in terms of society. Some published figures show that, in the US, it cost $60 billion in one year in terms of lost productivity and in terms of excessive medical investigations that many people with anxiety seek, often thinking they have a physical problem. Given all of this, it is rather worrying that anxiety also has a rather low treatment-seeking rate. <span id="ev-5" class="ev-box">Only 10 per cent of people with an anxiety disorder will seek treatment.</span> That seems to be largely because people do not realise there are effective treatments available. Most people tend to think <span id="ev-6" class="ev-box">they have had it for most of their lives, so it is just their personality</span> and they cannot change their personality, and so they feel rather hopeless about it.</p>
+
+            <p class="paragraph">The first psychotherapy treatment that was shown to be effective was exposure therapy, which essentially encourages people in a <span id="ev-7" class="ev-box">graded</span> way to go into their feared situations and stay in them as long as they can and build up their confidence that way. Often, the <span id="ev-8" class="ev-box">therapist</span> will accompany the person to a feared situation to provide support and guidance. Group cognitive behaviour therapy has also been shown to be effective. This is a talking therapy that helps people to understand the link between <span id="ev-9" class="ev-box">negative thoughts</span> and mood and how altering their <span id="ev-10" class="ev-box">behaviour</span> can enable them to manage anxiety and feel in control.</p>
+
+            <p class="paragraph">There are, of course, drugs that can help people with anxiety. <span id="ev-11" class="ev-box">Medication will not cure an anxiety disorder, but it can keep it under control while the person receives psychotherapy.</span> The principal medications used for anxiety disorders are antidepressants, anti-anxiety drugs, and beta-blockers to control some of the physical symptoms. With proper treatment, many people with anxiety disorders can lead normal, fulfilling lives.</p>
+
+            <p class="paragraph">There is plenty of evidence that exercise can help with anxiety problems. When stress affects the brain, with its many nerve connections, the rest of the body feels the impact as well. Exercise and other physical activity produce <span id="ev-12" class="ev-box">endorphins</span>, which are chemicals in the brain that act as natural painkillers. In addition to this, getting physically tired can help people fall asleep faster and have deeper and more relaxing sleep. As many people suffering from anxiety often have problems with <span id="ev-13" class="ev-box">insomnia</span>, just the ability to get a good night's rest can change people's whole perspectives.</p>
+
+            <p class="paragraph">Anxiety is a normal, but highly subjective, human emotion. While normal anxiety serves a beneficial and adaptive purpose, anxiety can also become the cause of tremendous suffering for millions of people. It is important that people recognise excessive anxiety in themselves as soon as possible, as treatment can be very successful and living untreated can be a misery.</p>
+        </div>
+
+        <div id="text-p2" class="passage-content">
+            <h2 class="passage-title">The Grand Banks</h2>
+            <p class="paragraph"><span class="paragraph-label">Paragraph A</span>
+The Grand Banks is a large area of submerged highlands southeast of Newfoundland and east of the Laurentian Channel on the North American continental shelf. Covering 93,200 square kilometres, the Grand Banks are relatively shallow, ranging from 25 to 100 meters in depth. It is in this area that the <span id="ev-17" class="ev-box">cold Labrador Current mixes with the warm waters of the Gulf Stream. The mixing of these waters and the shape of the ocean bottom lifts nutrients to the surface and these conditions created one of the richest fishing grounds in the world.</span> Extensive marine life flourishes in the Grand Banks, whose range extends beyond the Canadian 200-mile exclusive economic zone (EEZ) and into international waters. This has made it an important part of both the Canadian and the high seas fisheries, with fishermen risking their lives in the extremely inhospitable environment consisting of rogue waves, fog, icebergs, sea ice, hurricanes, winter storms and earthquakes.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph B</span>
+While the area's 'official' discovery is credited to John Cabot in 1497, <span id="ev-21" class="ev-box">English and Portuguese vessels are known to have first sought out these waters prior to that, based upon reports they received from earlier Viking voyages</span> to Newfoundland. Several navigators, including Basque fishermen, are known to have fished these waters in the fifteenth century. Some texts from that era refer to a land called Bacalao, 'the land of the codfish', which is possibly Newfoundland. However, <span id="ev-22" class="ev-box">it was not until John Cabot noted the waters' abundance of sea life that the existence of these fishing grounds became widely known in Europe.</span> Soon, fishermen and merchants from France, Spain, Portugal and England developed seasonal inshore fisheries producing for European markets. Known as 'dry' fishery, cod were split, salted, and dried on shore over the summer before crews returned to Europe. <span id="ev-20" class="ev-box">The French pioneered 'wet' or 'green' fishery on the Grand Banks proper around 1550, heavily salting the cod on board and immediately returning home.</span></p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph C</span>
+The Grand Banks were possibly the world's most important international fishing area in the nineteenth and twentieth centuries. Technological advances in fishing, such as sonar and large factory ships, including the massive factory freezer trawlers introduced in the 1950's, led to overfishing and a serious decline in the fish stocks. Based upon the <span id="ev-14" class="ev-box">many foreign policy agreements Newfoundland had entered into prior to its admittance into the Canadian Confederation</span>, foreign fleets, some from as far away as Russia, came to the Grand Banks in force, catching unprecedented quantities of fish.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph D</span>
+Between 1973 and 1982, the United Nations and its member states negotiated the Third Convention of the Law of the Sea, one component of which was the concept of nations being allowed to declare an EEZ. Many nations worldwide-declared 200-nautical mile EEZ's, including Canada and the United States. <span id="ev-18" class="ev-box">On the whole, the EEZ was very well received by fishermen in eastern Canada, because it meant they could fish unhindered out to the limit</span> without fear of competing with the foreign fleets. During the late 1970's and early 1980s, Canada's domestic offshore fleet grew as fishermen and fish processing companies rushed to take advantage. It was during this time that it was noticed that <span id="ev-23" class="ev-box">the foreign fleets now pushed out to areas of the Grand Banks off Newfoundland outside the Canadian EEZ. By the late 1980's, dwindling catches of Atlantic cod were being reported throughout Newfoundland and eastern Canada, and the federal government and citizens of coastal regions in the area began to face the reality that the domestic and foreign overfishing had taken its toll.</span> The Canadian government was finally forced to take drastic action in 1992, when a total moratorium was declared indefinitely for the northern cod.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph E</span>
+<span id="ev-24" class="ev-box">Over the last ten years, it has been noted that cod appear to be returning to the Grand Banks in small numbers.</span> The reasons for this fragile recovery are still unknown. Perhaps, the damage done by trawlers is not permanent and the marine fauna and ecosystems can rebuild themselves if given a prolonged period of time without any commercial activity. Either way, the early stage recovery of the Grand Banks is encouraging news, but caution is needed, as, after nearly twenty years of severe limitations, <span id="ev-19" class="ev-box">cod stocks are still only at approximately ten per cent of 1960's levels.</span> It is hoped that in another ten to twenty years, stocks may be close to a full recovery, although this would require political pressure to maintain strict limitations on commercial fishing. If cod do come back to the Grand Banks in meaningful numbers, it is to be hoped that the Canadians will not make the same mistakes again.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph F</span>
+Further riches have now been found in the Grand Banks. Petroleum reserves have been discovered and a number of oil fields are under development in the region. The vast Hibernia oil field was discovered in 1979, and, <span id="ev-25" class="ev-box">following several years of aborted start-up attempts, the Hibernia megaproject began construction</span> of the production platform and gravity base structures in the early 1990's. Production commenced on November 17, 1997, with initial production rates in excess of 50,000 barrels of crude oil per day from a single well. Hibernia has proven to be the most prolific oil well in Canada. However, <span id="ev-16" class="ev-box">earthquake and iceberg activity in the Grand Banks pose a potential ecological disaster that could devastate the fishing grounds</span> that are only now starting to recover.</p>
+        </div>
+
+        <div id="text-p3" class="passage-content">
+            <h2 class="passage-title">An Aging Population</h2>
+            <p class="paragraph">People are living longer and, in some parts of the world, healthier lives. This represents one of the crowning achievements of the last century, but also a significant challenge. Longer lives must be planned for. Societal aging may affect economic growth and lead to many other issues, including the sustainability of families, the ability of states and communities to provide resources for older citizens, and international relations. The Global Burden of Disease, a study conducted by the World Health Organization, predicts a very large increase in age-related chronic disease in all regions of the world. Dealing with this will be a significant challenge for all countries' health services.</p>
+
+            <p class="paragraph">Population aging is driven by declines in fertility and improvements in health and <span id="ev-27" class="ev-box">longevity</span>. In more developed countries, falling fertility beginning in the early 1900's has resulted in current levels being below the population replacement rate of two live births per woman. Perhaps the most surprising demographic development of the past 20 years has been the pace of fertility decline in many <span id="ev-28" class="ev-box">less developed countries.</span> In 2006, for example, the total fertility rate was at or below the replacement rate in 44 less developed countries.</p>
+
+            <p class="paragraph">One central issue for policymakers in regard to pension funds is the relationship between the official retirement age and actual retirement age. Over several decades in the latter part of the 20th century, many of the <span id="ev-29" class="ev-box">more developed nations</span> lowered the official age at which people become fully entitled to public pension benefits. This was propelled by general economic conditions, changes in welfare philosophy, and private pension trends. Despite the recent trend toward increased workforce participation at older ages, a significant gap between official and actual ages of retirement persists. This trend is emerging in rapidly aging developing countries as well. Many countries already have taken steps towards much-needed <span id="ev-30" class="ev-box">reform</span> of their old-age social insurance programs. One common reform has been to raise the age at which workers are eligible for full public pension benefits. Another strategy for bolstering economic security for older people has been to increase the <span id="ev-31" class="ev-box">contributions</span> by workers. Other measures to enhance income for older people include new financial instruments for private savings, tax incentives for individual retirement savings, and supplemental occupational pension plans.</p>
+
+            <p class="paragraph">As life expectancy increases in most nations, so do the odds of different generations within a family coexisting. In more developed countries, this has manifested itself as the 'beanpole family,' a vertical extension of family structure characterised by an increase in the number of living <span id="ev-32" class="ev-box">generations</span> within a lineage and a decrease in the number of people within each generation. As mortality rates continue to improve, more people in their 50's and 60's will have surviving parents, aunts, and uncles. Consequently, more children will know their grandparents and even their great-grandparents, especially their great-grandmothers. <span id="ev-33" class="ev-box">There is no historical precedent</span> for a majority of middle-aged and older adults having living parents.</p>
+
+            <p class="paragraph">As the World Health Organisation study, The Global Burden of Disease, predicts that in a few decades the loss of health and life worldwide will be greater from non-communicable or chronic diseases than from infectious diseases, childhood diseases, and accidents. The study estimates that today, noncommunicable diseases account for 85 per cent of the burden of disease in high-income countries and a <span id="ev-34" class="ev-box">surprising 44 per cent of the burden of disease in low- and middle-income countries.</span> Noncommunicable diseases already account for as much of the burden of disease in low- and middleincome countries as all communicable diseases, maternal and perinatal conditions, and nutritional conditions. By 2030, according to projections, the share of the burden attributed to noncommunicable diseases in low- and middle-income countries will reach 54 per cent, while the share attributed to communicable diseases will fall to 32 per cent. If we restrict attention to older ages, noncommunicable diseases already account for more than 87 per cent of the burden for the over-60 population in low-, middle-, and high-income countries. The critical issue for low- and middle-income countries is how to mobilise and allocate resources to address non-communicable diseases, as they continue to struggle with the continued high prevalence of communicable diseases.</p>
+
+            <p class="paragraph">Of course, a <span id="ev-35" class="ev-box">significant jump in disability numbers</span> has accompanied the increase in longevity. Because countries age at different paces, it is possible for the elements of production - labour and capital - to flow across national boundaries and mitigate the impact of population aging. Studies predict that, in the near term, <span id="ev-36" class="ev-box">surplus capital will flow from Europe and North America to emerging markets in Asia and Latin America</span>, where the population is younger and cheaper and supplies of capital relatively low. <span id="ev-36-part2" class="ev-box">In another 20 years, when the baby boom generation in the West has mostly retired, capital will most likely flow in the opposite direction.</span> However, these studies rest on the uncertain assumption that capital will flow easily across national boundaries.</p>
+
+            <p class="paragraph">Despite the weight of scientific evidence, the <span id="ev-38" class="ev-box">significance of population aging and its global implications have yet to be wholly appreciated.</span> There is a need to raise awareness about not only global aging issues, but also the importance of rigorous cross-national scientific research and policy dialogue that will help us address the challenges and opportunities of an aging world. Preparing financially for longer lives and finding ways to reduce aging-related disability should become national and global priorities. Experience shows that for nations, as for individuals, it is critical to address problems sooner rather than later. <span id="ev-39" class="ev-box">Waiting significantly increases the costs and difficulties</span> of addressing these challenges.</p>
+        </div>
+    </div>
+
+    <div class="pane pane-right" id="questionPane">
+        
+        <div id="q-group-1" class="question-group active">
+            <div class="question-section">
+                <div class="instruction">Questions 1-3: Complete each sentence with the correct ending (A - E) below.</div>
+                
+                <table class="q-table">
+                    <tr>
+                        <th style="width: 50%;">Sentence beginnings</th>
+                        <th style="width: 15%; text-align: center;">Answer</th>
+                        <th style="width: 35%;">Sentence endings</th>
+                    </tr>
+                    <tr id="q-row-1">
+                        <td><span class="q-num">1.</span> Experiencing small doses of anxiety can</td>
+                        <td class="center">
+                            <select class="input-select" id="ans-1" onchange="updateNav(1)" style="margin:0; width: 60px;">
+                                <option value=""></option>
+                                <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                            </select>
+                            <span id="fb-1" class="feedback" style="display:block; margin-top:5px; margin-left:0;"></span>
+                        </td>
+                        <td><strong>A</strong> be very beneficial.</td>
+                    </tr>
+                    <tr id="q-row-2">
+                        <td><span class="q-num">2.</span> Imagining or exaggerating problems can</td>
+                        <td class="center">
+                            <select class="input-select" id="ans-2" onchange="updateNav(2)" style="margin:0; width: 60px;">
+                                <option value=""></option>
+                                <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                            </select>
+                            <span id="fb-2" class="feedback" style="display:block; margin-top:5px; margin-left:0;"></span>
+                        </td>
+                        <td><strong>B</strong> never have to deal with anxiety.</td>
+                    </tr>
+                    <tr id="q-row-3">
+                        <td><span class="q-num">3.</span> Nearly one in five people can</td>
+                        <td class="center">
+                            <select class="input-select" id="ans-3" onchange="updateNav(3)" style="margin:0; width: 60px;">
+                                <option value=""></option>
+                                <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option>
+                            </select>
+                            <span id="fb-3" class="feedback" style="display:block; margin-top:5px; margin-left:0;"></span>
+                        </td>
+                        <td><strong>C</strong> lead to unhelpful levels of anxiety.</td>
+                    </tr>
+                    <tr>
+                        <td></td><td></td><td><strong>D</strong> experience anxiety at some point.</td>
+                    </tr>
+                    <tr>
+                        <td></td><td></td><td><strong>E</strong> increase the possibility of physical disease.</td>
+                    </tr>
+                </table>
+                <div id="exp-1"></div>
+                <div id="exp-2"></div>
+                <div id="exp-3"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 4-6: Answer the questions below. Write <strong>NO MORE THAN THREE WORDS AND/OR A NUMBER</strong> from the text for each answer.</div>
+                
+                <div class="q-row" id="q-row-4">
+                    <span class="q-num">4.</span>
+                    <span class="q-content">Which area of the brain have scientists identified as being significant in anxiety problems?<br>
+                        <input type="text" class="input-gap" id="ans-4" oninput="updateNav(4)" autocomplete="off"> <span id="fb-4" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-4"></div>
+
+                <div class="q-row" id="q-row-5">
+                    <span class="q-num">5.</span>
+                    <span class="q-content">What proportion of people look for treatment for their anxiety?<br>
+                        <input type="text" class="input-gap" id="ans-5" oninput="updateNav(5)" autocomplete="off"> <span id="fb-5" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-5"></div>
+
+                <div class="q-row" id="q-row-6">
+                    <span class="q-num">6.</span>
+                    <span class="q-content">What part of themselves do most people blame for their anxiety?<br>
+                        <input type="text" class="input-gap" id="ans-6" oninput="updateNav(6)" autocomplete="off"> <span id="fb-6" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-6"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 7-13: Complete the table below. Write <strong>NO MORE THAN TWO WORDS</strong> from the text for each answer.</div>
+                
+                <table class="q-table">
+                    <tr>
+                        <th colspan="2">Treatment for Anxiety</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Exposure Therapy</strong></td>
+                        <td>Patients face their fears in a <b>7.</b> <input type="text" class="input-gap" id="ans-7" oninput="updateNav(7)" autocomplete="off"> <span id="fb-7" class="feedback"></span> fashion, often with their <b>8.</b> <input type="text" class="input-gap" id="ans-8" oninput="updateNav(8)" autocomplete="off"> <span id="fb-8" class="feedback"></span>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Group Cognitive Behaviour Therapy</strong></td>
+                        <td>A talking therapy. It explores the links between <b>9.</b> <input type="text" class="input-gap" id="ans-9" oninput="updateNav(9)" autocomplete="off"> <span id="fb-9" class="feedback"></span> and feelings.<br>It explores how changing people's <b>10.</b> <input type="text" class="input-gap" id="ans-10" oninput="updateNav(10)" autocomplete="off"> <span id="fb-10" class="feedback"></span> can help them regain control.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Drugs</strong></td>
+                        <td>These cannot cure people, but they can help in conjunction with <b>11.</b> <input type="text" class="input-gap" id="ans-11" oninput="updateNav(11)" autocomplete="off"> <span id="fb-11" class="feedback"></span>.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Exercise</strong></td>
+                        <td>By creating <b>12.</b> <input type="text" class="input-gap" id="ans-12" oninput="updateNav(12)" autocomplete="off"> <span id="fb-12" class="feedback"></span>, the body can help dull the pain of anxiety.<br>It can allow a good sleep for people who suffer from the <b>13.</b> <input type="text" class="input-gap" id="ans-13" oninput="updateNav(13)" autocomplete="off"> <span id="fb-13" class="feedback"></span> caused by their anxiety.</td>
+                    </tr>
+                </table>
+                <div id="fb-container-7-13" style="display:flex; flex-direction:column; gap:10px; margin-top: 15px;"></div>
+                <div id="exp-7"></div><div id="exp-8"></div><div id="exp-9"></div><div id="exp-10"></div><div id="exp-11"></div><div id="exp-12"></div><div id="exp-13"></div>
+            </div>
+        </div>
+
+        <div id="q-group-2" class="question-group">
+            <div class="question-section">
+                <div class="instruction">Questions 14-20: The text on the previous pages has 6 paragraphs A - F. Which paragraph contains the following information?</div>
+                
+                <div class="q-row" id="q-row-14">
+                    <span class="q-num">14.</span>
+                    <span class="q-content">Many countries could legally fish Newfoundland waters because of treaties Newfoundland had made before becoming part of Canada.
+                        <select class="input-select" id="ans-14" onchange="updateNav(14)">
+                            <option value="">Select...</option>
+                            <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                        </select>
+                        <span id="fb-14" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-14"></div>
+
+                <div class="q-row" id="q-row-15">
+                    <span class="q-num">15.</span>
+                    <span class="q-content">The establishment of the EEZ did not stop over-fishing in the Grand Banks.
+                        <select class="input-select" id="ans-15" onchange="updateNav(15)">
+                            <option value="">Select...</option>
+                            <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                        </select>
+                        <span id="fb-15" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-15"></div>
+
+                <div class="q-row" id="q-row-16">
+                    <span class="q-num">16.</span>
+                    <span class="q-content">Natural disasters could cause oil to destroy what is left of the Grand Banks ecosystem.
+                        <select class="input-select" id="ans-16" onchange="updateNav(16)">
+                            <option value="">Select...</option>
+                            <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                        </select>
+                        <span id="fb-16" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-16"></div>
+
+                <div class="q-row" id="q-row-17">
+                    <span class="q-num">17.</span>
+                    <span class="q-content">The original amount of fish in the Grand Banks was due to different temperature waters mixing.
+                        <select class="input-select" id="ans-17" onchange="updateNav(17)">
+                            <option value="">Select...</option>
+                            <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                        </select>
+                        <span id="fb-17" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-17"></div>
+
+                <div class="q-row" id="q-row-18">
+                    <span class="q-num">18.</span>
+                    <span class="q-content">East Canadian fishermen were generally happy with the establishment of the Canadian EEZ.
+                        <select class="input-select" id="ans-18" onchange="updateNav(18)">
+                            <option value="">Select...</option>
+                            <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                        </select>
+                        <span id="fb-18" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-18"></div>
+
+                <div class="q-row" id="q-row-19">
+                    <span class="q-num">19.</span>
+                    <span class="q-content">Grand Banks' cod stocks are still 90 per cent lower than what they were in the 1960's.
+                        <select class="input-select" id="ans-19" onchange="updateNav(19)">
+                            <option value="">Select...</option>
+                            <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                        </select>
+                        <span id="fb-19" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-19"></div>
+
+                <div class="q-row" id="q-row-20">
+                    <span class="q-num">20.</span>
+                    <span class="q-content">The French were the first to prepare the cod on board their ships before going back to France.
+                        <select class="input-select" id="ans-20" onchange="updateNav(20)">
+                            <option value="">Select...</option>
+                            <option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                        </select>
+                        <span id="fb-20" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-20"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 21-23: Choose the correct letter A, B, C or D.</div>
+                
+                <div class="mcq-item" id="q-row-21">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">21.</span> The first English fishermen to come to the Grand Banks to fish</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-21" value="A" onchange="updateNav(21)"> A. were told about the fishery by Basque fishermen.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-21" value="B" onchange="updateNav(21)"> B. were sent word about the fishery from the first American colonists.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-21" value="C" onchange="updateNav(21)"> C. acted on information from previous Viking expeditions.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-21" value="D" onchange="updateNav(21)"> D. discovered the fishery themselves while exploring.</label>
+                    <span id="fb-21" class="feedback"></span>
+                    <div id="exp-21"></div>
+                </div>
+
+                <div class="mcq-item" id="q-row-22">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">22.</span> John Cabot's reports of the Grand Banks</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-22" value="A" onchange="updateNav(22)"> A. led to the establishment of the Canadian EEZ.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-22" value="B" onchange="updateNav(22)"> B. meant the fishery was well known in Europe.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-22" value="C" onchange="updateNav(22)"> C. led to fighting between rival fishing fleets.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-22" value="D" onchange="updateNav(22)"> D. were not immediately publicised, so that English fishermen could benefit.</label>
+                    <span id="fb-22" class="feedback"></span>
+                    <div id="exp-22"></div>
+                </div>
+
+                <div class="mcq-item" id="q-row-23">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">23.</span> The establishment of the Canadian EEZ</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-23" value="A" onchange="updateNav(23)"> A. did not stop foreign fishermen from fishing the Grand Banks.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-23" value="B" onchange="updateNav(23)"> B. was not ratified by the United Nations.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-23" value="C" onchange="updateNav(23)"> C. temporarily stopped the over-fishing of cod in the Grand Banks.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-23" value="D" onchange="updateNav(23)"> D. meant Canadian fishermen were excluded from fishing the Grand Banks.</label>
+                    <span id="fb-23" class="feedback"></span>
+                    <div id="exp-23"></div>
+                </div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 24-26: Do the following statements agree with the information given in the text?</div>
+                
+                <div class="q-row" id="q-row-24">
+                    <span class="q-num">24.</span>
+                    <span class="q-content">Even now, cod stocks have shown no signs of recovery in the Grand Banks.
+                        <select class="input-select" id="ans-24" onchange="updateNav(24)">
+                            <option value="">Select...</option>
+                            <option value="TRUE">TRUE</option>
+                            <option value="FALSE">FALSE</option>
+                            <option value="NOT GIVEN">NOT GIVEN</option>
+                        </select>
+                        <span id="fb-24" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-24"></div>
+
+                <div class="q-row" id="q-row-25">
+                    <span class="q-num">25.</span>
+                    <span class="q-content">Initial efforts to extract oil from the Grand Banks' Hibernia oil field were unsuccessful.
+                        <select class="input-select" id="ans-25" onchange="updateNav(25)">
+                            <option value="">Select...</option>
+                            <option value="TRUE">TRUE</option>
+                            <option value="FALSE">FALSE</option>
+                            <option value="NOT GIVEN">NOT GIVEN</option>
+                        </select>
+                        <span id="fb-25" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-25"></div>
+
+                <div class="q-row" id="q-row-26">
+                    <span class="q-num">26.</span>
+                    <span class="q-content">Oil exploration companies have to follow strict safety controls imposed by the Canadian government.
+                        <select class="input-select" id="ans-26" onchange="updateNav(26)">
+                            <option value="">Select...</option>
+                            <option value="TRUE">TRUE</option>
+                            <option value="FALSE">FALSE</option>
+                            <option value="NOT GIVEN">NOT GIVEN</option>
+                        </select>
+                        <span id="fb-26" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-26"></div>
+            </div>
+        </div>
+
+        <div id="q-group-3" class="question-group">
+            <div class="question-section">
+                <div class="instruction">Questions 27-33: Complete the notes below. Write <strong>NO MORE THAN THREE WORDS</strong> for each answer.</div>
+                
+                <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px dashed #cbd5e1; line-height: 2.2; font-size: 15px;">
+                    <strong>An Aging Population</strong><br>
+                    The longer lives of people of today must be prepared for. The longer lives will affect economics, family life, old age care and health services.<br>
+                    The aging population has been caused by a drop in fertility, improvements in health and 
+                    <b>27.</b> <input type="text" class="input-gap" id="ans-27" oninput="updateNav(27)" autocomplete="off"> <span id="fb-27" class="feedback"></span>; the former is surprisingly seen in many 
+                    <b>28.</b> <input type="text" class="input-gap" style="width: 200px;" id="ans-28" oninput="updateNav(28)" autocomplete="off"> <span id="fb-28" class="feedback"></span>.<br>
+                    One key area to consider is the age for retirement benefits to be paid - this has changed a lot recently in 
+                    <b>29.</b> <input type="text" class="input-gap" style="width: 200px;" id="ans-29" oninput="updateNav(29)" autocomplete="off"> <span id="fb-29" class="feedback"></span> due to various conditions and trends.<br>
+                    A lot of 
+                    <b>30.</b> <input type="text" class="input-gap" id="ans-30" oninput="updateNav(30)" autocomplete="off"> <span id="fb-30" class="feedback"></span> is required in many countries and some have already done this - usually by raising the official pension age or raising the 
+                    <b>31.</b> <input type="text" class="input-gap" id="ans-31" oninput="updateNav(31)" autocomplete="off"> <span id="fb-31" class="feedback"></span> of people still working. Other new financial instruments have also been launched.<br>
+                    Longer life expectancy will also lead to different family 
+                    <b>32.</b> <input type="text" class="input-gap" id="ans-32" oninput="updateNav(32)" autocomplete="off"> <span id="fb-32" class="feedback"></span> living with each other more. There has been no previous 
+                    <b>33.</b> <input type="text" class="input-gap" id="ans-33" oninput="updateNav(33)" autocomplete="off"> <span id="fb-33" class="feedback"></span> of such a change in family demographics.
+                </div>
+                <div id="fb-container-27-33" style="display:flex; flex-direction:column; gap:10px; margin-top: 15px;"></div>
+                <div id="exp-27"></div><div id="exp-28"></div><div id="exp-29"></div><div id="exp-30"></div><div id="exp-31"></div><div id="exp-32"></div><div id="exp-33"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 34-39: Do the following statements agree with the views of the writer of the text?</div>
+                
+                <div class="q-row" id="q-row-34">
+                    <span class="q-num">34.</span>
+                    <span class="q-content">It is no shock that low- and middle-income countries have experienced a significant rise in non-communicable diseases.
+                        <select class="input-select" id="ans-34" onchange="updateNav(34)">
+                            <option value="">Select...</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="NOT GIVEN">NOT GIVEN</option>
+                        </select>
+                        <span id="fb-34" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-34"></div>
+
+                <div class="q-row" id="q-row-35">
+                    <span class="q-num">35.</span>
+                    <span class="q-content">While the numbers of people with chronic diseases have increased around the world, the numbers of people with disability problems have reduced.
+                        <select class="input-select" id="ans-35" onchange="updateNav(35)">
+                            <option value="">Select...</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="NOT GIVEN">NOT GIVEN</option>
+                        </select>
+                        <span id="fb-35" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-35"></div>
+
+                <div class="q-row" id="q-row-36">
+                    <span class="q-num">36.</span>
+                    <span class="q-content">It is theorised that money invested short-term in Asia will later be reinvested back in the West.
+                        <select class="input-select" id="ans-36" onchange="updateNav(36)">
+                            <option value="">Select...</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="NOT GIVEN">NOT GIVEN</option>
+                        </select>
+                        <span id="fb-36" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-36"></div>
+
+                <div class="q-row" id="q-row-37">
+                    <span class="q-num">37.</span>
+                    <span class="q-content">It is predicted that problems in the international flow of capital will lead to armed conflict between some countries.
+                        <select class="input-select" id="ans-37" onchange="updateNav(37)">
+                            <option value="">Select...</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="NOT GIVEN">NOT GIVEN</option>
+                        </select>
+                        <span id="fb-37" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-37"></div>
+
+                <div class="q-row" id="q-row-38">
+                    <span class="q-num">38.</span>
+                    <span class="q-content">All the effects of population aging around the world have still not been fully realised.
+                        <select class="input-select" id="ans-38" onchange="updateNav(38)">
+                            <option value="">Select...</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="NOT GIVEN">NOT GIVEN</option>
+                        </select>
+                        <span id="fb-38" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-38"></div>
+
+                <div class="q-row" id="q-row-39">
+                    <span class="q-num">39.</span>
+                    <span class="q-content">It would be better to wait a while to see how the situation develops, as fast decisions could create problems in the future.
+                        <select class="input-select" id="ans-39" onchange="updateNav(39)">
+                            <option value="">Select...</option>
+                            <option value="YES">YES</option>
+                            <option value="NO">NO</option>
+                            <option value="NOT GIVEN">NOT GIVEN</option>
+                        </select>
+                        <span id="fb-39" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-39"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Question 40: Choose the correct letter, A, B, C or D.</div>
+                
+                <div class="mcq-item" id="q-row-40">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">40.</span> What is the writer's purpose in Reading Passage 3?</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-40" value="A" onchange="updateNav(40)"> A. To provide suggestions on how developed countries can deal with their aging populations.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-40" value="B" onchange="updateNav(40)"> B. To provide an overview of the causes and effects of the world's aging population.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-40" value="C" onchange="updateNav(40)"> C. To provide potential suggestions on how to prevent the world's aging population from increasing.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-40" value="D" onchange="updateNav(40)"> D. To provide a historical analysis of the causes of today's aging population.</label>
+                    <span id="fb-40" class="feedback"></span>
+                    <div id="exp-40"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="confirmOverlay" class="custom-overlay" style="display:none;">
+    <div class="custom-modal">
+        <h2>Xác nhận nộp bài</h2>
+        <p style="font-size: 15px; color: #475569; margin-bottom: 20px;">Bạn có chắc chắn muốn nộp bài để xem đáp án và giải thích chi tiết không?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmModal()">Quay lại</button>
+            <button class="btn-confirm" onclick="executeSubmit()">Nộp bài</button>
+        </div>
+    </div>
+</div>
+
+<div id="resultOverlay" class="custom-overlay" style="display:none;">
+    <div class="custom-modal">
+        <h2 id="resultTitle">🎉 Kết Quả Bài Thi</h2>
+        <div style="font-size: 64px; font-weight: 800; color: var(--primary); margin: 20px 0; letter-spacing: -2px;" id="scoreDisplay">0/40</div>
+        <div style="font-size: 24px; font-weight: 800; color: var(--correct); margin-bottom: 25px; background: #ecfdf5; display: inline-block; padding: 12px 30px; border-radius: 20px; border: 2px solid #a7f3d0;" id="bandDisplay">Band: 0.0</div>
+        <button class="btn-confirm" style="width: 100%;" onclick="closeResultModal()">Xem giải thích chi tiết</button>
+    </div>
+</div>
+<div id="deleteConfirmOverlay" class="custom-overlay" style="display:none;">
+    <div class="custom-modal">
+        <h2>Xác nhận xóa</h2>
+        <p style="font-size: 15px; color: #475569; margin-bottom: 20px;">Bạn có chắc chắn muốn xóa bài làm này khỏi lịch sử không? Hành động này không thể hoàn tác.</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeDeleteModal()">Quay lại</button>
+            <button class="btn-confirm" style="background: var(--wrong); box-shadow: 0 4px 0 #b91c1c;" onclick="executeDelete()">Xóa</button>
+        </div>
+    </div>
+</div>
+<div id="ctxMenu">
+    <button onclick="doHighlight()">🖍 Highlight</button>
+    <button onclick="removeHighlight()" class="delete">🗑 Xóa Highlight</button>
+</div>
+
+<footer>
+    <div style="font-size:13px; font-weight:bold; color:#64748b; text-transform:uppercase;">Điều hướng:</div>
+    <div class="palette-scroller" id="navPalette"></div>
+</footer>
+
+<script>
+    // --- STATE & DATA ---
+    let currentMode = '';
+    let testDuration = 0; 
+    let timerInterval = null;
+    let isSubmitted = false;
+
+    // --- SETUP MODAL LOGIC ---
+    function selectMode(mode) {
+        currentMode = mode;
+        document.querySelector('.mode-practice').classList.toggle('selected', mode === 'practice');
+        document.querySelector('.mode-mock').classList.toggle('selected', mode === 'mock');
+        
+        document.getElementById('timeInputBox').style.display = (mode === 'practice') ? 'block' : 'none';
+        document.getElementById('startBtn').style.display = 'inline-block';
+    }
+
+    function openHistoryTab() {
+        document.getElementById('setupContent').style.display = 'none';
+        document.getElementById('historyContent').style.display = 'block';
+        if(window.taiLichSuIELTS) window.taiLichSuIELTS();
+    }
+
+    function backToMenu() {
+        document.getElementById('historyContent').style.display = 'none';
+        document.getElementById('setupContent').style.display = 'block';
+    }
+
+    function askReady() {
+        let confirmMsg = currentMode === 'mock' 
+            ? "Bạn chọn Thi Thử Full Test (60 phút).\nBạn đã sẵn sàng bước vào bài làm chưa?" 
+            : `Bạn chọn Luyện Tập (${document.getElementById('timeInput').value} phút).\nBạn đã sẵn sàng chưa?`;
+            
+        document.getElementById('startConfirmMsg').innerText = confirmMsg;
+        document.getElementById('startConfirmOverlay').style.display = 'flex';
+    }
+
+    function closeStartConfirmModal() { document.getElementById('startConfirmOverlay').style.display = 'none'; }
+
+    function startTestActual() {
+        document.getElementById('startConfirmOverlay').style.display = 'none';
+        let minutes = (currentMode === 'mock') ? 60 : parseInt(document.getElementById('timeInput').value);
+        if(isNaN(minutes) || minutes < 1) minutes = 60;
+        testDuration = minutes * 60;
+        
+        document.getElementById('setupOverlay').style.display = 'none';
+        startTimer();
+    }
+
+    const correctAnswers = {
+        // Passage 1
+        1: "A", 2: "C", 3: "D", 
+        4: ["AMYGDALA", "THE AMYGDALA"], 5: ["10%", "10 PER CENT", "10 PERCENT"], 6: ["PERSONALITY", "THEIR PERSONALITY"], 
+        7: ["GRADED"], 8: ["THERAPIST"], 9: ["THOUGHTS", "NEGATIVE THOUGHTS"], 10: ["BEHAVIOUR", "BEHAVIOR"], 11: ["PSYCHOTHERAPY"], 12: ["ENDORPHINS"], 13: ["INSOMNIA"],
+        // Passage 2
+        14: "C", 15: "D", 16: "F", 17: "A", 18: "D", 19: "E", 20: "B",
+        21: "C", 22: "B", 23: "A",
+        24: "FALSE", 25: "TRUE", 26: "NOT GIVEN",
+        // Passage 3
+        27: ["LONGEVITY"], 28: ["LESS DEVELOPED COUNTRIES"], 29: ["MORE DEVELOPED NATIONS", "DEVELOPED NATIONS"], 30: ["REFORM"], 31: ["CONTRIBUTIONS"], 32: ["GENERATION", "GENERATIONS"], 33: ["PRECEDENT", "HISTORICAL PRECEDENT"],
+        34: "NO", 35: "NO", 36: "YES", 37: "NOT GIVEN", 38: "YES", 39: "NO", 40: "B"
+    };
+
+    const explanations = {
+        // Passage 1
+        1: { translation: "Trải qua liều lượng lo lắng nhỏ có thể rất có lợi.", keywords: "<span class='exp-keyword-match'>beneficial = adaptive... helps us</span>", exp: "Đoạn 3 cho biết 'some anxiety is adaptive... it helps us to jump out of the way quickly'.", colorClass: "ev-1" },
+        2: { translation: "Việc tưởng tượng hoặc phóng đại các vấn đề có thể dẫn đến mức độ lo lắng không có ích.", keywords: "<span class='exp-keyword-match'>Imagining or exaggerating = imagined rather than real, or... exaggerated</span>", exp: "Đoạn 3 giải thích rằng lo lắng trở thành vấn đề khi nguy hiểm bị tưởng tượng hoặc phóng đại, dẫn đến rối loạn.", colorClass: "ev-2" },
+        3: { translation: "Gần 1/5 số người có thể trải qua mức độ lo lắng vào một thời điểm nào đó.", keywords: "<span class='exp-keyword-match'>one in five = 17 per cent</span>", exp: "Đoạn 3 kết luận 'About 17 per cent of the population will have an anxiety disorder...' (17% xấp xỉ 1/5).", colorClass: "ev-3" },
+        4: { translation: "Khu vực nào của não bộ được các nhà khoa học xác định là quan trọng đối với các vấn đề lo lắng?", keywords: "<span class='exp-keyword-match'>significant = significant role</span>", exp: "Đoạn 5: 'scientists have discovered that the amygdala plays a significant role in most anxiety disorders.'", colorClass: "ev-4" },
+        5: { translation: "Tỷ lệ người tìm kiếm sự điều trị cho sự lo lắng của họ là bao nhiêu?", keywords: "<span class='exp-keyword-match'>look for treatment = seek treatment</span>", exp: "Đoạn 6: 'Only 10 per cent of people with an anxiety disorder will seek treatment.'", colorClass: "ev-5" },
+        6: { translation: "Phần lớn mọi người đổ lỗi cho phần nào của bản thân về sự lo lắng của họ?", keywords: "<span class='exp-keyword-match'>blame = just their personality</span>", exp: "Đoạn 6: 'they have had it for most of their lives, so it is just their personality'.", colorClass: "ev-6" },
+        7: { translation: "Bệnh nhân đối mặt với nỗi sợ theo một cách [được phân loại/từng bước]...", keywords: "<span class='exp-keyword-match'>fashion = way</span>", exp: "Đoạn 7: 'encourages people in a graded way to go into their feared situations'.", colorClass: "ev-7" },
+        8: { translation: "...thường với [nhà trị liệu] của họ.", keywords: "<span class='exp-keyword-match'>often with = accompany the person</span>", exp: "Đoạn 7: 'Often, the therapist will accompany the person to a feared situation'.", colorClass: "ev-8" },
+        9: { translation: "Nó khám phá các liên kết giữa [những suy nghĩ] và cảm xúc.", keywords: "<span class='exp-keyword-match'>links between = link between</span>", exp: "Đoạn 7: 'understand the link between negative thoughts and mood'.", colorClass: "ev-9" },
+        10: { translation: "Nó khám phá cách thay đổi [hành vi] của mọi người có thể giúp họ lấy lại quyền kiểm soát.", keywords: "<span class='exp-keyword-match'>changing = altering</span>", exp: "Đoạn 7: 'how altering their behaviour can enable them to manage anxiety'.", colorClass: "ev-10" },
+        11: { translation: "Chúng không thể chữa khỏi nhưng có thể giúp kết hợp cùng với [liệu pháp tâm lý].", keywords: "<span class='exp-keyword-match'>conjunction with = while the person receives</span>", exp: "Đoạn 8: 'it can keep it under control while the person receives psychotherapy.'", colorClass: "ev-11" },
+        12: { translation: "Bằng cách tạo ra [endorphins], cơ thể có thể giúp giảm bớt nỗi đau lo lắng.", keywords: "<span class='exp-keyword-match'>creating = produce</span>", exp: "Đoạn 9: 'Exercise and other physical activity produce endorphins... act as natural painkillers.'", colorClass: "ev-12" },
+        13: { translation: "Nó có thể cho phép giấc ngủ ngon cho những người bị [mất ngủ] do lo lắng gây ra.", keywords: "<span class='exp-keyword-match'>suffer from = problems with</span>", exp: "Đoạn 9: 'many people suffering from anxiety often have problems with insomnia'.", colorClass: "ev-13" },
+
+        // Passage 2
+        14: { translation: "Nhiều quốc gia có thể đánh bắt hợp pháp ở vùng biển Newfoundland do các hiệp ước...", keywords: "<span class='exp-keyword-match'>treaties = foreign policy agreements</span>", exp: "Đoạn C nhắc đến 'foreign policy agreements Newfoundland had entered into prior to its admittance... foreign fleets came...'", colorClass: "ev-14" },
+        15: { translation: "Việc thành lập EEZ không ngăn được đánh bắt quá mức ở Grand Banks.", keywords: "<span class='exp-keyword-match'>did not stop over-fishing = pushed out to areas... outside the Canadian EEZ... overfishing had taken its toll</span>", exp: "Đoạn D mô tả các đội tàu nước ngoài đã đẩy ra các khu vực nằm ngoài EEZ của Canada và đánh bắt quá mức tiếp diễn.", colorClass: "ev-15" },
+        16: { translation: "Thảm họa tự nhiên có thể khiến dầu mỏ phá hủy phần còn lại của hệ sinh thái...", keywords: "<span class='exp-keyword-match'>Natural disasters = earthquake and iceberg activity</span>", exp: "Đoạn F: 'earthquake and iceberg activity... pose a potential ecological disaster...'", colorClass: "ev-16" },
+        17: { translation: "Lượng cá ban đầu ở Grand Banks là do các vùng nước có nhiệt độ khác nhau hòa trộn.", keywords: "<span class='exp-keyword-match'>different temperature waters mixing = cold Labrador Current mixes with the warm waters...</span>", exp: "Đoạn A: 'cold Labrador Current mixes with the warm waters of the Gulf Stream... created one of the richest fishing grounds'.", colorClass: "ev-17" },
+        18: { translation: "Ngư dân đông Canada nhìn chung hài lòng với việc thành lập EEZ của Canada.", keywords: "<span class='exp-keyword-match'>generally happy = very well received by fishermen</span>", exp: "Đoạn D: 'On the whole, the EEZ was very well received by fishermen in eastern Canada...'", colorClass: "ev-18" },
+        19: { translation: "Lượng cá tuyết ở Grand Banks vẫn thấp hơn 90% so với những năm 1960.", keywords: "<span class='exp-keyword-match'>90 per cent lower = only at approximately ten per cent</span>", exp: "Đoạn E: 'cod stocks are still only at approximately ten per cent of 1960's levels.' (còn 10% tức là thấp hơn 90%).", colorClass: "ev-19" },
+        20: { translation: "Người Pháp là những người đầu tiên chuẩn bị cá tuyết trên tàu trước khi trở về Pháp.", keywords: "<span class='exp-keyword-match'>prepare the cod on board = salting the cod on board</span>", exp: "Đoạn B: 'The French pioneered 'wet' or 'green' fishery... heavily salting the cod on board and immediately returning home.'", colorClass: "ev-20" },
+        21: { translation: "Hành động dựa trên thông tin từ các chuyến thám hiểm của người Viking trước đó.", keywords: "<span class='exp-keyword-match'>Viking expeditions = earlier Viking voyages</span>", exp: "Đoạn B: 'English and Portuguese vessels are known to have first sought out these waters... based upon reports they received from earlier Viking voyages...'", colorClass: "ev-21" },
+        22: { translation: "Có nghĩa là ngư trường đã được biết đến rộng rãi ở Châu Âu.", keywords: "<span class='exp-keyword-match'>well known in Europe = widely known in Europe</span>", exp: "Đoạn B: 'it was not until John Cabot noted the waters' abundance of sea life that the existence of these fishing grounds became widely known in Europe.'", colorClass: "ev-22" },
+        23: { translation: "Không ngăn cản được ngư dân nước ngoài đánh bắt ở Grand Banks.", keywords: "<span class='exp-keyword-match'>did not stop = pushed out to areas... outside the Canadian EEZ</span>", exp: "Đoạn D giải thích dù có EEZ, ngư dân nước ngoài chỉ di chuyển ra ngoài ranh giới EEZ nhưng vẫn thuộc khu vực Grand Banks.", colorClass: "ev-23" },
+        24: { translation: "Ngay cả bây giờ, lượng cá tuyết vẫn không cho thấy dấu hiệu phục hồi nào.", keywords: "<span class='exp-keyword-match'>no signs of recovery >< cod appear to be returning</span>", exp: "Đoạn E cho biết cá tuyết dường như đang quay trở lại với số lượng nhỏ (cod appear to be returning... in small numbers). -> FALSE", colorClass: "ev-24" },
+        25: { translation: "Những nỗ lực khai thác dầu ban đầu... đã không thành công.", keywords: "<span class='exp-keyword-match'>unsuccessful = aborted start-up attempts</span>", exp: "Đoạn F: 'following several years of aborted start-up attempts, the Hibernia megaproject began construction...'. -> TRUE", colorClass: "ev-25" },
+        26: { translation: "Các công ty thăm dò dầu mỏ phải tuân theo các quy định an toàn nghiêm ngặt...", keywords: "Không có thông tin", exp: "Đoạn F có nhắc đến rủi ro thảm họa do động đất và băng trôi, nhưng không đề cập đến việc áp đặt các quy định an toàn của chính phủ. -> NOT GIVEN", colorClass: "ev-26" },
+
+        // Passage 3
+        27: { translation: "Dân số già đi là do sự sụt giảm mức sinh, những cải thiện về sức khỏe và [tuổi thọ].", keywords: "<span class='exp-keyword-match'>health and... = health and longevity</span>", exp: "Đoạn 2: 'Population aging is driven by declines in fertility and improvements in health and longevity.'", colorClass: "ev-27" },
+        28: { translation: "Điều trước đó đáng ngạc nhiên là được nhìn thấy ở nhiều [các nước kém phát triển hơn].", keywords: "<span class='exp-keyword-match'>surprisingly seen = most surprising... pace</span>", exp: "Đoạn 2: 'Perhaps the most surprising demographic development... fertility decline in many less developed countries.'", colorClass: "ev-28" },
+        29: { translation: "...điều này đã thay đổi rất nhiều gần đây ở [các quốc gia phát triển hơn].", keywords: "<span class='exp-keyword-match'>changed a lot recently = lowered the official age</span>", exp: "Đoạn 3: 'many of the more developed nations lowered the official age...'", colorClass: "ev-29" },
+        30: { translation: "Cần rất nhiều sự [cải cách] ở nhiều quốc gia...", keywords: "<span class='exp-keyword-match'>required = much-needed</span>", exp: "Đoạn 3: 'Many countries already have taken steps towards much-needed reform of their old-age social insurance programs.'", colorClass: "ev-30" },
+        31: { translation: "...hoặc tăng các [đóng góp] của những người vẫn đang làm việc.", keywords: "<span class='exp-keyword-match'>raising = increase</span>", exp: "Đoạn 3: 'Another strategy... has been to increase the contributions by workers.'", colorClass: "ev-31" },
+        32: { translation: "Tuổi thọ cao hơn cũng sẽ dẫn đến việc các [thế hệ] gia đình khác nhau sống cùng nhau nhiều hơn.", keywords: "<span class='exp-keyword-match'>living with each other = coexisting</span>", exp: "Đoạn 4: 'As life expectancy increases... so do the odds of different generations within a family coexisting.'", colorClass: "ev-32" },
+        33: { translation: "Không có [tiền lệ] trước đây về sự thay đổi như vậy.", keywords: "<span class='exp-keyword-match'>no previous = no historical</span>", exp: "Đoạn 4: 'There is no historical precedent for a majority of middle-aged and older adults having living parents.'", colorClass: "ev-33" },
+        34: { translation: "Không có gì ngạc nhiên khi các nước thu nhập thấp và trung bình trải qua sự gia tăng đáng kể các bệnh không truyền nhiễm.", keywords: "<span class='exp-keyword-match'>no shock >< surprising</span>", exp: "Đoạn 5 viết là 'a surprising 44 per cent of the burden of disease in low- and middle-income countries' (một con số 44% ĐÁNG NGẠC NHIÊN). Do đó nhận định 'Không có gì ngạc nhiên' là trái ngược. -> NO", colorClass: "ev-34" },
+        35: { translation: "Trong khi số lượng người mắc bệnh mãn tính tăng, số lượng người có vấn đề khuyết tật đã giảm.", keywords: "<span class='exp-keyword-match'>reduced >< significant jump</span>", exp: "Đoạn 6 viết: 'Of course, a significant jump in disability numbers has accompanied the increase in longevity.' (Số liệu khuyết tật nhảy vọt đáng kể). -> NO", colorClass: "ev-35" },
+        36: { translation: "Có giả thuyết cho rằng tiền đầu tư ngắn hạn ở Châu Á sau đó sẽ được tái đầu tư trở lại phương Tây.", keywords: "<span class='exp-keyword-match'>reinvested back = flow in the opposite direction</span>", exp: "Đoạn 6 viết: 'surplus capital will flow from Europe... to emerging markets in Asia... In another 20 years... capital will most likely flow in the opposite direction.' -> YES", colorClass: "ev-36" },
+        37: { translation: "Người ta dự đoán rằng các vấn đề trong dòng vốn quốc tế sẽ dẫn đến xung đột vũ trang...", keywords: "Không có thông tin", exp: "Đoạn 6 có nhắc đến dòng vốn quốc tế nhưng hoàn toàn không đề cập đến việc nó dẫn tới chiến tranh vũ trang (armed conflict). -> NOT GIVEN", colorClass: "ev-37" },
+        38: { translation: "Tất cả các tác động của già hóa dân số trên thế giới vẫn chưa được nhận thức đầy đủ.", keywords: "<span class='exp-keyword-match'>not been fully realised = yet to be wholly appreciated</span>", exp: "Đoạn 7 viết: 'the significance of population aging and its global implications have yet to be wholly appreciated.' -> YES", colorClass: "ev-38" },
+        39: { translation: "Sẽ tốt hơn nếu đợi một thời gian xem tình hình phát triển thế nào...", keywords: "<span class='exp-keyword-match'>better to wait >< Waiting significantly increases the costs</span>", exp: "Đoạn 7 viết: 'Waiting significantly increases the costs and difficulties of addressing these challenges.' (Chờ đợi làm tăng đáng kể chi phí và khó khăn). -> NO", colorClass: "ev-39" },
+        40: { translation: "Mục đích của tác giả là gì? B. Để cung cấp cái nhìn tổng quan về nguyên nhân và ảnh hưởng của già hóa dân số trên thế giới.", keywords: "Toàn bài", exp: "Bài đọc đi từ nguyên nhân (giảm mức sinh, tăng tuổi thọ ở đoạn 2) đến các ảnh hưởng khác nhau (lương hưu đoạn 3, cấu trúc gia đình đoạn 4, bệnh tật đoạn 5, dòng vốn đoạn 6). Chọn B.", colorClass: "ev-40" }
+    };
+
+    window.onload = function() {
+        renderPalette();
+        document.getElementById('setupOverlay').style.display = 'flex';
+    }
+
+    function renderPalette() {
+        const nav = document.getElementById("navPalette");
+        for (let i = 1; i <= 40; i++) {
+            let dot = document.createElement("div");
+            dot.className = "nav-dot"; dot.id = `nav-${i}`; dot.innerText = i;
+            dot.onclick = () => scrollToQuestion(i);
+            nav.appendChild(dot);
+        }
+    }
+
+    function switchTab(n) {
+        document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i + 1 === n));
+        document.querySelectorAll('.passage-content').forEach((p, i) => p.classList.toggle('active', i + 1 === n));
+        document.querySelectorAll('.question-group').forEach((q, i) => q.classList.toggle('active', i + 1 === n));
+        document.querySelector('.pane-left').scrollTop = 0;
+        document.querySelector('.pane-right').scrollTop = 0;
+    }
+
+    function scrollToQuestion(id) {
+        let group = 1;
+        if (id >= 14 && id <= 26) group = 2;
+        if (id >= 27) group = 3;
+        
+        switchTab(group);
+        setTimeout(() => {
+            let targetId = `q-row-${id}`;
+            let el = document.getElementById(targetId);
+            
+            if(el) {
+                el.scrollIntoView({behavior:"smooth", block:"center"});
+                el.style.backgroundColor = "var(--highlight-color)";
+                setTimeout(() => el.style.backgroundColor = "", 1000);
+            }
+        }, 100);
+    }
+
+    function updateNav(id) {
+        let nav = document.getElementById(`nav-${id}`);
+        if (!nav) return;
+        
+        let val = "";
+        if ((id >= 21 && id <= 23) || (id == 40)) { // MCQs
+            let checked = document.querySelector(`input[name="mcq-${id}"]:checked`);
+            if (checked) val = checked.value;
+        } else {
+            let el = document.getElementById(`ans-${id}`);
+            if (el) val = el.value;
+        }
+        
+        if (val && val.trim() !== "") nav.classList.add("done");
+        else nav.classList.remove("done");
+    }
+
+    function startTimer() {
+        let display = document.getElementById("timer");
+        timerInterval = setInterval(function () {
+            let m = Math.floor(testDuration / 60);
+            let s = testDuration % 60;
+            display.textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            if (--testDuration < 0) { clearInterval(timerInterval); executeSubmit(); }
+        }, 1000);
+    }
+
+    function submitTest(manual) {
+        if (isSubmitted) return;
+        if (manual) document.getElementById('confirmOverlay').style.display = 'flex';
+        else executeSubmit();
+    }
+
+    function closeConfirmModal() { document.getElementById('confirmOverlay').style.display = 'none'; }
+    function closeResultModal() { document.getElementById('resultOverlay').style.display = 'none'; }
+
+   window.calculateIeltsBand = function(correct, total) {
+        let normalizedCorrect = (correct / total) * 40;
+        if (normalizedCorrect >= 39) return 9.0;
+        if (normalizedCorrect >= 37) return 8.5;
+        if (normalizedCorrect >= 35) return 8.0;
+        if (normalizedCorrect >= 33) return 7.5;
+        if (normalizedCorrect >= 30) return 7.0;
+        if (normalizedCorrect >= 27) return 6.5;
+        if (normalizedCorrect >= 23) return 6.0;
+        if (normalizedCorrect >= 19) return 5.5;
+        if (normalizedCorrect >= 15) return 5.0;
+        if (normalizedCorrect >= 13) return 4.5;
+        if (normalizedCorrect >= 10) return 4.0;
+        if (normalizedCorrect >= 8) return 3.5;
+        if (normalizedCorrect >= 6) return 3.0;
+        return 2.5;
+    }
+
+    function executeSubmit(isReviewMode = false) {
+        document.getElementById('confirmOverlay').style.display = 'none';
+        isSubmitted = true;
+        clearInterval(timerInterval);
+        document.querySelectorAll('input, select').forEach(el => el.disabled = true);
+        
+        let score = 0;
+        let userAnswersDict = {}; 
+
+        for (let i = 1; i <= 40; i++) {
+            let userAns = "";
+            
+           if ((i >= 21 && i <= 23) || (i == 40)) { 
+                let checked = document.querySelector(`input[name="mcq-${i}"]:checked`);
+                if (checked) userAns = checked.value;
+            } else {
+                let el = document.getElementById(`ans-${i}`);
+                if (el) userAns = el.value.trim().toUpperCase();
+            }
+
+            userAnswersDict['ans-'+i] = userAns; 
+
+            let correctAnswer = correctAnswers[i];
+            let isCorrect = false;
+
+            if (Array.isArray(correctAnswer)) {
+                isCorrect = correctAnswer.includes(userAns);
+            } else {
+                isCorrect = (userAns === correctAnswer);
+            }
+
+            if (isCorrect) score++;
+
+            let fb = document.getElementById(`fb-${i}`);
+            let correctStr = Array.isArray(correctAnswer) ? correctAnswer.join(" / ") : correctAnswer;
+            if (fb) {
+                fb.innerText = isCorrect ? "✓" : `✗ (${correctStr})`;
+                fb.className = isCorrect ? "feedback correct" : "feedback wrong";
+            }
+
+            if(explanations[i]) {
+                let expData = explanations[i];
+                let htmlContent = `
+                    <div class="exp-box show">
+                        <div class="exp-title">
+                            💡 Giải thích Câu ${i}
+                            ${expData.colorClass ? `<button class="locate-btn" onclick="scrollToEvidence('${expData.colorClass}')">📍 Xem dẫn chứng</button>` : ''}
+                        </div>
+                        <div class="exp-section">
+                            <span class="exp-label">👉 Dịch nghĩa:</span> 
+                            <div class="exp-translate">${expData.translation}</div>
+                        </div>
+                        ${expData.keywords ? `
+                        <div class="exp-section">
+                            <span class="exp-label">🔑 Từ khóa:</span> 
+                            <div class="exp-keywords">${expData.keywords}</div>
+                        </div>` : ''}
+                        <div class="exp-section">
+                            <span class="exp-label">🧠 Phân tích:</span> 
+                            <div class="exp-detail">${expData.exp}</div>
+                        </div>
+                    </div>`;
+
+               if (i >= 7 && i <= 13) {
+                    let container = document.getElementById('fb-container-7-13');
+                    if(container) container.innerHTML += htmlContent;
+               } else if (i >= 27 && i <= 33) {
+                    let container = document.getElementById('fb-container-27-33');
+                    if(container) container.innerHTML += htmlContent;
+               } else {
+                    let expContainer = document.getElementById(`exp-${i}`);
+                    if(expContainer) expContainer.innerHTML = htmlContent;
+                }
+            }
+        } 
+
+        document.getElementById('scoreDisplay').innerText = score + "/40";
+        let bandScore = window.calculateIeltsBand(score, 40);
+        document.getElementById('bandDisplay').innerText = "Band: " + (Number.isInteger(bandScore) ? bandScore + ".0" : bandScore);
+        document.getElementById('resultOverlay').style.display = 'flex'; 
+
+        if (!isReviewMode && window.luuDiemLenFirebase) {
+            let initialTime = (currentMode === 'mock') ? 60 * 60 : parseInt(document.getElementById('timeInput').value) * 60;
+            let timeTakenMinutes = Math.round((initialTime - testDuration) / 60);
+            window.luuDiemLenFirebase(score, timeTakenMinutes, userAnswersDict);
+        }
+    }
+
+    window.xemLaiLichSu = function(docId) {
+        let attempt = window.historyDataList.find(d => d.id === docId);
+        if(!attempt) return;
+        
+        document.getElementById('setupOverlay').style.display = 'none';
+        
+        let ans = attempt.userAnswers || {};
+        for(let i=1; i<=40; i++) {
+            let val = ans['ans-'+i] || '';
+            
+           if ((i >= 21 && i <= 23) || (i == 40)) {
+                let radios = document.querySelectorAll(`input[name="mcq-${i}"]`);
+                radios.forEach(r => {
+                    if(r.value.toUpperCase() === val.toUpperCase()) r.checked = true;
+                });
+            } else {
+                let el = document.getElementById(`ans-${i}`);
+                if (el) el.value = val;
+            }
+        }
+
+        executeSubmit(true);
+    }
+
+    function scrollToEvidence(id) {
+        const evElement = document.getElementById(id);
+        if(evElement) {
+            let passagePane = evElement.closest('.passage-content');
+            if (passagePane) {
+                let tabNum = passagePane.id === 'text-p1' ? 1 : passagePane.id === 'text-p2' ? 2 : 3;
+                if (!passagePane.classList.contains('active')) {
+                    switchTab(tabNum);
+                }
+            }
+
+            setTimeout(() => {
+                evElement.scrollIntoView({behavior: "smooth", block: "center"});
+                evElement.classList.remove("focus-blink");
+                void evElement.offsetWidth;
+                evElement.classList.add("focus-blink");
+                setTimeout(() => evElement.classList.remove("focus-blink"), 1500);
+            }, 100);
+        }
+    }
+
+    // --- HIGHLIGHT SYSTEM ---
+    const container = document.getElementById("mainContainer");
+    const menu = document.getElementById("ctxMenu");
+    let targetEl = null; let selectedRange = null;
+
+    container.addEventListener("contextmenu", (e) => {
+        if (!e.target.closest('.pane')) return;
+        e.preventDefault();
+        targetEl = null; selectedRange = null; menu.style.display = "none";
+        
+        if (e.target.classList.contains("highlight")) {
+            targetEl = e.target;
+            showMenu(e.pageX, e.pageY, "remove"); return;
+        }
+
+        let sel = window.getSelection();
+        if (sel.toString().trim().length > 0 && container.contains(sel.anchorNode)) {
+            selectedRange = sel.getRangeAt(0).cloneRange();
+            showMenu(e.pageX, e.pageY, "add");
+        }
+    });
+
+    document.addEventListener("click", (e) => { if (!menu.contains(e.target)) menu.style.display = "none"; });
+
+    function showMenu(x, y, mode) {
+        menu.style.display = "block";
+        let mw = menu.offsetWidth; let mh = menu.offsetHeight;
+        menu.style.left = (x + mw > window.innerWidth ? window.innerWidth - mw - 10 : x) + "px";
+        menu.style.top = (y + mh > window.innerHeight ? window.innerHeight - mh - 10 : y) + "px";
+        menu.children[0].style.display = (mode === "add") ? "block" : "none";
+        menu.children[1].style.display = (mode === "remove") ? "block" : "none";
+    }
+
+   function doHighlight() {
+        if (selectedRange && !selectedRange.collapsed) {
+            let span = document.createElement("span"); 
+            span.className = "highlight";
+            try { 
+                selectedRange.surroundContents(span); 
+            } catch(e) {
+                span.appendChild(selectedRange.extractContents());
+                selectedRange.insertNode(span);
+            }
+            window.getSelection().removeAllRanges();
+        }
+        menu.style.display = "none";
+    }
+
+    function removeHighlight() {
+        if (targetEl) {
+            let text = document.createTextNode(targetEl.textContent);
+            targetEl.parentNode.replaceChild(text, targetEl);
+            container.normalize();
+        }
+        menu.style.display = "none";
+    }
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+        }
+    });
+
+   window.luuDiemLenFirebase = async function(diemSo, timeTakenMinutes, userAnswersDict) {
+        if (!window.currentUserUid) return;
+        
+        let bandScore = window.calculateIeltsBand ? window.calculateIeltsBand(diemSo, 40) : 0;
+        let timestamp = Date.now();
+        let idLuotThi = window.currentUserUid + "_ielts_R_T6_" + timestamp;
+
+        try {
+            await setDoc(doc(db, "user_ielts_scores", idLuotThi), {
+                email: window.currentUserEmail,
+                skill: "Reading",
+                testName: "Test 6",
+                partName: "Full Test",
+                timeTaken: timeTakenMinutes.toString(),
+                correctQ: diemSo,
+                totalQ: 40,
+                bandScore: bandScore,
+                userAnswers: userAnswersDict,
+                date: new Date().toLocaleDateString("vi-VN"),
+                timestamp: timestamp
+            });
+        } catch(e) {
+            console.error("Lỗi khi lưu điểm: ", e);
+        }
+    }
+    
+    window.taiLichSuIELTS = async function() {
+        const tbody = document.getElementById("historyBody");
+        const loading = document.getElementById("historyLoading");
+
+        if (!window.currentUserUid) {
+            tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Vui lòng đăng nhập hệ thống để xem lịch sử.</td></tr>";
+            loading.style.display = "none";
+            return;
+        }
+
+        loading.style.display = "block";
+        tbody.innerHTML = "";
+
+        try {
+            const q = query(
+                collection(db, "user_ielts_scores"),
+                where("email", "==", window.currentUserEmail),
+                where("skill", "==", "Reading"),
+                where("testName", "==", "Test 6")
+            );
+
+            const querySnapshot = await getDocs(q);
+            let html = "";
+            
+            if (querySnapshot.empty) {
+                html = "<tr><td colspan='4' style='text-align:center;'>Bạn chưa làm bài test này.</td></tr>";
+            } else {
+                window.historyDataList = [];
+                querySnapshot.forEach((doc) => { 
+                    let data = doc.data();
+                    data.id = doc.id; 
+                    window.historyDataList.push(data); 
+                });
+                
+                window.historyDataList.sort((a, b) => b.timestamp - a.timestamp);
+
+                window.historyDataList.forEach((data) => {
+                    let dateObj = new Date(data.timestamp);
+                    let dateString = dateObj.toLocaleDateString("vi-VN") + " " + dateObj.getHours() + ":" + (dateObj.getMinutes() < 10 ? '0':'') + dateObj.getMinutes();
+
+                   html += `
+                        <tr>
+                            <td>${dateString}</td>
+                            <td><strong>${data.correctQ} / 40</strong></td>
+                            <td><strong style="color: var(--primary-dark); font-size: 1.1em;">${data.bandScore}</strong></td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="xemLaiLichSu('${data.id}')" class="btn-confirm" style="padding: 6px 12px; background: #e0f2fe; color: #0284c7; box-shadow: none;">Xem lại</button>
+                                    <button onclick="xoaLichSu('${data.id}', this)" class="btn-cancel" style="padding: 6px 12px; border-color: #fca5a5; color: #dc2626;">Xóa</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            tbody.innerHTML = html;
+        } catch (error) {
+            console.error("Lỗi fetch lịch sử: ", error);
+            tbody.innerHTML = "<tr><td colspan='4' style='text-align:center; color: var(--danger);'>Đã xảy ra lỗi tải dữ liệu.</td></tr>";
+        } finally {
+            loading.style.display = "none";
+        }
+    }
+
+    let itemToDeleteId = null;
+    let itemToDeleteBtn = null;
+
+    window.xoaLichSu = function(docId, btnElement) {
+        itemToDeleteId = docId;
+        itemToDeleteBtn = btnElement;
+        document.getElementById('deleteConfirmOverlay').style.display = 'flex';
+    }
+
+    window.closeDeleteModal = function() {
+        document.getElementById('deleteConfirmOverlay').style.display = 'none';
+        itemToDeleteId = null;
+        itemToDeleteBtn = null;
+    }
+
+    window.executeDelete = async function() {
+        if (!itemToDeleteId || !itemToDeleteBtn) return;
+        
+        let docId = itemToDeleteId;
+        let btnElement = itemToDeleteBtn;
+        
+        closeDeleteModal();
+
+        let originalText = btnElement.innerText;
+        btnElement.innerText = "...";
+        btnElement.disabled = true;
+
+        try {
+            await deleteDoc(doc(db, "user_ielts_scores", docId));
+            window.taiLichSuIELTS(); 
+        } catch (error) {
+            console.error("Lỗi khi xóa lịch sử: ", error);
+            btnElement.innerText = "Lỗi!";
+            setTimeout(() => {
+                btnElement.innerText = originalText;
+                btnElement.disabled = false;
+            }, 2000);
+        }
+    }
+</script>
+</body>
+</html>
