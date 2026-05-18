@@ -74,7 +74,7 @@
         }
         .btn-login-nav:hover { background: var(--pink-dark); transform: translateY(-2px); }
 
-        /* --- LAYOUT CHÍNH (Khoa học) --- */
+        /* --- LAYOUT CHÍNH --- */
         .container {
             max-width: 1200px; margin: 30px auto; padding: 0 15px;
             display: flex; gap: 30px; flex: 1; width: 100%; box-sizing: border-box;
@@ -86,7 +86,7 @@
             .sidebar-btn { flex: 0 0 auto; }
         }
 
-        /* --- SIDEBAR (Menu Cấp Độ) --- */
+        /* --- SIDEBAR --- */
         .sidebar {
             width: 250px; background: white; border-radius: 20px; padding: 20px;
             box-shadow: var(--shadow); border: 1px solid rgba(255, 182, 193, 0.3);
@@ -113,14 +113,14 @@
             flex: 1; display: flex; flex-direction: column; gap: 30px;
         }
 
-        /* --- HERO SECTION (Chỉ hiện ở màn hình chính/Intro) --- */
+        /* --- HERO SECTION --- */
         .hero-card {
             background: white; border-radius: 25px; padding: 40px;
             box-shadow: var(--shadow); display: flex; align-items: center; gap: 30px;
             border: 2px solid var(--pink-light);
         }
         @media (max-width: 768px) { .hero-card { flex-direction: column; text-align: center; } }
-        .hero-img {
+        .avatar {
             width: 150px; height: 150px; border-radius: 50%; object-fit: cover;
             border: 5px solid var(--pink-light); box-shadow: var(--shadow); flex-shrink: 0;
         }
@@ -183,17 +183,43 @@
         .login-submit { width: 100%; background: var(--pink-primary); color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 1.1rem; cursor: pointer; margin-top: 10px; transition: 0.3s;}
         .login-submit:hover { background: var(--pink-dark); }
         
-        /* Cập nhật UI thông báo rỗng */
         .empty-state { text-align: center; padding: 40px; color: var(--text-muted); font-weight: 600; background: white; border-radius: 20px; border: 1px dashed var(--pink-light); }
+
+        /* --- TOAST NOTIFICATION --- */
+        .toast-box {
+            position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 12px;
+            z-index: 9999; pointer-events: none;
+        }
+        .toast {
+            background: white; color: var(--text-main); padding: 15px 20px; border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(216, 27, 96, 0.15); border-left: 6px solid var(--pink-primary);
+            font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 700;
+            display: flex; align-items: center; gap: 12px;
+            transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.success { border-left-color: #4CAF50; }
+        .toast.info { border-left-color: var(--pink-primary); }
+        .toast.error { border-left-color: #F44336; }
+        .toast-icon { font-size: 1.2rem; }
     </style>
 </head>
 <body>
+
+<audio id="toastSound" src="https://assets.mixkit.co/active_storage/sfx/2870/2870-preview.mp3" preload="auto"></audio>
+
+<div id="toastBox" class="toast-box"></div>
 
 <nav class="navbar">
     <div class="nav-container">
         <div class="logo">🌸 Snap<span>Chinese</span></div>
         <ul class="nav-links">
-            <li><a href="hsk-index.html" class="active" onclick="location.reload()">Trang Chủ</a></li>
+            <li><a href="#" class="active" onclick="location.reload()">Trang Chủ</a></li>
+            <li id="login-nav-item"><a href="#" class="btn-login-nav" onclick="showLoginModal()">Đăng Nhập</a></li>
+            <li id="user-profile-item" style="display: none; align-items: center; font-weight: bold; color: var(--pink-dark);">
+                Xin chào, <span id="display-username" style="margin: 0 5px; color: var(--pink-primary);"></span>!
+                <a href="#" onclick="logout()" style="font-size: 0.85rem; color: #888; text-decoration: underline; padding: 0;">Thoát</a>
+            </li>
         </ul>
     </div>
 </nav>
@@ -201,6 +227,7 @@
 <div class="container">
     <aside class="sidebar">
         <h3 class="sidebar-title">Lộ Trình Học</h3>
+        <button class="sidebar-btn active" onclick="loadLevel('home', this)">🌟 Giới thiệu chung</button>
         <button class="sidebar-btn" onclick="loadLevel('hsk1', this)">📚 HSK 1</button>
         <button class="sidebar-btn" onclick="loadLevel('hsk2', this)">📚 HSK 2</button>
         <button class="sidebar-btn" onclick="loadLevel('hsk3', this)">📚 HSK 3</button>
@@ -210,11 +237,68 @@
         <button class="sidebar-btn" onclick="loadLevel('hsk79', this)">🎓 HSK 7-9 (Cao Cấp)</button>
     </aside>
 
+    <main class="main-content" id="main-content-area">
+        <div class="hero-card">
+            <img src="https://s120-25-ava-talk.zadn.vn/123/a1d327b38e0e961bddcfdaf1013779ca.jpg?key=zY8uTDumdxEqJ8eVnC7QQQ&time=1781426753" alt="SnapEnglish Avatar" class="avatar">
+            <div class="hero-text">
+                <h1>Chào bạn, mình là anh em sinh đôi với SnapEnglish! ✨</h1>
+                <p>Chào mừng bạn đến với <b>SnapChinese</b> - Nền tảng học tiếng Trung được trình bày khoa học, hệ thống và logic. Tại đây, mọi kiến thức từ HSK 1 đến HSK 9 được tích hợp chặt chẽ giữa học qua Game (Gamification) và Tài liệu giáo trình chuẩn, giúp bạn nắm bắt bài học nhanh chóng.</p>
+                <p style="margin-top: 10px; color: var(--pink-primary);">👈 Hãy chọn một cấp độ HSK ở menu bên trái để bắt đầu học ngay nhé!</p>
+            </div>
+        </div>
+    </main>
+</div>
+
 <footer>
-    © 2026 - SnapChinese 🌸 by SnapEnglish | Học Thật - Ứng Dụng Thật
+    © 2026 - SnapChinese 🌸 by SnapEnglish | Học Thật - Thi Thật - Ứng Dụng Thật
 </footer>
 
+<div class="modal-overlay" id="loginModal">
+    <div class="login-box">
+        <span class="close-btn" onclick="document.getElementById('loginModal').style.display='none'">&times;</span>
+        <h3 style="color: var(--pink-dark); margin-top: 0;">🌸 Đăng Nhập</h3>
+        <input type="text" id="username" class="login-input" placeholder="Tên tài khoản">
+        <input type="password" id="password" class="login-input" placeholder="Mật khẩu">
+        <button class="login-submit" onclick="attemptLogin()">Vào Học</button>
+        <div id="login-message" style="margin-top: 10px; font-weight: bold; font-size: 0.9rem;"></div>
+    </div>
+</div>
+
 <script>
+    // --- TOAST NOTIFICATION LOGIC ---
+    function showToast(message, type = 'info') {
+        const toastBox = document.getElementById('toastBox');
+        const toast = document.createElement('div');
+        toast.classList.add('toast', type);
+
+        let icon = '🌸';
+        if (type === 'success') icon = '✅';
+        if (type === 'error') icon = '❌';
+
+        toast.innerHTML = `<span class="toast-icon">${icon}</span> <span>${message}</span>`;
+        toastBox.appendChild(toast);
+
+        // Phát âm thanh
+        const sound = document.getElementById('toastSound');
+        if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log("Trình duyệt chặn autoplay âm thanh:", e));
+        }
+
+        // Animation trượt vào
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+
+        // Tự động trượt ra và xóa
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                toast.remove();
+            }, 400);
+        }, 3000);
+    }
+
     // --- DATA ---
     function parseLevelData(level, rawDataArray) {
         const icons = ["🌸", "🎀", "💖", "🍓", "🍉", "🍧", "🌷", "🌺", "⭐", "🎵"];
@@ -286,12 +370,11 @@
         "hsk4": [ { title: "Giáo trình chuẩn HSK 4 📚", desc: "Sách bài học, tập 1 và 2.", link: "https://drive.google.com/drive/folders/1BCOcEbKXV7LH-mVBtO46NVNL8sURP9rE" } ],
         "hsk5": [ { title: "Giáo trình chuẩn HSK 5 📚", desc: "Sách bài học, tập 1 và 2.", link: "https://drive.google.com/drive/folders/1pREX6RFrRGsjReT2OVK3zRccZzZbsI5q" } ],
         "hsk6": [ { title: "Giáo trình chuẩn HSK 6 📚", desc: "Tài liệu cao cấp nhất.", link: "https://drive.google.com/drive/folders/1GOHlwjMphCNYqvsYbmP6wxdBoymdXSwa" } ],
-        "hsk79": [ {title: "Không có giáo trình"}] 
+        "hsk79": [ {title: "Chưa có giáo trình", desc: "Hệ thống đang được cập nhật thêm", link: "#"}] 
     };
 
-    // --- LOGIC GIAO DIỆN KHOA HỌC ---
+    // --- LOGIC GIAO DIỆN ---
     function loadLevel(levelKey, btnElement) {
-        // Cập nhật trạng thái nút bấm
         document.querySelectorAll('.sidebar-btn').forEach(b => b.classList.remove('active'));
         btnElement.classList.add('active');
 
@@ -300,11 +383,8 @@
         if (levelKey === 'home') {
             mainArea.innerHTML = `
                 <div class="hero-card">
+                    <img src="https://s120-25-ava-talk.zadn.vn/123/a1d327b38e0e961bddcfdaf1013779ca.jpg?key=zY8uTDumdxEqJ8eVnC7QQQ&time=1781426753" alt="SnapEnglish Avatar" class="avatar">
                     <div class="hero-text">
-                    
-        <img src="https://s120-25-ava-talk.zadn.vn/123/a1d327b38e0e961bddcfdaf1013779ca.jpg?key=zY8uTDumdxEqJ8eVnC7QQQ&time=1781426753" 
-             alt="Nguyễn Thị Hồng Phúc" class="avatar">
-   
                         <h1>Chào bạn, mình là anh em sinh đôi với SnapEnglish! ✨</h1>
                         <p>Chào mừng bạn đến với <b>SnapChinese</b> - Nền tảng học tiếng Trung được trình bày khoa học, hệ thống và logic. Tại đây, mọi kiến thức từ HSK 1 đến HSK 9 được tích hợp chặt chẽ giữa học qua Game (Gamification) và Tài liệu giáo trình chuẩn, giúp bạn nắm bắt bài học nhanh chóng.</p>
                         <p style="margin-top: 10px; color: var(--pink-primary);">👈 Hãy chọn một cấp độ HSK ở menu bên trái để bắt đầu học ngay nhé!</p>
@@ -326,9 +406,9 @@
                 <div class="doc-card">
                     <div class="doc-info">
                         <h3>${d.title}</h3>
-                        <p>${d.desc}</p>
+                        <p>${d.desc || ''}</p>
                     </div>
-                    <a href="${d.link}" target="_blank" class="btn-download">Tải về 📥</a>
+                    ${d.link !== '#' ? `<a href="${d.link}" target="_blank" class="btn-download">Tải về 📥</a>` : ''}
                 </div>`;
             });
             html += `</div>`;
@@ -345,7 +425,6 @@
                 let mainTitle = g.title;
                 let finalTrans = g.translation || "";
                 
-                // Trích xuất bản dịch nếu nó nằm chung trong title (Dự phòng)
                 if (!finalTrans && mainTitle.includes(' – ')) {
                     const parts = mainTitle.split(' – ');
                     mainTitle = parts[0]; finalTrans = parts[1];
@@ -386,20 +465,23 @@
             return; 
         }
         
-        // Mô phỏng đăng nhập tĩnh
         currentUser = user;
-        localStorage.setItem('nga_user', user);
+        localStorage.setItem('snap_user', user);
         document.getElementById('loginModal').style.display = 'none';
         updateUIAfterLogin();
-        alert("Đăng nhập thành công! Chào mừng " + user);
+        
+        // Thay alert bằng Toast Notification
+        showToast("Đăng nhập thành công! Chào mừng " + user, "success");
     }
 
     function logout() {
         currentUser = null;
-        localStorage.removeItem('nga_user');
+        localStorage.removeItem('snap_user');
         document.getElementById('login-nav-item').style.display = 'block';
         document.getElementById('user-profile-item').style.display = 'none';
-        alert("Đã đăng xuất");
+        
+        // Thay alert bằng Toast Notification
+        showToast("Đã đăng xuất thành công!", "info");
     }
 
     function updateUIAfterLogin() {
@@ -409,7 +491,7 @@
     }
 
     window.onload = () => {
-        const u = localStorage.getItem('nga_user'); 
+        const u = localStorage.getItem('snap_user'); 
         if(u) { 
             currentUser = u; 
             updateUIAfterLogin(); 
