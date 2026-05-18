@@ -1878,231 +1878,699 @@
     ]
 };
 
-    let currentMode = '';
-    let timerInterval;
-    let totalSeconds;
-    let timeSpent = 0;
-    let currentTab = 1;
-    let userAnswers = {};
+  // Global State
+    let userAnswers = new Array(101).fill(null);
+    let timerDuration = 45 * 60; 
+    let timerInterval = null;
+    let isMockMode = false;
     let isSubmitted = false;
 
-    /* (Phần Logic và Render UI hoàn toàn tương tự bản Test 2, giữ nguyên toàn bộ hàm Script) */
+    // --- QUẢN LÝ LỊCH SỬ LÀM BÀI ---
+    const HISTORY_KEY = "snapenglish_listening_test3_2019_history"; // Đã đổi Key sang Test 2
+    let isReviewingMode = false;
 
-    function selectMode(mode) {
-        currentMode = mode;
-        document.getElementById('btnModePractice').classList.remove('selected');
-        document.getElementById('btnModeMock').classList.remove('selected');
+    function openHistoryModal() {
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        let historyListEl = document.getElementById('historyList');
+        let listHtml = '';
+
+        if (history.length === 0) {
+            listHtml = '<p style="text-align: center; color: var(--text-muted); margin-top: 20px;">Chưa có dữ liệu làm bài.</p>';
+        } else {
+            history.forEach(attempt => {
+                listHtml += `
+                    <div class="history-item">
+                        <div class="history-info">
+                            <span class="history-date">📅 ${attempt.date} - ⏰ ${attempt.time}</span>
+                            <span class="history-score">🏆 Điểm: ${attempt.score}/495</span>
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn-review" onclick="restoreAttempt(${attempt.id})">Xem lại</button>
+                            <button class="btn-delete-history" onclick="deleteAttempt(${attempt.id})" title="Xóa bài làm này">✖</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        historyListEl.innerHTML = listHtml;
+        document.getElementById('historyOverlay').classList.add('show');
+    }
+
+    function saveAttemptToHistory(score, total, answersArray) {
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        let now = new Date();
+        let toeicScore = Math.round(((score / total) * 495) / 5) * 5;
         
+        let attempt = {
+            id: Date.now(),
+            date: now.toLocaleDateString('vi-VN'),
+            time: now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+            score: toeicScore,
+            total: total,
+            answers: answersArray
+        };
+        
+        history.unshift(attempt);
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+        if (window.syncHistoryToCloud) {
+            window.syncHistoryToCloud(history);
+        }
+    }
+
+    // Hàm hiển thị Popup xác nhận tùy chỉnh
+    function showCustomConfirm(title, desc, onConfirmCallback) {
+        document.getElementById('ccTitle').innerText = title;
+        document.getElementById('ccDesc').innerText = desc;
+        
+        let confirmBtn = document.getElementById('ccConfirmBtn');
+        
+        let newBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+        
+        newBtn.addEventListener('click', () => {
+            onConfirmCallback();
+            closeModal('customConfirmModal');
+        });
+
+        document.getElementById('customConfirmModal').classList.add('show');
+    }
+
+    function deleteAttempt(attemptId) {
+        showCustomConfirm(
+            "Xóa lịch sử", 
+            "Bạn có chắc chắn muốn xóa bài làm này khỏi lịch sử không? Hành động này không thể hoàn tác.", 
+            () => {
+                let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+                history = history.filter(h => h.id !== attemptId); 
+                localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); 
+                
+                if (window.syncHistoryToCloud) window.syncHistoryToCloud(history);
+                openHistoryModal(); 
+            }
+        );
+    }
+
+    function restoreAttempt(attemptId) {
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        let attempt = history.find(h => h.id === attemptId);
+        if(!attempt) return;
+
+        isReviewingMode = true; 
+        closeModal('historyOverlay');
+        closeModal('setupModal');
+        
+        document.querySelectorAll('input[type="radio"]').forEach(el => {
+            el.disabled = false;
+            el.checked = false; 
+        });
+        
+        userAnswers = attempt.answers; 
+        attempt.answers.forEach((val, qId) => {
+            if (val && qId > 0) {
+                let radio = document.querySelector(`input[name="q${qId}"][value="${val}"]`);
+                if (radio) radio.checked = true;
+            }
+        });
+
+        let btnSubmit = document.getElementById('headerSubmitBtn');
+        if(btnSubmit) {
+            btnSubmit.innerText = "Đang xem lại";
+            btnSubmit.style.background = "var(--text-muted)";
+        }
+
+        isSubmitted = false; 
+        executeSubmit();
+    }
+
+    // --- INIT APP ---
+    function selectMode(mode) {
+        document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('selected'));
         if(mode === 'practice') {
             document.getElementById('btnModePractice').classList.add('selected');
-            document.getElementById('timeSettings').style.display = 'none';
+            document.getElementById('timeSettings').style.display = 'block';
+            isMockMode = false;
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.style.pointerEvents = 'auto'; 
+                btn.style.opacity = '1';
+            });
+            
         } else {
             document.getElementById('btnModeMock').classList.add('selected');
-            document.getElementById('timeSettings').style.display = 'block';
+            document.getElementById('timeSettings').style.display = 'none';
+            document.getElementById('inputTime').value = 45; 
+            isMockMode = true;
         }
         document.getElementById('btnStart').style.display = 'block';
     }
 
     function startTest() {
-        if(!currentMode) return;
-        if(currentMode === 'mock') {
-            let mins = parseInt(document.getElementById('inputTime').value);
-            if(isNaN(mins) || mins < 5) mins = 45;
-            totalSeconds = mins * 60;
-            updateTimerDisplay();
-            startTimer();
-        } else {
-            document.getElementById('timerDisplay').style.display = 'none';
-        }
-        
+        timerDuration = parseInt(document.getElementById('inputTime').value) * 60;
         document.getElementById('setupModal').classList.remove('show');
-        initNavGrid();
-        renderTab(1);
+        renderTest();
+        buildNavGrid();
+        startTimer();
+
+        if (isMockMode) {
+            setupMockModeAudio();
+        }
     }
 
-    // Timer Logic
+    let mockAudioList = [];
+
+    function setupMockModeAudio() {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.style.pointerEvents = 'none'; 
+            btn.style.opacity = '0.8';
+        });
+
+        mockAudioList = Array.from(document.querySelectorAll('audio'));
+        
+        mockAudioList.forEach((audio, index) => {
+            audio.removeAttribute('controls'); 
+
+            audio.onended = () => {
+                let nextIndex = index + 1;
+                
+                if (nextIndex < mockAudioList.length) {
+                    let currentPart = audio.closest('.part-container');
+                    let nextPart = mockAudioList[nextIndex].closest('.part-container');
+
+                    if (currentPart !== nextPart) {
+                        let partId = nextPart.id;
+                        let partNum = parseInt(partId.replace('part', ''));
+                        switchTab(partNum);
+                    }
+
+                    mockAudioList[nextIndex].closest('.q-card').scrollIntoView({behavior: "smooth", block: "center"});
+                    mockAudioList[nextIndex].play();
+                }
+            };
+        });
+
+        if (mockAudioList.length > 0) {
+            switchTab(1);
+            mockAudioList[0].play().catch(e => console.log("Trình duyệt chặn autoplay."));
+        }
+    }
+
     function startTimer() {
+        const display = document.getElementById('timerDisplay');
         timerInterval = setInterval(() => {
-            if(totalSeconds <= 0) {
+            let m = Math.floor(timerDuration / 60);
+            let s = timerDuration % 60;
+            display.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            if(timerDuration <= 0) {
                 clearInterval(timerInterval);
                 executeSubmit();
-                return;
             }
-            totalSeconds--;
-            timeSpent++;
-            updateTimerDisplay();
+            timerDuration--;
         }, 1000);
     }
 
-    function updateTimerDisplay() {
-        let m = Math.floor(totalSeconds / 60);
-        let s = totalSeconds % 60;
-        document.getElementById('timerDisplay').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
-        if(totalSeconds <= 300) { // Dưới 5 phút
-            document.getElementById('timerDisplay').style.color = 'white';
-            document.getElementById('timerDisplay').style.background = 'var(--danger)';
-        }
-    }
-
-    // Modal Controls
-    function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-    function openHistoryModal() { document.getElementById('historyOverlay').classList.add('show'); }
-    function promptSubmit() { document.getElementById('confirmModal').classList.add('show'); }
-    function requestSubmit() { if(!isSubmitted) promptSubmit(); }
-    function toggleNavPanel() {
-        const overlay = document.getElementById('navOverlay');
-        const panel = document.getElementById('navPanel');
-        overlay.classList.toggle('show');
-        panel.classList.toggle('show');
-    }
-
-    // Render logic
-    function switchTab(tabNum) {
-        document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
-            btn.classList.toggle('active', idx + 1 === tabNum);
-        });
-        currentTab = tabNum;
-        renderTab(tabNum);
-    }
-
-    function getLetter(idx) { return String.fromCharCode(65 + idx); }
-
-    function updateNavGrid() {
-        let count = Object.keys(userAnswers).length;
-        document.getElementById('answeredCount').innerText = count;
-        
-        for (let i = 1; i <= 100; i++) {
-            let dot = document.getElementById(`nav-dot-${i}`);
-            if(!dot) continue;
-            
-            if (isSubmitted) {
-                let ansObj = userAnswers[i];
-                let isCorrect = false;
-                if(ansObj && ansObj.isCorrect) isCorrect = true;
-                
-                dot.classList.remove('answered');
-                if(isCorrect) dot.classList.add('correct');
-                else dot.classList.add('wrong');
-            } else {
-                if (userAnswers[i]) dot.classList.add('answered');
-            }
-        }
-    }
-
-    function scrollToQuestion(qId, tabNum) {
-        if(currentTab !== tabNum) switchTab(tabNum);
-        toggleNavPanel(); // Đóng bảng
-        setTimeout(() => {
-            const el = document.getElementById(`q-${qId}`);
-            if(el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                el.style.border = '2px solid var(--primary)';
-                setTimeout(() => { el.style.border = '1px solid var(--border)'; }, 1500);
-            }
-        }, 100);
-    }
-
-    function initNavGrid() {
-        let html = '';
-        for (let i = 1; i <= 100; i++) {
-            let tab = (i <= 6) ? 1 : (i <= 31) ? 2 : (i <= 70) ? 3 : 4;
-            html += `<div class="nav-dot" id="nav-dot-${i}" onclick="scrollToQuestion(${i}, ${tab})">${i}</div>`;
-        }
-        document.getElementById('navGrid').innerHTML = html;
-    }
-
-    function selectOption(qId, val, isCorrect) {
-        if (isSubmitted) return;
-        userAnswers[qId] = { val: val, isCorrect: isCorrect };
-        
-        let container = document.getElementById(`q-${qId}`);
-        container.querySelectorAll('.opt-label').forEach(lbl => lbl.classList.remove('selected'));
-        let selectedLabel = container.querySelector(`input[value="${val}"]`).parentElement;
-        selectedLabel.classList.add('selected');
-
-        updateNavGrid();
-    }
-
-    /* Rendering Từng Phần (Part 1 -> Part 4) */
-    function renderTab(tabNum) {
+    // --- RENDER UI ---
+    function renderTest() {
         const main = document.getElementById('mainContent');
-        let html = '';
-        
-        if (tabNum === 1) html = renderPart1(TOEIC_DATA.part1);
-        else if (tabNum === 2) html = renderPart2(TOEIC_DATA.part2);
-        else if (tabNum === 3) html = renderPart3(TOEIC_DATA.part3);
-        else if (tabNum === 4) html = renderPart4(TOEIC_DATA.part4);
+        main.innerHTML = '';
 
-        main.innerHTML = html;
-        if(isSubmitted) showExplanationsForCurrentTab();
-        updateNavGrid();
-        
-        // Init resizer if exists (Part 3, 4)
-        initResizers();
-    }
+        // Render Part 1
+        let p1HTML = `<div id="part1" class="part-container active">
+            <div class="part-title">Part 1: Photographs</div>
+            <div class="part-desc">Listen to the audio and select the best description for the image.</div>`;
+        TOEIC_DATA.part1.forEach(q => {
+            let imgUrl = q.img || q.image;
+            let scriptEn = typeof q.script_en === 'string' ? q.script_en : (q.script_en || []).join('<br>');
+            let scriptVi = typeof q.script_vi === 'string' ? q.script_vi : (q.script_vi || []).join('<br>');
+            let explains = q.explains ? q.explains.map(ex => {
+                let isAns = ex.type === 'correct';
+                let tag = isAns ? "<span class='bingo-tag'>Đúng</span>" : "<span class='trap-tag'>Sai</span>";
+                return `<div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px;">
+                    <div style="font-weight: 700; margin-bottom: 5px;">Option ${ex.opt}</div>
+                    <div>${tag} ${ex.text}</div>
+                </div>`;
+            }).join('') : '';
+            
+            p1HTML += `
+            <div class="q-card" id="card-${q.id}">
+                <div class="split-layout">
+                    <div class="split-media">
+                        <img src="${imgUrl}" alt="Image Q${q.id}">
+                        <audio controls src="${q.audio}"></audio>
+                    </div>
+                    <div class="split-questions">
+                        <div class="q-header">
+                            <div class="q-num">${q.id}</div>
+                            <div class="q-text">Look at the picture and choose the correct statement.</div>
+                        </div>
+                        <div class="options-grid">
+                            ${['A', 'B', 'C', 'D'].map(opt => `
+                            <label class="opt-label" onclick="selectAnswer(${q.id}, '${opt}')">
+                                <input type="radio" name="q${q.id}" value="${opt}">
+                                <div class="custom-radio"></div><span>Option ${opt}</span>
+                            </label>`).join('')}
+                        </div>
+                        <div class="explanation-box" id="exp-${q.id}">
+                            <div class="exp-title">Phân tích chi tiết</div>
+                            <div class="script-en">${scriptEn}</div>
+                            <div class="script-vi">${scriptVi}</div>
+                            <div style="margin-top:15px; display:flex; flex-direction:column; gap:10px;">
+                                ${explains}
+                            </div>
+                            ${q.vocab ? `<div class="vocab-box"><b>📚 Từ Vựng:</b><br>${q.vocab.replace(/\n/g, '<br>')}</div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        });
+        p1HTML += `</div>`;
+        main.innerHTML += p1HTML;
 
-    function initResizers() {
+        // Render Part 2 
+        let p2HTML = `<div id="part2" class="part-container">
+            <div class="part-title">Part 2: Question & Response</div>
+            <div class="part-desc">Listen to the audio and select the best response.</div>`;
+        TOEIC_DATA.part2.forEach(q => {
+            let correctAns = q.answer || q.ans || q.correct;
+            p2HTML += `
+            <div class="q-card" id="card-${q.id}">
+                <div class="q-header">
+                    <div class="q-num">${q.id}</div>
+                    <div class="q-text">Mark your answer on your answer sheet.</div>
+                </div>
+                <audio controls src="${q.audio}" style="width:100%; margin-bottom:15px;"></audio>
+                <div class="options-grid">
+                    ${['A', 'B', 'C'].map(optLetter => `
+                    <label class="opt-label" onclick="selectAnswer(${q.id}, '${optLetter}')">
+                        <input type="radio" name="q${q.id}" value="${optLetter}">
+                        <div class="custom-radio"></div><span>Option ${optLetter}</span>
+                    </label>`).join('')}
+                </div>
+                <div class="explanation-box" id="exp-${q.id}">
+                    <div class="exp-title">Phân tích chi tiết</div>
+                    
+                    <div style="margin-bottom: 15px; padding: 15px; background: #E6F2FF; border-radius: 8px; border: 1px solid var(--primary);">
+                        <div style="font-weight: 700; color: var(--primary-dark); font-size: 16px;">Q: ${q.script_q_en || q.q_en}</div>
+                        <div style="color: var(--text-muted); font-style: italic; margin-bottom: 10px;">Dịch: ${q.script_q_vi || q.q_vi}</div>
+                        ${(q.general_explain || q.hint) ? `<div style="color: #D35400; font-size: 14px;">💡 <b>Mẹo giải:</b> ${q.general_explain || q.hint}</div>` : ''}
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                        ${q.explains ? q.explains.map((exp, idx) => {
+                            let isAns = (exp.opt === correctAns);
+                            let tag = isAns ? "<span class='bingo-tag'>Đúng</span>" : "<span class='trap-tag'>Sai</span>";
+                            let enText = q.script_opt_en ? q.script_opt_en[idx].replace(/^\([A-C]\)\s*/, '') : '';
+                            let viText = q.script_opt_vi ? q.script_opt_vi[idx].replace(/^\([A-C]\)\s*/, '') : '';
+                            return `<div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border);">
+                                <div style="font-weight: 700; margin-bottom: 5px;">(${exp.opt}) ${enText}</div>
+                                <div style="color: var(--text-muted); font-size: 14px; font-style: italic; margin-bottom: 8px;">${viText}</div>
+                                <div>${tag} ${exp.text}</div>
+                            </div>`;
+                        }).join('') : ''}
+                    </div>
+                    
+                    ${q.vocab ? `<div class="vocab-box"><b>📚 Từ Vựng:</b><br>${q.vocab.replace(/\n/g, '<br>')}</div>` : ''}
+                </div>
+            </div>`;
+        });
+        p2HTML += `</div>`;
+        main.innerHTML += p2HTML;
+
+        // Render Part 3 & 4 
+        const renderPassage = (data, title) => {
+            let html = `<div id="part${title.includes('3') ? 3 : 4}" class="part-container">
+                <div class="part-title">${title}</div>
+                <div class="part-desc">Listen to the talks and answer the questions.</div>`;
+            data.forEach(p => {
+                html += `
+                <div class="q-card" style="padding:0;"> <div class="split-layout" id="layout-${p.id}" style="padding:30px;">
+                        
+                        <div class="split-media" id="media-${p.id}">
+                            <div style="font-weight:800; color:var(--primary-dark); margin-bottom:15px;">Questions ${p.id}</div>
+                            ${p.graphic ? (p.graphic.includes('<') ? `<div style="overflow-x:auto; margin-bottom:15px;">${p.graphic}</div>` : `<img src="${p.graphic}" alt="Graphic">`) : ''}
+                            <audio controls src="${p.audio}" style="width: 100%;"></audio>
+                            
+                            <div class="explanation-box" id="exp-passage-${p.id}" style="margin-top:20px; border-top:2px dashed var(--border); border-left:none; padding:20px 0 0 0; background:transparent; text-align:left;">
+                                <div class="exp-title">Transcript Song Ngữ</div>
+                                <div class="script-en">${p.script_en.replace(/\n/g, '<br>')}</div>
+                                <div class="script-vi">${p.script_vi.replace(/\n/g, '<br>')}</div>
+                                ${p.vocab ? `<div class="vocab-box" style="margin-top:15px; background:#F8FAFC;"><b>📚 Từ vựng quan trọng:</b><br>${p.vocab.replace(/\n/g, '<br>')}</div>` : ''}
+                            </div>
+                        </div>
+
+                        <div class="resizer" id="resizer-${p.id}"></div>
+
+                        <div class="split-questions">`;
+                p.questions.forEach(q => {
+                    let qTextEn = q.q_en || (q.q && q.q.includes('<br>') ? q.q.split('<br>')[0] : q.q);
+                    let qTextVi = q.q_vi || (q.q && q.q.includes('<br>') ? q.q.split('<br>')[1] : '');
+                    
+                    html += `
+                            <div class="q-header" id="card-${q.id}" style="margin-top:${q===p.questions[0] ? '0' : '30px'};">
+                                <div class="q-num">${q.id}</div>
+                                <div class="q-text">${qTextEn}</div>
+                            </div>
+                            <div class="options-grid">
+                                ${['A','B','C','D'].map((opt, i) => {
+                                    let optObj = q.opts.find(o => o.l === opt) || q.opts[i];
+                                    let optText = typeof optObj === 'object' ? optObj.text : optObj;
+                                    let optVi = typeof optObj === 'object' && optObj.text_vi ? `<div class="opt-vi-hint" style="display:none; font-size:14px; color:var(--text-muted); font-weight:normal; margin-top:4px;"><i>${optObj.text_vi}</i></div>` : '';
+                                    return `
+                                    <label class="opt-label" onclick="selectAnswer(${q.id}, '${opt}')">
+                                        <input type="radio" name="q${q.id}" value="${opt}">
+                                        <div class="custom-radio"></div>
+                                        <div style="display:flex; flex-direction:column;">
+                                            <span><b>${opt}.</b> ${optText}</span>
+                                            ${optVi}
+                                        </div>
+                                    </label>`;
+                                }).join('')}
+                            </div>
+                            <div class="explanation-box" id="exp-${q.id}">
+                                <div style="margin-bottom:10px; font-size:15px; color:var(--text-muted);">${qTextVi}</div>
+                                ${q.explanation || q.exp || ''}
+                            </div>`;
+                });
+                html += `
+                        </div>
+                    </div>
+                </div>`;
+            });
+            html += `</div>`;
+            return html;
+        };
+
+        main.innerHTML += renderPassage(TOEIC_DATA.part3, 'Part 3: Conversations');
+        main.innerHTML += renderPassage(TOEIC_DATA.part4, 'Part 4: Short Talks');
+
+        const allIDs = [
+            ...TOEIC_DATA.part1.map(q=>q.id), 
+            ...TOEIC_DATA.part2.map(q=>q.id),
+            ...TOEIC_DATA.part3.flatMap(p=>p.questions.map(q=>q.id)),
+            ...TOEIC_DATA.part4.flatMap(p=>p.questions.map(q=>q.id))
+        ];
+        
+        let missingDivs = '<div style="display:none;">';
+        for(let i=1; i<=100; i++) {
+            if(!allIDs.includes(i)) missingDivs += `<div id="card-${i}">Fake Q${i}</div><div id="exp-${i}"></div>`;
+        }
+        missingDivs += '</div>';
+        main.innerHTML += missingDivs;
+
         document.querySelectorAll('.resizer').forEach(resizer => {
-            const leftSide = resizer.previousElementSibling;
-            let isDown = false;
-            resizer.addEventListener('mousedown', (e) => {
-                isDown = true;
-                resizer.classList.add('dragging');
-                document.body.style.cursor = 'col-resize';
-            });
-            document.addEventListener('mousemove', (e) => {
-                if(!isDown) return;
-                const container = resizer.parentElement;
-                let newWidth = (e.clientX - container.getBoundingClientRect().left) / container.offsetWidth * 100;
-                if(newWidth > 20 && newWidth < 80) {
-                    leftSide.style.flex = `0 0 ${newWidth}%`;
-                }
-            });
-            document.addEventListener('mouseup', () => {
-                isDown = false;
-                resizer.classList.remove('dragging');
-                document.body.style.cursor = 'default';
-            });
+            let id = resizer.id.split('resizer-')[1]; 
+            let leftCol = document.getElementById(`media-${id}`);
+            let container = document.getElementById(`layout-${id}`);
+            if(leftCol && container) {
+                initResizer(resizer, leftCol, container);
+            }
         });
     }
 
-    // Các hàm render Part 1, 2, 3, 4 tương tự như file Test 2...
-    // (Lưu ý: Chỉ cần chèn lại các block HTML JS từ template cũ hoặc tùy chỉnh lại nếu bạn muốn chạy local).
-    
-    // ... [Code Render UI và Submission tương tự Test 2]
-    function executeSubmit() {
+    function buildNavGrid() {
+        const grid = document.getElementById('navGrid');
+        grid.innerHTML = '';
+        for(let i = 1; i <= 100; i++) {
+            grid.innerHTML += `<div class="nav-dot" id="nav-${i}" onclick="scrollToQ(${i})">${i}</div>`;
+        }
+    }
+
+    function switchTab(n) {
+        document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i+1 === n));
+        document.querySelectorAll('.part-container').forEach((p, i) => p.classList.toggle('active', i+1 === n));
+        document.getElementById('mainContent').scrollTop = 0;
+    }
+
+    // Mở / Đóng bảng điều hướng
+    function toggleNavPanel() {
+        const panel = document.getElementById('navPanel');
+        const overlay = document.getElementById('navOverlay');
+        panel.classList.toggle('show');
+        
+        if (panel.classList.contains('show')) {
+            overlay.classList.add('show');
+        } else {
+            overlay.classList.remove('show');
+        }
+    }
+
+    // Cập nhật hàm selectAnswer để tự động đếm số câu đã làm
+    window.selectAnswer = function(id, val) {
         if(isSubmitted) return;
+        
+        userAnswers[id] = val;
+        const card = document.getElementById(`card-${id}`) || document.getElementById(`card-${id}`).parentElement;
+        card.querySelectorAll(`input[name="q${id}"]`).forEach(inp => {
+            const lbl = inp.parentElement.parentElement.classList.contains('opt-label') ? inp.parentElement.parentElement : inp.closest('.opt-label');
+            if(inp.value === val) {
+                inp.checked = true;
+                lbl.classList.add('selected');
+            } else {
+                lbl.classList.remove('selected');
+            }
+        });
+
+        document.getElementById(`nav-${id}`).classList.add('answered');
+
+        // Đếm số lượng câu đã làm và hiển thị lên nút nổi
+        let answeredCount = userAnswers.filter(ans => ans !== null).length;
+        document.getElementById('answeredCount').innerText = answeredCount;
+    };
+
+    window.scrollToQ = function(id) {
+        let tab = 1;
+        if(id > 6) tab = 2;
+        if(id >= 32) tab = 3;
+        if(id >= 71) tab = 4;
+        switchTab(tab);
+        
+        toggleNavPanel();
+
+        setTimeout(() => {
+            let el = document.getElementById(`card-${id}`);
+            if(el) {
+                el.scrollIntoView({behavior: "smooth", block: "center"});
+                el.style.transition = "box-shadow 0.5s";
+                el.style.boxShadow = "0 0 0 4px var(--secondary)";
+                setTimeout(() => el.style.boxShadow = "0 4px 15px rgba(0,0,0,0.02)", 1000);
+            }
+        }, 300);
+    };
+
+    function requestSubmit() {
+        document.getElementById('confirmModal').classList.add('show');
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('show');
+    }
+
+    function executeSubmit() {
         isSubmitted = true;
         clearInterval(timerInterval);
         closeModal('confirmModal');
         
         let correctCount = 0;
-        for(let key in userAnswers) {
-            if(userAnswers[key].isCorrect) correctCount++;
+        let totalRendered = 0;
+
+        const keys = {};
+        TOEIC_DATA.part1.forEach(q => keys[q.id] = q.answer || q.ans || q.correct);
+        TOEIC_DATA.part2.forEach(q => keys[q.id] = q.answer || q.ans || q.correct);
+        TOEIC_DATA.part3.forEach(p => p.questions.forEach(q => {
+            let corrOpt = q.opts.find(o => o.isCorrect === true);
+            keys[q.id] = q.answer || q.ans || q.correct || (corrOpt ? corrOpt.l : null);
+        }));
+        TOEIC_DATA.part4.forEach(p => p.questions.forEach(q => {
+            let corrOpt = q.opts.find(o => o.isCorrect === true);
+            keys[q.id] = q.answer || q.ans || q.correct || (corrOpt ? corrOpt.l : null);
+        }));
+
+        for(let i=1; i<=100; i++) {
+            if(keys[i]) {
+                totalRendered++;
+                let isCorr = (userAnswers[i] === keys[i]);
+                if(isCorr) correctCount++;
+
+                document.querySelectorAll(`input[name="q${i}"]`).forEach(inp => {
+                    let lbl = inp.closest('.opt-label');
+                    if(inp.value === keys[i]) {
+                        lbl.classList.add('is-correct');
+                    } else if (inp.value === userAnswers[i] && !isCorr) {
+                        lbl.classList.add('is-wrong');
+                    }
+                });
+
+                let exp = document.getElementById(`exp-${i}`);
+                if(exp) exp.classList.add('show');
+
+                let nav = document.getElementById(`nav-${i}`);
+                if(nav) {
+                    nav.classList.remove('answered');
+                    nav.classList.add(isCorr ? 'correct' : 'wrong');
+                }
+
+                let qText = document.getElementById(`text-q${i}`);
+                if(qText) qText.classList.add('revealed');
+            }
         }
-        
-        document.getElementById('scoreDisplay').innerText = `${correctCount}/100`;
-        document.getElementById('resultModal').classList.add('show');
+
+        document.querySelectorAll('[id^="exp-passage-"]').forEach(el => el.classList.add('show'));
+        document.querySelectorAll('.opt-vi-hint').forEach(el => el.style.display = 'block');
+        document.querySelectorAll('input[type="radio"]').forEach(el => el.disabled = true);
         document.getElementById('headerSubmitBtn').style.display = 'none';
-        
-        // Render lại tab hiện tại để hiện giải thích
-        renderTab(currentTab);
-        
-        // Lưu Firebase (Nếu bạn có tích hợp sẵn db config)
-        if(window.luuDiemTOEICFull) {
-            let m = Math.floor(timeSpent / 60);
-            let s = timeSpent % 60;
-            window.luuDiemTOEICFull(correctCount, 100, "ETS 2019 - Test 3", `${m} phút ${s} giây`);
+
+        let toeicScore = Math.round(((correctCount / totalRendered) * 495) / 5) * 5;
+        document.getElementById('scoreDisplay').innerText = `${toeicScore}/495`; 
+        document.getElementById('scoreComment').innerText = `Bạn trả lời đúng ${correctCount}/${totalRendered} câu. Tuyệt vời! Hãy xem chi tiết giải thích ở từng câu bên dưới.`;
+        document.getElementById('resultModal').classList.add('show');
+
+        if (!isReviewingMode) {
+            saveAttemptToHistory(correctCount, totalRendered, [...userAnswers]);
+            let totalTimeInSeconds = parseInt(document.getElementById('inputTime').value) * 60;
+            let timeSpentInSeconds = totalTimeInSeconds - timerDuration;
+            let min = Math.floor(timeSpentInSeconds / 60);
+            let sec = timeSpentInSeconds % 60;
+            let timeString = `${min} phút ${sec} giây`;
+            
+            if(window.luuDiemTOEICFull) {
+                window.luuDiemTOEICFull(correctCount, totalRendered, "ETS 2019 - Test 3", timeString);
+            }
+        } else {
+            let toast = document.getElementById('toastNotification');
+            if (toast) {
+                document.querySelector('.toast-desc').innerText = "Đã khôi phục bài làm ngày cũ!";
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 4000);
+            }
+        }
+    }
+
+    // HÀM XỬ LÝ KÉO THẢ THANH TRƯỢT
+    function initResizer(resizer, leftElement, container) {
+        let isDragging = false;
+
+        resizer.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            resizer.classList.add('dragging');
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            const containerRect = container.getBoundingClientRect();
+            let newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+            if (newWidth < 25) newWidth = 25;
+            if (newWidth > 75) newWidth = 75;
+            leftElement.style.flex = `0 0 ${newWidth}%`;
+        });
+
+        document.addEventListener('mouseup', function() {
+            if (isDragging) {
+                isDragging = false;
+                resizer.classList.remove('dragging');
+                document.body.style.cursor = 'default';
+                document.body.style.userSelect = 'auto';
+            }
+        });
+    }
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.syncHistoryToCloud = async function(historyData) {
+        if (!window.currentUserUid) return;
+        try {
+            let docId = window.currentUserUid + "_history_listening_test3_2019";
+            await setDoc(doc(db, "user_test_histories", docId), {
+                savedHistory: historyData,
+                lastUpdated: Date.now()
+            }, { merge: true });
+        } catch (error) {
+            console.error("Lỗi đồng bộ lịch sử: ", error);
         }
     }
     
-    // Dummy functions for Rendering components (Để code chạy mượt)
-    function renderPart1(data) { return `<div class="part-title">Part 1</div><p class="part-desc">Photographs (Q1-Q6)</p> <p style="text-align:center;">Vui lòng dán dữ liệu Part 1 vào biến TOEIC_DATA</p>`; }
-    function renderPart2(data) { return `<div class="part-title">Part 2</div><p class="part-desc">Question & Response (Q7-Q31)</p> <p style="text-align:center;">Vui lòng dán dữ liệu Part 2 vào biến TOEIC_DATA</p>`; }
-    function renderPart3(data) { return `<div class="part-title">Part 3</div><p class="part-desc">Short Conversations (Q32-Q70)</p> <p style="text-align:center;">Vui lòng dán dữ liệu Part 3 vào biến TOEIC_DATA</p>`; }
-    function renderPart4(data) { return `<div class="part-title">Part 4</div><p class="part-desc">Short Talks (Q71-Q100)</p> <p style="text-align:center;">Vui lòng dán dữ liệu Part 4 vào biến TOEIC_DATA</p>`; }
-    function showExplanationsForCurrentTab() {}
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+            
+            let docId = user.uid + "_history_listening_test3_2019";
+            const docRef = doc(db, "user_test_histories", docId);
+            
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    let cloudData = docSnap.data().savedHistory;
+                    if (cloudData) {
+                        localStorage.setItem("snapenglish_listening_test3_2019_history", JSON.stringify(cloudData));
+                        let historyModal = document.getElementById('historyOverlay');
+                        if (historyModal && historyModal.classList.contains('show')) {
+                            openHistoryModal();
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    window.luuDiemTOEICFull = async function(correct, total, testTitle, timeSpent) {
+        if (!window.currentUserUid) return;
+        let scoreConverted = Math.round(((correct / total) * 495) / 5) * 5;
+        let timestamp = Date.now();
+        let docId = window.currentUserUid + "_toeic_" + timestamp;
+
+        try {
+            await setDoc(doc(db, "user_toeic_scores", docId), {
+                email: window.currentUserEmail,
+                skill: "Listening",
+                testName: testTitle,
+                partName: "Full",
+                correctQ: correct,
+                totalQ: total,
+                score: scoreConverted,
+                timeSpent: timeSpent || "0 phút 0 giây",
+                date: new Date().toLocaleDateString('vi-VN'),
+                timestamp: timestamp
+            });
+            
+            // Hiện Toast thông báo
+            const toast = document.getElementById('toastNotification');
+            if (toast) {
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 4000); 
+            }
+        } catch (error) {
+            console.error("Lỗi khi lưu điểm: ", error);
+        }
+    }
 </script>
+
+<div id="toastNotification">
+    <div class="toast-icon">✨</div>
+    <div class="toast-content">
+        <div class="toast-title">Thành công!</div>
+        <div class="toast-desc">Điểm của bạn đã được đồng bộ.</div>
+    </div>
+</div>
 
 </body>
 </html>
