@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HSK 1 - Trải nghiệm mới</title>
+    <style>
+        /* === RESET & BIẾN MÀU SẮC === */
+        :root {
+            --primary: #4ade80; /* Xanh mint */
+            --primary-dark: #22c55e;
+            --secondary: #ffb0a3; /* Cam đào */
+            --bg-color: #f0fdf4; /* Nền xanh nhạt */
+            --white: #ffffff;
+            --text-dark: #334155;
+            --text-gray: #64748b;
+            --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+        }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { margin: 0; background-color: var(--bg-color); color: var(--text-dark); display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+
+        /* === BỐ CỤC CHUNG === */
+        .container { width: 100%; max-width: 800px; margin: 20px; }
+        .hidden { display: none !important; }
+        .btn { padding: 12px 24px; border: none; border-radius: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-size: 16px; }
+        .btn-primary { background-color: var(--primary); color: var(--white); box-shadow: 0 4px 12px rgba(74, 222, 128, 0.3); }
+        .btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+        .btn-secondary { background-color: var(--secondary); color: var(--white); box-shadow: 0 4px 12px rgba(255, 176, 163, 0.3); }
+        .btn-secondary:hover { filter: brightness(0.95); transform: translateY(-2px); }
+        .btn-outline { background-color: var(--white); color: var(--text-gray); border: 2px solid #e2e8f0; }
+        .btn-outline:hover { background-color: #f8fafc; }
+
+        /* === POPUP / MODAL CHÀO MỪNG & KẾT QUẢ === */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-content { background: var(--white); padding: 40px; border-radius: 30px; box-shadow: var(--shadow); text-align: center; max-width: 500px; width: 90%; animation: slideUp 0.4s ease forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        .modal-title { font-size: 24px; color: var(--primary-dark); margin-bottom: 10px; }
+        .modal-desc { color: var(--text-gray); margin-bottom: 30px; line-height: 1.6; }
+        
+        .mode-cards { display: flex; gap: 20px; justify-content: center; }
+        .mode-card { flex: 1; padding: 30px 20px; border-radius: 20px; border: 2px solid #e2e8f0; cursor: pointer; transition: 0.3s; }
+        .mode-card:hover { border-color: var(--primary); background: #f0fdf4; transform: translateY(-5px); }
+        .mode-card.test-mode:hover { border-color: var(--secondary); background: #fff1f0; }
+        .mode-icon { font-size: 40px; margin-bottom: 10px; }
+
+        /* === MÀN HÌNH LÀM BÀI === */
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: var(--white); padding: 15px 25px; border-radius: 20px; box-shadow: var(--shadow); }
+        .timer { font-weight: bold; color: var(--secondary); font-size: 18px; display: flex; align-items: center; gap: 5px; }
+        .progress-bar { height: 8px; background: #e2e8f0; border-radius: 4px; margin-top: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--primary); width: 0%; transition: 0.3s; }
+
+        .quiz-body { background: var(--white); padding: 40px; border-radius: 30px; box-shadow: var(--shadow); min-height: 400px; display: flex; flex-direction: column; }
+        .question-text { font-size: 22px; font-weight: 600; margin-bottom: 30px; }
+        .audio-player { background: #f8fafc; padding: 15px; border-radius: 16px; margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
+        
+        .options-grid { display: grid; gap: 15px; }
+        .option-item { background: #f8fafc; padding: 16px 20px; border-radius: 16px; border: 2px solid transparent; cursor: pointer; font-size: 18px; transition: 0.2s; display: flex; align-items: center; }
+        .option-item:hover { background: #f0fdf4; }
+        .option-item.selected { border-color: var(--primary); background: #e6fffa; font-weight: bold; }
+        
+        .quiz-footer { margin-top: auto; padding-top: 30px; display: flex; justify-content: space-between; }
+
+        /* === MÀN HÌNH GIẢI THÍCH (REVIEW) === */
+        .review-layout { display: flex; gap: 20px; }
+        .review-left { flex: 1; background: var(--white); padding: 30px; border-radius: 30px; box-shadow: var(--shadow); }
+        .review-right { flex: 1; background: #fffbe6; padding: 30px; border-radius: 30px; box-shadow: var(--shadow); border: 2px dashed #fcd34d; }
+        .correct-ans { color: var(--primary-dark); font-weight: bold; }
+        .wrong-ans { color: #ef4444; text-decoration: line-through; }
+        .explanation-text { line-height: 1.8; color: #475569; }
+        .hanzi-highlight { background: #fef08a; padding: 2px 6px; border-radius: 6px; font-weight: bold; color: #b45309; }
+
+        /* Kết quả tròn */
+        .score-circle { width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(var(--primary) 80%, #e2e8f0 0); display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; font-size: 32px; font-weight: bold; color: var(--primary-dark); }
+        .score-inner { width: 100px; height: 100px; border-radius: 50%; background: var(--white); display: flex; justify-content: center; align-items: center; }
+    </style>
+</head>
+<body>
+
+    <div id="welcome-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h1 class="modal-title">🐼 Chào mừng bạn đến với HSK 1</h1>
+            <p class="modal-desc">Hôm nay bạn muốn học theo phong cách nào? Đừng lo lắng, hãy chọn cách làm bạn thấy thoải mái nhất nhé!</p>
+            <div class="mode-cards">
+                <div class="mode-card practice-mode" onclick="startQuiz('practice')">
+                    <div class="mode-icon">☕</div>
+                    <h3>Luyện tập</h3>
+                    <p style="font-size: 14px; color: gray;">Thong thả nghe, có thể quay lại, không áp lực thời gian.</p>
+                </div>
+                <div class="mode-card test-mode" onclick="startQuiz('test')">
+                    <div class="mode-icon">🔥</div>
+                    <h3>Thi thử</h3>
+                    <p style="font-size: 14px; color: gray;">Audio chỉ phát 2 lần, tự động thu bài khi hết giờ.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-container" class="container hidden">
+        <div class="quiz-header">
+            <div>
+                <strong id="header-title">Chế độ Luyện tập ☕</strong>
+                <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+            </div>
+            <div id="timer" class="timer hidden">⏳ 15:00</div>
+            <button class="btn btn-secondary" onclick="submitQuiz()">Nộp bài sớm</button>
+        </div>
+
+        <div class="quiz-body">
+            <div style="color: var(--text-gray); margin-bottom: 10px;">Câu <span id="current-q-num">1</span>/3</div>
+            
+            <div id="audio-area" class="audio-player">
+                <button id="btn-play-audio" class="btn btn-outline" style="padding: 8px 16px;">▶️ Nghe Audio</button>
+                <span id="audio-status" style="color: var(--text-gray); font-size: 14px;">(Audio minh hoạ)</span>
+            </div>
+
+            <div id="question-text" class="question-text">Nghe và chọn bức tranh tương ứng:</div>
+            
+            <div id="options-area" class="options-grid">
+                </div>
+
+            <div class="quiz-footer">
+                <button id="btn-prev" class="btn btn-outline" onclick="prevQuestion()">🔙 Quay lại</button>
+                <button id="btn-next" class="btn btn-primary" onclick="nextQuestion()">Tiếp theo 🔜</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="result-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h1 class="modal-title">🎉 Chúc mừng bạn đã hoàn thành!</h1>
+            <div id="score-chart" class="score-circle">
+                <div class="score-inner" id="score-text">100%</div>
+            </div>
+            <p id="result-feedback" style="font-size: 18px; font-weight: bold; color: var(--text-dark);"></p>
+            <p id="result-stats" class="modal-desc"></p>
+            
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button class="btn btn-outline" onclick="location.reload()">Làm lại</button>
+                <button class="btn btn-primary" onclick="showReview()">Xem Giải thích sâu sắc 💡</button>
+                <button class="btn btn-secondary">📸 Khoe thành tích</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="review-container" class="container hidden" style="max-width: 1000px;">
+        <h2 style="color: var(--primary-dark); text-align: center; margin-bottom: 30px;">Giải thích chi tiết (Review)</h2>
+        
+        <div id="review-content"></div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn btn-primary" onclick="location.reload()">Về trang chủ</button>
+        </div>
+    </div>
+
+    <script>
+        // MOCK DATA (Dữ liệu giả lập 3 câu hỏi)
+        const questions = [
+            {
+                id: 1,
+                text: "Nghe và chọn câu có ý nghĩa tương ứng:",
+                audioHint: "🎵 [Audio]: Tā zài dǎ diànhuà. (Cô ấy đang gọi điện thoại)",
+                options: ["A. Cô ấy đang nấu ăn", "B. Cô ấy đang gọi điện thoại", "C. Cô ấy đang lái xe"],
+                correctAnswer: 1, // Vị trí index B
+                explanation: {
+                    script: "她在打电话 (Tā zài dǎ diànhuà)",
+                    vietnamese: "Cô ấy đang gọi điện thoại.",
+                    why: "Từ khóa ở đây là <span class='hanzi-highlight'>打电话 (dǎ diànhuà)</span> nghĩa là 'gọi điện thoại'. Các đáp án khác như nấu ăn (做饭) hay lái xe (开车) hoàn toàn không xuất hiện trong file nghe."
+                }
+            },
+            {
+                id: 2,
+                text: "Chọn từ điền vào chỗ trống: 今天天气很 ___。",
+                audioHint: "",
+                options: ["A. 冷 (lěng)", "B. 饭 (fàn)", "C. 猫 (māo)"],
+                correctAnswer: 0,
+                explanation: {
+                    script: "今天天气很冷。 (Jīntiān tiānqì hěn lěng)",
+                    vietnamese: "Thời tiết hôm nay rất lạnh.",
+                    why: "Cấu trúc '天气很 + Tính từ' (Thời tiết rất...). Trong 3 đáp án chỉ có <span class='hanzi-highlight'>冷 (lạnh)</span> là tính từ chỉ thời tiết. B là Cơm, C là Con mèo (danh từ) nên sai ngữ pháp."
+                }
+            },
+            {
+                id: 3,
+                text: "Đọc hiểu: 现在是十点十分。 (Xiànzài shì shí diǎn shí fēn)",
+                audioHint: "",
+                options: ["A. 10:10", "B. 10:00", "C. 08:10"],
+                correctAnswer: 0,
+                explanation: {
+                    script: "现在是十点十分",
+                    vietnamese: "Bây giờ là mười giờ mười phút.",
+                    why: "Cách nói giờ cơ bản: <span class='hanzi-highlight'>十 (shí) = 10</span>, 点 (diǎn) = giờ, 分 (fēn) = phút. Khớp số liệu ta có 10:10."
+                }
+            }
+        ];
+
+        // STATE VARIABLES
+        let currentMode = '';
+        let currentQIndex = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let timerInterval;
+        let timeLeft = 15 * 60; // 15 minutes in seconds cho thi thử
+
+        // DOM ELEMENTS
+        const welcomeModal = document.getElementById('welcome-modal');
+        const quizContainer = document.getElementById('quiz-container');
+        const resultModal = document.getElementById('result-modal');
+        const reviewContainer = document.getElementById('review-container');
+
+        // 1. START BÀI THI
+        function startQuiz(mode) {
+            currentMode = mode;
+            welcomeModal.classList.add('hidden');
+            quizContainer.classList.remove('hidden');
+
+            document.getElementById('header-title').innerHTML = mode === 'practice' ? 'Chế độ Luyện tập ☕' : 'Chế độ Thi thử 🔥';
+            
+            // Xử lý UI theo mode
+            if (mode === 'test') {
+                document.getElementById('timer').classList.remove('hidden');
+                document.getElementById('btn-prev').classList.add('hidden'); // Ẩn nút lùi lại
+                document.getElementById('audio-area').classList.add('hidden'); // Ẩn thanh điều khiển audio
+                startTimer();
+            }
+
+            renderQuestion();
+        }
+
+        // 2. RENDER CÂU HỎI
+        function renderQuestion() {
+            const q = questions[currentQIndex];
+            document.getElementById('current-q-num').innerText = currentQIndex + 1;
+            document.getElementById('question-text').innerText = q.text;
+            
+            // Render thanh tiến độ
+            const progress = ((currentQIndex) / questions.length) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+
+            // Giả lập Audio auto play cho chế độ thi thử
+            if (currentMode === 'test' && q.audioHint) {
+                // Thực tế ở đây sẽ là element.play()
+                console.log("Đang phát audio tự động 2 lần...");
+            } else {
+                document.getElementById('audio-status').innerText = q.audioHint || "(Câu này không có audio)";
+            }
+
+            // Render Options
+            const optionsArea = document.getElementById('options-area');
+            optionsArea.innerHTML = '';
+            q.options.forEach((opt, index) => {
+                const isSelected = userAnswers[currentQIndex] === index ? 'selected' : '';
+                optionsArea.innerHTML += `
+                    <div class="option-item ${isSelected}" onclick="selectOption(${index})">
+                        ${opt}
+                    </div>
+                `;
+            });
+
+            // Nút điều hướng
+            document.getElementById('btn-prev').disabled = currentQIndex === 0;
+            if (currentQIndex === questions.length - 1) {
+                document.getElementById('btn-next').innerText = "Nộp bài 🏁";
+                document.getElementById('btn-next').classList.add('btn-secondary');
+                document.getElementById('btn-next').classList.remove('btn-primary');
+            } else {
+                document.getElementById('btn-next').innerText = "Tiếp theo 🔜";
+                document.getElementById('btn-next').classList.add('btn-primary');
+                document.getElementById('btn-next').classList.remove('btn-secondary');
+            }
+        }
+
+        // 3. CHỌN ĐÁP ÁN
+        function selectOption(index) {
+            userAnswers[currentQIndex] = index;
+            renderQuestion(); // Render lại để hiện hiệu ứng selected
+        }
+
+        function nextQuestion() {
+            if (currentQIndex < questions.length - 1) {
+                currentQIndex++;
+                renderQuestion();
+            } else {
+                submitQuiz();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQIndex > 0) {
+                currentQIndex--;
+                renderQuestion();
+            }
+        }
+
+        // Timer cho chế độ thi thử
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById('timer').innerText = `⏳ ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        // 4. NỘP BÀI VÀ TÍNH ĐIỂM
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            quizContainer.classList.add('hidden');
+            resultModal.classList.remove('hidden');
+
+            let correctCount = 0;
+            userAnswers.forEach((ans, index) => {
+                if (ans === questions[index].correctAnswer) correctCount++;
+            });
+
+            const percent = Math.round((correctCount / questions.length) * 100);
+            
+            // Cập nhật vòng tròn điểm số
+            document.getElementById('score-chart').style.background = `conic-gradient(var(--primary) ${percent}%, #e2e8f0 0)`;
+            document.getElementById('score-text').innerText = `${percent}%`;
+
+            // Feedback Profound & Cute
+            let feedback = "";
+            if (percent === 100) feedback = "Đỉnh của chóp! Gốc rễ của bạn quá vững chắc! 🌟";
+            else if (percent >= 60) feedback = "Làm tốt lắm! Bạn đã sẵn sàng cho kỳ thi thực tế rồi đấy! 🐼";
+            else feedback = "Không sao cả, sai lầm là cơ hội để học sâu hơn! Chăm chỉ lên nhé! 🌱";
+
+            document.getElementById('result-feedback').innerText = feedback;
+            document.getElementById('result-stats').innerText = `Bạn làm đúng ${correctCount}/${questions.length} câu. Thời gian: ${currentMode === 'test' ? (15*60 - timeLeft) + ' giây' : 'Không tính giờ'}`;
+        }
+
+        // 5. REVIEW SÂU SẮC (GIẢI THÍCH)
+        function showReview() {
+            resultModal.classList.add('hidden');
+            reviewContainer.classList.remove('hidden');
+
+            const reviewContent = document.getElementById('review-content');
+            reviewContent.innerHTML = '';
+
+            questions.forEach((q, index) => {
+                const userAns = userAnswers[index];
+                const isCorrect = userAns === q.correctAnswer;
+                const userAnsText = userAns !== null ? q.options[userAns] : 'Chưa làm';
+                const correctAnsText = q.options[q.correctAnswer];
+
+                reviewContent.innerHTML += `
+                    <div class="review-layout" style="margin-bottom: 30px;">
+                        <div class="review-left">
+                            <h3 style="color: var(--text-dark)">Câu ${index + 1}: ${q.text}</h3>
+                            <p>Bạn chọn: <span class="${isCorrect ? 'correct-ans' : 'wrong-ans'}">${userAnsText}</span> ${isCorrect ? '✅' : '❌'}</p>
+                            ${!isCorrect ? `<p>Đáp án đúng: <span class="correct-ans">${correctAnsText}</span></p>` : ''}
+                        </div>
+                        <div class="review-right">
+                            <h4 style="margin-top: 0; color: #b45309;">💡 Giải nghĩa</h4>
+                            <p style="font-size: 18px; margin: 5px 0;">${q.explanation.script}</p>
+                            <p style="font-style: italic; color: var(--text-gray); margin-top: 0;">"${q.explanation.vietnamese}"</p>
+                            <div class="explanation-text">
+                                ${q.explanation.why}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
