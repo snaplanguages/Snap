@@ -230,7 +230,39 @@
         .snap-btn-container { display: flex; gap: 15px; justify-content: center; }
         .snap-btn-confirm { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 12px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.2s; width: 100%; }
         .snap-btn-confirm:hover { background: var(--primary-dark); transform: translateY(-2px); }
-
+/* --- NÚT AUDIO CHO TỪ VỰNG --- */
+.audio-icon-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 107, 139, 0.1);
+    color: var(--primary-dark);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+.audio-icon-btn:hover {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.1);
+}
+.ex-audio-inline {
+    display: inline-block;
+    cursor: pointer;
+    margin-left: 6px;
+    font-size: 0.95rem;
+    color: var(--primary-dark);
+    transition: transform 0.1s;
+}
+.ex-audio-inline:active { transform: scale(1.2); }
         @media (max-width: 520px) {
             .hanzi-grid { grid-template-columns: 1fr; }
             .hanzi-flip-card { height: 390px; }
@@ -494,7 +526,23 @@
         }
     }
     document.body.addEventListener('click', initAudio, { once: true });
-
+// ========== PHÁT ÂM TIẾNG TRUNG (TTS) ==========
+function speakChinese(text, isSlow = false) {
+    if ('speechSynthesis' in window) {
+        // Hủy lượt đọc cũ nếu có để tránh bị đè tiếng
+        window.speechSynthesis.cancel();
+        
+        var utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'zh-CN'; // Đọc giọng Trung Quốc chuẩn
+        
+        // Nếu là từ vựng thì cho đọc chậm một chút cho học viên dễ nghe (0.8), câu ví dụ thì đọc bình thường (1)
+        utterance.rate = isSlow ? 0.75 : 0.9; 
+        
+        window.speechSynthesis.speak(utterance);
+    } else {
+        showToast("Trình duyệt của bạn không hỗ trợ phát âm tự động!", "error");
+    }
+}
     // ========== RENDER ==========
     var writerInstances = {};
 
@@ -528,27 +576,31 @@
     }
 
     function renderVocabCards() {
-        var container = document.getElementById('vocab-container');
-        container.innerHTML = vocabData.map(function(item, i) {
-            return '<div class="flashcard" onclick="flipVocab(' + i + ')" id="fcard-' + i + '">' +
-                '<div class="flashcard-inner">' +
-                    '<div class="flashcard-front">' +
-                        '<div class="word-cn">' + item.word + '</div>' +
-                        '<div class="hint">👆 Chạm để lật thẻ</div>' +
-                    '</div>' +
-                    '<div class="flashcard-back">' +
-                        '<div class="py">' + item.pinyin + '</div>' +
-                        '<div class="mn">' + item.meaning + '</div>' +
-                        '<div class="example-box">' +
-                            '<div class="ex-cn">' + item.ex_cn + '</div>' +
-                            '<div class="ex-py">' + item.ex_py + '</div>' +
-                            '<div class="ex-vn">' + item.ex_vn + '</div>' +
-                        '</div>' +
+    var container = document.getElementById('vocab-container');
+    container.innerHTML = vocabData.map(function(item, i) {
+        return '<div class="flashcard" onclick="flipVocab(' + i + ')" id="fcard-' + i + '">' +
+            '<div class="flashcard-inner">' +
+                // Mặt trước từ vựng (Có nút loa to ở góc)
+                '<div class="flashcard-front">' +
+                    '<button class="audio-icon-btn" onclick="event.stopPropagation(); speakChinese(\'' + item.word + '\', true)">🔊</button>' +
+                    '<div class="word-cn">' + item.word + '</div>' +
+                    '<div class="hint">👆 Chạm để lật thẻ</div>' +
+                '</div>' +
+                // Mặt sau từ vựng (Có nút loa đọc từ và loa nhỏ đọc câu ví dụ)
+                '<div class="flashcard-back">' +
+                    '<button class="audio-icon-btn" onclick="event.stopPropagation(); speakChinese(\'' + item.word + '\', true)">🔊</button>' +
+                    '<div class="py">' + item.pinyin + '</div>' +
+                    '<div class="mn">' + item.meaning + '</div>' +
+                    '<div class="example-box">' +
+                        '<div class="ex-cn">' + item.ex_cn + ' <span class="ex-audio-inline" onclick="event.stopPropagation(); speakChinese(\'' + item.ex_cn + '\', false)">🗣️</span></div>' +
+                        '<div class="ex-py">' + item.ex_py + '</div>' +
+                        '<div class="ex-vn">' + item.ex_vn + '</div>' +
                     '</div>' +
                 '</div>' +
-            '</div>';
-        }).join('');
-    }
+            '</div>' +
+        '</div>';
+    }).join('');
+}
 
     function flipCard(char) {
         playSound('click');
