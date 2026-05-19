@@ -1,0 +1,2854 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test 4 - 2018 | SnapEnglish</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style> 
+        :root {
+            /* Theme Test 4: Ocean Blue & Sky */
+            --primary: #4169E1;        /* Royal Blue */
+            --primary-dark: #27408B; 
+            --primary-light: #E1F0FF;  
+            --secondary: #55EFEC;      /* Mint/Aqua */
+            --success: #00B894;
+            --danger: #FF7675;
+            --bg-main: #F4F9FA;
+            --bg-card: #FFFFFF;
+            --text-main: #2D3436;
+            --text-muted: #636E72;
+            --border: #DFE6E9;
+            --header-h: 60px;
+            --footer-h: 90px;
+        }
+
+        /* TOAST NOTIFICATION */
+        #toastNotification {
+            position: fixed; bottom: -100px; right: 30px;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5); box-shadow: 0 10px 30px rgba(9, 132, 227, 0.15);
+            padding: 15px 25px; border-radius: 12px; display: flex; align-items: center; gap: 15px;
+            z-index: 10000; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        #toastNotification.show { bottom: 30px; }
+        .toast-icon { font-size: 24px; }
+        .toast-content { display: flex; flex-direction: column; }
+        .toast-title { font-weight: 800; color: var(--primary-dark); font-size: 16px; }
+        .toast-desc { color: var(--text-muted); font-size: 14px; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito Sans', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+        /* CUSTOM MODAL / POPUP */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(45, 52, 54, 0.8); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center; z-index: 9999;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        .modal-box {
+            background: white; padding: 40px; border-radius: 20px; width: 90%; max-width: 500px;
+            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.2); transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.show .modal-box { transform: translateY(0); }
+        .modal-title { font-size: 24px; font-weight: 800; color: var(--primary-dark); margin-bottom: 15px; }
+        .modal-desc { font-size: 16px; color: var(--text-muted); margin-bottom: 25px; line-height: 1.6; }
+        
+        .mode-btn {
+            display: block; width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px;
+            font-size: 16px; font-weight: 700; cursor: pointer; border: 2px solid var(--border);
+            background: white; color: var(--text-muted); transition: all 0.2s;
+        }
+        .mode-btn:hover, .mode-btn.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+        
+        .input-time {
+            width: 100px; padding: 10px; font-size: 18px; text-align: center;
+            border: 2px solid var(--border); border-radius: 8px; margin: 10px 0 20px 0;
+        }
+
+        .btn {
+            padding: 12px 25px; border-radius: 10px; font-weight: 700; font-size: 16px;
+            cursor: pointer; border: none; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center;
+        }
+        .btn-primary { background: var(--primary); color: white; box-shadow: 0 4px 15px rgba(65, 105, 225, 0.3); }
+        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
+        .btn-outline { background: white; border: 2px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: #F1F2F6; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; box-shadow: 0 4px 15px rgba(255, 118, 117, 0.3); }
+        .btn-danger:hover { background: #b02728; transform: translateY(-2px); }
+        .modal-actions { display: flex; justify-content: center; gap: 15px; margin-top: 20px; }
+
+        /* HEADER */
+        header {
+            height: var(--header-h); background: white; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center; padding: 0 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02); z-index: 100;
+        }
+        .brand { font-size: 22px; font-weight: 800; color: var(--primary-dark); }
+        .brand span { color: var(--primary); }
+        
+        .tabs { display: flex; gap: 5px; background: #F1F2F6; padding: 5px; border-radius: 12px; }
+        .tab-btn {
+            padding: 8px 20px; border: none; background: transparent; border-radius: 8px;
+            font-weight: 700; color: var(--text-muted); cursor: pointer; transition: 0.2s; font-size: 15px;
+        }
+        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        .header-right { display: flex; align-items: center; gap: 20px; }
+        .timer { font-size: 20px; font-weight: 800; color: var(--primary-dark); background: var(--primary-light); padding: 8px 15px; border-radius: 8px; font-variant-numeric: tabular-nums; }
+
+        /* MAIN CONTENT AREA */
+        main { flex: 1; overflow-y: auto; padding: 40px; scroll-behavior: smooth; }
+        .part-container { display: none; width: 100%; animation: fadeIn 0.4s ease; }
+        .part-container.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Tìm và thay thế các class này trong file của bạn */
+.part-title { font-size: 24px; font-weight: 800; color: var(--primary-dark); margin-bottom: 5px; text-align: center;}
+.part-desc { font-size: 15px; color: var(--text-muted); margin-bottom: 15px; text-align: center; } /* Đã giảm margin-bottom từ 40px xuống 15px */
+
+.q-card {
+    display: none;
+    animation: fadeIn 0.4s ease;
+    background: white; 
+    padding: 20px 30px; /* Đã giảm padding trên dưới từ 30px xuống 20px */
+    border-radius: 16px; 
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02); 
+    margin-bottom: 20px; /* Đã giảm margin-bottom */
+}
+        .q-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .q-num {
+            background: var(--primary); color: white; width: 40px; height: 40px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 18px; flex-shrink: 0;
+        }
+        .q-text { font-size: 18px; font-weight: 700; color: var(--text-main); }
+        .q-text.hidden-in-mock { filter: blur(4px); user-select: none; transition: 0.3s; }
+        .q-text.revealed { filter: blur(0); }
+
+        /* LAYOUTS */
+        .split-layout { display: flex; gap: 30px; align-items: flex-start; }
+        .split-media { 
+            flex: 1; position: sticky !important; top: 10px; align-self: flex-start; 
+            max-height: calc(100vh - 100px); overflow-y: auto; background: #F8FAFC; padding: 20px; border-radius: 12px; 
+            border: 1px dashed #CBD5E1; text-align: center;
+        }
+        .split-media::-webkit-scrollbar { width: 6px; }
+        .split-media::-webkit-scrollbar-thumb { background: #B2BEC3; border-radius: 10px; }
+        .resizer {
+            width: 8px; background-color: #DFE6E9; cursor: col-resize; border-radius: 4px;
+            transition: background 0.2s; flex-shrink: 0; position: sticky; top: 10px;
+            height: calc(100vh - 100px); align-self: flex-start;
+        }
+        .resizer:hover, .resizer.dragging { background-color: var(--primary); }
+        .split-media img { max-width: 100%; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .split-media audio { width: 100%; outline: none; }
+        .split-questions { flex: 1.2; }
+
+        /* --- TỐI ƯU GIAO DIỆN ĐA THIẾT BỊ (ĐIỆN THOẠI & MÁY TÍNH BẢNG) --- */
+#cardNavArea {
+    flex-shrink: 0; /* Đảm bảo khu vực nút không bị ép cho xẹp lép */
+}
+
+@media (max-width: 1024px) {
+    /* 1. Sắp xếp lại Header, ẨN TABS (Part 1,2,3,4) cho gọn */
+    header { 
+        height: 60px; 
+        flex-direction: row !important; /* Giữ logo và đồng hồ cùng 1 hàng */
+        padding: 0 15px; 
+    }
+    .tabs { display: none !important; } /* Ẩn thanh Part đi */
+    .brand { font-size: 18px; }
+    .header-right { width: auto !important; gap: 10px; }
+    .timer { font-size: 15px; padding: 6px 12px; }
+
+    /* 2. Thu nhỏ bố cục câu hỏi (Card) */
+    .split-layout { flex-direction: column; gap: 15px; }
+    /* Tối ưu bám dính (Sticky) cho phần Ảnh/Audio/Bảng biểu trên Mobile */
+    .split-media { 
+        position: sticky !important; 
+        top: 0; /* Bám sát mép trên cùng của màn hình */
+        z-index: 50; /* Nổi bồng bềnh lên trên các câu hỏi */
+        background: #F8FAFC !important; /* Nền màu xám nhạt để che chữ của câu hỏi trượt bên dưới */
+        max-height: 40vh; /* Chỉ chiếm tối đa 40% chiều cao màn hình để chừa chỗ đọc câu hỏi */
+        overflow-y: auto; /* Nếu bảng biểu hoặc hình quá dài, cho phép cuộn nhẹ bên trong nó */
+        width: 100%; 
+        padding: 15px 10px 10px 10px !important;
+        border-bottom: 2px dashed var(--border); /* Tạo đường phân cách 2 tầng trên-dưới */
+        box-shadow: 0 8px 15px rgba(0,0,0,0.05); /* Đổ bóng nhẹ cho đẹp mắt */
+    }
+    .resizer { display: none; }
+    main { padding: 10px !important; }
+    .q-card { padding: 15px; margin-bottom: 10px; }
+
+    /* 3. Thu nhỏ "xíu xiu" Bảng Câu Hỏi */
+    .nav-panel { 
+        height: 45vh; /* Thấp xuống nửa màn hình thôi */
+        padding: 15px; 
+    } 
+    .nav-panel-header { margin-bottom: 10px; padding-bottom: 10px; }
+    .nav-grid { 
+        grid-template-columns: repeat(auto-fill, minmax(32px, 1fr)) !important; /* Ô vuông nhỏ lại */
+        gap: 8px !important; 
+    }
+    .nav-dot { 
+        min-width: 32px; 
+        height: 32px; 
+        font-size: 12px; 
+        border-radius: 6px;
+    }
+    
+    /* 4. Cứu 2 nút "Tiếp theo / Quay lại" không bị nút nổi (FAB) lấp mất */
+    #cardNavArea {
+        padding: 10px 15px 90px 15px !important; /* Đẩy khoảng trống bên dưới lên 90px để né nút FAB */
+        display: flex;
+        gap: 10px;
+    }
+    .btn-nav {
+        padding: 10px;
+        font-size: 14px;
+        flex: 1; /* Tự động chia đều 2 bên, nhìn rất cân đối */
+    }
+}
+
+        /* OPTIONS */
+        .options-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+        .opt-label {
+            display: flex; align-items: center; padding: 15px 20px; border-radius: 12px;
+            border: 2px solid var(--border); cursor: pointer; transition: 0.2s;
+            background: white; font-weight: 600; font-size: 16px;
+        }
+        .opt-label:hover { border-color: #A0C4FF; background: #F4F8FF; }
+        .opt-label input { display: none; }
+        .custom-radio {
+            width: 24px; height: 24px; border: 2px solid #B2BEC3; border-radius: 50%;
+            margin-right: 15px; position: relative; flex-shrink: 0;
+        }
+        .opt-label input:checked + .custom-radio { border-color: var(--primary); }
+        .opt-label input:checked + .custom-radio::after {
+            content: ""; position: absolute; width: 12px; height: 12px; background: var(--primary);
+            border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        }
+        .opt-label.selected { border-color: var(--primary); background: var(--primary-light); }
+
+        /* POST-SUBMISSION EXPLANATIONS */
+        .opt-label.is-correct { border-color: var(--success); background: #E6F8F3; }
+        .opt-label.is-wrong { border-color: var(--danger); background: #FDEAEA; opacity: 0.7; }
+        
+        .explanation-box {
+            display: none; margin-top: 25px; padding: 25px; background: #F8FAFC;
+            border-left: 5px solid var(--primary); border-radius: 0 12px 12px 0;
+            font-size: 16px; line-height: 1.6; animation: fadeIn 0.5s;
+        }
+        .explanation-box.show { display: block; }
+        .exp-title { font-weight: 800; color: var(--primary-dark); margin-bottom: 15px; font-size: 18px; border-bottom: 1px dashed var(--border); padding-bottom: 10px;}
+        .script-en { font-weight: 700; color: var(--primary-dark); margin-bottom: 5px; }
+        .script-vi { color: var(--text-muted); font-style: italic; margin-bottom: 15px; }
+        .vocab-box { background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-top: 15px; }
+        .trap-tag { background: #FFEAA7; color: #D35400; padding: 2px 8px; border-radius: 6px; font-size: 14px; font-weight: 800; margin-right: 5px;}
+        .bingo-tag { background: #D5F5E3; color: #1E8449; padding: 2px 8px; border-radius: 6px; font-size: 14px; font-weight: 800; margin-right: 5px;}
+        
+        .hl-q1 { background-color: #ffeaa7; padding: 2px 4px; border-radius: 4px; font-weight: 700; color: #b38b14; }
+        .hl-q2 { background-color: #fab1a0; padding: 2px 4px; border-radius: 4px; font-weight: 700; color: #c0392b; }
+        .hl-q3 { background-color: #81ecec; padding: 2px 4px; border-radius: 4px; font-weight: 700; color: #008080; }
+        .hl-right { background-color: #D5F5E3; color: #1E8449; font-weight: 700; padding: 2px 6px; border-radius: 6px; }
+        .hl-wrong { background-color: #FDEBD0; color: #C0392B; font-weight: 700; padding: 2px 6px; border-radius: 6px; text-decoration: line-through decoration-red; }
+        
+        .graphic-table { width: 100%; border-collapse: collapse; margin: 15px 0; background: white; border: 2px solid var(--border); font-size: 15px; border-radius: 8px; overflow: hidden; }
+        .graphic-table th, .graphic-table td { border: 1px solid var(--border); padding: 10px; text-align: center; }
+        .graphic-table th { background: #F8FAFC; font-weight: 800; color: var(--primary-dark); }
+        
+        /* FOOTER NAVIGATION */
+        footer {
+            height: var(--footer-h); background: white; border-top: 1px solid var(--border);
+            padding: 15px 30px; display: flex; flex-direction: column; justify-content: center; z-index: 100;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.03);
+        }
+        .nav-title { font-size: 14px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; }
+        .nav-grid { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; }
+        .nav-grid::-webkit-scrollbar { height: 6px; }
+        .nav-grid::-webkit-scrollbar-thumb { background: #B2BEC3; border-radius: 10px; }
+        .nav-dot {
+            min-width: 40px; height: 40px; border-radius: 8px; border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;
+            cursor: pointer; background: white; color: var(--text-muted); transition: 0.2s; flex-shrink: 0;
+        }
+        .nav-dot:hover { border-color: var(--primary); color: var(--primary); }
+        .nav-dot.answered { background: var(--primary-light); border-color: var(--primary); color: var(--primary-dark); }
+        .nav-dot.correct { background: var(--success); border-color: var(--success); color: white; }
+        .nav-dot.wrong { background: var(--danger); border-color: var(--danger); color: white; }
+        
+        /* NÚT ĐIỀU HƯỚNG NỔI (FAB) */
+        .nav-toggle-btn {
+            position: fixed; 
+            bottom: 25px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: var(--primary-dark); 
+            border: 2px solid var(--border); 
+            padding: 12px 25px;
+            border-radius: 30px; 
+            font-weight: 800; 
+            font-size: 16px; 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            cursor: pointer; 
+            z-index: 900; 
+            transition: all 0.3s ease;
+            display: flex; 
+            align-items: center; 
+            gap: 8px;
+        }
+        .nav-toggle-btn:hover { 
+            background: var(--primary); 
+            color: white; 
+            border-color: var(--primary);
+            transform: translate(-50%, -3px); 
+            box-shadow: 0 15px 30px rgba(65, 105, 225, 0.2);
+        }
+
+        /* LỚP PHỦ TỐI MÀU & BẢNG ĐIỀU HƯỚNG */
+        .nav-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(45, 52, 54, 0.5); backdrop-filter: blur(3px);
+            z-index: 899; display: none; opacity: 0; transition: opacity 0.3s ease;
+        }
+        .nav-overlay.show { display: block; opacity: 1; }
+
+        .nav-panel {
+            position: fixed; bottom: -100%; left: 0; width: 100%; height: 65vh; max-height: 500px;
+            background: white; border-top-left-radius: 24px; border-top-right-radius: 24px;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.1); z-index: 901; 
+            transition: bottom 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex; flex-direction: column; padding: 25px;
+        }
+        .nav-panel.show { bottom: 0; }
+
+        .nav-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px dashed var(--border); padding-bottom: 15px;}
+        .close-nav-btn { 
+            background: #F1F2F6; border: none; width: 35px; height: 35px; border-radius: 50%; 
+            cursor: pointer; color: var(--text-muted); font-weight: bold; transition: 0.2s;
+        }
+        .close-nav-btn:hover { background: #FDEAEA; color: var(--danger); }
+
+        /* GRID TỰ ĐỘNG RESPONSIVE */
+        .nav-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(45px, 1fr)); 
+            gap: 12px; 
+            overflow-y: auto; 
+            padding-bottom: 30px; 
+            padding-right: 5px;
+        }
+        .nav-grid::-webkit-scrollbar { width: 6px; }
+        .nav-grid::-webkit-scrollbar-thumb { background: #B2BEC3; border-radius: 10px; }
+
+        main { padding-bottom: 90px !important; }
+
+        /* CSS HISTORY ITEMS */
+        .history-item { background: var(--bg-main); border: 1px solid var(--border); padding: 12px 15px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .history-item:hover { border-color: var(--primary); background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .history-info { display: flex; flex-direction: column; gap: 5px; }
+        .history-date { font-weight: bold; color: var(--text-main); font-size: 15px; }
+        .history-score { color: var(--primary-dark); font-size: 14px; font-weight: 600; }
+        .btn-review { background: var(--primary-light); color: var(--primary-dark); border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-review:hover { background: var(--primary); color: white; }
+        .btn-delete-history { background: #FDEAEA; color: var(--danger); border: none; padding: 0 10px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 20px; }
+        .btn-delete-history:hover { background: var(--danger); color: white; }
+        #historyList::-webkit-scrollbar { width: 6px; }
+        #historyList::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+        /* --- GIAO DIỆN TỪNG CÂU (PAGINATION) --- */
+.q-card {
+    display: none; /* Ẩn hết tất cả các card mặc định */
+    animation: fadeIn 0.4s ease;
+}
+
+/* Nút điều hướng Next/Prev */
+.card-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 10px 0;
+    border-top: 2px dashed var(--border);
+}
+
+.btn-nav {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+    background: white;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.btn-nav:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-nav:disabled {
+    background: #F1F2F6;
+    color: #B2BEC3;
+    border-color: #DFE6E9;
+    cursor: not-allowed;
+}
+        /* --- TỐI ƯU KHOẢNG TRỐNG TRÊN LAPTOP / DESKTOP (MÀN HÌNH LỚN) --- */
+@media (min-width: 1025px) {
+    /* 1. Trả lại không gian chiều ngang, bung rộng theo màn hình (chỉ để lề 40px) */
+    main { 
+        padding: 10px 40px 15px 40px !important; 
+    }
+    
+    /* 2. Ép gọn phần tiêu đề Part */
+    .part-title { 
+        font-size: 22px; 
+        margin-bottom: 2px; 
+    }
+    .part-desc { 
+        font-size: 14px; 
+        margin-bottom: 15px; 
+    }
+
+    /* 3. Thu gọn padding bên trong Card câu hỏi và tạo độ cao vừa vặn */
+    .q-card { 
+        padding: 20px 30px !important; 
+        margin-bottom: 10px !important;
+        min-height: 460px; /* Giữ nguyên độ cao tối thiểu cho form đẹp */
+        display: flex;
+        flex-direction: column;
+        justify-content: center; 
+    }
+    
+    /* Riêng Part 2 câu hỏi rất ngắn, ép nó gọn lại ở giữa màn hình để khỏi bị kéo giãn quá lố */
+    #part2 .q-card {
+        min-height: auto !important;
+        padding: 25px 30px !important;
+        max-width: 800px; 
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    /* 4. Bung rộng luôn khu vực nút Tiếp theo / Quay lại cho đồng bộ */
+    #cardNavArea {
+        padding: 5px 40px 10px 40px !important;
+        margin-top: 5px !important;
+    }
+}
+    </style>
+</head>
+<body>
+
+<div id="setupModal" class="modal-overlay show">
+    <div class="modal-box">
+        <div class="modal-title">TOEIC Listening Test 4</div>
+        <div class="modal-desc">Chào mừng bạn đến với bài thi thử TOEIC Listening Test 4 - 2018 (Full Test). Vui lòng chọn chế độ làm bài.</div>
+        
+        <button class="mode-btn" id="btnModePractice" onclick="selectMode('practice')">🌿 Luyện Tập </button>
+        <button class="mode-btn" id="btnModeMock" onclick="selectMode('mock')">🔥 Thi Thử </button>
+        
+        <div id="timeSettings" style="display: none; margin-top: 15px;">
+            <label style="font-weight: 700; color: var(--text-main);">Thời gian (phút): </label>
+            <input type="number" id="inputTime" class="input-time" value="45" min="5" max="120">
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button class="btn btn-outline" style="flex: 1;" onclick="openHistoryModal()">🕒 Xem lịch sử</button>
+            <button class="btn btn-primary" style="flex: 1; display: none;" id="btnStart" onclick="startTest()">Bắt đầu</button>
+        </div>
+    </div>
+</div>
+
+<div id="historyOverlay" class="modal-overlay">
+    <div class="modal-box" style="max-width: 500px; width: 100%; text-align: left;">
+        <div class="modal-title" style="text-align: center;">🕒 Lịch sử làm bài</div>
+        <div id="historyList" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; padding-right: 5px;"></div>
+        <button class="btn btn-outline" style="width: 100%;" onclick="closeModal('historyOverlay')">Quay lại</button>
+    </div>
+</div>
+
+<div id="confirmModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-title">Xác nhận nộp bài</div>
+        <div class="modal-desc">Bạn có chắc chắn muốn nộp bài? Các câu chưa làm sẽ bị tính là sai.</div>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeModal('confirmModal')">Quay lại làm tiếp</button>
+            <button class="btn btn-primary" onclick="executeSubmit()">Đồng ý nộp bài</button>
+        </div>
+    </div>
+</div>
+
+<div id="customConfirmModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-title" id="ccTitle">Xác nhận</div>
+        <div class="modal-desc" id="ccDesc">Bạn có chắc chắn muốn thực hiện hành động này?</div>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeModal('customConfirmModal')">Hủy bỏ</button>
+            <button class="btn btn-danger" id="ccConfirmBtn">Đồng ý</button>
+        </div>
+    </div>
+</div>
+
+<div id="resultModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-title">Kết Quả Bài Thi 🏆</div>
+        <div style="font-size: 60px; font-weight: 800; color: var(--primary); margin: 10px 0;" id="scoreDisplay">0/100</div>
+        <div class="modal-desc" id="scoreComment">Tuyệt vời! Hãy xem chi tiết giải thích ở từng câu bên dưới.</div>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="location.reload()">Làm lại bài khác</button>
+            <button class="btn btn-success" onclick="closeModal('resultModal')">Xem giải thích chi tiết</button>
+        </div>
+    </div>
+</div>
+
+<header>
+    <div class="brand">Snap<span>English</span></div>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab(1)">Part 1</button>
+        <button class="tab-btn" onclick="switchTab(2)">Part 2</button>
+        <button class="tab-btn" onclick="switchTab(3)">Part 3</button>
+        <button class="tab-btn" onclick="switchTab(4)">Part 4</button>
+    </div>
+    <div class="header-right">
+        <div class="timer" id="timerDisplay">45:00</div>
+        <button class="btn btn-primary" id="headerSubmitBtn" onclick="requestSubmit()">Nộp bài</button>
+    </div>
+</header>
+
+<main id="mainContent">
+    </main>
+
+<div class="card-navigation" id="cardNavArea" style="padding: 10px 40px 20px 40px; margin-top: 10px;">
+    <button class="btn-nav" id="btnPrevCard" onclick="prevCard()">⬅ Câu trước</button>
+    <button class="btn-nav" id="btnNextCard" onclick="nextCard()">Câu tiếp theo ➡</button>
+</div>
+
+<button class="nav-toggle-btn" id="navToggleBtn" onclick="toggleNavPanel()">
+    🧭 <span id="answeredCount">0</span>/100
+</button>
+
+<div class="nav-overlay" id="navOverlay" onclick="toggleNavPanel()"></div>
+<div id="navPanel" class="nav-panel">
+    <div class="nav-panel-header">
+        <div class="nav-title" style="margin: 0; font-size: 18px;">Bảng điều hướng nhanh</div>
+        <button class="close-nav-btn" onclick="toggleNavPanel()">✖</button>
+    </div>
+    <div class="nav-grid" id="navGrid"></div>
+</div>
+
+<script>
+    // BẠN SẼ THAY DỮ LIỆU CỦA TEST 4 VÀO ĐÂY BẰNG CÁCH COPY OBJECT "TOEIC_DATA" CỦA TỪNG PART VÀO ĐÚNG VỊ TRÍ
+    
+        const TOEIC_DATA = {
+   // ==========================================
+// PART 1: PHOTOGRAPHS (Câu 1 - 6)
+// ==========================================
+const part1 = [
+  {
+    id: 1,
+    audio: "audio/listening/test4/part1/q1.mp3",
+    image: "img/listening/test4/part1/q1.jpg",
+    options: ["A", "B", "C", "D"],
+    correct: "A",
+    transcript: `<strong>A.</strong> He's looking at a computer screen. <em>(Anh ấy đang nhìn vào màn hình máy tính.)</em><br>
+<strong>B.</strong> He's typing on a keyboard. <em>(Anh ấy đang gõ bàn phím.)</em><br>
+<strong>C.</strong> He's adjusting a headrest. <em>(Anh ấy đang điều chỉnh gối tựa đầu.)</em><br>
+<strong>D.</strong> He's writing in a notebook. <em>(Anh ấy đang viết vào một cuốn sổ.)</em>`,
+    explanation: "Dựa vào hình ảnh, người đàn ông đang ngồi tập trung nhìn vào màn hình máy tính cá nhân. Hành động này trùng khớp hoàn toàn với phương án (A). Các phương án khác đều sai hành động thực tế.",
+    highlight: "looking at a computer screen"
+  },
+  {
+    id: 2,
+    audio: "audio/listening/test4/part1/q2.mp3",
+    image: "img/listening/test4/part1/q2.jpg",
+    options: ["A", "B", "C", "D"],
+    correct: "C",
+    transcript: `<strong>A.</strong> Some boards are leaning against a house. <em>(Vài tấm ván đang tựa vào một ngôi nhà.)</em><br>
+<strong>B.</strong> Some walkways are being swept. <em>(Vài lối đi đang được quét dọn.)</em><br>
+<strong>C.</strong> Some bricks are stacked in a pile. <em>(Vài viên gạch được xếp thành một đống.)</em><br>
+<strong>D.</strong> Some tools are being put in a box. <em>(Vài công cụ đang được bỏ vào hộp.)</em>`,
+    explanation: "Hình ảnh hiển thị rõ ràng các viên gạch công trình được xếp chồng ngay ngắn thành đống lớn trên mặt đất, phù hợp với mô tả ở đáp án (C).",
+    highlight: "bricks are stacked in a pile"
+  },
+  {
+    id: 3,
+    audio: "audio/listening/test4/part1/q3.mp3",
+    image: "img/listening/test4/part1/q3.jpg",
+    options: ["A", "B", "C", "D"],
+    correct: "A",
+    transcript: `<strong>A.</strong> She's holding a piece of paper. <em>(Cô ấy đang cầm một tờ giấy.)</em><br>
+<strong>B.</strong> She's hanging up a picture. <em>(Cô ấy đang treo một bức tranh.)</em><br>
+<strong>C.</strong> She's turning on a light. <em>(Cô ấy đang bật đèn.)</em><br>
+<strong>D.</strong> She's putting away some binders. <em>(Cô ấy đang cất vài bìa hồ sơ.)</em>`,
+    explanation: "Người phụ nữ trong ảnh đang cầm một tờ tài liệu/tờ giấy trên tay tại văn phòng làm việc, do đó đáp án (A) là miêu tả chính xác nhất.",
+    highlight: "holding a piece of paper"
+  },
+  {
+    id: 4,
+    audio: "audio/listening/test4/part1/q4.mp3",
+    image: "img/listening/test4/part1/q4.jpg",
+    options: ["A", "B", "C", "D"],
+    correct: "A",
+    transcript: `<strong>A.</strong> A lamp has been placed next to a bed. <em>(Một chiếc đèn đã được đặt cạnh giường ngủ.)</em><br>
+<strong>B.</strong> A pillow is facing the window. <em>(Một chiếc gối đang hướng về phía cửa sổ.)</em><br>
+<strong>C.</strong> A blanket is draped over a chair. <em>(Một chiếc chăn đang được vắt trên ghế.)</em><br>
+<strong>D.</strong> Some curtains have been drawn shut. <em>(Vài tấm rèm cửa đã được kéo đóng lại.)</em>`,
+    explanation: "Đây là bức tranh tả vật (phòng ngủ). Ta thấy rõ một chiếc đèn ngủ được đặt ngay trên bàn cạnh đầu giường, khớp với phương án (A). Rèm cửa trong hình đang mở chứ không đóng.",
+    highlight: "lamp... placed next to a bed"
+  },
+  {
+    id: 5,
+    audio: "audio/listening/test4/part1/q5.mp3",
+    image: "img/listening/test4/part1/q5.jpg",
+    options: ["A", "B", "C", "D"],
+    correct: "C",
+    transcript: `<strong>A.</strong> One of the women is wearing a scarf. <em>(Một trong những người phụ nữ đang quàng khăn.)</em><br>
+<strong>B.</strong> One of the women is adjusting a microphone. <em>(Một trong những người phụ nữ đang chỉnh micro.)</em><br>
+<strong>C.</strong> They are looking at some document. <em>(Họ đang cùng nhìn vào một tài liệu.)</em><br>
+<strong>D.</strong> They are sitting in an auditorium. <em>(Họ đang ngồi trong một thính phòng.)</em>`,
+    explanation: "Cả hai người phụ nữ đang tập trung hướng mắt nhìn chung vào tập tài liệu đặt trên bàn. Hành động chung này được miêu tả chuẩn xác bằng phương án (C).",
+    highlight: "looking at some document"
+  },
+  {
+    id: 6,
+    audio: "audio/listening/test4/part1/q6.mp3",
+    image: "img/listening/test4/part1/q6.jpg",
+    options: ["A", "B", "C", "D"],
+    correct: "D",
+    transcript: `<strong>A.</strong> A vendor is pushing a cart through a market. <em>(Người bán hàng đang đẩy xe qua khu chợ.)</em><br>
+<strong>B.</strong> A variety of bags are hanging from hooks. <em>(Nhiều loại túi xách đang được treo trên các móc.)</em><br>
+<strong>C.</strong> A shopper is paying for a purchase. <em>(Khách mua hàng đang thanh toán hóa đơn.)</em><br>
+<strong>D.</strong> Some merchandise is displayed outside a store. <em>(Nhiều hàng hóa đang được trưng bày phía trước một cửa hàng.)</em>`,
+    explanation: "Bức tranh chụp cảnh mặt tiền một cửa tiệm với rất nhiều quần áo, hàng hóa được bày ra không gian bên ngoài để thu hút khách. Đáp án (D) phản ánh đúng tính chất bức ảnh.",
+    highlight: "merchandise is displayed outside"
+  }
+];
+part2 = [
+  {
+    id: 7,
+    audio: "audio/listening/test4/part2/q7.mp3",
+    options: ["A", "B", "C"],
+    correct: "B",
+    transcript: `<strong>How long will it take to ship this item?</strong> <em>(Mất bao lâu để giao món đồ này?)</em><br>
+<strong>A.</strong> Sure, I can take it. <em>(Chắc chắn rồi, tôi sẽ lấy nó.)</em><br>
+<strong>B.</strong> Three to four days. <em>(3 – 4 ngày.)</em><br>
+<strong>C.</strong> Shipping is free. <em>(Miễn phí giao hàng.)</em>`,
+    explanation: "Câu hỏi bắt đầu bằng cụm từ 'How long' (Mất bao lâu) nhằm tìm kiếm một khoảng thời gian cụ thể. Phương án (B) đưa ra câu trả lời trực tiếp và chính xác nhất với khoảng thời gian 'Three to four days' (3 đến 4 ngày).",
+    highlight: "How long... take to ship / Three to four days"
+  },
+  {
+    id: 8,
+    audio: "audio/listening/test4/part2/q8.mp3",
+    options: ["A", "B", "C"],
+    correct: "C",
+    transcript: `<strong>Who approved the budget estimate?</strong> <em>(Ai đã phê duyệt bản dự toán ngân sách?)</em><br>
+<strong>A.</strong> That sounds like a good idea. <em>(Nghe có vẻ là một ý tưởng hay đấy.)</em><br>
+<strong>B.</strong> About five thousand dollars. <em>(Khoảng năm nghìn đô la.)</em><br>
+<strong>C.</strong> The section head did. <em>(Trưởng bộ phận đã làm điều đó.)</em>`,
+    explanation: "Câu hỏi bắt đầu bằng từ 'Who' (Ai) dùng để hỏi về người thực hiện hành động. Phương án (C) đưa ra câu trả lời trực tiếp chỉ một đối tượng người cụ thể 'The section head' (Trưởng bộ phận) kèm trợ động từ thay thế 'did'.",
+    highlight: "Who approved / The section head did"
+  },
+  {
+    id: 9,
+    audio: "audio/listening/test4/part2/q9.mp3",
+    options: ["A", "B", "C"],
+    correct: "A",
+    transcript: `<strong>When will the museum's renovation project be completed?</strong> <em>(Khi nào dự án cải tạo bảo tàng sẽ hoàn thành?)</em><br>
+<strong>A.</strong> Not until the end of April. <em>(Phải tới cuối tháng 4.)</em><br>
+<strong>B.</strong> Yes, I sent the completed form yesterday. <em>(Vâng, tôi đã gửi mẫu đơn hoàn chỉnh vào hôm qua.)</em><br>
+<strong>C.</strong> The museum is nearby. <em>(Bảo tàng ở ngay gần đây.)</em>`,
+    explanation: "Câu hỏi sử dụng từ nghi vấn 'When' (Khi nào) yêu cầu một mốc thời gian. Phương án (A) đưa ra một mốc thời gian rõ ràng 'the end of April' (cuối tháng 4). Loại phương án (B) vì câu hỏi bắt đầu bằng Wh- không trả lời bằng Yes/No.",
+    highlight: "When... project be completed / end of April"
+  },
+  {
+    id: 10,
+    audio: "audio/listening/test4/part2/q10.mp3",
+    options: ["A", "B", "C"],
+    correct: "A",
+    transcript: `<strong>Has the new sales manager been named yet?</strong> <em>(Giám đốc kinh doanh mới đã được xướng tên/chỉ định chưa?)</em><br>
+<strong>A.</strong> I'm hoping it'll be Ms. Diaz. <em>(Tôi mong rằng đó sẽ là cô Diaz.)</em><br>
+<strong>B.</strong> There's a 25 percent discount today. <em>(Hôm nay có chương trình giảm giá 25%.)</em><br>
+<strong>C.</strong> The topic is time management. <em>(Chủ đề là quản lý thời gian.)</em>`,
+    explanation: "Câu hỏi dạng Yes/No hỏi về việc đã xác định danh tính của giám đốc kinh doanh mới chưa. Phương án (A) là câu trả lời gián tiếp cực kỳ tự nhiên, bày tỏ mong muốn người được chọn sẽ là 'Ms. Diaz'.",
+    highlight: "sales manager been named / Ms. Diaz"
+  },
+  {
+    id: 11,
+    audio: "audio/listening/test4/part2/q11.mp3",
+    options: ["A", "B", "C"],
+    correct: "B",
+    transcript: `<strong>I thought the workshop was very useful.</strong> <em>(Tôi nghĩ buổi hội thảo rất hữu ích.)</em><br>
+<strong>A.</strong> That could work. <em>(Điều đó có thể khả thi.)</em><br>
+<strong>B.</strong> Yes, I learned a lot. <em>(Đúng vậy, tôi đã học hỏi được rất nhiều.)</em><br>
+<strong>C.</strong> It's new, not used. <em>(Nó là đồ mới, chưa qua sử dụng.)</em>`,
+    explanation: "Đây là một câu trần thuật đưa ra nhận định của người nói về tính hữu ích của buổi hội thảo. Phương án (B) phản hồi phù hợp bằng cách đồng tình 'Yes' và bổ sung lý do thực tế 'I learned a lot'.",
+    highlight: "workshop was very useful / Yes, I learned a lot"
+  },
+  {
+    id: 12,
+    audio: "audio/listening/test4/part2/q12.mp3",
+    options: ["A", "B", "C"],
+    correct: "C",
+    transcript: `<strong>Why has Makoto called this staff meeting?</strong> <em>(Tại sao Makoto lại tổ chức cuộc họp nhân viên này?)</em><br>
+<strong>A.</strong> I met them yesterday. <em>(Tôi đã gặp họ vào ngày hôm qua.)</em><br>
+<strong>B.</strong> Please call back at a later time. <em>(Vui lòng gọi lại sau.)</em><br>
+<strong>C.</strong> Because the quarterly results were disappointing. <em>(Bởi vì kết quả kinh doanh theo quý thật thất vọng.)</em>`,
+    explanation: "Câu hỏi bắt đầu bằng 'Why' (Tại sao) nhằm hỏi về nguyên nhân hoặc lý do. Phương án (C) đưa ra câu trả lời trực tiếp bắt đầu bằng từ nối 'Because' chỉ lý do liên quan đến kết quả công việc.",
+    highlight: "Why... called this staff meeting / Because... quarterly results"
+  },
+  {
+    id: 13,
+    audio: "audio/listening/test4/part2/q13.mp3",
+    options: ["A", "B", "C"],
+    correct: "C",
+    transcript: `<strong>How soon will you be finished with the marketing report?</strong> <em>(Bao lâu nữa thì bạn sẽ hoàn thành xong báo cáo tiếp thị?)</em><br>
+<strong>A.</strong> Yes, he said he would. <em>(Đúng vậy, anh ấy nói rằng mình sẽ làm.)</em><br>
+<strong>B.</strong> It's not open today. <em>(Nó không mở cửa ngày hôm nay.)</em><br>
+<strong>C.</strong> In about an hour. <em>(Trong khoảng một tiếng nữa.)</em><br>`,
+    explanation: "Cụm câu hỏi 'How soon' dùng để hỏi về thời điểm một hành động sắp sửa hoàn thành trong tương lai gần. Phương án (C) chỉ ra một lượng thời gian chuẩn xác 'In about an hour' (Trong vòng một tiếng nữa).",
+    highlight: "How soon... finished / In about an hour"
+  },
+  {
+    id: 14,
+    audio: "audio/listening/test4/part2/q14.mp3",
+    options: ["A", "B", "C"],
+    correct: "C",
+    transcript: `<strong>What time can we check in to the hotel tomorrow?</strong> <em>(Ngày mai chúng tôi có thể nhận phòng khách sạn vào lúc mấy giờ?)</em><br>
+<strong>A.</strong> At the front desk. <em>(Tại bàn lễ tân.)</em><br>
+<strong>B.</strong> I usually pay with cash. <em>(Tôi thường thanh toán bằng tiền mặt.)</em><br>
+<strong>C.</strong> Any time after two. <em>(Bất cứ lúc nào sau hai giờ.)</em>`,
+    explanation: "Câu hỏi yêu cầu thông tin về mặt thời gian 'What time' (Mấy giờ). Phương án (C) đáp ứng chính xác bằng cách chỉ ra khung giờ có thể thực hiện hành động 'Any time after two'. Phương án (A) dùng để trả lời cho câu hỏi 'Where'.",
+    highlight: "What time can we check in / Any time after two"
+  },
+  {
+    id: 15,
+    audio: "audio/listening/test4/part2/q15.mp3",
+    options: ["A", "B", "C"],
+    correct: "B",
+    transcript: `<strong>Where's the closest dry cleaners?</strong> <em>(Cửa hàng giặt khô gần nhất ở đâu?)</em><br>
+<strong>A.</strong> Yes, it closed at six. <em>(Vâng, nó đã đóng cửa lúc sáu giờ.)</em><br>
+<strong>B.</strong> There's one on Eleventh Street. <em>(Có một cái nằm ở phố số 11.)</em><br>
+<strong>C.</strong> They're definitely cleaner now. <em>(Giờ đây chúng chắc chắn đã sạch hơn rồi.)</em>`,
+    explanation: "Câu hỏi bắt đầu bằng 'Where' dùng để hỏi về địa điểm, vị trí. Phương án (B) cung cấp một vị trí địa lý rõ ràng 'on Eleventh Street' phù hợp để trả lời. Loại (A) vì lặp từ phát âm gây nhiễu ('closed') và sai loại câu hỏi Wh-.",
+    highlight: "Where's the closest... / There's one on Eleventh Street"
+  },
+  {
+    id: 16,
+    audio: "audio/listening/test4/part2/q16.mp3",
+    options: ["A", "B", "C"],
+    correct: "B",
+    transcript: `<strong>If you have the time, you should travel by train rather than by air.</strong> <em>(Nếu có thời gian, bạn nên di chuyển bằng tàu hoả thay vì đi bằng máy bay.)</em><br>
+<strong>A.</strong> Training ends tomorrow. <em>(Buổi tập huấn sẽ kết thúc vào ngày mai.)</em><br>
+<strong>B.</strong> Thanks, I'll definitely consider it. <em>(Cám ơn, tôi chắc chắn sẽ cân nhắc điều đó.)</em><br>
+<strong>C.</strong> May I see your ticket? <em>(Tôi có thể kiểm tra vé của bạn được không?)</em>`,
+    explanation: "Đây là một câu đưa ra lời khuyên hoặc gợi ý cấu trúc 'you should...'. Phương án (B) đưa ra lời phản hồi lịch sự bằng cách nói cảm ơn và hứa sẽ cân nhắc lời khuyên đó. Loại (A) do lặp từ đồng âm gây nhiễu ('train' và 'training').",
+    highlight: "should travel by train... / Thanks, I'll definitely consider"
+  },
+  {
+    id: 17,
+    audio: "audio/listening/test4/part2/q17.mp3",
+    options: ["A", "B", "C"],
+    correct: "C",
+    transcript: `<strong>Where can we display these new product samples?</strong> <em>(Chúng tôi có thể trưng bày những mẫu sản phẩm mới này ở đâu?)</em><br>
+<strong>A.</strong> A variety of colors. <em>(Nhiều màu sắc khác nhau.)</em><br>
+<strong>B.</strong> From a new supplier. <em>(Từ một nhà cung cấp mới.)</em><br>
+<strong>C.</strong> In the glass case by the register. <em>(Trong tủ kính cạnh bàn đăng ký/quầy thu ngân.)</em>`,
+    explanation: "Câu hỏi dùng để hỏi về nơi chốn 'Where'. Phương án (C) trả lời chính xác bằng một cụm giới từ chỉ địa điểm rõ ràng 'In the glass case by the register'.",
+    highlight: "Where can we display / In the glass case"
+  },
+  {
+    id: 18,
+    audio: "audio/listening/test4/part2/q18.mp3",
+    options: ["A", "B", "C"],
+    correct: "A",
+    transcript: `<strong>Will the office party be catered, or do you want me to reserve a restaurant?</strong> <em>(Bữa tiệc của văn phòng sẽ do dịch vụ cung cấp đồ ăn phục vụ, hay bạn muốn tôi đặt bàn ở nhà hàng?)</em><br>
+<strong>A.</strong> Luis hired a caterer. <em>(Luis đã thuê một dịch vụ cung cấp đồ ăn rồi.)</em><br>
+<strong>B.</strong> Until the end of the month. <em>(Cho tới cuối tháng.)</em><br>
+<strong>C.</strong> They're running late. <em>(Họ đang bị muộn giờ rồi.)</em>`,
+    explanation: "Đây là câu hỏi lựa chọn giữa hai phương án: thuê dịch vụ đặt tiệc (catered) hoặc đặt nhà hàng (reserve a restaurant). Phương án (A) đã trả lời và giải quyết cho lựa chọn đầu tiên bằng việc xác nhận 'Luis hired a caterer'.",
+    highlight: "party be catered, or... / Luis hired a caterer"
+  },
+  {
+    id: 19,
+    audio: "audio/listening/test4/part2/q19.mp3",
+    options: ["A", "B", "C"],
+    correct: "A",
+    transcript: `<strong>What do you think of the proposed floor plan?</strong> <em>(Bạn nghĩ thế nào về sơ đồ thiết kế mặt sàn đã được đề xuất?)</em><br>
+<strong>A.</strong> It's a good design. <em>(Nó là một bản thiết kế tốt.)</em><br>
+<strong>B.</strong> The architecture firm. <em>(Công ty kiến trúc.)</em><br>
+<strong>C.</strong> It needs to be swept. <em>(Nó cần phải được quét dọn.)</em>`,
+    explanation: "Câu hỏi bắt đầu với cấu trúc 'What do you think of...' nhằm hỏi xin ý kiến hoặc đánh giá của người đối diện. Phương án (A) đưa ra một lời nhận xét trực tiếp và phù hợp về mặt ngữ nghĩa: 'It's a good design'.",
+    highlight: "What do you think of... / It's a good design"
+  },
+  {
+    id: 20,
+    audio: "audio/listening/test4/part2/q20.mp3",
+    options: ["A", "B", "C"],
+    correct: "C",
+    transcript: `<strong>Did Carol give you the key to the warehouse?</strong> <em>(Carol đã đưa cho bạn chiếc chìa khoá để vào nhà kho chưa?)</em><br>
+<strong>A.</strong> They work at the hardware store. <em>(Họ làm việc ở cửa hàng ngũ kim.)</em><br>
+<strong>B.</strong> She won't be home then. <em>(Cô ấy sẽ không có ở nhà lúc đó.)</em><br>
+<strong>C.</strong> I thought you had one. <em>(Tôi cứ nghĩ là bạn đã có một cái rồi chứ.)</em>`,
+    explanation: "Câu hỏi kiểm tra xem người nghe đã nhận được chìa khóa chưa. Phương án (C) đưa ra lời phản hồi gián tiếp bằng một giả định ngược lại 'I thought you had one' nhằm ám chỉ bản thân người nói cũng chưa nhận được hoặc tưởng đối phương đang giữ.",
+    highlight: "give you the key... / I thought you had one"
+  },
+  {
+    id: 21,
+    audio: "audio/listening/test4/part2/q21.mp3",
+    options: ["A", "B", "C"],
+    correct: "A",
+    transcript: `<strong>Should I open a window?</strong> <em>(Tôi có nên mở cửa sổ ra không?)</em><br>
+<strong>A.</strong> I'll turn the air-conditioning on. <em>(Thay vào đó tôi sẽ bật điều hòa lên.)</em><br>
+<strong>B.</strong> The weather forecast. <em>(Bản tin dự báo thời tiết.)</em><br>
+<strong>C.</strong> That one is, too. <em>(Cái kia cũng như vậy.)</em>`,
+    explanation: "Đây là một câu đề xuất hành động làm mát không gian phòng. Phương án (A) đưa ra một giải pháp thay thế tốt hơn cho việc mở cửa sổ đó là sử dụng điều hòa máy lạnh: 'I'll turn the air-conditioning on'.",
+    highlight: "Should I open a window / turn the air-conditioning on"
+  },
+  {
+    id: 22,
+    audio: "audio/listening/test4/part2/q22.mp3",
+    options: ["A", "B", "C"],
+    correct: "B",
+    transcript: `<strong>Our manager will be retiring in July.</strong> <em>(Quản lý của chúng ta sẽ nghỉ hưu vào tháng Bảy.)</em><br>
+<strong>A.</strong> A two-year contract. <em>(Một bản hợp đồng có thời hạn hai năm.)</em><br>
+<strong>B.</strong> She'll certainly be missed. <em>(Cô ấy chắc chắn sẽ được mọi người nhớ tới rất nhiều.)</em><br>
+<strong>C.</strong> We already booked it. <em>(Chúng tôi đã đặt trước nó rồi.)</em><br>`,
+    explanation: "Câu gốc đưa ra một thông báo về sự kiện nghỉ hưu của người quản lý. Phương án (B) thể hiện một phản ứng cảm xúc hoàn toàn tự nhiên và lịch sự trong môi trường làm việc khi nghe tin đồng nghiệp nghỉ hưu: 'She'll certainly be missed'.",
+    highlight: "manager will be retiring / She'll certainly be missed"
+  },
+  {
+    id: 23,
+    audio: "audio/listening/test4/part2/q23.mp3",
+    options: ["A", "B", "C"],
+    correct: "C",
+    transcript: `<strong>Is this morning's meeting on-site, or is it a teleconference?</strong> <em>(Buổi họp sáng nay diễn ra trực tiếp tại văn phòng hay họp trực tuyến qua điện thoại/mạng?)</em><br>
+<strong>A.</strong> From ten to eleven. <em>(Từ mười giờ đến mười một giờ.)</em><br>
+<strong>B.</strong> That's what he said. <em>(Đó chính là những gì anh ấy đã nói.)</em><br>
+<strong>C.</strong> The meeting invitation has the details. <em>(Giấy mời họp có ghi đầy đủ chi tiết đó.)</em>`,
+    explanation: "Câu hỏi lựa chọn về hình thức tổ chức cuộc họp (on-site hay teleconference). Phương án (C) không trực tiếp chọn nhưng chỉ ra nguồn thông tin chính xác để người hỏi tự kiểm tra: 'The meeting invitation has the details'.",
+    highlight: "meeting on-site, or... teleconference / invitation has the details"
+  },
+  {
+    id: 24,
+    audio: "audio/listening/test4/part2/q24.mp3",
+    options: ["A", "B", "C"],
+    correct: "C",
+    transcript: `<strong>You can attend the awards ceremony on Thursday evening, can't you?</strong> <em>(Bạn có thể tới tham dự buổi lễ trao giải vào tối thứ Năm đúng không?)</em><br>
+<strong>A.</strong> They're in the report. <em>(Chúng nằm ở trong bản báo cáo.)</em><br>
+<strong>B.</strong> Almost fifty people were in attendance. <em>(Gần năm mươi người đã có mặt tham dự.)</em><br>
+<strong>C.</strong> I'm working the night shift all week. <em>(Tôi phải làm ca đêm suốt cả tuần này rồi.)</em><br>`,
+    explanation: "Câu hỏi đuôi kiểm tra khả năng tham dự sự kiện vào buổi tối. Phương án (C) đưa ra câu trả lời phủ định gián tiếp bằng cách giải thích lý do kẹt lịch làm việc 'I'm working the night shift all week' (Tôi phải làm ca đêm nên không thể đi được).",
+    highlight: "attend the awards ceremony... / working the night shift"
+  },
+  {
+    id: 25,
+    audio: "audio/listening/test4/part2/q25.mp3",
+    options: ["A", "B", "C"],
+    correct: "C",
+    transcript: `<strong>Didn't you begin your career writing at a newspaper?</strong> <em>(Có phải bạn đã bắt đầu sự nghiệp viết lách của mình tại một tòa soạn báo không?)</em><br>
+<strong>A.</strong> The career center opens at noon. <em>(Trung tâm hướng nghiệp mở cửa vào buổi trưa.)</em><br>
+<strong>B.</strong> Take a right at the next corner. <em>(Hãy rẽ phải ở ngã rẽ tiếp theo.)</em><br>
+<strong>C.</strong> Yes, it was an incredible experience. <em>(Đúng vậy, đó đã là một trải nghiệm cực kỳ đáng kinh ngạc.)</em>`,
+    explanation: "Câu hỏi phủ định dùng để xác nhận thông tin về quá khứ sự nghiệp của người nghe. Phương án (C) xác nhận chính xác thông tin bằng từ 'Yes' kèm theo lời bổ sung cảm nghĩ về trải nghiệm đó 'it was an incredible experience'.",
+    highlight: "begin your career writing... / Yes... incredible experience"
+  },
+  {
+    id: 26,
+    audio: "audio/listening/test4/part2/q26.mp3",
+    options: ["A", "B", "C"],
+    correct: "B",
+    transcript: `<strong>Why did you bring your laptop to the meeting?</strong> <em>(Tại sao bạn lại mang máy tính xách tay của mình tới cuộc họp làm gì?)</em><br>
+<strong>A.</strong> Not until two o'clock. <em>(Phải cho đến tận hai giờ.)</em><br>
+<strong>B.</strong> Oh, isn't it allowed? <em>(Ồ, việc đó không được phép làm à?)</em><br>
+<strong>C.</strong> At the top of the stairs. <em>(Ở ngay phía trên đỉnh của cầu thang.)</em>`,
+    explanation: "Câu hỏi 'Why' hỏi lý do hành động mang laptop. Phương án (B) phản hồi một cách tự nhiên bằng một câu hỏi ngược lại thể hiện sự ngạc nhiên 'Oh, isn't it allowed?' vì người nói nghĩ rằng mang máy tính vào họp là chuyện bình thường.",
+    highlight: "Why did you bring your laptop / Oh, isn't it allowed"
+  },
+  {
+    id: 27,
+    audio: "audio/listening/test4/part2/q27.mp3",
+    options: ["A", "B", "C"],
+    correct: "C",
+    transcript: `<strong>We'd like you to present your research at the next directors meeting.</strong> <em>(Chúng tôi muốn bạn thuyết trình về công trình nghiên cứu của mình trong cuộc họp ban giám đốc sắp tới.)</em><br>
+<strong>A.</strong> Conference room C. <em>(Phòng hội nghị C.)</em><br>
+<strong>B.</strong> Yes, yesterday after lunch. <em>(Vâng, vào trưa ngày hôm qua sau bữa ăn.)</em><br>
+<strong>C.</strong> Sure, I'm happy to give an update. <em>(Chắc chắn rồi, tôi rất vui lòng đưa ra bản cập nhật.)</em>`,
+    explanation: "Đây là một lời đề nghị/yêu cầu công việc lịch sự hướng tới người nghe. Phương án (C) đưa ra lời phản hồi chấp thuận nhiệt tình bằng từ 'Sure' và khẳng định bản thân rất sẵn lòng thực hiện việc thuyết trình cập nhật thông tin 'happy to give an update'.",
+    highlight: "present your research / Sure, I'm happy to give an update"
+  },
+  {
+    id: 28,
+    audio: "audio/listening/test4/part2/q28.mp3",
+    options: ["A", "B", "C"],
+    correct: "C",
+    transcript: `<strong>Is it going to be much longer to see the doctor?</strong> <em>(Có phải sẽ mất nhiều thời gian nữa mới tới lượt gặp bác sĩ không?)</em><br>
+<strong>A.</strong> I plan to watch that show today. <em>(Tôi dự định sẽ xem chương trình biểu diễn đó vào ngày hôm nay.)</em><br>
+<strong>B.</strong> About twenty-five kilometers. <em>(Khoảng hai mươi lăm ki-lô-mét.)</em><br>
+<strong>C.</strong> Sorry, it's been a very busy day. <em>(Xin lỗi bạn, hôm nay là một ngày cực kỳ bận rộn.)</em>`,
+    explanation: "Câu hỏi thắc mắc về thời gian chờ đợi tại phòng khám. Phương án (C) là lời phản hồi gián tiếp tinh tế từ phía nhân viên y tế, vừa nói lời xin lỗi 'Sorry' vừa giải thích lý do phòng khám đang bị quá tải 'it's been a very busy day' để ngầm xác nhận sẽ phải đợi thêm.",
+    highlight: "much longer to see the doctor / Sorry, it's been a very busy day"
+  },
+  {
+    id: 29,
+    audio: "audio/listening/test4/part2/q29.mp3",
+    options: ["A", "B", "C"],
+    correct: "A",
+    transcript: `<strong>Didn't we just call maintenance about this printer?</strong> <em>(Không phải chúng ta vừa mới gọi cho đội bảo dưỡng về chiếc máy in này rồi sao?)</em><br>
+<strong>A.</strong> Don't tell me it's broken again. <em>(Đừng nói với tôi là nó lại bị hỏng nữa nhé.)</em><br>
+<strong>B.</strong> Twelve copies on colored paper. <em>(Mười hai bản sao được in trên giấy màu.)</em><br>
+<strong>C.</strong> No, my office is on the main floor. <em>(Không, văn phòng của tôi nằm ở tầng chính.)</em>`,
+    explanation: "Câu hỏi phủ định mang tính chất nhắc nhớ về việc vừa gọi thợ sửa máy in. Phương án (A) phản hồi bằng một câu bộc lộ cảm xúc ngao ngán, bất ngờ phù hợp ngữ cảnh: 'Don't tell me it's broken again' (Ám chỉ máy in này có tần suất hỏng hóc quá nhiều).",
+    highlight: "just call maintenance about this printer / Don't tell me it's broken again"
+  },
+  {
+    id: 30,
+    audio: "audio/listening/test4/part2/q30.mp3",
+    options: ["A", "B", "C"],
+    correct: "A",
+    transcript: `<strong>When will I be reimbursed for my travel expenses?</strong> <em>(Khi nào thì tôi sẽ được hoàn trả lại các khoản chi phí đi lại của mình?)</em><br>
+<strong>A.</strong> Have they been approved? <em>(Chúng đã được phê duyệt hay chưa?)</em><br>
+<strong>B.</strong> The Compton Hotel. <em>(Khách sạn Compton.)</em><br>
+<strong>C.</strong> Four hundred seventy dollars. <em>(Bốn trăm bảy mươi đô la.)</em>`,
+    explanation: "Câu hỏi 'When' hỏi về mốc thời gian nhận tiền hoàn tất thủ tục. Phương án (A) không đưa ra mốc thời gian mà hỏi ngược lại một điều kiện tiên quyết để việc giải ngân được thực hiện 'Have they been approved?' (Khoản chi đó đã được sếp duyệt chưa, nếu duyệt rồi thì mới có lịch trả tiền).",
+    highlight: "When will I be reimbursed / Have they been approved"
+  },
+  {
+    id: 31,
+    audio: "audio/listening/test4/part2/q31.mp3",
+    options: ["A", "B", "C"],
+    correct: "B",
+    transcript: `<strong>You haven't taken inventory yet, have you?</strong> <em>(Bạn vẫn chưa thực hiện việc kiểm kê hàng tồn kho đúng không?)</em><br>
+<strong>A.</strong> Go ahead, take some. <em>(Cứ tự nhiên đi, lấy một vài cái đi.)</em><br>
+<strong>B.</strong> Was I supposed to? <em>(Ủa tôi có nhiệm vụ phải làm việc đó à?)</em><br>
+<strong>C.</strong> Yes, I have that one already. <em>(Đúng vậy, tôi đã có cái đó rồi.)</em>`,
+    explanation: "Câu hỏi đuôi nhằm kiểm tra tiến độ thực hiện công việc kiểm kê. Phương án (B) đưa ra câu hỏi ngược mang tính chất làm rõ trách nhiệm 'Was I supposed to?' cho thấy người nghe hoàn toàn không biết hoặc chưa nhận được chỉ thị phải làm công việc này.",
+    highlight: "haven't taken inventory yet / Was I supposed to"
+  }
+];
+
+part3 = [
+  // --- Đoạn hội thoại 32 - 34 ---
+  {
+    id: 32,
+    audio: "audio/listening/test4/part3/32-34.mp3",
+    question: "32. Where does the man work?",
+    options: [
+      "A. At a delivery service",
+      "B. At an advertising agency",
+      "C. At a restaurant",
+      "D. At a bank"
+    ],
+    correct: "C",
+    transcript: `<strong>W-Br:</strong> Hi, Mr. Maksood. <strong>Since you regularly buy bulk foods from us for your restaurant</strong>, I wanted to tell you about a new product we're selling: Harcourt Black Beans. <em>(Chào, ông Maksood. Vì ông thường mua thực phẩm số lượng lớn cho nhà hàng của mình, tôi muốn nói với ông về một sản phẩm mới chúng tôi đang bán: Đậu đen Harcourt.)</em><br>
+<strong>M-Au:</strong> <strong>You know, the black beans we use now are very flavorful, and that's important to me. I worry that if we switch to a different brand, our dishes won't taste as good.</strong> <em>(Bạn biết đấy, đậu đen chúng tôi sử dụng bây giờ rất thơm ngon, và đó là điều quan trọng đối với tôi. Tôi lo rằng nếu chúng tôi chuyển sang một nhãn hiệu khác, các món ăn của chúng tôi sẽ không ngon như trước.)</em><br>
+<strong>W-Br:</strong> Well, several of our customers have tried Harcourt Black Beans, and they've been very happy—especially since the beans only cost three dollars per kilogram. <em>(Chà, một số khách hàng của chúng tôi đã dùng thử Đậu đen Harcourt và họ đã rất hài lòng – đặc biệt khi mà đậu chỉ có giá ba đô la mỗi kí-lô-gram.)</em><br>
+<strong>M-Au:</strong> <strong>In that case, why don't you add a ten- kilogram bag to my order this week so I can test them in my recipes?</strong> <em>(Trong trường hợp đó, sao bạn không thêm một túi mười kí-lô-gram vào đơn đặt hàng của tôi tuần này để tôi có thể thử chúng trong các công thức nấu ăn của mình.)</em>`,
+    explanation: "Người phụ nữ mở đầu đoạn hội thoại bằng cách nhắc đến nơi làm việc của người đàn ông: 'buy bulk foods from us for your restaurant' (mua thực phẩm số lượng lớn từ chúng tôi cho nhà hàng của bạn). Do đó, người đàn ông làm việc tại một nhà hàng.",
+    highlight: "buy bulk foods... for your restaurant"
+  },
+  {
+    id: 33,
+    audio: "audio/listening/test4/part3/32-34.mp3",
+    question: "33. What does the man say is important to him?",
+    options: [
+      "A. Attracting new investors",
+      "B. Meeting work schedules",
+      "C. Opening a new location",
+      "D. Using reliable brands"
+    ],
+    correct: "D",
+    transcript: `(Dùng chung kịch bản thoại câu 32)`,
+    explanation: "Người đàn ông nhấn mạnh: 'the black beans we use now are very flavorful, and that's important to me. I worry that if we switch to a different brand, our dishes won't taste as good.' (Hương vị đậu thơm ngon rất quan trọng với tôi, tôi lo khi đổi sang nhãn hiệu khác món ăn không còn ngon). Điều này cho thấy việc sử dụng những nhãn hiệu có chất lượng ổn định, đáng tin cậy là tiêu chí hàng đầu của anh ấy.",
+    highlight: "flavorful, and that's important to me"
+  },
+  {
+    id: 34,
+    audio: "audio/listening/test4/part3/32-34.mp3",
+    question: "34. What does the man say he will do?",
+    options: [
+      "A. Check an inventory list",
+      "B. Try a new product",
+      "C. Ask some colleagues for advice",
+      "D. Distribute some brochures"
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 32)`,
+    explanation: "Ở cuối đoạn thoại, người đàn ông quyết định đưa ra hành động: 'why don't you add a ten-kilogram bag to my order this week so I can test them in my recipes?' (Tại sao bạn không thêm một túi 10kg vào đơn hàng tuần này để tôi kiểm tra/thử nghiệm chúng trong công thức nấu ăn của mình?). Hành động này chính là dùng thử một sản phẩm mới.",
+    highlight: "add a ten-kilogram bag... so I can test them"
+  },
+
+  // --- Đoạn hội thoại 35 - 37 ---
+  {
+    id: 35,
+    audio: "audio/listening/test4/part3/35-37.mp3",
+    question: "35. What change are the speakers discussing?",
+    options: [
+      "A. An updated vacation policy",
+      "B. A technology upgrade",
+      "C. A company merger",
+      "D. An office renovation"
+    ],
+    correct: "C",
+    transcript: `<strong>M-Cn:</strong> <strong>Marie, did you hear the news about our company merger with Geller Technical Solutions?</strong> It's scheduled to happen before the end of the year. <em>(Marie, bạn có nghe tin tức về việc sáp nhập công ty của chúng ta với công ty Giải pháp kỹ thuật Geller không? Nó dự kiến sẽ diễn ra trước cuối năm nay.)</em><br>
+<strong>W-Am:</strong> Yes, I saw that on the company Web site. <strong>And we'll have a new office, too. I was just talking to the regional manager who said that they're opening it soon.</strong> Our combined department will be split between the existing New York office and the new one in Los Angeles. <em>(Vâng, tôi thấy nó trên trang web của công ty. Và chúng ta cũng sẽ có một văn phòng mới. Tôi vừa nói chuyện với người quản lý khu vực, anh ấy nói rằng họ sẽ mở văn phòng này sớm. Phòng ban kết hợp của chúng ta sẽ được chia ra thành văn phòng New York hiện tại và văn phòng mới ở Los Angeles.)</em><br>
+<strong>M-Cn:</strong> That's true. I saw Mr. Endo this morning and he said <strong>they'll be flying our new colleagues here to New York next month so that we can all meet each other.</strong> <em>(Đó là sự thật. Sáng nay tôi gặp ông Endo và ông ấy nói họ sẽ đưa những đồng nghiệp mới của chúng ta bay tới New York vào tháng tới để tất cả chúng ta có thể cùng gặp nhau.)</em>`,
+    explanation: "Người đàn ông mở đầu câu chuyện bằng cách hỏi người phụ nữ: 'did you hear the news about our company merger...?' (bạn có nghe tin tức về việc sáp nhập công ty không?). Do đó, chủ đề họ đang thảo luận là việc sáp nhập doanh nghiệp.",
+    highlight: "news about our company merger"
+  },
+  {
+    id: 36,
+    audio: "audio/listening/test4/part3/35-37.mp3",
+    question: "36. What does the woman say will happen because of the change?",
+    options: [
+      "A. Managers will have to attend a workshop.",
+      "B. Work hours will be more flexible.",
+      "C. An employee handbook will be revised.",
+      "D. Another branch location will open."
+    ],
+    correct: "D",
+    transcript: `(Dùng chung kịch bản thoại câu 35)`,
+    explanation: "Người phụ nữ đề cập đến hệ quả của sự sáp nhập: 'And we'll have a new office, too... they're opening it soon.' (Và chúng ta sẽ có một văn phòng mới, họ sẽ sớm mở nó). Điều này tương ứng với việc một chi nhánh/địa điểm mới sẽ được khai trương.",
+    highlight: "opening it soon... new one in Los Angeles"
+  },
+  {
+    id: 37,
+    audio: "audio/listening/test4/part3/35-37.mp3",
+    question: "37. What will take place next month?",
+    options: [
+      "A. A product launch",
+      "B. An annual survey",
+      "C. Staff introductions",
+      "D. Contract negotiations"
+    ],
+    correct: "C",
+    transcript: `(Dùng chung kịch bản thoại câu 35)`,
+    explanation: "Người đàn ông chia sẻ thông tin về kế hoạch tháng tới: 'they'll be flying our new colleagues here... so that we can all meet each other.' (họ sẽ đưa những đồng nghiệp mới bay đến đây vào tháng tới để tất cả có thể gặp gỡ nhau). Việc gặp mặt nhân sự mới này chính là hoạt động giới thiệu nhân viên.",
+    highlight: "new colleagues here... so that we can all meet each other"
+  },
+
+  // --- Đoạn hội thoại 38 - 40 ---
+  {
+    id: 38,
+    audio: "audio/listening/test4/part3/38-40.mp3",
+    question: "38. Why will the man go to Toronto next week?",
+    options: [
+      "A. To organize a store opening",
+      "B. To attend a training session",
+      "C. To recruit job candidates",
+      "D. To inspect production facilities"
+    ],
+    correct: "A",
+    transcript: `<strong>M-Au:</strong> Laura, I have to reschedule our meeting on Monday. <strong>I'll be in Toronto next week, preparing for the grand opening of our new store there.</strong> <em>(Laura, tôi phải lên lịch lại cuộc họp của chúng ta vào thứ Hai. Tôi sẽ đến Toronto vào tuần tới, chuẩn bị cho việc khai trương cửa hàng mới của chúng ta ở đó.)</em><br>
+<strong>W-Br:</strong> I understand. Getting the store ready for its big opening will keep you busy. But… <strong>can we meet right when you get back? The quarterly budget needs to be finalized by the end of this month.</strong> <em>(Tôi hiểu. Để cửa hàng sẵn sàng cho việc khai trương lớn sẽ khiến bạn bận rộn. Nhưng … chúng ta có thể gặp nhau ngay khi bạn quay lại không? Ngân sách hàng quý cần được hoàn thiện vào cuối tháng này.)</em><br>
+<strong>M-Au:</strong> Sure—I'll be back in the office a week from Monday, so we can work on the budget that morning. <em>(Chắc chắn rồi-Tôi sẽ trở lại văn phòng trong vòng một tuần từ thứ hai, vì vậy chúng ta có thể làm việc về ngân sách vào sáng hôm đó.)</em><br>
+<strong>W-Br:</strong> Thanks. By the way, <strong>I used to live in Toronto —I'd be happy to give you some recommendations for places to visit in your free time.</strong> <em>(Cảm ơn. Nhân tiện, tôi đã từng sống ở Toronto-tôi rất sẵn lòng cho bạn một vài gợi ý về các địa điểm tham quan trong thời gian rảnh.)</em>`,
+    explanation: "Người đàn ông giải thích lý do phải dời lịch họp và đi công tác: 'I'll be in Toronto next week, preparing for the grand opening of our new store there.' (Tôi sẽ ở Toronto tuần tới để chuẩn bị cho sự kiện khai trương cửa hàng mới ở đó).",
+    highlight: "preparing for the grand opening of our new store"
+  },
+  {
+    id: 39,
+    audio: "audio/listening/test4/part3/38-40.mp3",
+    question: "39. What is the woman concerned about?",
+    options: [
+      "A. Arranging a travel itinerary",
+      "B. Meeting a deadline",
+      "C. Managing a team",
+      "D. Giving an acceptance speech"
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 38)`,
+    explanation: "Người phụ nữ bày tỏ sự lo lắng và hối thúc lịch gặp mặt: 'The quarterly budget needs to be finalized by the end of this month.' (Ngân sách hàng quý cần phải được hoàn thành/chốt vào cuối tháng này). Điều này cho thấy cô ấy quan tâm đến việc kịp thời hạn (deadline) của công việc.",
+    highlight: "budget needs to be finalized by the end of this month"
+  },
+  {
+    id: 40,
+    audio: "audio/listening/test4/part3/38-40.mp3",
+    question: "40. What does the woman offer the man?",
+    options: [
+      "A. Tourism advice",
+      "B. Assistance with a client",
+      "C. A ride to the airport",
+      "D. Financial recommendations"
+    ],
+    correct: "A",
+    transcript: `(Dùng chung kịch bản thoại câu 38)`,
+    explanation: "Người phụ nữ chủ động đưa ra lời đề nghị giúp đỡ: 'I'd be happy to give you some recommendations for places to visit in your free time.' (Tôi rất vui lòng đưa ra cho bạn vài gợi ý về các địa điểm tham quan lúc rảnh rỗi), tương đương với việc đưa ra lời khuyên/tư vấn về du lịch.",
+    highlight: "recommendations for places to visit"
+  },
+
+  // --- Đoạn hội thoại 41 - 43 ---
+  {
+    id: 41,
+    audio: "audio/listening/test4/part3/41-43.mp3",
+    question: "41. Where do the speakers most likely work?",
+    options: [
+      "A. At a cafe",
+      "B. At a bookstore",
+      "C. At a magazine publisher",
+      "D. At an art gallery"
+    ],
+    correct: "C",
+    transcript: `<strong>M-Cn:</strong> Aziz and Heather, <strong>take a look at the layout for the next issue of our cooking magazine. I'm concerned about some photos.</strong> <em>(Aziz và Heather, hãy xem bố cục cho số tiếp theo của tạp chí nấu ăn của chúng ta. Tôi đang lo ngại về một số bức ảnh.)</em><br>
+<strong>M-Au:</strong> Sure. Which ones? <em>(Chắc rồi. Cái nào vậy?)</em><br>
+<strong>M-Cn:</strong> <strong>The photos for the "Science of Baking" article, on pages 52 to 56. They look out of focus.</strong> <em>(Các bức ảnh cho bài báo “Khoa học của nghệ thuật nướng bánh”, trên các trang 52 đến 56. Chúng trông không được rõ nét lắm.)</em><br>
+<strong>W-Am:</strong> Can I take a look? … Hmm, <strong>the fact that they're blurry means they're probably low-resolution files.</strong> Are those the only versions of the photos the photographer sent us? <em>(Tôi có thể xem qua không? …Ừm, việc chúng bị mờ có nghĩa là chúng có lẽ là những tập tin có độ phân giải thấp. Đó có phải là những phiên bản duy nhất của những bức hình mà thợ chụp ảnh đã gửi chúng ta không?)</em><br>
+<strong>M-Au:</strong> I'm checking on that right now in the original e-mail he sent… yep, looks like it. <em>(Tôi đang kiểm tra ngay bây giờ trong e-mail gốc mà anh ấy đã gửi … vâng, trông có vẻ như vậy.)</em><br>
+<strong>W-Am:</strong> Okay. <strong>I'll e-mail him and ask him to send better resolution files as soon as possible.</strong> <em>(Được rồi. Tôi sẽ gửi e-mail cho anh ta và yêu cầu anh ta gửi những tập tin với độ phân giải tốt hơn càng sớm càng tốt.)</em>`,
+    explanation: "Người đàn ông yêu cầu các đồng nghiệp: 'take a look at the layout for the next issue of our cooking magazine' (Hãy nhìn vào phần bố cục cho số phát hành tiếp theo của cuốn tạp chí nấu ăn của chúng ta). Do đó, họ làm việc tại một tòa soạn/nhà xuất bản tạp chí.",
+    highlight: "layout for the next issue of our cooking magazine"
+  },
+  {
+    id: 42,
+    audio: "audio/listening/test4/part3/41-43.mp3",
+    question: "42. What problem is being discussed?",
+    options: [
+      "A. Some images are blurry.",
+      "B. Some customers are unhappy.",
+      "C. An exhibit is incomplete.",
+      "D. An event was canceled."
+    ],
+    correct: "A",
+    transcript: `(Dùng chung kịch bản thoại câu 41)`,
+    explanation: "Người nói chỉ ra vấn đề nằm ở các tấm ảnh minh họa: 'They look out of focus' (Chúng trông bị lệch nét) và người phụ nữ bổ sung thêm 'the fact that they're blurry means...' (thực tế là chúng bị mờ có nghĩa là...). Các từ khóa này ám chỉ hình ảnh bị mờ nét, không rõ ràng.",
+    highlight: "They look out of focus / they're blurry"
+  },
+  {
+    id: 43,
+    audio: "audio/listening/test4/part3/41-43.mp3",
+    question: "43. What will the woman most likely do next?",
+    options: [
+      "A. Contact a photographer",
+      "B. Write an article",
+      "C. Update a Web site",
+      "D. Revise a schedule"
+    ],
+    correct: "A",
+    transcript: `(Dùng chung kịch bản thoại câu 41)`,
+    explanation: "Người phụ nữ chốt phương án xử lý ở cuối đoạn thoại: 'I'll e-mail him and ask him to send better resolution files as soon as possible' (Tôi sẽ gửi e-mail cho anh ấy và yêu cầu anh ấy gửi file độ phân giải tốt hơn), trong đó 'him' chính là người nhiếp ảnh gia ('the photographer') được nhắc tới ở câu trước.",
+    highlight: "I'll e-mail him [the photographer] and ask him to send"
+  },
+
+  // --- Đoạn hội thoại 44 - 46 ---
+  {
+    id: 44,
+    audio: "audio/listening/test4/part3/44-46.mp3",
+    question: "44. Where is the conversation taking place?",
+    options: [
+      "A. At a computer service center",
+      "B. At a parking garage",
+      "C. At a health clinic",
+      "D. At an automobile repair shop"
+    ],
+    correct: "D",
+    transcript: `<strong>W-Br:</strong> Hello. <strong>I brought my car in to have the tires replaced, and I've been waiting for almost two hours.</strong> Do you know when it will be ready? <em>(Xin chào. Tôi đã mang xe đến để thay lốp và tôi đã đợi gần hai tiếng rồi. Bạn có biết khi nào nó sẽ xong không?)</em><br>
+<strong>M-Cn:</strong> I'm sorry. <strong>One of our technicians is out sick today. We're working as fast as we can, but there are still a few customers ahead of you.</strong> <em>(Tôi xin lỗi. Một trong những kỹ thuật viên của chúng tôi đã nghỉ bệnh ngày hôm nay. Chúng tôi đang làm việc nhanh nhất có thể, nhưng vẫn còn một vài khách hàng trước bạn.)</em><br>
+<strong>W-Br:</strong> Hmm, OK. <strong>I have an appointment downtown this afternoon, and I'm worried that I might not make it.</strong> I didn't realize this would take so long. <em>(Ừm, được rồi. Tôi có một cuộc hẹn ở trung tâm thành phố chiều nay, và tôi lo ngại rằng tôi có thể không đến được. Tôi đã không nhận ra điều này sẽ mất nhiều thời gian như thế.)</em><br>
+<strong>M-Cn:</strong> <strong>Actually, we have a shuttle that can take you there. If you add your name to this list, we'll notify you when the shuttle is here.</strong> <em>(Thực ra, chúng tôi có một xe đưa đón có thể đưa bạn đến đó. Nếu bạn thêm tên của bạn vào danh sách này, chúng tôi sẽ thông báo cho bạn khi xe đưa đón đến đây.)</em>`,
+    explanation: "Người phụ nữ đề cập lý do có mặt: 'I brought my car in to have the tires replaced' (Tôi mang xe ô tô của mình vào đây để thay lốp). Hành động thay lốp sửa xe này diễn ra tại một xưởng/cửa hàng sửa chữa ô tô.",
+    highlight: "brought my car in to have the tires replaced"
+  },
+  {
+    id: 45,
+    audio: "audio/listening/test4/part3/44-46.mp3",
+    question: "45. What problem does the man mention?",
+    options: [
+      "A. A part is out of stock.",
+      "B. A business is understaffed.",
+      "C. A reservation has been lost.",
+      "D. A route has a lot of traffic."
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 44)`,
+    explanation: "Người đàn ông giải thích sự chậm trễ bằng cách đưa ra sự cố: 'One of our technicians is out sick today' (Một trong các kỹ thuật viên của chúng tôi hôm nay nghỉ ốm). Việc thiếu người làm khiến cửa hàng rơi vào tình trạng thiếu hụt nhân sự (understaffed).",
+    highlight: "One of our technicians is out sick today"
+  },
+  {
+    id: 46,
+    audio: "audio/listening/test4/part3/44-46.mp3",
+    question: "46. What will the woman probably do?",
+    options: [
+      "A. Cancel an appointment",
+      "B. Take a shuttle",
+      "C. Request a price estimate",
+      "D. Contact a supervisor"
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 44)`,
+    explanation: "Khi người phụ nữ lo lắng không kịp giờ hẹn ở trung tâm, người đàn ông gợi ý giải pháp: 'we have a shuttle that can take you there. If you add your name to this list...' (Chúng tôi có xe đưa đón đưa bạn đến đó, hãy điền tên vào danh sách). Người phụ nữ sẽ đón nhận dịch vụ này để đi xe đưa đón.",
+    highlight: "shuttle that can take you there... add your name"
+  },
+
+  // --- Đoạn hội thoại 47 - 49 ---
+  {
+    id: 47,
+    audio: "audio/listening/test4/part3/47-49.mp3",
+    question: "47. What are the speakers discussing?",
+    options: [
+      "A. Filling a job opening",
+      "B. Planning a customer presentation",
+      "C. Organizing a research committee",
+      "D. Revising some sales figures"
+    ],
+    correct: "A",
+    transcript: `<strong>W-Am:</strong> <strong>Before we finish our meeting today, let's talk about the open position for customer support manager.</strong> Jurgen, what do you think about our pool of candidates? <em>(Trước khi chúng ta kết thúc cuộc họp hôm nay, hãy nói về vị trí quản lý hỗ trợ khách hàng còn trống. Jurgen, bạn nghĩ gì về nhóm ứng cử viên của chúng ta?)</em><br>
+<strong>M-Cn:</strong> We've received a lot of applications from outside the company, <strong>but I hope we can give one of our current service representatives a chance to move up into management.</strong> A few of them have applied too. <em>(Chúng ta đã nhận được rất nhiều đơn ứng tuyển từ bên ngoài công ty, nhưng tôi hy vọng chúng ta có thể cho một trong những nhân viên dịch vụ hiện tại của chúng ta cơ hội chuyển lên làm quản lý. Một vài trong số họ cũng đã nộp đơn.)</em><br>
+<strong>W-Br:</strong> I agree with Jurgen. We had four of our own people apply for the position. <strong>Why don't we take another look at their most recent performance results to help us make a decision?</strong> <em>(Tôi đồng ý với Jurgen. Chúng ta đã có bốn người của mình nộp đơn cho vị trí này. Tại sao chúng ta không nhìn lại về kết quả làm việc gần đây nhất của họ để giúp chúng ta đưa ra quyết định?)</em><br>
+<strong>W-Am:</strong> Good idea. <strong>Let me get their folders so we can start reviewing them.</strong> <em>(Ý kiến hay đấy. Hãy để tôi lấy các tài liệu của họ để chúng ta có thể bắt đầu xem lại chúng.)</em>`,
+    explanation: "Người phụ nữ điều phối cuộc họp yêu cầu thảo luận: 'let's talk about the open position for customer support manager' (hãy nói về vị trí còn trống cho chức danh quản lý hỗ trợ khách hàng). Cuộc thảo luận hướng tới việc tuyển người ứng tuyển để lấp đầy vị trí trống đó.",
+    highlight: "talk about the open position"
+  },
+  {
+    id: 48,
+    audio: "audio/listening/test4/part3/47-49.mp3",
+    question: "48. What does the man say he hopes to do?",
+    options: [
+      "A. Change a vacation policy",
+      "B. Move to a new facility",
+      "C. Win a client contract",
+      "D. Promote an employee"
+    ],
+    correct: "D",
+    transcript: `(Dùng chung kịch bản thoại câu 47)`,
+    explanation: "Người đàn ông chia sẻ nguyện vọng: 'but I hope we can give one of our current service representatives a chance to move up into management.' (nhưng tôi hy vọng chúng ta có thể trao cho một trong những đại diện dịch vụ hiện tại cơ hội thăng tiến lên làm quản lý). Hành động đưa nhân viên nội bộ lên chức vụ cao hơn chính là thăng chức (promote).",
+    highlight: "current service representatives a chance to move up"
+  },
+  {
+    id: 49,
+    audio: "audio/listening/test4/part3/47-49.mp3",
+    question: "49. What will the speakers most likely do next?",
+    options: [
+      "A. Watch a video",
+      "B. Review some documents",
+      "C. Contact a manager",
+      "D. Submit some questions"
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 47)`,
+    explanation: "Ở cuối hội thoại, người phụ nữ chốt hành động tiếp theo: 'Let me get their folders so we can start reviewing them.' (Hãy để tôi đi lấy tập hồ sơ tài liệu của họ để chúng ta bắt đầu xem xét lại chúng). Do đó, bước tiếp theo là xem lại tài liệu hồ sơ của các ứng viên.",
+    highlight: "get their folders so we can start reviewing them"
+  },
+
+  // --- Đoạn hội thoại 50 - 52 ---
+  {
+    id: 50,
+    audio: "audio/listening/test4/part3/50-52.mp3",
+    question: "50. What does the man say he recently did?",
+    options: [
+      "A. Placed an order",
+      "B. Made a delivery",
+      "C. Requested time off",
+      "D. Conducted an inspection"
+    ],
+    correct: "D",
+    transcript: `<strong>M-Au:</strong> Ms. Zhao, <strong>I just finished inspecting the equipment</strong> and it looks like the conveyor belt on the packaging machine should be replaced. <em>(Cô Zhao, tôi vừa kiểm tra xong thiết bị và có vẻ như băng chuyền trên máy đóng gói nên được thay thế.)</em><br>
+<strong>W-Br:</strong> Thanks for checking on that. But… do you think we could wait to replace it for a little while? <strong>We've got a tight schedule here at the factory for the next couple of weeks— a lot of orders are being shipped out.</strong> <em>(Cảm ơn bạn đã kiểm tra. Nhưng… bạn có nghĩ rằng chúng ta có thể chờ một thời gian rồi thay nó sau được không? Chúng ta có một lịch làm việc dày đặc tại nhà máy trong vài tuần tới – rất nhiều đơn đặt hàng đang được chuyển đi.)</em><br>
+<strong>M-Au:</strong> The top layer of rubber is wearing thin in several places, so <strong>I think we'd better take care of it today.</strong> It shouldn't take long, though. <strong>I'm pretty sure I'll only need an hour to put a new belt on the machine.</strong> <em>(Lớp cao su trên cùng bị mòn ở một vài nơi, vì vậy tôi nghĩ rằng chúng ta tốt hơn nên xử lý nó hôm nay. Nó dù sao cũng không mất nhiều thời gian đâu. Tôi khá chắc chắn rằng tôi chỉ cần một giờ để gắn băng chuyền mới vào máy.)</em>`,
+    explanation: "Người đàn ông mở đầu cuộc hội thoại bằng việc thông báo: 'I just finished inspecting the equipment' (Tôi vừa hoàn thành việc kiểm tra các trang thiết bị xong).",
+    highlight: "just finished inspecting the equipment"
+  },
+  {
+    id: 51,
+    audio: "audio/listening/test4/part3/50-52.mp3",
+    question: "51. Where is the conversation taking place?",
+    options: [
+      "A. At an airport",
+      "B. At a construction site",
+      "C. At a factory",
+      "D. At a clothing store"
+    ],
+    correct: "C",
+    transcript: `(Dùng chung kịch bản thoại câu 50)`,
+    explanation: "Người phụ nữ trực tiếp nhắc đến vị trí và bối cảnh làm việc của họ: 'We've got a tight schedule here at the factory...' (Chúng ta đang có một lịch trình rất bận rộn ở nhà máy này...).",
+    highlight: "tight schedule here at the factory"
+  },
+  {
+    id: 52,
+    audio: "audio/listening/test4/part3/50-52.mp3",
+    question: "52. What does the man recommend doing today?",
+    options: [
+      "A. Confirming a reservation",
+      "B. Replacing a machine part",
+      "C. Hiring additional employees",
+      "D. Reducing some prices"
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 50)`,
+    explanation: "Mặc dù người phụ nữ xin hoãn lịch sửa chữa, người đàn ông vẫn khuyên nên thực hiện ngay trong ngày: 'I think we'd better take care of it today. I'll only need an hour to put a new belt on the machine.' (Tôi nghĩ chúng ta nên xử lý nó hôm nay, tôi chỉ cần 1 tiếng để lắp băng chuyền mới vào máy). Điều này tương đương việc khuyên thay thế một bộ phận máy móc ngay lập tức.",
+    highlight: "better take care of it today... new belt on the machine"
+  },
+
+  // --- Đoạn hội thoại 53 - 55 ---
+  {
+    id: 53,
+    audio: "audio/listening/test4/part3/53-55.mp3",
+    question: "53. Where do the speakers most likely work?",
+    options: [
+      "A. At a moving company",
+      "B. At a construction firm",
+      "C. At an apartment management office",
+      "D. At a commercial cleaning service"
+    ],
+    correct: "C",
+    transcript: `<strong>W-Am:</strong> Jerry, <strong>you know how we paint each apartment before new tenants move in? It's getting to be a problem because our maintenance workers can't always get to it right away.</strong> <em>(Jerry, bạn có biết làm thế nào để chúng ta sơn các căn hộ trước khi người thuê mới chuyển đến không? Đó là một vấn đề bởi vì công nhân bảo trì của chúng ta không thể luôn luôn bắt tay vào việc đó ngay lập tức.)</em><br>
+<strong>M-Au:</strong> We should hire a professional painting company to come in to do that work. <em>(Chúng ta nên thuê một công ty sơn chuyên nghiệp đến để làm công việc đó.)</em><br>
+<strong>W-Am:</strong> <strong>We considered that before, but we thought it would be too expensive.</strong> <em>(Chúng ta đã cân nhắc việc đó trước đây, nhưng chúng ta cho rằng nó sẽ quá đắt.)</em><br>
+<strong>M-Au:</strong> Yes, but that was quite a while ago. <strong>We manage more apartments now.</strong> <em>(Đúng, nhưng đó đã là một thời gian trước rồi. Bây giờ, chúng ta quản lý nhiều căn hộ hơn rồi.)</em><br>
+<strong>W-Am:</strong> That's true. Even without painting, our staff is already busy dealing with an increase in maintenance requests. <em>(Đúng thế thật. Ngay cả khi không sơn, nhân viên của chúng ta đã bận rộn xử lý việc gia tăng các yêu cầu về việc bảo trì.)</em><br>
+<strong>M-Au:</strong> Right. <strong>And that's why it would be better to contract the work out. I'll call some painting companies right now for some price estimates.</strong> <em>(Đúng. Chính vì vậy, việc thuê một công ty khác làm sẽ tốt hơn. Tôi sẽ gọi cho một số công ty sơn ngay bây giờ để lấy báo giá.)</em>`,
+    explanation: "Các nhân vật trao đổi về quy trình vận hành bất động sản: 'paint each apartment before new tenants move in... We manage more apartments now.' (sơn sửa lại từng căn hộ trước khi người thuê mới chuyển vào... Hiện tại chúng ta quản lý nhiều căn hộ hơn). Công việc này thuộc thẩm quyền của một văn phòng quản lý chung cư/căn hộ.",
+    highlight: "paint each apartment before new tenants move in"
+  },
+  {
+    id: 54,
+    audio: "audio/listening/test4/part3/53-55.mp3",
+    question: "54. What does the man imply when he says, ''but that was quite a while ago”?",
+    options: [
+      "A. A deadline is approaching.",
+      "B. A procedure has been improved.",
+      "C. A decision should be reconsidered.",
+      "D. A database should be updated."
+    ],
+    correct: "C",
+    transcript: `(Dùng chung kịch bản thoại câu 53)`,
+    explanation: "Khi người phụ nữ nói họ từng từ chối phương án thuê ngoài vì giá đắt, người đàn ông đáp: 'but that was quite a while ago. We manage more apartments now.' (nhưng đó là chuyện của ngày xưa rồi, giờ quy mô quản lý căn hộ đã lớn hơn). Anh ấy ngụ ý rằng quyết định cũ không còn phù hợp và cần được xem xét, đánh giá lại.",
+    highlight: "quite a while ago. We manage more apartments now"
+  },
+  {
+    id: 55,
+    audio: "audio/listening/test4/part3/53-55.mp3",
+    question: "55. What will the man do next?",
+    options: [
+      "A. Review some applications",
+      "B. Inspect some properties",
+      "C. Make some deliveries",
+      "D. Research some prices"
+    ],
+    correct: "D",
+    transcript: `(Dùng chung kịch bản thoại câu 53)`,
+    explanation: "Người đàn ông nêu rõ hành động sẽ làm ngay sau cuộc trò chuyện: 'I'll call some painting companies right now for some price estimates.' (Tôi sẽ gọi cho vài công ty sơn ngay bây giờ để lấy một số báo giá/khảo sát mức giá).",
+    highlight: "call some painting companies right now for some price estimates"
+  },
+
+  // --- Đoạn hội thoại 56 - 58 ---
+  {
+    id: 56,
+    audio: "audio/listening/test4/part3/56-58.mp3",
+    question: "56. What does the woman ask the man to do?",
+    options: [
+      "A. Visit company headquarters",
+      "B. Participate in a conference",
+      "C. Complete a technical design",
+      "D. Submit a proposal"
+    ],
+    correct: "B",
+    transcript: `<strong>W-Am:</strong> Bill, I've been thinking— <strong>you should attend the Southeast Technology Expo next month. We're sending a team to promote the company's EX300 television, and you should join them.</strong> <em>(Bill, tôi đã suy nghĩ – Bạn nên tham dự Triển lãm Công nghệ Đông Nam vào tháng tới. Chúng tôi đang gửi một nhóm để quảng bá ti-vi EX300 của công ty và bạn nên tham gia cùng họ.)</em><br>
+<strong>M-Cn:</strong> <strong>Sure, but I haven't done much marketing of that product. I've spent more time creating advertisements for some of our other television models.</strong> <em>(Chắc rồi, nhưng tôi chưa tiến hành nhiều hoạt động tiếp thị cho sản phẩm đó. Tôi đã dành nhiều thời gian hơn để tạo quảng cáo cho các mẫu ti-vi khác của chúng ta.)</em><br>
+<strong>W-Am:</strong> I know, but I think it would be a good experience for you. <strong>I've already prepared the presentation,</strong> so I'll send you a copy. You'll have plenty of time to review it in advance of the conference. <em>(Tôi biết, nhưng tôi nghĩ nó sẽ là một trải nghiệm tốt cho bạn. Tôi đã chuẩn bị bài thuyết trình, vì vậy tôi sẽ gửi cho bạn một bản sao. Bạn sẽ có nhiều thời gian để xem lại nó trước hội nghị.)</em>`,
+    explanation: "Người phụ nữ yêu cầu người đàn ông thực hiện nhiệm vụ: 'you should attend the Southeast Technology Expo next month... you should join them' (bạn nên đi tham dự Triển lãm Công nghệ Đông Nam vào tháng sau và gia nhập đội của công ty). Triển lãm (Expo) là một dạng hội nghị thương mại, nên đây là yêu cầu tham gia hội nghị.",
+    highlight: "attend the Southeast Technology Expo"
+  },
+  {
+    id: 57,
+    audio: "audio/listening/test4/part3/56-58.mp3",
+    question: "57. Why is the man concerned?",
+    options: [
+      "A. He is not very familiar with a product.",
+      "B. He has not registered for a conference.",
+      "C. He has missed an important deadline.",
+      "D. He was planning to take a vacation."
+    ],
+    correct: "A",
+    transcript: `(Dùng chung kịch bản thoại câu 56)`,
+    explanation: "Người đàn ông lo lắng vì bản thân thiếu kinh nghiệm đối với dòng sản phẩm chuẩn bị đem đi triển lãm: 'but I haven't done much marketing of that product. I've spent more time creating advertisements for some of our other television models.' (nhưng tôi chưa làm tiếp thị nhiều cho sản phẩm đó, tôi chủ yếu làm cho các mẫu tivi khác). Sự thiếu trải nghiệm này đồng nghĩa với việc anh ấy chưa quen thuộc với sản phẩm.",
+    highlight: "I haven't done much marketing of that product"
+  },
+  {
+    id: 58,
+    audio: "audio/listening/test4/part3/56-58.mp3",
+    question: "58. What does the woman say she has already done?",
+    options: [
+      "A. Provided feedback from a meeting",
+      "B. Designed a new product",
+      "C. Prepared a presentation",
+      "D. Made a hotel reservation"
+    ],
+    correct: "C",
+    transcript: `(Dùng chung kịch bản thoại câu 56)`,
+    explanation: "Người phụ nữ trấn an đồng nghiệp bằng việc thông báo một việc cô đã hoàn tất trước đó: 'I've already prepared the presentation' (Tôi đã chuẩn bị xong bài thuyết trình rồi).",
+    highlight: "I've already prepared the presentation"
+  },
+
+  // --- Đoạn hội thoại 59 - 61 ---
+  {
+    id: 59,
+    audio: "audio/listening/test4/part3/59-61.mp3",
+    question: "59. What is the woman’s area of expertise?",
+    options: [
+      "A. Product development",
+      "B. Finance",
+      "C. Marketing",
+      "D. Business law"
+    ],
+    correct: "B",
+    transcript: `<strong>M-Au:</strong> Bruce Koplow here for KQRF radio. <strong>Joining me today is economist Janine Kang, author of Best Practices in Investing.</strong> So Janine … tell us about your book. <em>(Bruce Koplow từ đài phát thanh KORF đây. Tham gia với tôi hôm nay là nhà kinh tế Janine Kang, tác giả của “Những thói quen tốt nhất trong đầu tư”. Janine … hãy cho chúng tôi biết về cuốn sách của bạn.)</em><br>
+<strong>W-Am:</strong> Sure. I wrote it to help investors with little experience understand how to manage their finances. <em>(Chắc chắn rồi. Tôi đã viết nó để giúp các nhà đầu tư có ít kinh nghiệm hiểu cách quản lý tài chính của họ.)</em><br>
+<strong>M-Au:</strong> <strong>If you could give our listeners one piece of advice right now, what would it be?</strong> <em>(Nếu bạn có thể đưa ra lời khuyên cho thính giả của chúng tôi ngay bây giờ, nó sẽ là gì?)</em><br>
+<strong>W-Am:</strong> Do your research! Don't invest until you learn as much as possible. <strong>I explain more in my book</strong>, so you'll just have to find out on your own! It comes out tomorrow. <em>(Hãy nghiên cứu! Đừng đầu tư cho đến khi bạn học được nhiều nhất có thể. Tôi giải thích chi tiết hơn trong cuốn sách của mình, vì vậy bạn hãy tự mình tìm hiểu nó nhé! Nó sẽ được phát hành vào ngày mai.)</em>`,
+    explanation: "Người dẫn chương trình giới thiệu danh tính của người phụ nữ: 'economist Janine Kang, author of Best Practices in Investing' (nhà kinh tế học Janine Kang, tác giả cuốn sách thực tiễn đầu tư tốt nhất). Lĩnh vực kinh tế và đầu tư thuộc chuyên ngành Tài chính.",
+    highlight: "economist... author of Best Practices in Investing"
+  },
+  {
+    id: 60,
+    audio: "audio/listening/test4/part3/59-61.mp3",
+    question: "60. What does the man ask the woman to do?",
+    options: [
+      "A. Come back tomorrow",
+      "B. Demonstrate a process",
+      "C. Give some advice",
+      "D. Teach a course"
+    ],
+    correct: "C",
+    transcript: `(Dùng chung kịch bản thoại câu 59)`,
+    explanation: "Người nam đặt câu hỏi yêu cầu hành động từ khách mời: 'If you could give our listeners one piece of advice right now, what would it be?' (Nếu cô có thể đưa cho các thính giả một lời khuyên ngay lúc này, đó sẽ là gì?).",
+    highlight: "give our listeners one piece of advice"
+  },
+  {
+    id: 61,
+    audio: "audio/listening/test4/part3/59-61.mp3",
+    question: "61. Why does the woman say, ‘‘you'll just have to find out on your own''?",
+    options: [
+      "A. To apologize for giving incorrect information",
+      "B. To express regret about missing an event",
+      "C. To invite listeners to participate in a study",
+      "D. To encourage listeners to read her book"
+    ],
+    correct: "D",
+    transcript: `(Dùng chung kịch bản thoại câu 59)`,
+    explanation: "Người phụ nữ nói câu 'you'll just have to find out on your own' (bạn phải tự mình khám phá/tìm hiểu thôi) ngay sau khi tiếp thị: 'I explain more in my book' (Tôi có giải thích kỹ hơn nhiều trong cuốn sách của tôi). Việc này nhằm kích thích sự tò mò và khuyến khích mọi người tìm đọc cuốn sách sắp phát hành của cô ấy.",
+    highlight: "explain more in my book, so you'll just have to find out"
+  },
+
+  // --- Đoạn hội thoại 62 - 64 (Có hình ảnh minh họa lịch trình) ---
+  {
+    id: 62,
+    audio: "audio/listening/test4/part3/62-64.mp3",
+    question: "62. Where do the speakers most likely work?",
+    options: [
+      "A. At a landscaping firm",
+      "B. At a moving company",
+      "C. At a florist shop",
+      "D. At a catering business"
+    ],
+    correct: "C",
+    transcript: `<strong>M-Cn:</strong> <strong>Eileen, I just had a call from Tollberg Industries about the flower arrangements they ordered for their banquet tomorrow</strong>. <strong>They'd like to have four more centerpieces, in addition to the ten they originally requested.</strong> <em>(Eileen, tôi vừa có một cuộc gọi từ Tollberg Industries về việc cắm hoa mà họ đã đặt cho bữa tiệc của họ vào ngày mai. Họ muốn có thêm bốn vòng hoa trang trí ở trung tâm, ngoài mười cái họ yêu cầu ban đầu.)</em><br>
+<strong>W-Br:</strong> Oh. I think we have enough flowers to do that. We might have to change the time of the delivery, though. Right now it's scheduled for the morning, but we'll need more time to do the extra arrangements. <br>
+<strong>M-Cn:</strong> <strong>Well, I'm sure the Crawford Apartments wouldn't mind getting the flowers for their lobby earlier in the day. Let's move them to the morning and give that delivery time to Tollberg Industries.</strong> <em>(Chà, tôi chắc chắn rằng Crawford Apartments sẽ không ngại nhận hoa cho sảnh của họ sớm hơn trong ngày. Hãy chuyển chúng đến buổi sáng và để thời gian giao hàng đó cho Tollberg Industries.)</em>`,
+    explanation: "Người đàn ông trao đổi về đơn đặt hàng của đối tác: 'Tollberg Industries about the flower arrangements they ordered... They'd like to have four more centerpieces...' (Tollberg Industries gọi về các lẵng hoa họ đã đặt... họ muốn bổ sung thêm 4 lẵng hoa trung tâm bàn nữa). Nơi chịu trách nhiệm thiết kế hoa đặt trước này là một cửa hàng bán hoa.",
+    highlight: "flower arrangements they ordered"
+  },
+  {
+    id: 63,
+    audio: "audio/listening/test4/part3/62-64.mp3",
+    question: "63. What did Tollberg Industries call about?",
+    options: [
+      "A. Increasing the size of an order",
+      "B. Changing the time of an event",
+      "C. Receiving some product samples",
+      "D. Replacing some defective equipment"
+    ],
+    correct: "A",
+    transcript: `(Dùng chung kịch bản thoại câu 62)`,
+    explanation: "Thông tin cuộc gọi từ phía công ty Tollberg: 'They'd like to have four more centerpieces, in addition to the ten they originally requested.' (Họ muốn lấy thêm 4 lẵng hoa trang trí nữa bên cạnh 10 cái đã yêu cầu ban đầu). Việc này tương ứng với hành động gia tăng số lượng của đơn hàng.",
+    highlight: "have four more centerpieces, in addition to the ten"
+  },
+  {
+    id: 64,
+    audio: "audio/listening/test4/part3/62-64.mp3",
+    question: "64. Look at the graphic. When will the Tollberg Industries delivery most likely be made?",
+    options: [
+      "A. At 1 P.M.",
+      "B. At 2 P.M.",
+      "C. At 3 P.M.",
+      "D. At 4 P.M."
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 62)`,
+    explanation: "Dựa theo lời thoại của người đàn ông: 'Let's move them [Crawford Apartments] to the morning and give that delivery time to Tollberg Industries.' (Hãy chuyển lịch của Crawford Apartments lên buổi sáng và nhường lại khung giờ giao hàng cũ của họ cho Tollberg Industries). Nhìn vào biểu đồ đồ họa đính kèm của đề thi, lịch ban đầu của Crawford Apartments đang cố định vào lúc **2 P.M.**, do đó đơn hàng của Tollberg sẽ được chuyển sang giao vào lúc **2 giờ chiều**.",
+    highlight: "give that delivery time [of Crawford Apartments at 2 P.M.] to Tollberg Industries"
+  },
+
+  // --- Đoạn hội thoại 65 - 67 (Có hình ảnh sơ đồ khách sạn) ---
+  {
+    id: 65,
+    audio: "audio/listening/test4/part3/65-67.mp3",
+    question: "65. What most likely is the woman’s job?",
+    options: [
+      "A. Tour guide",
+      "B. Catering manager",
+      "C. Front-desk clerk",
+      "D. Conference organizer"
+    ],
+    correct: "C",
+    transcript: `<strong>W-Br:</strong> <strong>Thank you for staying at the Murphey Hotel. Now that I've checked you in, do you have any questions about our facilities?</strong> <em>(Cảm ơn bạn đã ở khách sạn Murphey. Tôi đã kiểm tra hành lý/làm thủ tục nhận phòng cho bạn, bạn có câu hỏi nào về các cơ sở vật chất của chúng tôi không?)</em><br>
+<strong>M-Cn:</strong> I'm attending the Milton Engineering Convention. This is my first time here, and I'm not sure where the meeting rooms are.<br>
+<strong>W-Br:</strong> This brochure shows what's located on each floor.<br>
+<strong>M-Cn:</strong> Thanks. <strong>One more thing: is there some place in the hotel where I can copy some documents for a presentation I'll be making this afternoon?</strong> <em>(Còn một điều nữa: có nơi nào trong khách sạn mà tôi có thể sao chép một số tài liệu cho buổi thuyết trình tôi sẽ thực hiện vào chiều nay không?)</em><br>
+<strong>W-Br:</strong> <strong>Yes, the Business Center</strong>. It's open twenty-four hours a day. <em>(Vâng, ở trung tâm thương mại/trung tâm dịch vụ văn phòng ý. Nó mở cửa hai mươi bốn giờ một ngày.)</em><br>
+<strong>M-Cn:</strong> <strong>Good. I'll head up there now.</strong> <em>(Tốt. Tôi sẽ đến đó ngay bây giờ.)</em>`,
+    explanation: "Người phụ nữ mở đầu câu thoại chào mừng khách: 'Thank you for staying at the Murphey Hotel. Now that I've checked you in...' (Cảm ơn sếp đã lưu trú tại khách sạn Murphey. Bây giờ tôi đã hoàn tất thủ tục nhận phòng cho anh xong...). Người làm công việc đón khách và làm thủ tục check-in này là nhân viên lễ tân khách sạn.",
+    highlight: "checked you in... hotel"
+  },
+  {
+    id: 66,
+    audio: "audio/listening/test4/part3/65-67.mp3",
+    question: "66. What does the man say he needs to do?",
+    options: [
+      "A. Revise a schedule",
+      "B. Check a machine",
+      "C. Call his office",
+      "D. Make some copies"
+    ],
+    correct: "D",
+    transcript: `(Dùng chung kịch bản thoại câu 65)`,
+    explanation: "Người đàn ông hỏi về một khu vực dịch vụ cụ thể: 'is there some place in the hotel where I can copy some documents for a presentation...?' (Có nơi nào trong khách sạn này tôi có thể photocopy/sao chép vài tài liệu cho bài thuyết trình được không?). Nhu cầu của anh ta là thực hiện việc sao chép tài liệu.",
+    highlight: "place in the hotel where I can copy some documents"
+  },
+  {
+    id: 67,
+    audio: "audio/listening/test4/part3/65-67.mp3",
+    question: "67. Look at the graphic. Which floor will the man go to next?",
+    options: [
+      "A. Floor 1",
+      "B. Floor 2",
+      "C. Floor 3",
+      "D. Floor 4"
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 65)`,
+    explanation: "Người phụ nữ hướng dẫn địa điểm copy tài liệu: 'Yes, the Business Center' và người đàn ông đáp 'I'll head up there now' (Tôi sẽ lên đó ngay bây giờ). Đối chiếu với bảng sơ đồ tầng của đồ họa trong đề thi, vị trí **Business Center** nằm chính xác tại vị trí **Floor 2** (Tầng 2). Do đó người đàn ông sẽ đi lên tầng 2.",
+    highlight: "Business Center [Đối chiếu sơ đồ đồ họa nằm ở Floor 2]"
+  },
+
+  // --- Đoạn hội thoại 68 - 70 (Có hình ảnh bảng giá vé hội nghị) ---
+  {
+    id: 68,
+    audio: "audio/listening/test4/part3/68-70.mp3",
+    question: "68. What problem does the woman mention?",
+    options: [
+      "A. A Web site is not working.",
+      "B. A bill is incorrect.",
+      "C. Some records are missing.",
+      "D. Some staff are unavailable."
+    ],
+    correct: "A",
+    transcript: `<strong>W-Am:</strong> Hello, I'm Dr. Monica Fanciulli. I'm calling about the Delvin Institute Medical Research Conference. <strong>I want to register, but your Web site is down again.</strong> <em>(Xin chào, tôi là Tiến sĩ Monica Fanciulli. Tôi đang gọi để nói về Hội nghị Nghiên cứu Y khoa của Viện Delvin. Tôi muốn đăng ký, nhưng trang web của bạn lại không hoạt động.)</em><br>
+<strong>M-Au:</strong> I'm sorry for the inconvenience, Dr. Fanciulli. <strong>I can take your registration over the phone. Will you be attending both days of our conference?</strong> <em>(Tôi xin lỗi vì sự bất tiện này, thưa Tiến sĩ Fanciulli. Tôi có thể nhận đăng ký của cô qua điện thoại. Bạn sẽ tham dự cả hai ngày hội nghị của chúng tôi chứ?)</em><br>
+<strong>W-Am:</strong> <strong>I'm just interested in the second day, and I am a Delvin Institute member.</strong> <em>(Không, tôi chỉ hứng thú ngày thứ hai, và tôi là thành viên của Viện Delvin.)</em><br>
+<strong>M-Au:</strong> OK, fine, <strong>and if you give me your membership ID number, we'll make sure you get the discount.</strong> <em>(OK, tốt thôi, và nếu bạn cho tôi mã số nhận dạng thành viên của bạn, chúng tôi sẽ đảm bảo bạn được giảm giá.)</em><br>
+<strong>W-Am:</strong> Of course. Uh…give me a second while I get my ID card. <em>(Tất nhiên. Ừ … chờ tôi một giây để tôi lấy chứng minh thư)</em>`,
+    explanation: "Người phụ nữ gọi đến tổng đài và thông báo trực tiếp sự cố kỹ thuật: 'I want to register, but your Web site is down again.' (Tôi muốn đăng ký tham gia hội nghị, nhưng trang web của bên bạn lại bị sập/không hoạt động nữa rồi).",
+    highlight: "your Web site is down again"
+  },
+  {
+    id: 69,
+    audio: "audio/listening/test4/part3/68-70.mp3",
+    question: "69. Look at the graphic. How much will the woman most likely pay?",
+    options: [
+      "A. $75",
+      "B. $85",
+      "C. $90",
+      "D. $100"
+    ],
+    correct: "C",
+    transcript: `(Dùng chung kịch bản thoại câu 68)`,
+    explanation: "Để tính toán số tiền người phụ nữ phải trả, cần kết hợp hai điều kiện cô ấy đưa ra trong lời thoại: 'I'm just interested in the second day' (Tôi chỉ muốn tham gia ngày thứ hai - tương đương gói One Day) và 'I am a Delvin Institute member' (Tôi là thành viên của viện Delvin - thuộc nhóm Member). Tra cứu bảng biểu đồ họa mức giá trong đề thi, cột giao nhau giữa hàng **Member** và cột **One Day** có mức giá hiển thị là **$90**.",
+    highlight: "interested in the second day [One Day]... and I am a Delvin Institute member"
+  },
+  {
+    id: 70,
+    audio: "audio/listening/test4/part3/68-70.mp3",
+    question: "70. What does the man ask the woman to provide?",
+    options: [
+      "A. A meal preference",
+      "B. A hospital name",
+      "C. A product specification",
+      "D. An identification number"
+    ],
+    correct: "D",
+    transcript: `(Dùng chung kịch bản thoại câu 68)`,
+    explanation: "Người đàn ông hướng dẫn để áp dụng mức giá ưu đãi cho cô: 'if you give me your membership ID number, we'll make sure you get the discount.' (nếu cô cung cấp cho tôi số thẻ thành viên của cô, chúng tôi sẽ đảm bảo cô nhận được giảm giá). 'ID number' chính là mã số chứng minh thư/số nhận diện.",
+    highlight: "give me your membership ID number"
+  }
+];
+
+ part4 = [
+  // --- Đoạn văn 71 - 73 ---
+  {
+    id: 71,
+    audio: "audio/listening/test4/part4/71-73.mp3",
+    question: "71. Where is the speaker?",
+    options: [
+      "A. At a hardware store",
+      "B. At a fitness center",
+      "C. At a public library",
+      "D. At a pharmacy",
+    ],
+    correct: "B",
+    transcript: `<strong>W-Am:</strong> Hello, and welcome to <strong>Sundance Fitness</strong>. I'm glad you're all here for the first session of our indoor cycling class. <em>(Xin chào và chào mừng bạn đến với Sundance Fitness. Tôi rất vui vì tất cả các bạn đều có mặt ở đây trong buổi đầu tiên của lớp học đạp xe trong nhà.)</em><br>
+<strong>Before we begin, please make sure you've adjusted the seat on your bike.</strong> The handlebars should be at the same height as the seat. If you need help, please let me know. <em>(Trước khi chúng ta bắt đầu, vui lòng đảm bảo rằng bạn đã điều chỉnh yên xe của mình. Tay lái phải ở cùng độ cao với yên xe. Nếu bạn cần giúp đỡ, xin vui lòng cho tôi biết.)</em><br>
+Oh, one last thing: <strong>we're updating our schedule next week. The new timetable is posted on our Web site</strong>, so please check it before coming to class next Tuesday. OK, let's start. <em>(Ồ, một điều cuối cùng: chúng tôi sẽ cập nhật lịch trình của mình vào tuần tới. Thời gian biểu mới được đăng trên trang web của chúng tôi, vì vậy vui lòng kiểm tra trước khi đến lớp vào thứ Ba tuần tới. Được rồi, chúng ta bắt đầu thôi.)</em>`,
+    explanation: "Người nói mở đầu bài thông báo bằng lời chào mừng trực tiếp đến một địa điểm: 'welcome to Sundance Fitness' (chào mừng đến với Sundance Fitness). Do đó, người nói đang ở một trung tâm thể hình.",
+    highlight: "welcome to Sundance Fitness"
+  },
+  {
+    id: 72,
+    audio: "audio/listening/test4/part4/71-73.mp3",
+    question: "72. What are the listeners asked to do before a session begins?",
+    options: [
+      "A. Adjust some equipment",
+      "B. Show an ID card",
+      "C. Put away personal items",
+      "D. Sign a medical waiver",
+    ],
+    correct: "A",
+    transcript: `(Dùng chung kịch bản thoại câu 71)`,
+    explanation: "Người nói yêu cầu các học viên chuẩn bị trước giờ học: 'Before we begin, please make sure you've adjusted the seat on your bike.' (Trước khi bắt đầu, vui lòng đảm bảo bạn đã điều chỉnh yên xe đạp của mình). Việc này đồng nghĩa với việc điều chỉnh thiết bị tập luyện.",
+    highlight: "adjusted the seat on your bike"
+  },
+  {
+    id: 73,
+    audio: "audio/listening/test4/part4/71-73.mp3",
+    question: "73. According to the speaker, what will change next week?",
+    options: [
+      "A. Group membership rates",
+      "B. A class schedule",
+      "C. Parking regulations",
+      "D. Facility layout",
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 71)`,
+    explanation: "Người nói thông báo sự thay đổi vào tuần tới: 'we're updating our schedule next week. The new timetable is posted on our Web site...' (chúng tôi sẽ cập nhật lịch trình vào tuần tới, thời khóa biểu mới đã được đăng trên trang web).",
+    highlight: "updating our schedule next week"
+  },
+
+  // --- Đoạn văn 74 - 76 ---
+  {
+    id: 74,
+    audio: "audio/listening/test4/part4/74-76.mp3",
+    question: "74. What event is being announced?",
+    options: [
+      "A. A business seminar",
+      "B. A community festival",
+      "C. An awards banquet",
+      "D. A grand opening",
+    ],
+    correct: "D",
+    transcript: `<strong>M-Cn:</strong> Thank you all for coming out to celebrate this evening. <strong>We're so proud to be opening the doors of the West Side Medical Clinic here in our community.</strong> <em>(Cảm ơn tất cả các bạn đã đến ăn mừng tối nay. Chúng tôi rất tự hào được mở cửa Phòng khám Y tế West Side ngay tại cộng đồng của chúng ta.)</em><br>
+We're happy to tell you that <strong>beginning tomorrow, Dr. Robert Sterling will join our medical team. He's a leading cardiologist, so we're proud to have him on staff.</strong> <em>(Chúng tôi rất vui được thông báo với bạn rằng bắt đầu từ ngày mai, Bác sĩ Robert Sterling sẽ tham gia vào đội ngũ y tế của chúng tôi. Ông ấy là một bác sĩ tim mạch hàng đầu, vì vậy chúng tôi tự hào khi có ông ấy trong đội ngũ nhân viên.)</em><br>
+Now, <strong>we'll take you on a brief tour of the facility. If you'll follow me into the lobby, we'll start there.</strong> <em>(Bây giờ, chúng tôi sẽ đưa bạn đi tham quan một vòng ngắn cơ sở vật chất. Nếu bạn đi theo tôi vào sảnh đợi, chúng ta sẽ bắt đầu từ đó.)</em>`,
+    explanation: "Người nói thông báo lý do buổi tiệc tối nay: 'We're so proud to be opening the doors of the West Side Medical Clinic...' (Chúng tôi rất tự hào được mở cửa/khai trương Phòng khám Y tế West Side). Sự kiện được thông báo chính là một lễ khai trương.",
+    highlight: "opening the doors of the West Side Medical Clinic"
+  },
+  {
+    id: 75,
+    audio: "audio/listening/test4/part4/74-76.mp3",
+    question: "75. Who is Robert Sterling?",
+    options: [
+      "A. A clinic director",
+      "B. A city official",
+      "C. A medical specialist",
+      "D. A building contractor",
+    ],
+    correct: "C",
+    transcript: `(Dùng chung kịch bản thoại câu 74)`,
+    explanation: "Người nói giới thiệu về nhân sự mới: 'Dr. Robert Sterling will join our medical team. He's a leading cardiologist...' (Bác sĩ Robert Sterling sẽ gia nhập đội ngũ y tế. Ông ấy là một bác sĩ chuyên khoa tim mạch hàng đầu). Do đó, ông là một chuyên gia y tế.",
+    highlight: "leading cardiologist"
+  },
+  {
+    id: 76,
+    audio: "audio/listening/test4/part4/74-76.mp3",
+    question: "76. What will the listeners most likely do next?",
+    options: [
+      "A. Take a tour of a building",
+      "B. Listen to a musical performance",
+      "C. Watch a short film",
+      "D. Enjoy refreshments",
+    ],
+    correct: "A",
+    transcript: `(Dùng chung kịch bản thoại câu 74)`,
+    explanation: "Người nói đưa ra lời mời thực hiện hành động tiếp theo ở cuối bài phát biểu: 'we'll take you on a brief tour of the facility. If you'll follow me...' (chúng tôi sẽ dẫn các bạn đi tham quan ngắn cơ sở vật chất, vui lòng đi theo tôi).",
+    highlight: "take you on a brief tour of the facility"
+  },
+
+  // --- Đoạn văn 77 - 79 ---
+  {
+    id: 77,
+    audio: "audio/listening/test4/part4/77-79.mp3",
+    question: "77. What type of company does the speaker work for?",
+    options: [
+      "A. An appliance repair company",
+      "B. An electricity provider",
+      "C. A construction firm",
+      "D. A landscaping service",
+    ],
+    correct: "B",
+    transcript: `<strong>W-Br:</strong> Good afternoon. I'm calling from <strong>Crosstown Energy</strong> with an important notice for residents of Oakville. <em>(Chào buổi chiều. Tôi đang gọi từ Crosstown Energy với một thông báo quan trọng dành cho cư dân Oakville.)</em><br>
+<strong>We'll be repairing power lines on Tuesday, August eighth. This means that power will be unavailable between the hours of nine A.M. and twelve noon on Tuesday.</strong> <em>(Chúng tôi sẽ sửa chữa các đường dây điện vào thứ Ba, ngày 8 tháng 8. Điều này có nghĩa là điện sẽ không khả dụng trong khoảng thời gian từ 9 giờ sáng đến 12 giờ trưa thứ Ba.)</em><br>
+We apologize for this inconvenience. <strong>If you have any questions, please contact our customer service department at 555-0122.</strong> <em>(Chúng tôi xin lỗi vì sự bất tiện này. Nếu bạn có bất kỳ câu hỏi nào, vui lòng liên hệ với bộ phận dịch vụ khách hàng của chúng tôi theo số 555-0122.)</em>`,
+    explanation: "Người nói giới thiệu tên công ty 'Crosstown Energy' và thông báo kế hoạch 'repairing power lines' (sửa chữa đường dây điện). Do đó, đây là một công ty cung cấp điện năng.",
+    highlight: "Crosstown Energy... repairing power lines"
+  },
+  {
+    id: 78,
+    audio: "audio/listening/test4/part4/77-79.mp3",
+    question: "78. According to the speaker, what will happen on Tuesday, August 8?",
+    options: [
+      "A. Service will be interrupted.",
+      "B. A bill will be sent out.",
+      "C. An office will be closed.",
+      "D. Prices will increase.",
+    ],
+    correct: "A",
+    transcript: `(Dùng chung kịch bản thoại câu 77)`,
+    explanation: "Người nói nêu rõ ảnh hưởng của việc sửa chữa: 'This means that power will be unavailable...' (Điều này có nghĩa là điện sẽ không khả dụng/bị ngắt). Việc này đồng nghĩa dịch vụ điện sẽ bị gián đoạn lâm thời.",
+    highlight: "power will be unavailable"
+  },
+  {
+    id: 79,
+    audio: "audio/listening/test4/part4/77-79.mp3",
+    question: "79. What are the listeners encouraged to do if they want more information?",
+    options: [
+      "A. Visit a Web site",
+      "B. Call a customer service number",
+      "C. Attend a community meeting",
+      "D. Review a brochure",
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 77)`,
+    explanation: "Người nói hướng dẫn cách giải đáp thắc mắc: 'If you have any questions, please contact our customer service department at 555-0122.' (Vui lòng liên hệ bộ phận dịch vụ khách hàng qua số điện thoại...).",
+    highlight: "contact our customer service department at 555-0122"
+  },
+
+  // --- Đoạn văn 80 - 82 ---
+  {
+    id: 80,
+    audio: "audio/listening/test4/part4/80-82.mp3",
+    question: "80. What is the broadcast mainly about?",
+    options: [
+      "A. Local theater productions",
+      "B. Recent historical discoveries",
+      "C. Travel destinations in South America",
+      "D. Highlights from a cultural festival",
+    ],
+    correct: "D",
+    transcript: `<strong>M-Au:</strong> Thanks for listening to <strong>All Things Culture</strong>. Today, <strong>we're talking about the annual Latin-American Fiesta in London, Ontario</strong>. <em>(Cảm ơn bạn đã lắng nghe All Things Culture. Hôm nay, chúng ta đang nói về Lễ hội Mỹ Latinh hàng tuần/hàng năm ở London, Ontario.)</em><br>
+The fiesta is a celebration of music and culture from across Latin America. Over eighty bands and dance groups performed this year. <strong>While the music is always a major draw, this year the festival organizers added a new attraction—a short-film competition.</strong> <em>(Lễ hội là một sự tôn vinh âm nhạc và văn hóa từ khắp châu Mỹ Latinh. Hơn tám mươi ban nhạc và nhóm nhảy đã biểu diễn trong năm nay. Trong khi âm nhạc luôn là điểm thu hút chính, năm nay ban tổ chức lễ hội đã thêm một điểm thu hút mới – một cuộc thi phim ngắn.)</em><br>
+<strong>If you'd like to see a list of the winning entries, you can find it on our station's Web site.</strong> And stay tuned—after the break we'll be speaking with the winner of the best documentary category. <em>(Nếu bạn muốn xem danh sách các tác phẩm đoạt giải, bạn có thể tìm thấy danh sách đó trên trang web của đài chúng tôi. Và hãy theo dõi—sau giờ nghỉ, chúng tôi sẽ nói chuyện với người chiến thắng ở hạng mục phim tài liệu hay nhất.)</em>`,
+    explanation: "Người dẫn chương trình phát thanh mở đầu: 'Today, we're talking about the annual Latin-American Fiesta...' (Hôm nay, chúng ta sẽ nói về Lễ hội văn hóa Mỹ-Latinh thường niên). Nội dung chính của bản tin là điểm tin từ một lễ hội văn hóa.",
+    highlight: "talking about the annual Latin-American Fiesta"
+  },
+  {
+    id: 81,
+    audio: "audio/listening/test4/part4/80-82.mp3",
+    question: "81. What was new about the event this year?",
+    options: [
+      "A. A film competition",
+      "B. Free parking",
+      "C. An outdoor location",
+      "D. Food vendors",
+    ],
+    correct: "A",
+    transcript: `(Dùng chung kịch bản thoại câu 80)`,
+    explanation: "Người nói chỉ rõ điểm mới lạ của sự kiện năm nay: 'this year the festival organizers added a new attraction—a short-film competition.' (Năm nay ban tổ chức đã thêm một điểm thu hút mới - một cuộc thi phim ngắn).",
+    highlight: "added a new attraction—a short-film competition"
+  },
+  {
+    id: 82,
+    audio: "audio/listening/test4/part4/80-82.mp3",
+    question: "82. What can the listeners find on the radio station’s Web site?",
+    options: [
+      "A. Concert ticket prices",
+      "B. Driving directions",
+      "C. A list of award winners",
+      "D. Vendor application forms",
+    ],
+    correct: "C",
+    transcript: `(Dùng chung kịch bản thoại câu 80)`,
+    explanation: "Người nói thông báo thông tin có sẵn trên trang web: 'If you'd like to see a list of the winning entries, you can find it on our station's Web site.' (Nếu bạn muốn xem danh sách các tác phẩm đoạt giải, bạn có thể tìm trên website của đài phát thanh).",
+    highlight: "list of the winning entries... find it on our station's Web site"
+  },
+
+  // --- Đoạn văn 83 - 85 ---
+  {
+    id: 83,
+    audio: "audio/listening/test4/part4/83-85.mp3",
+    question: "83. What is the purpose of the meeting?",
+    options: [
+      "A. To finalize a budget",
+      "B. To plan a menu",
+      "C. To evaluate a training session",
+      "D. To prepare for a busy season",
+    ],
+    correct: "D",
+    transcript: `<strong>W-Br:</strong> Hi, everyone. I called this meeting because <strong>the summer season is about to start and the resort will be very crowded for the next few months.</strong> <em>(Chào mọi người. Tôi gọi cuộc họp này vì mùa hè sắp bắt đầu và khu nghỉ dưỡng sẽ rất đông đúc trong vài tháng tới.)</em><br>
+<strong>We want to ensure that our guests have a positive experience, so we're giving our customer service staff more authority to solve problems.</strong> <em>(Chúng tôi muốn đảm bảo rằng khách của chúng tôi có trải nghiệm tích cực, vì vậy chúng tôi trao cho nhân viên dịch vụ khách hàng nhiều quyền hạn hơn để giải quyết vấn đề.)</em><br>
+In the past, if a guest wanted a refund for a room or a meal, you had to get approval from a supervisor. <strong>But now, you can authorize refunds up to a total of one hundred dollars yourself.</strong> <em>(Trước đây, nếu khách muốn hoàn tiền phòng hoặc bữa ăn, bạn phải xin chấp thuận từ người giám sát. Nhưng bây giờ, bạn có thể tự mình ủy quyền hoàn tiền lên tới tổng số một trăm đô la.)</em><br>
+<strong>Let's look at the handbook for details on how to document these refunds.</strong> <em>(Hãy xem sổ tay để biết chi tiết về cách ghi chép các khoản hoàn trả này.)</em>`,
+    explanation: "Người quản lý tuyên bố lý do tổ chức họp nội bộ: 'the summer season is about to start and the resort will be very crowded for the next few months.' (mùa hè sắp bắt đầu và khu resort sẽ cực kỳ đông đúc trong vài tháng tới). Mục đích cuộc họp nhằm chuẩn bị công tác phục vụ cho mùa cao điểm bận rộn.",
+    highlight: "summer season is about to start and the resort will be very crowded"
+  },
+  {
+    id: 84,
+    audio: "audio/listening/test4/part4/83-85.mp3",
+    question: "84. What policy change does the speaker describe?",
+    options: [
+      "A. Employees can work flexible hours.",
+      "B. Staff can approve certain refunds.",
+      "C. Staff must wear new uniforms.",
+      "D. Employees can receive free meals.",
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 83)`,
+    explanation: "Người nói công bố quy định mới phân quyền cho cấp dưới: 'But now, you can authorize refunds up to a total of one hundred dollars yourself.' (Nhưng bây giờ, các bạn có thể tự duyệt các khoản hoàn tiền lên tới mức tối đa 100 đô la).",
+    highlight: "authorize refunds up to a total of one hundred dollars yourself"
+  },
+  {
+    id: 85,
+    audio: "audio/listening/test4/part4/83-85.mp3",
+    question: "85. What will the listeners most likely do next?",
+    options: [
+      "A. Practice a demonstration",
+      "B. Review an employee handbook",
+      "C. Meet a new supervisor",
+      "D. Tour a facility",
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 83)`,
+    explanation: "Ở câu cuối cùng, người nói hướng dẫn hành động tiếp theo cho nhân viên: 'Let's look at the handbook for details...' (Chúng ta hãy cùng xem cuốn sổ tay hướng dẫn để biết thêm chi tiết...).",
+    highlight: "look at the handbook for details"
+  },
+
+  // --- Đoạn văn 86 - 88 ---
+  {
+    id: 86,
+    audio: "audio/listening/test4/part4/86-88.mp3",
+    question: "86. What is the topic of the talk?",
+    options: [
+      "A. Inventory management software",
+      "B. Office security protocols",
+      "C. Corporate travel guidelines",
+      "D. Time-reporting procedures",
+    ],
+    correct: "D",
+    transcript: `<strong>M-Cn:</strong> Good morning. I asked everyone from the accounting department to come to this meeting so I can show you <strong>our new system for tracking billable hours.</strong> <em>(Chào buổi chiều. Tôi đã yêu cầu tất cả mọi người từ bộ phận kế toán đến cuộc họp này để tôi có thể chỉ cho các bạn hệ thống mới của chúng tôi để theo dõi số giờ thanh toán.)</em><br>
+Starting on Monday, we'll be using a software program called Chrono-Time. <strong>With Chrono-Time, you'll be able to enter your work hours directly from your mobile phone.</strong> <em>(Bắt đầu từ thứ Hai, chúng ta sẽ sử dụng một chương trình phần mềm có tên là Chrono-Time. Với Chrono-Time, bạn sẽ có thể nhập giờ làm việc của mình trực tiếp từ điện thoại di động.)</em><br>
+Now, <strong>I know that some of you have been using our old paper system for years, and you're probably wondering why we have to change.</strong> But the new software will automatically generate client invoices, which will save us a lot of time. <em>(Bây giờ, tôi biết rằng một số bạn đã sử dụng hệ thống giấy cũ của chúng tôi trong nhiều năm và các bạn có lẽ đang tự hỏi tại sao chúng ta phải thay đổi. Nhưng phần mềm mới sẽ tự động tạo hóa đơn cho khách hàng, điều này sẽ tiết kiệm cho chúng ta rất nhiều thời gian.)</em><br>
+<strong>Let's watch a short video that demonstrates how to log in to the system.</strong> <em>(Hãy xem một video ngắn trình bày cách đăng nhập vào hệ thống.)</em>`,
+    explanation: "Người quản lý giới thiệu chủ đề chính của buổi hướng dẫn: 'our new system for tracking billable hours' (hệ thống mới của chúng ta để theo dõi giờ làm việc tính phí). Đây chính là quy trình báo cáo/chấm công thời gian làm việc.",
+    highlight: "new system for tracking billable hours"
+  },
+  {
+    id: 87,
+    audio: "audio/listening/test4/part4/86-88.mp3",
+    question: "87. Why does the speaker say, “I know that some of you have been using our old paper system for years”?",
+    options: [
+      "A. To praise employees for their hard work",
+      "B. To acknowledge potential resistance to a change",
+      "C. To suggest that a system needs to be repaired",
+      "D. To request feedback about a current policy",
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 86)`,
+    explanation: "Khi người nói bày tỏ: 'I know that some of you have been using our old paper system for years, and you're probably wondering why we have to change.' (Tôi biết vài người đã dùng hệ thống giấy cũ nhiều năm và đang tự hỏi tại sao phải đổi), ông đang thấu hiểu tâm lý e ngại, muốn thừa nhận sự phản kháng hoặc lo lắng của nhân viên trước một công nghệ mới.",
+    highlight: "probably wondering why we have to change"
+  },
+  {
+    id: 88,
+    audio: "audio/listening/test4/part4/86-88.mp3",
+    question: "88. What will the listeners do next?",
+    options: [
+      "A. Watch a video",
+      "B. Complete a survey",
+      "C. Download an application",
+      "D. Set up a password",
+    ],
+    correct: "A",
+    transcript: `(Dùng chung kịch bản thoại câu 86)`,
+    explanation: "Người nói kết thúc bài nói bằng bước hành động tiếp theo: 'Let's watch a short video that demonstrates...' (Chúng ta hãy cùng xem một video ngắn trình diễn...).",
+    highlight: "watch a short video that demonstrates"
+  },
+
+  // --- Đoạn văn 89 - 91 ---
+  {
+    id: 89,
+    audio: "audio/listening/test4/part4/89-91.mp3",
+    question: "89. What is the speaker’s job?",
+    options: [
+      "A. Radio host",
+      "B. Politician",
+      "C. Weather reporter",
+      "D. Structural engineer",
+    ],
+    correct: "A",
+    transcript: `<strong>W-Am:</strong> Welcome back to <strong>Morning Talk on Radio One</strong>. <strong>Today, we're talking about the recent transit strike in the city.</strong> <em>(Chào mừng bạn quay trở lại với Morning Talk trên Radio One. Hôm nay, chúng ta đang nói về cuộc đình công giao thông gần đây trong thành phố.)</em><br>
+As many of you know, bus and train drivers have been on strike for the past three days. <strong>I'm joined now by City Councilman Kenneth Rossi. Councilman Rossi, thank you for being here today.</strong> <em>(Như nhiều bạn đã biết, tài xế xe buýt và tàu hỏa đã đình công trong ba ngày qua. Tham gia với tôi bây giờ là Ủy viên Hội đồng Thành phố Kenneth Rossi. Ủy viên Hội đồng Rossi, cảm ơn ông đã có mặt ở đây hôm nay.)</em><br>
+<strong>M-Au:</strong> Thanks for having me. <em>(Cảm ơn vì đã mời tôi.)</em><br>
+<strong>W-Am:</strong> <strong>So, can you give our listeners an update on the contract negotiations?</strong> Our phone lines are flooded with calls from commuters who want to know when transit service will resume. <em>(Vậy, ông có thể cập nhật cho thính giả của chúng tôi về các cuộc đàm phán hợp đồng không? Đường dây điện thoại của chúng tôi tràn ngập các cuộc gọi từ những người đi làm muốn biết khi nào dịch vụ giao thông công cộng sẽ hoạt động trở lại.)</em>`,
+    explanation: "Người nói tự giới thiệu vị trí và kênh của mình: 'Welcome back to Morning Talk on Radio One.' (Chào mừng quay trở lại với chương trình Trò chuyện buổi sáng trên Kênh Radio số 1). Do đó, cô ấy là người dẫn chương trình radio.",
+    highlight: "Morning Talk on Radio One"
+  },
+  {
+    id: 90,
+    audio: "audio/listening/test4/part4/89-91.mp3",
+    question: "90. What is the topic of discussion?",
+    options: [
+      "A. A transit strike",
+      "B. A construction project",
+      "C. A local election",
+      "D. A business expansion",
+    ],
+    correct: "A",
+    transcript: `(Dùng chung kịch bản thoại câu 89)`,
+    explanation: "Người nói tuyên bố trực tiếp chủ đề thảo luận của bản tin: 'Today, we're talking about the recent transit strike in the city.' (Hôm nay chúng ta nói về cuộc đình công ngành giao thông công cộng gần đây trong thành phố).",
+    highlight: "recent transit strike in the city"
+  },
+  {
+    id: 91,
+    audio: "audio/listening/test4/part4/89-91.mp3",
+    question: "91. Why does the speaker say, “Our phone lines are flooded with calls”?",
+    options: [
+      "A. To ask listeners to stop calling",
+      "B. To complain about a technical problem",
+      "C. To emphasize that a topic is important to listeners",
+      "D. To explain why she is ending a conversation",
+    ],
+    correct: "C",
+    transcript: `(Dùng chung kịch bản thoại câu 89)`,
+    explanation: "Cụm từ 'Our phone lines are flooded with calls from commuters...' (Đường dây điện thoại của đài chúng tôi đang bị quá tải bởi các cuộc gọi từ người dân đi làm) nhằm nhấn mạnh rằng vấn đề đình công này đang thu hút sự quan tâm cực kỳ lớn và vô cùng quan trọng đối với khán thính giả nghe đài.",
+    highlight: "flooded with calls from commuters who want to know"
+  },
+
+  // --- Đoạn văn 92 - 94 ---
+  {
+    id: 92,
+    audio: "audio/listening/test4/part4/92-94.mp3",
+    question: "92. What did the company successfully do last year?",
+    options: [
+      "A. Decrease operating expenses",
+      "B. Expand into international markets",
+      "C. Increase customer satisfaction ratings",
+      "D. Redesign a product line",
+    ],
+    correct: "C",
+    transcript: `<strong>M-Cn:</strong> Before we begin our group work today, I want to share some good news from our corporate headquarters. <strong>Last year, we set a goal to improve our customer satisfaction ratings by ten percent, and I'm happy to report that we reached that target.</strong> <em>(Trước khi chúng ta bắt đầu công việc nhóm hôm nay, tôi muốn chia sẻ một số tin tốt từ trụ sở chính của công ty chúng tôi. Năm ngoái, chúng tôi đã đặt mục tiêu cải thiện xếp hạng sự hài lòng của khách hàng lên mười phần trăm và tôi vui mừng thông báo rằng chúng tôi đã đạt được mục tiêu đó.)</em><br>
+<strong>To celebrate this achievement, the company is treating us all to lunch next Friday.</strong> <em>(Để chúc mừng thành tích này, công ty sẽ chiêu đãi tất cả chúng ta bữa trưa vào thứ Sáu tới.)</em><br>
+Now, <strong>for today's workshop, we'll be working in small teams to brainstorm ideas for our new marketing campaign.</strong> I'll divide you into groups now, and then we'll get started. <em>(Bây giờ, đối với buổi hội thảo ngày hôm nay, chúng ta sẽ làm việc theo các nhóm nhỏ để động não các ý tưởng cho chiến dịch tiếp thị mới của mình. Tôi sẽ chia các bạn thành các nhóm bây giờ, và sau đó chúng ta sẽ bắt đầu.)</em>`,
+    explanation: "Người nói chia sẻ thành tựu năm ngoái: 'Last year, we set a goal to improve our customer satisfaction ratings... we reached that target.' (Năm ngoái chúng ta đặt mục tiêu nâng cao tỷ lệ hài lòng của khách hàng và đã đạt được mục tiêu đó).",
+    highlight: "improve our customer satisfaction ratings... reached that target"
+  },
+  {
+    id: 93,
+    audio: "audio/listening/test4/part4/92-94.mp3",
+    question: "93. What will the company do to celebrate an achievement?",
+    options: [
+      "A. Distribute bonuses",
+      "B. Provide a free meal",
+      "C. Host an evening reception",
+      "D. Offer additional vacation time",
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 92)`,
+    explanation: "Hình thức chúc mừng thành tích được người nói công bố: 'To celebrate this achievement, the company is treating us all to lunch next Friday.' (Để ăn mừng thành công này, công ty sẽ bao toàn bộ chúng ta ăn trưa vào thứ Sáu tuần tới). Việc bao ăn trưa tương đương với cung cấp một bữa ăn miễn phí.",
+    highlight: "treating us all to lunch"
+  },
+  {
+    id: 94,
+    audio: "audio/listening/test4/part4/92-94.mp3",
+    question: "94. What is the main purpose of today's workshop?",
+    options: [
+      "A. To practice sales techniques",
+      "B. To select a new vendor",
+      "C. To generate marketing ideas",
+      "D. To learn a software program",
+    ],
+    correct: "C",
+    transcript: `(Dùng chung kịch bản thoại câu 92)`,
+    explanation: "Mục tiêu của buổi làm việc hôm nay được nêu rõ: 'for today's workshop, we'll be working in small teams to brainstorm ideas for our new marketing campaign.' (Đối với buổi thảo luận hôm nay, chúng ta sẽ chia đội nhỏ để động não thu thập ý tưởng cho chiến dịch tiếp thị mới).",
+    highlight: "brainstorm ideas for our new marketing campaign"
+  },
+
+  // --- Đoạn văn 95 - 97 (Có hình ảnh sơ đồ sơ đồ chỗ ngồi nhà hát) ---
+  {
+    id: 95,
+    audio: "audio/listening/test4/part4/95-97.mp3",
+    question: "95. Why is the speaker calling?",
+    options: [
+      "A. To purchase tickets",
+      "B. To reschedule a performance",
+      "C. To upgrade a membership",
+      "D. To correct an error",
+    ],
+    correct: "D",
+    transcript: `<strong>W-Br:</strong> Hi, I'm calling about the tickets I bought online yesterday for the concert on Saturday. <strong>I just looked at my confirmation e-mail and realized that I accidentally booked seats in the second row instead of the front row.</strong> <em>(Xin chào, tôi gọi điện về số vé tôi đã mua trực tuyến ngày hôm qua cho buổi hòa nhạc vào thứ Bảy. Tôi vừa xem e-mail xác nhận của mình và nhận ra rằng tôi đã vô tình đặt nhầm chỗ ở hàng ghế thứ hai thay vì hàng ghế đầu tiên.)</em><br>
+<strong>I wanted seats right next to the stage, in the center section. I hope you can change my booking.</strong> <em>(Tôi muốn có chỗ ngồi ngay cạnh sân khấu, ở khu vực trung tâm. Tôi hy vọng bạn có thể thay đổi đặt chỗ của tôi.)</em><br>
+<strong>If the front-row seats are already sold out, please give me a full refund instead.</strong> My confirmation number is 4-9-2-0. Thank you. <em>(Nếu vé hàng ghế đầu đã bán hết, vui lòng hoàn tiền đầy đủ cho tôi. Số xác nhận của tôi là 4-9-2-0. Cảm ơn bạn.)</em>`,
+    explanation: "Người phụ nữ gọi điện giải thích lý do: 'I just looked at my confirmation e-mail and realized that I accidentally booked seats in the second row instead of the front row.' (Tôi vừa xem email xác nhận và nhận ra mình đã đặt nhầm hàng ghế số 2 thay vì hàng đầu). Cô ấy gọi đến để sửa chữa sai sót đặt nhầm này.",
+    highlight: "realized that I accidentally booked... instead of"
+  },
+  {
+    id: 96,
+    audio: "audio/listening/test4/part4/95-97.mp3",
+    question: "96. Look at the graphic. Which section does the speaker want her new seats to be in?",
+    options: [
+      "A. Section A",
+      "B. Section B",
+      "C. Section C",
+      "D. Section D",
+    ],
+    correct: "B",
+    transcript: `(Dùng chung kịch bản thoại câu 95)`,
+    explanation: "Người phụ nữ mô tả rất cụ thể vị trí mong muốn đổi sang: 'I wanted seats right next to the stage, in the center section.' (Tôi muốn ghế ngồi ngay sát cạnh sân khấu, thuộc khu vực chính giữa trung tâm). Đối chiếu sơ đồ đồ họa của nhà hát, khu vực nằm ngay sát sân khấu (Stage) và ở chính giữa trung tâm chính là **Section B**.",
+    highlight: "right next to the stage, in the center section [Section B]"
+  },
+  {
+    id: 97,
+    audio: "audio/listening/test4/part4/95-97.mp3",
+    question: "97. What does the speaker ask the listener to do if her request is not possible?",
+    options: [
+      "A. Cancel her order",
+      "B. Contact a manager",
+      "C. Credit her account",
+      "D. Send an updated schedule",
+    ],
+    correct: "A",
+    transcript: `(Dùng chung kịch bản thoại câu 95)`,
+    explanation: "Người phụ nữ đưa ra phương án dự phòng nếu không đổi được vị trí ghế mong muốn: 'If the front-row seats are already sold out, please give me a full refund instead.' (Nếu hàng ghế đầu bán hết rồi thì vui lòng hoàn tiền đầy đủ cho tôi luôn). Hoàn tiền đầy đủ đồng nghĩa với việc hủy bỏ đơn đặt hàng.",
+    highlight: "please give me a full refund instead"
+  },
+
+  // --- Đoạn văn 98 - 100 (Có hình ảnh danh sách danh mục chi phí) ---
+  {
+    id: 98,
+    audio: "audio/listening/test4/part4/98-100.mp3",
+    question: "98. Who most likely are the listeners?",
+    options: [
+      "A. City council members",
+      "B. Store managers",
+      "C. Financial consultants",
+      "D. Marketing executives",
+    ],
+    correct: "B",
+    transcript: `<strong>M-Au:</strong> Welcome to the quarterly regional meeting for <strong>Oak Valley Grocery Stores</strong>. <strong>Today, we're reviewing last quarter's expenses for all ten of our stores in the region.</strong> <em>(Chào mừng bạn đến với cuộc họp khu vực hàng quý của Cửa hàng tạp hóa Oak Valley. Hôm nay, chúng ta sẽ xem xét các chi phí trong quý trước cho tất cả mười cửa hàng của chúng ta trong khu vực.)</em><br>
+Overall, we did a great job keeping costs down. However, <strong>the category that we overspent on was maintenance. As you all know, we had to replace a refrigeration unit in our North store last month</strong>, which was very expensive. <em>(Nhìn chung, chúng ta đã làm rất tốt việc giữ chi phí thấp. Tuy nhiên, danh mục mà chúng ta chi tiêu quá mức là bảo trì. Như tất cả các bạn đã biết, chúng ta đã phải thay thế một tổ máy làm lạnh tại cửa hàng phía Bắc của chúng ta vào tháng trước, việc này rất tốn kém.)</em><br>
+Now, before we move on to next quarter's budget, <strong>I'd like each of you to give a brief report on your individual store's sales performance.</strong> Let's start with the West store. <em>(Bây giờ, trước khi chúng ta chuyển sang ngân sách của quý tới, tôi muốn mỗi bạn đưa ra một báo cáo ngắn gọn về hiệu suất bán hàng của từng cửa hàng của bạn. Hãy bắt đầu với cửa hàng phía Tây.)</em>`,
+    explanation: "Người nói mở đầu cuộc họp khu vực của chuỗi 'Oak Valley Grocery Stores' và nói: 'I'd like each of you to give a brief report on your individual store's sales performance.' (Tôi muốn mỗi người trong các bạn báo cáo ngắn về tình hình doanh số của riêng từng cửa hàng các bạn quản lý). Do đó, người nghe là các quản lý cửa hàng.",
+    highlight: "report on your individual store's sales performance"
+  },
+  {
+    id: 99,
+    audio: "audio/listening/test4/part4/98-100.mp3",
+    question: "99. Look at the graphic. Which category of expenses was higher than expected?",
+    options: [
+      "A. Category 1",
+      "B. Category 2",
+      "C. Category 3",
+      "D. Category 4",
+    ],
+    correct: "C",
+    transcript: `(Dùng chung kịch bản thoại câu 98)`,
+    explanation: "Người nói chỉ rõ danh mục bị vượt ngân sách: 'the category that we overspent on was maintenance. As you all know, we had to replace a refrigeration unit...' (Danh mục mà chúng ta chi tiêu vượt mức dự kiến chính là bảo trì - Maintenance do phải sửa cụm tủ đông). Đối chiếu danh sách bảng chi phí đính kèm trong đề bài, từ khóa **Maintenance** tương ứng với **Category 3**.",
+    highlight: "overspent on was maintenance [Category 3]"
+  },
+  {
+    id: 100,
+    audio: "audio/listening/test4/part4/98-100.mp3",
+    question: "100. What does the speaker ask the listeners to do next?",
+    options: [
+      "A. Review a budget proposal",
+      "B. Break into small discussion groups",
+      "C. Present a sales report",
+      "D. Complete an expense form",
+    ],
+    correct: "C",
+    transcript: `(Dùng chung kịch bản thoại câu 98)`,
+    explanation: "Người nói yêu cầu hành động tiếp theo ở cuối bài nói: 'I'd like each of you to give a brief report on your individual store's sales performance. Let's start...' (Tôi muốn mỗi bạn đưa ra một báo cáo ngắn gọn về hiệu quả bán hàng của cửa hàng mình). Hành động này là trình bày báo cáo doanh số.",
+    highlight: "give a brief report on your individual store's sales performance"
+  }
+            ]
+        }
+    ]
+};
+
+  // Global State
+    let userAnswers = new Array(101).fill(null);
+    let timerDuration = 45 * 60; 
+    let timerInterval = null;
+    let isMockMode = false;
+    let isSubmitted = false;
+
+    // --- QUẢN LÝ LỊCH SỬ LÀM BÀI ---
+    const HISTORY_KEY = "snapenglish_listening_test4_2018_history"; // Đã đổi Key sang Test 2
+    let isReviewingMode = false;
+
+    function openHistoryModal() {
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        let historyListEl = document.getElementById('historyList');
+        let listHtml = '';
+
+        if (history.length === 0) {
+            listHtml = '<p style="text-align: center; color: var(--text-muted); margin-top: 20px;">Chưa có dữ liệu làm bài.</p>';
+        } else {
+            history.forEach(attempt => {
+                listHtml += `
+                    <div class="history-item">
+                        <div class="history-info">
+                            <span class="history-date">📅 ${attempt.date} - ⏰ ${attempt.time}</span>
+                            <span class="history-score">🏆 Điểm: ${attempt.score}/495</span>
+                        </div>
+                        <div style="display: flex; gap: 5px;">
+                            <button class="btn-review" onclick="restoreAttempt(${attempt.id})">Xem lại</button>
+                            <button class="btn-delete-history" onclick="deleteAttempt(${attempt.id})" title="Xóa bài làm này">✖</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+        historyListEl.innerHTML = listHtml;
+        document.getElementById('historyOverlay').classList.add('show');
+    }
+
+    function saveAttemptToHistory(score, total, answersArray) {
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        let now = new Date();
+        let toeicScore = Math.round(((score / total) * 495) / 5) * 5;
+        
+        let attempt = {
+            id: Date.now(),
+            date: now.toLocaleDateString('vi-VN'),
+            time: now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+            score: toeicScore,
+            total: total,
+            answers: answersArray
+        };
+        
+        history.unshift(attempt);
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+        if (window.syncHistoryToCloud) {
+            window.syncHistoryToCloud(history);
+        }
+    }
+
+    // Hàm hiển thị Popup xác nhận tùy chỉnh
+    function showCustomConfirm(title, desc, onConfirmCallback) {
+        document.getElementById('ccTitle').innerText = title;
+        document.getElementById('ccDesc').innerText = desc;
+        
+        let confirmBtn = document.getElementById('ccConfirmBtn');
+        
+        let newBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+        
+        newBtn.addEventListener('click', () => {
+            onConfirmCallback();
+            closeModal('customConfirmModal');
+        });
+
+        document.getElementById('customConfirmModal').classList.add('show');
+    }
+
+    function deleteAttempt(attemptId) {
+        showCustomConfirm(
+            "Xóa lịch sử", 
+            "Bạn có chắc chắn muốn xóa bài làm này khỏi lịch sử không? Hành động này không thể hoàn tác.", 
+            () => {
+                let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+                history = history.filter(h => h.id !== attemptId); 
+                localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); 
+                
+                if (window.syncHistoryToCloud) window.syncHistoryToCloud(history);
+                openHistoryModal(); 
+            }
+        );
+    }
+
+    function restoreAttempt(attemptId) {
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        let attempt = history.find(h => h.id === attemptId);
+        if(!attempt) return;
+
+        isReviewingMode = true; 
+        closeModal('historyOverlay');
+        closeModal('setupModal');
+        
+        document.querySelectorAll('input[type="radio"]').forEach(el => {
+            el.disabled = false;
+            el.checked = false; 
+        });
+        
+        userAnswers = attempt.answers; 
+        attempt.answers.forEach((val, qId) => {
+            if (val && qId > 0) {
+                let radio = document.querySelector(`input[name="q${qId}"][value="${val}"]`);
+                if (radio) radio.checked = true;
+            }
+        });
+
+        let btnSubmit = document.getElementById('headerSubmitBtn');
+        if(btnSubmit) {
+            btnSubmit.innerText = "Đang xem lại";
+            btnSubmit.style.background = "var(--text-muted)";
+        }
+
+        isSubmitted = false; 
+        executeSubmit();
+    }
+
+    // --- INIT APP ---
+    function selectMode(mode) {
+        document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('selected'));
+        if(mode === 'practice') {
+            document.getElementById('btnModePractice').classList.add('selected');
+            document.getElementById('timeSettings').style.display = 'block';
+            isMockMode = false;
+            
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.style.pointerEvents = 'auto'; 
+                btn.style.opacity = '1';
+            });
+            
+        } else {
+            document.getElementById('btnModeMock').classList.add('selected');
+            document.getElementById('timeSettings').style.display = 'none';
+            document.getElementById('inputTime').value = 45; 
+            isMockMode = true;
+        }
+        document.getElementById('btnStart').style.display = 'block';
+    }
+
+    function startTest() {
+        timerDuration = parseInt(document.getElementById('inputTime').value) * 60;
+        document.getElementById('setupModal').classList.remove('show');
+        renderTest();
+        buildNavGrid();
+        
+        // --- ẨN NÚT CHUYỂN CÂU NẾU LÀ THI THỬ ---
+        let navArea = document.getElementById('cardNavArea');
+        if (navArea) {
+            navArea.style.display = isMockMode ? 'none' : 'flex';
+        }
+        
+        updateCardView(); // Khởi tạo view 1 câu
+        startTimer();
+
+        // Kích hoạt chế độ thi thật
+        if (isMockMode) {
+            setupMockModeAudio();
+        }
+    }
+
+    let mockAudioList = [];
+
+    function setupMockModeAudio() {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.style.pointerEvents = 'none'; 
+            btn.style.opacity = '0.8';
+        });
+
+        mockAudioList = Array.from(document.querySelectorAll('audio'));
+        
+        mockAudioList.forEach((audio, index) => {
+            audio.removeAttribute('controls'); 
+
+            audio.onended = () => {
+                let nextIndex = index + 1;
+                
+                if (nextIndex < mockAudioList.length) {
+                    let currentPart = audio.closest('.part-container');
+                    let nextPart = mockAudioList[nextIndex].closest('.part-container');
+
+                    if (currentPart !== nextPart) {
+                        // Tự động chuyển Tab (hàm switchTab đã có sẵn logic reset câu về 0)
+                        let partId = nextPart.id; 
+                        let partNum = parseInt(partId.replace('part', ''));
+                        switchTab(partNum);
+                    } else {
+                        // Tự động lật sang câu tiếp theo trong cùng 1 Part
+                        nextCard();
+                    }
+
+                    // Tự động phát audio tiếp theo
+                    mockAudioList[nextIndex].play();
+                } else {
+                    // Tự động nộp bài khi chạy xong audio cuối cùng của Part 4
+                    executeSubmit();
+                }
+            };
+        });
+
+        // Bắt đầu phát câu đầu tiên
+        if (mockAudioList.length > 0) {
+            switchTab(1);
+            mockAudioList[0].play().catch(e => console.log("Trình duyệt chặn autoplay, cần tương tác từ người dùng."));
+        }
+    }
+
+    function startTimer() {
+        const display = document.getElementById('timerDisplay');
+        timerInterval = setInterval(() => {
+            let m = Math.floor(timerDuration / 60);
+            let s = timerDuration % 60;
+            display.innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            if(timerDuration <= 0) {
+                clearInterval(timerInterval);
+                executeSubmit();
+            }
+            timerDuration--;
+        }, 1000);
+    }
+
+    // --- RENDER UI ---
+    function renderTest() {
+        const main = document.getElementById('mainContent');
+        main.innerHTML = '';
+
+        // Render Part 1
+        let p1HTML = `<div id="part1" class="part-container active">
+            <div class="part-title">Part 1: Photographs</div>
+            <div class="part-desc">Listen to the audio and select the best description for the image.</div>`;
+        TOEIC_DATA.part1.forEach(q => {
+            let imgUrl = q.img || q.image;
+            let scriptEn = typeof q.script_en === 'string' ? q.script_en : (q.script_en || []).join('<br>');
+            let scriptVi = typeof q.script_vi === 'string' ? q.script_vi : (q.script_vi || []).join('<br>');
+            let explains = q.explains ? q.explains.map(ex => {
+                let isAns = ex.type === 'correct';
+                let tag = isAns ? "<span class='bingo-tag'>Đúng</span>" : "<span class='trap-tag'>Sai</span>";
+                return `<div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px;">
+                    <div style="font-weight: 700; margin-bottom: 5px;">Option ${ex.opt}</div>
+                    <div>${tag} ${ex.text}</div>
+                </div>`;
+            }).join('') : '';
+            
+            p1HTML += `
+            <div class="q-card" id="card-${q.id}">
+                <div class="split-layout">
+                    <div class="split-media">
+                        <img src="${imgUrl}" alt="Image Q${q.id}">
+                        <audio controls src="${q.audio}"></audio>
+                    </div>
+                    <div class="split-questions">
+                        <div class="q-header">
+                            <div class="q-num">${q.id}</div>
+                            <div class="q-text">Look at the picture and choose the correct statement.</div>
+                        </div>
+                        <div class="options-grid">
+                            ${['A', 'B', 'C', 'D'].map(opt => `
+                            <label class="opt-label" onclick="selectAnswer(${q.id}, '${opt}')">
+                                <input type="radio" name="q${q.id}" value="${opt}">
+                                <div class="custom-radio"></div><span>Option ${opt}</span>
+                            </label>`).join('')}
+                        </div>
+                        <div class="explanation-box" id="exp-${q.id}">
+                            <div class="exp-title">Phân tích chi tiết</div>
+                            <div class="script-en">${scriptEn}</div>
+                            <div class="script-vi">${scriptVi}</div>
+                            <div style="margin-top:15px; display:flex; flex-direction:column; gap:10px;">
+                                ${explains}
+                            </div>
+                            ${q.vocab ? `<div class="vocab-box"><b>📚 Từ Vựng:</b><br>${q.vocab.replace(/\n/g, '<br>')}</div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        });
+        p1HTML += `</div>`;
+        main.innerHTML += p1HTML;
+
+        // Render Part 2 
+        let p2HTML = `<div id="part2" class="part-container">
+            <div class="part-title">Part 2: Question & Response</div>
+            <div class="part-desc">Listen to the audio and select the best response.</div>`;
+        TOEIC_DATA.part2.forEach(q => {
+            let correctAns = q.answer || q.ans || q.correct;
+            p2HTML += `
+            <div class="q-card" id="card-${q.id}">
+                <div class="q-header">
+                    <div class="q-num">${q.id}</div>
+                    <div class="q-text">Mark your answer on your answer sheet.</div>
+                </div>
+                <audio controls src="${q.audio}" style="width:100%; margin-bottom:15px;"></audio>
+                <div class="options-grid">
+                    ${['A', 'B', 'C'].map(optLetter => `
+                    <label class="opt-label" onclick="selectAnswer(${q.id}, '${optLetter}')">
+                        <input type="radio" name="q${q.id}" value="${optLetter}">
+                        <div class="custom-radio"></div><span>Option ${optLetter}</span>
+                    </label>`).join('')}
+                </div>
+                <div class="explanation-box" id="exp-${q.id}">
+                    <div class="exp-title">Phân tích chi tiết</div>
+                    
+                    <div style="margin-bottom: 15px; padding: 15px; background: #E6F2FF; border-radius: 8px; border: 1px solid var(--primary);">
+                        <div style="font-weight: 700; color: var(--primary-dark); font-size: 16px;">Q: ${q.script_q_en || q.q_en}</div>
+                        <div style="color: var(--text-muted); font-style: italic; margin-bottom: 10px;">Dịch: ${q.script_q_vi || q.q_vi}</div>
+                        ${(q.general_explain || q.hint) ? `<div style="color: #D35400; font-size: 14px;">💡 <b>Mẹo giải:</b> ${q.general_explain || q.hint}</div>` : ''}
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                        ${q.explains ? q.explains.map((exp, idx) => {
+                            let isAns = (exp.opt === correctAns);
+                            let tag = isAns ? "<span class='bingo-tag'>Đúng</span>" : "<span class='trap-tag'>Sai</span>";
+                            let enText = q.script_opt_en ? q.script_opt_en[idx].replace(/^\([A-C]\)\s*/, '') : '';
+                            let viText = q.script_opt_vi ? q.script_opt_vi[idx].replace(/^\([A-C]\)\s*/, '') : '';
+                            return `<div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border);">
+                                <div style="font-weight: 700; margin-bottom: 5px;">(${exp.opt}) ${enText}</div>
+                                <div style="color: var(--text-muted); font-size: 14px; font-style: italic; margin-bottom: 8px;">${viText}</div>
+                                <div>${tag} ${exp.text}</div>
+                            </div>`;
+                        }).join('') : ''}
+                    </div>
+                    
+                    ${q.vocab ? `<div class="vocab-box"><b>📚 Từ Vựng:</b><br>${q.vocab.replace(/\n/g, '<br>')}</div>` : ''}
+                </div>
+            </div>`;
+        });
+        p2HTML += `</div>`;
+        main.innerHTML += p2HTML;
+
+        // Render Part 3 & 4 
+        const renderPassage = (data, title) => {
+            let html = `<div id="part${title.includes('3') ? 3 : 4}" class="part-container">
+                <div class="part-title">${title}</div>
+                <div class="part-desc">Listen to the talks and answer the questions.</div>`;
+            data.forEach(p => {
+                html += `
+                <div class="q-card" style="padding:0;"> <div class="split-layout" id="layout-${p.id}" style="padding:30px;">
+                        
+                        <div class="split-media" id="media-${p.id}">
+                            <div style="font-weight:800; color:var(--primary-dark); margin-bottom:15px;">Questions ${p.id}</div>
+                            ${p.graphic ? (p.graphic.includes('<') ? `<div style="overflow-x:auto; margin-bottom:15px;">${p.graphic}</div>` : `<img src="${p.graphic}" alt="Graphic">`) : ''}
+                            <audio controls src="${p.audio}" style="width: 100%;"></audio>
+                            
+                            <div class="explanation-box" id="exp-passage-${p.id}" style="margin-top:20px; border-top:2px dashed var(--border); border-left:none; padding:20px 0 0 0; background:transparent; text-align:left;">
+                                <div class="exp-title">Transcript Song Ngữ</div>
+                                <div class="script-en">${p.script_en.replace(/\n/g, '<br>')}</div>
+                                <div class="script-vi">${p.script_vi.replace(/\n/g, '<br>')}</div>
+                                ${p.vocab ? `<div class="vocab-box" style="margin-top:15px; background:#F8FAFC;"><b>📚 Từ vựng quan trọng:</b><br>${p.vocab.replace(/\n/g, '<br>')}</div>` : ''}
+                            </div>
+                        </div>
+
+                        <div class="resizer" id="resizer-${p.id}"></div>
+
+                        <div class="split-questions">`;
+                p.questions.forEach(q => {
+                    let qTextEn = q.q_en || (q.q && q.q.includes('<br>') ? q.q.split('<br>')[0] : q.q);
+                    let qTextVi = q.q_vi || (q.q && q.q.includes('<br>') ? q.q.split('<br>')[1] : '');
+                    
+                    html += `
+                            <div class="q-header" id="card-${q.id}" style="margin-top:${q===p.questions[0] ? '0' : '30px'};">
+                                <div class="q-num">${q.id}</div>
+                                <div class="q-text">${qTextEn}</div>
+                            </div>
+                            <div class="options-grid">
+                                ${['A','B','C','D'].map((opt, i) => {
+                                    let optObj = q.opts.find(o => o.l === opt) || q.opts[i];
+                                    let optText = typeof optObj === 'object' ? optObj.text : optObj;
+                                    let optVi = typeof optObj === 'object' && optObj.text_vi ? `<div class="opt-vi-hint" style="display:none; font-size:14px; color:var(--text-muted); font-weight:normal; margin-top:4px;"><i>${optObj.text_vi}</i></div>` : '';
+                                    return `
+                                    <label class="opt-label" onclick="selectAnswer(${q.id}, '${opt}')">
+                                        <input type="radio" name="q${q.id}" value="${opt}">
+                                        <div class="custom-radio"></div>
+                                        <div style="display:flex; flex-direction:column;">
+                                            <span><b>${opt}.</b> ${optText}</span>
+                                            ${optVi}
+                                        </div>
+                                    </label>`;
+                                }).join('')}
+                            </div>
+                            <div class="explanation-box" id="exp-${q.id}">
+                                <div style="margin-bottom:10px; font-size:15px; color:var(--text-muted);">${qTextVi}</div>
+                                ${q.explanation || q.exp || ''}
+                            </div>`;
+                });
+                html += `
+                        </div>
+                    </div>
+                </div>`;
+            });
+            html += `</div>`;
+            return html;
+        };
+
+        main.innerHTML += renderPassage(TOEIC_DATA.part3, 'Part 3: Conversations');
+        main.innerHTML += renderPassage(TOEIC_DATA.part4, 'Part 4: Short Talks');
+
+        const allIDs = [
+            ...TOEIC_DATA.part1.map(q=>q.id), 
+            ...TOEIC_DATA.part2.map(q=>q.id),
+            ...TOEIC_DATA.part3.flatMap(p=>p.questions.map(q=>q.id)),
+            ...TOEIC_DATA.part4.flatMap(p=>p.questions.map(q=>q.id))
+        ];
+        
+        let missingDivs = '<div style="display:none;">';
+        for(let i=1; i<=100; i++) {
+            if(!allIDs.includes(i)) missingDivs += `<div id="card-${i}">Fake Q${i}</div><div id="exp-${i}"></div>`;
+        }
+        missingDivs += '</div>';
+        main.innerHTML += missingDivs;
+
+        document.querySelectorAll('.resizer').forEach(resizer => {
+            let id = resizer.id.split('resizer-')[1]; 
+            let leftCol = document.getElementById(`media-${id}`);
+            let container = document.getElementById(`layout-${id}`);
+            if(leftCol && container) {
+                initResizer(resizer, leftCol, container);
+            }
+        });
+    }
+
+    function buildNavGrid() {
+        const grid = document.getElementById('navGrid');
+        grid.innerHTML = '';
+        for(let i = 1; i <= 100; i++) {
+            grid.innerHTML += `<div class="nav-dot" id="nav-${i}" onclick="scrollToQ(${i})">${i}</div>`;
+        }
+    }
+
+    function switchTab(n) {
+        document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i+1 === n));
+        document.querySelectorAll('.part-container').forEach((p, i) => p.classList.toggle('active', i+1 === n));
+        document.getElementById('mainContent').scrollTop = 0;
+        currentCardIndex = 0; 
+    updateCardView();
+    }
+// --- LOGIC HIỂN THỊ TỪNG CÂU ---
+let currentCardIndex = 0;
+let cardsInCurrentPart = [];
+
+function updateCardView() {
+    // 1. Tìm Part đang active
+    let activePart = document.querySelector('.part-container.active');
+    if(!activePart) return;
+
+    // 2. Lấy tất cả các q-card trong Part đó
+    cardsInCurrentPart = Array.from(activePart.querySelectorAll('.q-card'));
+
+    // 3. Ẩn tất cả, chỉ bật display: block cho card hiện tại
+    cardsInCurrentPart.forEach((card, index) => {
+        if(index === currentCardIndex) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    // 4. Bật/tắt nút Next Prev
+    let btnPrev = document.getElementById('btnPrevCard');
+    let btnNext = document.getElementById('btnNextCard');
+    
+    if(btnPrev) btnPrev.disabled = (currentCardIndex === 0);
+    if(btnNext) btnNext.disabled = (currentCardIndex === cardsInCurrentPart.length - 1);
+    
+    // Tự động cuộn lên đầu câu hỏi
+    document.getElementById('mainContent').scrollTop = 0;
+}
+
+function nextCard() {
+    if (currentCardIndex < cardsInCurrentPart.length - 1) {
+        currentCardIndex++;
+        updateCardView();
+    }
+}
+
+function prevCard() {
+    if (currentCardIndex > 0) {
+        currentCardIndex--;
+        updateCardView();
+    }
+}
+    // Mở / Đóng bảng điều hướng
+    function toggleNavPanel() {
+        const panel = document.getElementById('navPanel');
+        const overlay = document.getElementById('navOverlay');
+        panel.classList.toggle('show');
+        
+        if (panel.classList.contains('show')) {
+            overlay.classList.add('show');
+        } else {
+            overlay.classList.remove('show');
+        }
+    }
+
+    // Cập nhật hàm selectAnswer để tự động đếm số câu đã làm
+    window.selectAnswer = function(id, val) {
+        if(isSubmitted) return;
+        
+        userAnswers[id] = val;
+        const card = document.getElementById(`card-${id}`) || document.getElementById(`card-${id}`).parentElement;
+        card.querySelectorAll(`input[name="q${id}"]`).forEach(inp => {
+            const lbl = inp.parentElement.parentElement.classList.contains('opt-label') ? inp.parentElement.parentElement : inp.closest('.opt-label');
+            if(inp.value === val) {
+                inp.checked = true;
+                lbl.classList.add('selected');
+            } else {
+                lbl.classList.remove('selected');
+            }
+        });
+
+        document.getElementById(`nav-${id}`).classList.add('answered');
+
+        // Đếm số lượng câu đã làm và hiển thị lên nút nổi
+        let answeredCount = userAnswers.filter(ans => ans !== null).length;
+        document.getElementById('answeredCount').innerText = answeredCount;
+    };
+
+   window.scrollToQ = function(id) {
+    let tab = 1;
+    if(id > 6) tab = 2;
+    if(id >= 32) tab = 3;
+    if(id >= 71) tab = 4;
+    switchTab(tab); // Gọi switchTab sẽ tự động quét các card
+    
+    toggleNavPanel();
+
+    // Tìm card chứa câu hỏi vừa bấm
+    let targetQuestion = document.getElementById(`card-${id}`);
+    if (targetQuestion) {
+        // Tìm q-card bọc ngoài cùng
+        let targetCard = targetQuestion.closest('.q-card');
+        
+        // Tìm vị trí của nó và show lên
+        let index = cardsInCurrentPart.indexOf(targetCard);
+        if(index !== -1) {
+            currentCardIndex = index;
+            updateCardView();
+        }
+    }
+};
+
+    function requestSubmit() {
+        document.getElementById('confirmModal').classList.add('show');
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('show');
+    }
+
+    function executeSubmit() {
+        isSubmitted = true;
+        clearInterval(timerInterval);
+        closeModal('confirmModal');
+        
+        let correctCount = 0;
+        let totalRendered = 0;
+
+        const keys = {};
+        TOEIC_DATA.part1.forEach(q => keys[q.id] = q.answer || q.ans || q.correct);
+        TOEIC_DATA.part2.forEach(q => keys[q.id] = q.answer || q.ans || q.correct);
+        TOEIC_DATA.part3.forEach(p => p.questions.forEach(q => {
+            let corrOpt = q.opts.find(o => o.isCorrect === true);
+            keys[q.id] = q.answer || q.ans || q.correct || (corrOpt ? corrOpt.l : null);
+        }));
+        TOEIC_DATA.part4.forEach(p => p.questions.forEach(q => {
+            let corrOpt = q.opts.find(o => o.isCorrect === true);
+            keys[q.id] = q.answer || q.ans || q.correct || (corrOpt ? corrOpt.l : null);
+        }));
+
+        for(let i=1; i<=100; i++) {
+            if(keys[i]) {
+                totalRendered++;
+                let isCorr = (userAnswers[i] === keys[i]);
+                if(isCorr) correctCount++;
+
+                document.querySelectorAll(`input[name="q${i}"]`).forEach(inp => {
+                    let lbl = inp.closest('.opt-label');
+                    if(inp.value === keys[i]) {
+                        lbl.classList.add('is-correct');
+                    } else if (inp.value === userAnswers[i] && !isCorr) {
+                        lbl.classList.add('is-wrong');
+                    }
+                });
+
+                let exp = document.getElementById(`exp-${i}`);
+                if(exp) exp.classList.add('show');
+
+                let nav = document.getElementById(`nav-${i}`);
+                if(nav) {
+                    nav.classList.remove('answered');
+                    nav.classList.add(isCorr ? 'correct' : 'wrong');
+                }
+
+                let qText = document.getElementById(`text-q${i}`);
+                if(qText) qText.classList.add('revealed');
+            }
+        }
+
+        document.querySelectorAll('[id^="exp-passage-"]').forEach(el => el.classList.add('show'));
+        document.querySelectorAll('.opt-vi-hint').forEach(el => el.style.display = 'block');
+        document.querySelectorAll('input[type="radio"]').forEach(el => el.disabled = true);
+        document.getElementById('headerSubmitBtn').style.display = 'none';
+
+        let toeicScore = Math.round(((correctCount / totalRendered) * 495) / 5) * 5;
+        document.getElementById('scoreDisplay').innerText = `${toeicScore}/495`; 
+        document.getElementById('scoreComment').innerText = `Bạn trả lời đúng ${correctCount}/${totalRendered} câu. Tuyệt vời! Hãy xem chi tiết giải thích ở từng câu bên dưới.`;
+        document.getElementById('resultModal').classList.add('show');
+
+        if (!isReviewingMode) {
+            saveAttemptToHistory(correctCount, totalRendered, [...userAnswers]);
+            let totalTimeInSeconds = parseInt(document.getElementById('inputTime').value) * 60;
+            let timeSpentInSeconds = totalTimeInSeconds - timerDuration;
+            let min = Math.floor(timeSpentInSeconds / 60);
+            let sec = timeSpentInSeconds % 60;
+            let timeString = `${min} phút ${sec} giây`;
+            
+            if(window.luuDiemTOEICFull) {
+                window.luuDiemTOEICFull(correctCount, totalRendered, "ETS 2018 - Test 4", timeString);
+            }
+        } else {
+            let toast = document.getElementById('toastNotification');
+            if (toast) {
+                document.querySelector('.toast-desc').innerText = "Đã khôi phục bài làm ngày cũ!";
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 4000);
+            }
+        }
+    }
+
+    // HÀM XỬ LÝ KÉO THẢ THANH TRƯỢT
+    function initResizer(resizer, leftElement, container) {
+        let isDragging = false;
+
+        resizer.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            resizer.classList.add('dragging');
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            const containerRect = container.getBoundingClientRect();
+            let newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+            if (newWidth < 25) newWidth = 25;
+            if (newWidth > 75) newWidth = 75;
+            leftElement.style.flex = `0 0 ${newWidth}%`;
+        });
+
+        document.addEventListener('mouseup', function() {
+            if (isDragging) {
+                isDragging = false;
+                resizer.classList.remove('dragging');
+                document.body.style.cursor = 'default';
+                document.body.style.userSelect = 'auto';
+            }
+        });
+    }
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.syncHistoryToCloud = async function(historyData) {
+        if (!window.currentUserUid) return;
+        try {
+            let docId = window.currentUserUid + "_history_listening_test4_2018";
+            await setDoc(doc(db, "user_test_histories", docId), {
+                savedHistory: historyData,
+                lastUpdated: Date.now()
+            }, { merge: true });
+        } catch (error) {
+            console.error("Lỗi đồng bộ lịch sử: ", error);
+        }
+    }
+    
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+            
+            let docId = user.uid + "_history_listening_test4_2018";
+            const docRef = doc(db, "user_test_histories", docId);
+            
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    let cloudData = docSnap.data().savedHistory;
+                    if (cloudData) {
+                        localStorage.setItem("snapenglish_listening_test4_2018_history", JSON.stringify(cloudData));
+                        let historyModal = document.getElementById('historyOverlay');
+                        if (historyModal && historyModal.classList.contains('show')) {
+                            openHistoryModal();
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    window.luuDiemTOEICFull = async function(correct, total, testTitle, timeSpent) {
+        if (!window.currentUserUid) return;
+        let scoreConverted = Math.round(((correct / total) * 495) / 5) * 5;
+        let timestamp = Date.now();
+        let docId = window.currentUserUid + "_toeic_" + timestamp;
+
+        try {
+            await setDoc(doc(db, "user_toeic_scores", docId), {
+                email: window.currentUserEmail,
+                skill: "Listening",
+                testName: testTitle,
+                partName: "Full",
+                correctQ: correct,
+                totalQ: total,
+                score: scoreConverted,
+                timeSpent: timeSpent || "0 phút 0 giây",
+                date: new Date().toLocaleDateString('vi-VN'),
+                timestamp: timestamp
+            });
+            
+            // Hiện Toast thông báo
+            const toast = document.getElementById('toastNotification');
+            if (toast) {
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 4000); 
+            }
+        } catch (error) {
+            console.error("Lỗi khi lưu điểm: ", error);
+        }
+    }
+</script>
+
+<div id="toastNotification">
+    <div class="toast-icon">✨</div>
+    <div class="toast-content">
+        <div class="toast-title">Thành công!</div>
+        <div class="toast-desc">Điểm của bạn đã được đồng bộ.</div>
+    </div>
+</div>
+
+</body>
+</html>
