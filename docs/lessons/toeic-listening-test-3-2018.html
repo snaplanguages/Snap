@@ -331,6 +331,44 @@
         .btn-delete-history:hover { background: var(--danger); color: white; }
         #historyList::-webkit-scrollbar { width: 6px; }
         #historyList::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+        /* --- GIAO DIỆN TỪNG CÂU (PAGINATION) --- */
+.q-card {
+    display: none; /* Ẩn hết tất cả các card mặc định */
+    animation: fadeIn 0.4s ease;
+}
+
+/* Nút điều hướng Next/Prev */
+.card-navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    padding: 10px 0;
+    border-top: 2px dashed var(--border);
+}
+
+.btn-nav {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+    border: none;
+    transition: 0.2s;
+    background: white;
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+.btn-nav:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.btn-nav:disabled {
+    background: #F1F2F6;
+    color: #B2BEC3;
+    border-color: #DFE6E9;
+    cursor: not-allowed;
+}
     </style>
 </head>
 <body>
@@ -412,7 +450,13 @@
     </div>
 </header>
 
-<main id="mainContent"></main>
+<main id="mainContent">
+    </main>
+
+<div class="card-navigation" style="padding: 0 40px 40px 40px;">
+    <button class="btn-nav" id="btnPrevCard" onclick="prevCard()">⬅ Câu trước</button>
+    <button class="btn-nav" id="btnNextCard" onclick="nextCard()">Câu tiếp theo ➡</button>
+</div>
 
 <button class="nav-toggle-btn" id="navToggleBtn" onclick="toggleNavPanel()">
     🧭 Bảng câu hỏi (<span id="answeredCount">0</span>/100)
@@ -1312,6 +1356,7 @@
         timerDuration = parseInt(document.getElementById('inputTime').value) * 60;
         document.getElementById('setupModal').classList.remove('show');
         renderTest();
+        updateCardView();
         buildNavGrid();
         startTimer();
 
@@ -1582,8 +1627,54 @@
         document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i+1 === n));
         document.querySelectorAll('.part-container').forEach((p, i) => p.classList.toggle('active', i+1 === n));
         document.getElementById('mainContent').scrollTop = 0;
+        currentCardIndex = 0; 
+    updateCardView();
     }
+// --- LOGIC HIỂN THỊ TỪNG CÂU ---
+let currentCardIndex = 0;
+let cardsInCurrentPart = [];
 
+function updateCardView() {
+    // 1. Tìm Part đang active
+    let activePart = document.querySelector('.part-container.active');
+    if(!activePart) return;
+
+    // 2. Lấy tất cả các q-card trong Part đó
+    cardsInCurrentPart = Array.from(activePart.querySelectorAll('.q-card'));
+
+    // 3. Ẩn tất cả, chỉ bật display: block cho card hiện tại
+    cardsInCurrentPart.forEach((card, index) => {
+        if(index === currentCardIndex) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+
+    // 4. Bật/tắt nút Next Prev
+    let btnPrev = document.getElementById('btnPrevCard');
+    let btnNext = document.getElementById('btnNextCard');
+    
+    if(btnPrev) btnPrev.disabled = (currentCardIndex === 0);
+    if(btnNext) btnNext.disabled = (currentCardIndex === cardsInCurrentPart.length - 1);
+    
+    // Tự động cuộn lên đầu câu hỏi
+    document.getElementById('mainContent').scrollTop = 0;
+}
+
+function nextCard() {
+    if (currentCardIndex < cardsInCurrentPart.length - 1) {
+        currentCardIndex++;
+        updateCardView();
+    }
+}
+
+function prevCard() {
+    if (currentCardIndex > 0) {
+        currentCardIndex--;
+        updateCardView();
+    }
+}
     // Mở / Đóng bảng điều hướng
     function toggleNavPanel() {
         const panel = document.getElementById('navPanel');
@@ -1621,25 +1712,29 @@
         document.getElementById('answeredCount').innerText = answeredCount;
     };
 
-    window.scrollToQ = function(id) {
-        let tab = 1;
-        if(id > 6) tab = 2;
-        if(id >= 32) tab = 3;
-        if(id >= 71) tab = 4;
-        switchTab(tab);
-        
-        toggleNavPanel();
+   window.scrollToQ = function(id) {
+    let tab = 1;
+    if(id > 6) tab = 2;
+    if(id >= 32) tab = 3;
+    if(id >= 71) tab = 4;
+    switchTab(tab); // Gọi switchTab sẽ tự động quét các card
+    
+    toggleNavPanel();
 
-        setTimeout(() => {
-            let el = document.getElementById(`card-${id}`);
-            if(el) {
-                el.scrollIntoView({behavior: "smooth", block: "center"});
-                el.style.transition = "box-shadow 0.5s";
-                el.style.boxShadow = "0 0 0 4px var(--secondary)";
-                setTimeout(() => el.style.boxShadow = "0 4px 15px rgba(0,0,0,0.02)", 1000);
-            }
-        }, 300);
-    };
+    // Tìm card chứa câu hỏi vừa bấm
+    let targetQuestion = document.getElementById(`card-${id}`);
+    if (targetQuestion) {
+        // Tìm q-card bọc ngoài cùng
+        let targetCard = targetQuestion.closest('.q-card');
+        
+        // Tìm vị trí của nó và show lên
+        let index = cardsInCurrentPart.indexOf(targetCard);
+        if(index !== -1) {
+            currentCardIndex = index;
+            updateCardView();
+        }
+    }
+};
 
     function requestSubmit() {
         document.getElementById('confirmModal').classList.add('show');
