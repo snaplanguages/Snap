@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shadowing Practice | SnapEnglish</title>
+  <link rel="icon" type="image/png" href="ảnh.png">
+<style>
+  :root {
+    --vi-display: block;
+    --primary-pastel: #fbc2eb;
+    --secondary-pastel: #a6c1ee;
+    --glass-bg: rgba(255, 255, 255, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.8);
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    min-height: 100vh; 
+    box-sizing: border-box;
+    background: linear-gradient(135deg, var(--primary-pastel) 0%, var(--secondary-pastel) 100%);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .container {
+    display: flex;
+    width: 100vw;
+    height: 100vh; 
+    min-height: 700px;
+    flex-direction: row;
+  }
+
+  .left-col {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    box-sizing: border-box;
+    gap: 24px;
+  }
+
+  .right-col {
+    width: 40%;
+    padding: 24px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  .top-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    margin-bottom: 10px;
+  }
+
+  .top-controls h2 {
+    margin: 0;
+    font-size: 1.4em;
+    color: #444;
+  }
+
+  .toggle-btn {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #555;
+    transition: all 0.2s;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+
+  .toggle-btn:hover {
+    background: #f0f0f0;
+  }
+
+  .video-wrapper {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 24px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .video-wrapper iframe {
+    width: 100%;
+    height: 100%;
+  }
+
+  .record-wrapper {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    padding: 15px 25px;
+    box-sizing: border-box;
+    gap: 20px;
+    overflow: hidden;
+    min-height: 110px;
+  }
+
+  .feedback-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .record-btn {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+    border: none;
+    padding: 14px 30px;
+    border-radius: 30px;
+    color: #444;
+    font-size: 1.1em;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 154, 158, 0.4);
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .record-btn:active {
+    transform: scale(0.96);
+  }
+
+  .record-btn.recording {
+    background: linear-gradient(135deg, #ff6a88 0%, #ff99ac 100%);
+    color: white;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 106, 136, 0.6); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 106, 136, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 106, 136, 0); }
+  }
+
+  .result-box {
+    width: 100%;
+    min-height: 40px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 12px;
+    padding: 8px 15px;
+    margin: 0;
+    font-style: italic;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+    font-size: 0.95em;
+  }
+
+  .metrics-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .metric {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 6px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+
+  .metric .label {
+    font-size: 0.65em;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+
+  .metric .value {
+    font-size: 1.1em;
+    font-weight: 800;
+    color: #444;
+  }
+
+  .script-container {
+    overflow-y: auto;
+    padding-right: 10px;
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .script-container::-webkit-scrollbar {
+    width: 6px;
+  }
+  .script-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+  }
+  .script-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+  }
+
+  .script-line {
+    padding: 16px 20px;
+    border-radius: 18px;
+    transition: 0.3s ease;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid transparent;
+  }
+
+  .script-line:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .script-line.active {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transform: scale(1.02);
+    border-left: 6px solid #ff9a9e;
+    border-right: 1px solid rgba(255,255,255,0.8);
+    border-top: 1px solid rgba(255,255,255,0.8);
+    border-bottom: 1px solid rgba(255,255,255,0.8);
+  }
+
+  .script-line.active .en-text {
+    color: #d81b60;
+  }
+
+  .en-text {
+    font-size: 1.15em;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.5;
+    transition: color 0.3s ease;
+  }
+
+  .vi-text {
+    font-size: 0.95em;
+    color: #666;
+    margin-top: 8px;
+    line-height: 1.4;
+    display: var(--vi-display);
+  }
+
+  /* Responsive Design cho Mobile */
+  @media (max-width: 992px) {
+    .container {
+      flex-direction: column;
+      height: auto;
+      min-height: 100vh;
+    }
+    .script-line {
+      scroll-margin-top: calc(56.25vw + 280px); 
+    }
+    .left-col {
+      width: 100%;
+      height: auto;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: linear-gradient(135deg, var(--primary-pastel) 0%, var(--secondary-pastel) 100%);
+      padding: 12px;
+      gap: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+    }
+    .right-col {
+      width: 100%;
+      height: auto;
+      padding: 12px;
+    }
+    .record-wrapper {
+      flex-direction: column; /* Xếp dọc trên điện thoại để không bị ép ngang */
+      padding: 12px;
+      gap: 12px;
+      min-height: auto;
+    }
+    .record-btn {
+      width: 100%;
+      margin: 0;
+    }
+    .metrics-grid {
+      flex-wrap: wrap; 
+      gap: 6px;
+    }
+    .metric {
+      min-width: 45%; 
+    }
+    .script-container {
+      max-height: none; 
+      overflow-y: visible;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="left-col">
+      <div class="video-wrapper glass">
+        <div id="ytplayer"></div>
+      </div>
+      
+      <div class="record-wrapper glass">
+        <button id="recordBtn" class="record-btn">Click to Speak</button>
+        
+        <div class="feedback-container">
+          <div id="resultText" class="result-box">Your voice will appear here...</div>
+          
+          <div class="metrics-grid">
+            <div class="metric">
+              <span class="label">Pronunciation</span>
+              <span class="value" id="score-pron">--%</span>
+            </div>
+            <div class="metric">
+              <span class="label">Accuracy</span>
+              <span class="value" id="score-acc">--%</span>
+            </div>
+            <div class="metric">
+              <span class="label">Fluency</span>
+              <span class="value" id="score-flu">--%</span>
+            </div>
+            <div class="metric">
+              <span class="label">Completeness</span>
+              <span class="value" id="score-comp">--%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col glass">
+      <div class="top-controls">
+        <h2>Transcript</h2>
+        <button class="toggle-btn" onclick="toggleTranslation()">Toggle Translation</button>
+      </div>
+      <div class="script-container" id="script-container"></div>
+    </div>
+  </div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    
+    const rawSrt = `
+1
+00:00:07,040 --> 00:00:11,059
+Hello. Today, I wanna tell you about a special day.
+Xin chào. Hôm nay, mình muốn kể cho mọi người nghe về một ngày đặc biệt.
+
+
+2
+00:00:11,419 --> 00:00:13,779
+It was the day I helped someone.
+Đó là ngày mình đã giúp đỡ ai đó.
+
+
+3
+00:00:14,565 --> 00:00:19,085
+This story is simple, but it means a lot to me.
+Câu chuyện này đơn giản thôi, nhưng nó có ý nghĩa rất lớn với mình.
+
+
+4
+00:00:19,525 --> 00:00:22,125
+It happened on a normal morning.
+Chuyện xảy ra vào một buổi sáng bình thường.
+
+
+5
+00:00:22,644 --> 00:00:27,645
+I woke up at 06:30AM.
+Mình thức dậy lúc 6:30 sáng.
+
+
+6
+00:00:27,924 --> 00:00:29,485
+The weather was nice.
+Thời tiết hôm đó rất đẹp.
+
+
+7
+00:00:29,949 --> 00:00:34,069
+I felt fresh and ready for the day.
+Mình cảm thấy tươi mới và sẵn sàng cho một ngày mới.
+
+
+8
+00:00:34,510 --> 00:00:38,470
+I ate breakfast and got ready to go out.
+Mình ăn sáng và chuẩn bị ra ngoài.
+
+
+9
+00:00:39,070 --> 00:00:42,710
+That day, I needed to go to a nearby store.
+Hôm đó, mình cần đến một cửa hàng gần nhà.
+
+
+10
+00:00:43,265 --> 00:00:46,825
+I wanted to buy some food and a few small things.
+Mình muốn mua một ít đồ ăn và vài thứ lặt vặt.
+
+
+11
+00:00:47,264 --> 00:00:50,105
+I took my bag and left my house.
+Mình xách túi và rời khỏi nhà.
+
+
+12
+00:00:50,625 --> 00:00:53,545
+The street was not too busy.
+Đường phố không quá đông đúc.
+
+
+13
+00:00:54,065 --> 00:00:55,705
+People were going to work.
+Mọi người đang đi làm.
+
+
+14
+00:00:56,280 --> 00:00:59,600
+Some were riding bikes.
+Một số người đạp xe.
+
+
+15
+00:01:00,120 --> 00:01:02,320
+Some were walking quickly.
+Một số người đi bộ nhanh.
+
+
+16
+00:01:02,840 --> 00:01:05,199
+Everything looked normal.
+Mọi thứ trông bình thường.
+
+
+17
+00:01:05,560 --> 00:01:08,559
+I walked slowly and looked around.
+Mình đi chậm và nhìn xung quanh.
+
+
+18
+00:01:09,105 --> 00:01:15,785
+When I arrived near the store, I saw an old woman.
+Khi mình đến gần cửa hàng, mình thấy một bà cụ.
+
+
+19
+00:01:16,465 --> 00:01:18,905
+She was standing near the road.
+Bà ấy đang đứng gần đường.
+
+
+20
+00:01:19,185 --> 00:01:21,065
+She looked a little confused.
+Bà ấy trông hơi bối rối.
+
+
+21
+00:01:21,800 --> 00:01:25,679
+She had a small bag in her hand.
+Trên tay cô ấy có một chiếc túi nhỏ.
+
+
+22
+00:01:26,440 --> 00:01:31,919
+She looked left and right, but she did not cross the street.
+Cô ấy nhìn trái nhìn phải, nhưng không băng qua đường.
+
+
+23
+00:01:32,360 --> 00:01:35,039
+I stopped and watched for a moment.
+Mình dừng lại và quan sát một lúc.
+
+
+24
+00:01:35,785 --> 00:01:43,184
+I felt that something was not right, so I walked closer to her.
+Mình cảm thấy có điều gì đó không ổn, nên mình bước lại gần cô ấy.
+
+
+25
+00:01:43,705 --> 00:01:46,605
+I asked, excuse me.
+Mình hỏi: 'Xin lỗi.'
+
+
+26
+00:01:46,605 --> 00:01:47,825
+Do you need help?
+Cô cần giúp đỡ không?
+
+
+27
+00:01:48,460 --> 00:01:51,699
+She looked at me and smiled a little.
+Cô ấy nhìn mình và mỉm cười nhẹ.
+
+
+28
+00:01:52,140 --> 00:01:54,979
+She said, yes.
+Cô ấy nói: 'Vâng.'
+
+
+29
+00:01:54,940 --> 00:02:00,020
+I wanna cross the street, but I'm afraid.
+Tôi muốn băng qua đường, nhưng tôi sợ.
+
+
+30
+00:02:00,540 --> 00:02:02,660
+The road was a little busy.
+Đường hơi đông xe.
+
+
+31
+00:02:03,335 --> 00:02:06,255
+There were many motorbikes.
+Có rất nhiều xe máy.
+
+
+32
+00:02:06,455 --> 00:02:09,775
+It was not easy for her to cross alone.
+Việc băng qua đường một mình không hề dễ dàng với cô ấy.
+
+
+33
+00:02:09,975 --> 00:02:12,795
+I said, don't worry.
+Mình nói: 'Đừng lo lắng nhé.'
+
+
+34
+00:02:12,795 --> 00:02:14,255
+I can help you.
+Mình có thể giúp cô.
+
+
+35
+00:02:14,615 --> 00:02:16,415
+She looked happy.
+Cô ấy trông vui vẻ.
+
+
+36
+00:02:16,855 --> 00:02:18,575
+I stood next to her.
+Mình đứng cạnh cô ấy.
+
+
+37
+00:02:19,040 --> 00:02:24,920
+When the road was clear, I helped her walk slowly across.
+Khi đường đã vắng, mình giúp cô ấy bước qua từ từ.
+
+
+38
+00:02:25,440 --> 00:02:27,640
+We moved carefully.
+Chúng mình di chuyển cẩn thận.
+
+
+39
+00:02:28,080 --> 00:02:32,440
+Step by step, we reached the other side.
+Từng bước một, chúng mình đã sang đến bờ bên kia.
+
+
+40
+00:02:33,095 --> 00:02:37,295
+She smiled and said, thank you very much.
+Cô ấy mỉm cười và nói: 'Cảm ơn bạn rất nhiều.'
+
+
+41
+00:02:37,895 --> 00:02:41,055
+I said, you're welcome.
+Mình nói, không có gì.
+
+
+42
+00:02:41,495 --> 00:02:44,495
+I thought that was the end.
+Mình nghĩ mọi chuyện kết thúc ở đó.
+
+
+43
+00:02:45,175 --> 00:02:50,220
+But then she asked, can you help me a little more?
+Nhưng rồi bà ấy hỏi: 'Cháu có thể giúp bà thêm một chút được không?'
+
+
+44
+00:02:50,580 --> 00:02:53,900
+I said, of course.
+Mình nói, tất nhiên rồi.
+
+
+45
+00:02:54,340 --> 00:03:02,460
+She told me she wanted to go to the market, but she did not know the way.
+Bà ấy nói với mình rằng bà muốn đi chợ, nhưng không biết đường.
+
+
+46
+00:03:02,944 --> 00:03:05,305
+I knew the market.
+Mình biết cái chợ đó.
+
+
+47
+00:03:05,665 --> 00:03:07,864
+It was not far.
+Nó không xa.
+
+
+48
+00:03:08,385 --> 00:03:12,585
+So I said, I can walk with you.
+Vậy mình nói, mình có thể đi cùng bà.
+
+
+49
+00:03:13,344 --> 00:03:15,625
+We started walking together.
+Chúng tôi bắt đầu đi cùng nhau.
+
+
+50
+00:03:16,385 --> 00:03:22,470
+She walked slowly, so I walked slowly too.
+Bà ấy đi chậm, nên mình cũng đi chậm.
+
+
+51
+00:03:22,749 --> 00:03:26,790
+On the way, we talked a little.
+Trên đường đi, mình và bà đã nói chuyện một chút.
+
+
+52
+00:03:27,150 --> 00:03:30,150
+She told me about her life.
+Bà kể cho mình nghe về cuộc sống của bà.
+
+
+53
+00:03:30,589 --> 00:03:32,390
+She lived alone.
+Bà sống một mình.
+
+
+54
+00:03:33,145 --> 00:03:35,985
+Her children lived far away.
+Các con của bà sống ở xa.
+
+
+55
+00:03:36,505 --> 00:03:40,225
+She said she did not go out often.
+Bà nói bà không thường xuyên ra ngoài.
+
+
+56
+00:03:40,825 --> 00:03:44,065
+That was why she felt nervous.
+Đó là lý do bà cảm thấy lo lắng.
+
+
+57
+00:03:44,585 --> 00:03:46,704
+I listened carefully.
+Mình đã lắng nghe thật chăm chú.
+
+
+58
+00:03:47,440 --> 00:03:54,200
+I felt a little sad, but also happy that I could help her.
+Mình cảm thấy hơi buồn, nhưng cũng vui vì mình có thể giúp bà.
+
+
+59
+00:03:54,800 --> 00:04:00,760
+When we arrived at the market, she looked very happy.
+Khi mình và bà đến chợ, bà trông rất vui.
+
+
+60
+00:04:01,235 --> 00:04:06,555
+She said, thank you for bringing me here.
+Bà nói, cảm ơn vì đã đưa bà tới đây.
+
+
+61
+00:04:07,155 --> 00:04:10,955
+I said, it's no problem.
+Mình nói, không sao đâu.
+
+
+62
+00:04:11,315 --> 00:04:21,080
+I thought she would go inside alone, but she asked, can you help me buy a few things?
+Mình nghĩ cô ấy sẽ tự vào trong, nhưng cô ấy hỏi: 'Bạn giúp tôi mua vài thứ được không?'
+
+
+63
+00:04:21,519 --> 00:04:27,000
+I had time, so I said, yes.
+Mình có thời gian, nên mình nói, được.
+
+
+64
+00:04:27,439 --> 00:04:31,255
+We went into the market together.
+Chúng tôi cùng đi vào chợ.
+
+
+65
+00:04:31,215 --> 00:04:34,055
+It was busy and full of people.
+Chợ rất đông đúc và đầy người.
+
+
+66
+00:04:34,575 --> 00:04:36,935
+She held my arm lightly.
+Cô ấy nhẹ nhàng nắm lấy tay mình.
+
+
+67
+00:04:37,375 --> 00:04:39,415
+We walked slowly.
+Chúng tôi đi chậm rãi.
+
+
+68
+00:04:39,935 --> 00:04:43,790
+She bought some vegetables.
+Cô ấy mua một ít rau.
+
+
+69
+00:04:44,390 --> 00:04:47,630
+I helped her choose fresh ones.
+Mình giúp cô ấy chọn rau tươi.
+
+
+70
+00:04:48,150 --> 00:04:50,830
+We also bought fruit.
+Chúng tôi cũng mua trái cây.
+
+
+71
+00:04:51,590 --> 00:04:55,310
+She asked me which fruit was sweet.
+Bà ấy hỏi mình loại trái cây nào ngọt.
+
+
+72
+00:04:55,909 --> 00:04:57,710
+I helped her pick some.
+Mình đã giúp bà ấy chọn một ít.
+
+
+73
+00:04:58,125 --> 00:05:00,805
+Then she wanted to buy rice.
+Sau đó bà ấy muốn mua gạo.
+
+
+74
+00:05:01,245 --> 00:05:03,765
+I helped carry the bag.
+Mình đã giúp xách túi.
+
+
+75
+00:05:04,364 --> 00:05:10,405
+After shopping, we sat down for a short rest.
+Sau khi mua sắm, chúng mình ngồi xuống nghỉ một chút.
+
+
+76
+00:05:10,765 --> 00:05:13,365
+She looked at me and smiled.
+Bà ấy nhìn mình và mỉm cười.
+
+
+77
+00:05:14,120 --> 00:05:18,160
+She said, you are very kind.
+Bà ấy nói: 'Con rất tốt bụng.'
+
+
+78
+00:05:18,760 --> 00:05:22,000
+I felt a little shy.
+Mình cảm thấy hơi ngại.
+
+
+79
+00:05:22,439 --> 00:05:25,600
+I said, it's okay.
+Mình nói: 'Không sao đâu ạ.'
+
+
+80
+00:05:26,039 --> 00:05:27,840
+I just wanted to help.
+Mình chỉ muốn giúp thôi.
+
+
+81
+00:05:28,495 --> 00:05:32,695
+She told me something that I will never forget.
+Cô ấy đã nói với mình một điều mà mình sẽ không bao giờ quên.
+
+
+82
+00:05:32,974 --> 00:05:38,135
+She said, sometimes small help means a lot.
+Cô ấy nói, đôi khi sự giúp đỡ nhỏ bé lại có ý nghĩa rất lớn.
+
+
+83
+00:05:38,495 --> 00:05:41,894
+That sentence stayed in my mind.
+Câu nói ấy cứ đọng lại trong tâm trí mình.
+
+
+84
+00:05:42,390 --> 00:05:46,830
+After that, I helped her walk home.
+Sau đó, mình đã giúp cô ấy đi bộ về nhà.
+
+
+85
+00:05:47,270 --> 00:05:50,670
+Her house was not far from the market.
+Nhà cô ấy không xa chợ lắm.
+
+
+86
+00:05:51,270 --> 00:05:55,550
+When we arrived, she thanked me again.
+Khi chúng mình tới nơi, cô ấy lại cảm ơn mình.
+
+
+87
+00:05:56,230 --> 00:06:01,955
+She said, today, I feel safe because of you.
+Cô ấy nói: “Hôm nay, nhờ có bạn mà tôi cảm thấy an toàn.”
+
+
+88
+00:06:02,235 --> 00:06:04,835
+I felt very warm inside.
+Mình cảm thấy rất ấm áp trong lòng.
+
+
+89
+00:06:05,594 --> 00:06:08,435
+I said goodbye and left.
+Mình nói lời tạm biệt và rời đi.
+
+
+90
+00:06:09,034 --> 00:06:13,640
+On my way home, I thought about what happened.
+Trên đường về nhà, mình đã suy nghĩ về những gì đã xảy ra.
+
+
+91
+00:06:14,239 --> 00:06:16,760
+I realized something important.
+Mình nhận ra một điều quan trọng.
+
+
+92
+00:06:17,440 --> 00:06:21,240
+Helping someone does not need big actions.
+Giúp đỡ ai đó không cần phải là những hành động lớn lao.
+
+
+93
+00:06:21,760 --> 00:06:23,880
+Small things are enough.
+Những điều nhỏ nhặt thôi cũng đủ.
+
+
+94
+00:06:24,655 --> 00:06:27,895
+A few minutes of your time,
+Một vài phút thời gian,
+
+
+95
+00:06:28,495 --> 00:06:32,775
+a kind word, a simple action,
+một lời nói tử tế, một hành động đơn giản,
+
+
+96
+00:06:33,215 --> 00:06:36,295
+these things can make a big difference.
+những điều này có thể tạo ra sự khác biệt lớn.
+
+
+97
+00:06:36,910 --> 00:06:48,950
+That day, I felt very happy, not because I bought something, but because I helped someone.
+Hôm đó, mình cảm thấy rất hạnh phúc, không phải vì mình đã mua được gì, mà vì mình đã giúp đỡ một ai đó.
+
+
+98
+00:06:49,745 --> 00:06:56,425
+It gave me a special feeling, a feeling of purpose.
+Nó mang lại cho mình một cảm giác đặc biệt, một cảm giác có mục đích.
+
+
+99
+00:06:56,945 --> 00:07:01,465
+After that day, I tried to help people more.
+Sau ngày hôm đó, mình đã cố gắng giúp đỡ mọi người nhiều hơn.
+
+
+100
+00:07:02,070 --> 00:07:05,470
+Sometimes I help carry something.
+Đôi khi mình giúp xách đồ.
+
+
+101
+00:07:06,150 --> 00:07:09,390
+Sometimes I give directions.
+Đôi khi mình chỉ đường.
+
+
+102
+00:07:10,150 --> 00:07:18,915
+Sometimes I just smile because I know even small things matter.
+Đôi khi mình chỉ mỉm cười vì mình biết ngay cả những điều nhỏ nhặt cũng có ý nghĩa.
+
+
+103
+00:07:19,354 --> 00:07:22,355
+Now I wanna say something to you.
+Bây giờ mình muốn nói với mọi người một điều.
+
+
+104
+00:07:22,955 --> 00:07:30,514
+If you see someone who needs help and you can help, try to do it.
+Nếu mọi người thấy ai đó cần giúp đỡ và mình có thể giúp, hãy thử làm điều đó.
+
+
+105
+00:07:31,179 --> 00:07:32,739
+Do not wait.
+Đừng chần chừ.
+
+
+106
+00:07:33,419 --> 00:07:36,180
+Do not think too much.
+Đừng suy nghĩ quá nhiều.
+
+
+107
+00:07:36,700 --> 00:07:47,885
+Just act because one small action can change someone's day, and it can also change you.
+Hãy hành động bởi vì một hành động nhỏ có thể thay đổi một ngày của ai đó, và nó cũng có thể thay đổi chính mọi người.
+
+
+108
+00:07:48,085 --> 00:07:50,845
+Thank you for listening to my story.
+Cảm ơn mọi người đã lắng nghe câu chuyện của mình.
+
+
+109
+00:07:51,125 --> 00:07:56,285
+I hope it inspires you to help others too.
+Mình hy vọng nó sẽ truyền cảm hứng để mọi người cũng giúp đỡ người khác.
+
+
+110
+00:07:56,724 --> 00:07:57,865
+See you next time.
+Hẹn gặp lại mọi người lần sau.
+
+
+    `;
+
+    // 2. BỘ PHÂN TÍCH TỰ ĐỘNG (Auto-Parser)
+    function parseSRT(text) {
+      // Tự động dọn dẹp các tag rác
+      const cleanText = text.replace(/\\s*/g, '').trim();
+      const lines = cleanText.split('\n').map(l => l.trim()).filter(l => l !== '');
+      
+      const result = [];
+      let currentItem = null;
+      const timeRegex = /(\d{2}):(\d{2}):(\d{2}),(\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2}),(\d{3})/;
+
+      function toSec(h, m, s, ms) {
+        return parseInt(h) * 3600 + parseInt(m) * 60 + parseInt(s) + parseInt(ms) / 1000;
+      }
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const t = line.match(timeRegex);
+
+        if (t) {
+          if (currentItem && currentItem.en) result.push(currentItem);
+          currentItem = {
+            start: toSec(t[1], t[2], t[3], t[4]),
+            end: toSec(t[5], t[6], t[7], t[8]),
+            en: "",
+            vi: ""
+          };
+        } else if (currentItem) {
+          // Bỏ qua các số thứ tự phân đoạn của SRT
+          if (/^\d+$/.test(line) && i + 1 < lines.length && lines[i+1].match(timeRegex)) continue;
+          
+          if (!currentItem.en) {
+            currentItem.en = line;
+          } else if (!currentItem.vi) {
+            currentItem.vi = line;
+          } else {
+            currentItem.vi += " " + line;
+          }
+        }
+      }
+      if (currentItem && currentItem.en) result.push(currentItem);
+      return result;
+    }
+
+    const transcriptData = parseSRT(rawSrt);
+
+    // 3. UI Tương tác
+    let showTranslation = true;
+    function toggleTranslation() {
+      showTranslation = !showTranslation;
+      document.documentElement.style.setProperty('--vi-display', showTranslation ? 'block' : 'none');
+    }
+
+    const scriptContainer = document.getElementById('script-container');
+    
+    // Đẩy dữ liệu ra màn hình
+    transcriptData.forEach((line, index) => {
+      const div = document.createElement('div');
+      div.className = 'script-line';
+      div.id = 'line-' + index;
+      
+      const enDiv = document.createElement('div');
+      enDiv.className = 'en-text';
+      enDiv.innerText = line.en;
+
+      const viDiv = document.createElement('div');
+      viDiv.className = 'vi-text';
+      viDiv.innerText = line.vi || " "; // Xử lý câu không có tiếng Việt
+
+      div.appendChild(enDiv);
+      div.appendChild(viDiv);
+
+     div.onclick = () => {
+        if(player && player.seekTo && line.start !== null) {
+          autoPauseTriggered = false; // Reset trạng thái tự động dừng
+          player.seekTo(line.start, true);
+          player.playVideo();
+        }
+      };
+
+      scriptContainer.appendChild(div);
+    });
+
+    // 4. API YouTube & Xử lý nháy sáng câu
+    let player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('ytplayer', {
+        height: '100%',
+        width: '100%',
+        videoId: 'p2Qm32uL3H8', 
+        playerVars: { 'autoplay': 0, 'controls': 1 },
+        events: {
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+let checkInterval;
+    let currentLineIndex = -1;
+    let autoPauseTriggered = false; // Thêm biến theo dõi trạng thái tự động
+
+    function onPlayerStateChange(event) {
+      if (event.data == YT.PlayerState.PLAYING) {
+        // TĂNG TỐC ĐỘ QUÉT lên 50ms để bắt thời gian chuẩn xác nhất (thay vì 200ms)
+        checkInterval = setInterval(updateHighlight, 50); 
+      } else {
+        clearInterval(checkInterval);
+      }
+    }
+
+    function updateHighlight() {
+      if(!player || !player.getCurrentTime) return;
+      const time = player.getCurrentTime();
+      let foundLine = -1;
+
+      // 1. Tìm câu đang khớp với thời gian video
+      for (let i = 0; i < transcriptData.length; i++) {
+        if (time >= transcriptData[i].start && time <= transcriptData[i].end) {
+          foundLine = i;
+          break;
+        }
+      }
+
+      // 2. LOGIC TỰ ĐỘNG DỪNG VÀ KHÓA CÂU (Sửa lỗi chấm 0%)
+      if (currentLineIndex !== -1 && !autoPauseTriggered) {
+        // Bắt thời điểm sát nút kết thúc câu (trừ hao 0.1 giây để không bị lẹm sang câu sau)
+        if (time >= transcriptData[currentLineIndex].end - 0.1) {
+          autoPauseTriggered = true; // Đánh dấu đã kích hoạt auto-pause
+          player.pauseVideo();       // Dừng video ngay lập tức
+          
+          // CRITICAL FIX: Ép hệ thống giữ nguyên câu hiện tại (không cho nhảy sang câu tiếp theo lúc dừng)
+          foundLine = currentLineIndex; 
+
+          // Bật mic thu âm sau 300ms để tránh tạp âm từ video
+          setTimeout(() => {
+            if (!isRecording) {
+              recordBtn.click();
+            }
+          }, 300);
+        }
+      }
+
+      // 3. LOGIC ĐỔI MÀU VÀ CHUYỂN CÂU MỚI
+      if (foundLine !== -1 && currentLineIndex !== foundLine) {
+        autoPauseTriggered = false; // Reset lại biến khi video nhảy sang một câu mới hoàn toàn
+
+        if (currentLineIndex !== -1) {
+          document.getElementById('line-' + currentLineIndex).classList.remove('active');
+        }
+        const activeLine = document.getElementById('line-' + foundLine);
+        activeLine.classList.add('active');
+       
+        // Căn lề mượt mà
+        if (window.innerWidth <= 992) {
+          activeLine.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        currentLineIndex = foundLine; // Cập nhật câu hiện tại
+      }
+    }
+
+    // 5. Chức năng nhận diện giọng nói (Shadowing Evaluation)
+    const recordBtn = document.getElementById('recordBtn');
+    const resultText = document.getElementById('resultText');
+    const scorePron = document.getElementById('score-pron');
+    const scoreAcc = document.getElementById('score-acc');
+    const scoreFlu = document.getElementById('score-flu');
+    const scoreComp = document.getElementById('score-comp');
+
+    let recognition;
+    let isRecording = false;
+    let recordStartTime = 0;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRec();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = function(event) {
+        const spoken = event.results[0][0].transcript;
+        const confidence = event.results[0][0].confidence; // Điểm tự tin của API (0.0 đến 1.0)
+        const durationSeconds = (Date.now() - recordStartTime) / 1000;
+        
+        resultText.innerText = `"${spoken}"`;
+        calculateAdvancedScores(spoken, confidence, durationSeconds);
+      };
+
+      recognition.onerror = function(event) {
+        resultText.innerText = "Error recognizing speech. Try again.";
+        resetRecordButton();
+      };
+
+      recognition.onend = function() {
+        if (isRecording) resetRecordButton();
+      };
+
+      recordBtn.onclick = () => {
+        if (!isRecording) {
+          if(player && player.pauseVideo) player.pauseVideo();
+          recordStartTime = Date.now();
+          recognition.start();
+          isRecording = true;
+          recordBtn.innerText = "Stop & Evaluate";
+          recordBtn.classList.add('recording');
+          resultText.innerText = "Listening...";
+          
+          // Reset điểm số
+          ['pron', 'acc', 'flu', 'comp'].forEach(id => {
+            document.getElementById(`score-${id}`).innerText = '--%';
+            document.getElementById(`score-${id}`).style.color = "#444";
+          });
+
+        } else {
+          recognition.stop();
+          resetRecordButton();
+        }
+      };
+    } else {
+      resultText.innerText = "Speech API not supported. Please use Chrome/Edge.";
+    }
+
+    function resetRecordButton() {
+      isRecording = false;
+      recordBtn.innerText = "Click to Speak";
+      recordBtn.classList.remove('recording');
+    }
+
+    function getColorForScore(score) {
+      if (score >= 85) return "#4CAF50"; // Xanh lá
+      if (score >= 60) return "#FF9800"; // Cam
+      return "#ff6a88"; // Đỏ hồng
+    }
+
+    function calculateAdvancedScores(spoken, apiConfidence, durationSec) {
+      if (currentLineIndex === -1) {
+        resultText.innerText = "Please select a sentence first!";
+        return;
+      }
+      
+      const targetText = transcriptData[currentLineIndex].en.toLowerCase().replace(/[^\w\s]/gi, '');
+      const spokenText = spoken.toLowerCase().replace(/[^\w\s]/gi, '');
+      
+      const targetWords = targetText.split(' ').filter(w => w);
+      const spokenWords = spokenText.split(' ').filter(w => w);
+      
+      if (targetWords.length === 0) return;
+
+      // 1. Completeness: Mức độ hoàn thiện (số từ đọc được / tổng số từ cần đọc)
+      let matchedTargetWords = 0;
+      targetWords.forEach(word => {
+        if (spokenWords.includes(word)) matchedTargetWords++;
+      });
+      let completeness = Math.round((matchedTargetWords / targetWords.length) * 100);
+      
+      // 2. Accuracy: Độ chính xác (số từ đúng / tổng số từ đã phát âm)
+      let accuracy = 0;
+      if (spokenWords.length > 0) {
+        accuracy = Math.round((matchedTargetWords / spokenWords.length) * 100);
+      }
+      // Giới hạn Accuracy không vượt quá 100 và không nhỏ hơn Completeness nếu đọc ít từ hơn
+      if (accuracy > 100) accuracy = 100;
+
+      // 3. Pronunciation: Sử dụng độ tin cậy của AI khi nhận diện giọng nói
+      let pronunciation = Math.round(apiConfidence * 100);
+      // Nếu đọc sai quá nhiều từ, phạt điểm Pronunciation
+      if (accuracy < 50) pronunciation -= 20; 
+      pronunciation = Math.max(0, Math.min(100, pronunciation));
+
+      // 4. Fluency: Tính bằng tốc độ đọc (Words Per Minute) kết hợp với Completeness
+      const expectedWPM = 130; 
+      const spokenWPM = (spokenWords.length / durationSec) * 60;
+      let fluency = 100;
+      if (spokenWPM < 80) fluency -= (80 - spokenWPM); // Đọc chậm quá bị trừ
+      if (spokenWPM > 200) fluency -= (spokenWPM - 200); // Đọc nhanh quá bị trừ
+      // Trừ thêm nếu ấp úng (thời gian dài nhưng ra ít chữ hoàn chỉnh)
+      fluency = Math.round((fluency * 0.6) + (completeness * 0.4));
+      fluency = Math.max(0, Math.min(100, fluency));
+
+      // Hiển thị điểm số và đổ màu
+      const metrics = [
+        { el: scorePron, val: pronunciation },
+        { el: scoreAcc, val: accuracy },
+        { el: scoreFlu, val: fluency },
+        { el: scoreComp, val: completeness }
+      ];
+
+      metrics.forEach(m => {
+        m.el.innerText = `${m.val}%`;
+        m.el.style.color = getColorForScore(m.val);
+      });
+    }
+  </script>
+</body>
+</html>
