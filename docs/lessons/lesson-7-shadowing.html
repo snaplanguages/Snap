@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shadowing Practice | SnapEnglish</title>
+  <link rel="icon" type="image/png" href="ảnh.png">
+<style>
+  :root {
+    --vi-display: block;
+    --primary-pastel: #fbc2eb;
+    --secondary-pastel: #a6c1ee;
+    --glass-bg: rgba(255, 255, 255, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.8);
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    min-height: 100vh; 
+    box-sizing: border-box;
+    background: linear-gradient(135deg, var(--primary-pastel) 0%, var(--secondary-pastel) 100%);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .container {
+    display: flex;
+    width: 100vw;
+    height: 100vh; 
+    min-height: 700px;
+    flex-direction: row;
+  }
+
+  .left-col {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    box-sizing: border-box;
+    gap: 24px;
+  }
+
+  .right-col {
+    width: 40%;
+    padding: 24px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  .top-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    margin-bottom: 10px;
+  }
+
+  .top-controls h2 {
+    margin: 0;
+    font-size: 1.4em;
+    color: #444;
+  }
+
+  .toggle-btn {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #555;
+    transition: all 0.2s;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+
+  .toggle-btn:hover {
+    background: #f0f0f0;
+  }
+
+  .video-wrapper {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 24px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .video-wrapper iframe {
+    width: 100%;
+    height: 100%;
+  }
+
+  .record-wrapper {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    padding: 15px 25px;
+    box-sizing: border-box;
+    gap: 20px;
+    overflow: hidden;
+    min-height: 110px;
+  }
+
+  .feedback-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .record-btn {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+    border: none;
+    padding: 14px 30px;
+    border-radius: 30px;
+    color: #444;
+    font-size: 1.1em;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 154, 158, 0.4);
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .record-btn:active {
+    transform: scale(0.96);
+  }
+
+  .record-btn.recording {
+    background: linear-gradient(135deg, #ff6a88 0%, #ff99ac 100%);
+    color: white;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 106, 136, 0.6); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 106, 136, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 106, 136, 0); }
+  }
+
+  .result-box {
+    width: 100%;
+    min-height: 40px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 12px;
+    padding: 8px 15px;
+    margin: 0;
+    font-style: italic;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+    font-size: 0.95em;
+  }
+
+  .metrics-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .metric {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 6px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+
+  .metric .label {
+    font-size: 0.65em;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+
+  .metric .value {
+    font-size: 1.1em;
+    font-weight: 800;
+    color: #444;
+  }
+
+  .script-container {
+    overflow-y: auto;
+    padding-right: 10px;
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .script-container::-webkit-scrollbar {
+    width: 6px;
+  }
+  .script-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+  }
+  .script-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+  }
+
+  .script-line {
+    padding: 16px 20px;
+    border-radius: 18px;
+    transition: 0.3s ease;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid transparent;
+  }
+
+  .script-line:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .script-line.active {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transform: scale(1.02);
+    border-left: 6px solid #ff9a9e;
+    border-right: 1px solid rgba(255,255,255,0.8);
+    border-top: 1px solid rgba(255,255,255,0.8);
+    border-bottom: 1px solid rgba(255,255,255,0.8);
+  }
+
+  .script-line.active .en-text {
+    color: #d81b60;
+  }
+
+  .en-text {
+    font-size: 1.15em;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.5;
+    transition: color 0.3s ease;
+  }
+
+  .vi-text {
+    font-size: 0.95em;
+    color: #666;
+    margin-top: 8px;
+    line-height: 1.4;
+    display: var(--vi-display);
+  }
+
+  /* Responsive Design cho Mobile */
+  @media (max-width: 992px) {
+    .container {
+      flex-direction: column;
+      height: auto;
+      min-height: 100vh;
+    }
+    .script-line {
+      scroll-margin-top: calc(56.25vw + 280px); 
+    }
+    .left-col {
+      width: 100%;
+      height: auto;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: linear-gradient(135deg, var(--primary-pastel) 0%, var(--secondary-pastel) 100%);
+      padding: 12px;
+      gap: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+    }
+    .right-col {
+      width: 100%;
+      height: auto;
+      padding: 12px;
+    }
+    .record-wrapper {
+      flex-direction: column; /* Xếp dọc trên điện thoại để không bị ép ngang */
+      padding: 12px;
+      gap: 12px;
+      min-height: auto;
+    }
+    .record-btn {
+      width: 100%;
+      margin: 0;
+    }
+    .metrics-grid {
+      flex-wrap: wrap; 
+      gap: 6px;
+    }
+    .metric {
+      min-width: 45%; 
+    }
+    .script-container {
+      max-height: none; 
+      overflow-y: visible;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="left-col">
+      <div class="video-wrapper glass">
+        <div id="ytplayer"></div>
+      </div>
+      
+      <div class="record-wrapper glass">
+        <button id="recordBtn" class="record-btn">Click to Speak</button>
+        
+        <div class="feedback-container">
+          <div id="resultText" class="result-box">Your voice will appear here...</div>
+          
+          <div class="metrics-grid">
+            <div class="metric">
+              <span class="label">Pronunciation</span>
+              <span class="value" id="score-pron">--%</span>
+            </div>
+            <div class="metric">
+              <span class="label">Accuracy</span>
+              <span class="value" id="score-acc">--%</span>
+            </div>
+            <div class="metric">
+              <span class="label">Fluency</span>
+              <span class="value" id="score-flu">--%</span>
+            </div>
+            <div class="metric">
+              <span class="label">Completeness</span>
+              <span class="value" id="score-comp">--%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col glass">
+      <div class="top-controls">
+        <h2>Transcript</h2>
+        <button class="toggle-btn" onclick="toggleTranslation()">Toggle Translation</button>
+      </div>
+      <div class="script-container" id="script-container"></div>
+    </div>
+  </div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    // 1. DÁN TOÀN BỘ TEXT TỪ FILE .SRT VÀO GIỮA 2 DẤU MẶC KÉP NGƯỢC (`) DƯỚI ĐÂY
+    // Không cần xóa các tag , hệ thống sẽ tự động dọn dẹp giúp bạn.
+    const rawSrt = `
+1
+00:00:00,400 --> 00:00:04,371
+Hello, everyone, and welcome back to Learn Smooth English, 
+Xin chào mọi người, và chào mừng quay trở lại với Learn Smooth English,
+
+
+2
+00:00:04,371 --> 00:00:07,280
+where learning English is easy and fun.
+nơi việc học tiếng Anh trở nên dễ dàng và thú vị.
+
+
+3
+00:00:07,280 --> 00:00:08,320
+I'm Emma.
+Tôi là Emma.
+
+
+4
+00:00:08,320 --> 00:00:09,519
+Hello, Emma.
+Xin chào, Emma.
+
+
+5
+00:00:09,519 --> 00:00:10,659
+Hi, everyone.
+Chào mọi người.
+
+
+6
+00:00:10,700 --> 00:00:12,879
+Today is a very special day.
+Hôm nay là một ngày rất đặc biệt.
+
+
+7
+00:00:12,879 --> 00:00:14,739
+I'm so happy to be here with you all.
+Tôi rất vui được ở đây cùng tất cả các bạn.
+
+
+8
+00:00:14,945 --> 00:00:15,845
+Yes.
+Đúng vậy.
+
+
+9
+00:00:15,845 --> 00:00:17,545
+It really is special.
+Nó thực sự đặc biệt.
+
+
+10
+00:00:17,584 --> 00:00:20,105
+James, do you know what day it is today?
+James, bạn có biết hôm nay là ngày gì không?
+
+
+11
+00:00:20,145 --> 00:00:21,945
+Let me think.
+Để tôi nghĩ xem.
+
+
+12
+00:00:22,384 --> 00:00:25,945
+It is Wednesday, 12/31/2025.
+Hôm nay là thứ Tư, ngày 31 tháng 12 năm 2025.
+
+
+13
+00:00:25,985 --> 00:00:27,305
+It's almost the end of the year.
+Sắp hết năm rồi.
+
+
+14
+00:00:27,660 --> 00:00:28,900
+Exactly.
+Chính xác.
+
+
+15
+00:00:28,939 --> 00:00:33,200
+This is our last podcast episode of 2025.
+Đây là tập podcast cuối cùng của chúng tôi trong năm 2025.
+
+
+16
+00:00:33,200 --> 00:00:34,660
+Can you believe it?
+Bạn có tin được không?
+
+
+17
+00:00:34,699 --> 00:00:35,600
+Wow.
+Wow.
+
+
+18
+00:00:35,600 --> 00:00:36,000
+No.
+Không.
+
+
+19
+00:00:36,000 --> 00:00:37,300
+I can't believe it.
+Tôi không thể tin được.
+
+
+20
+00:00:37,260 --> 00:00:38,900
+Time really flies.
+Thời gian trôi qua thật nhanh.
+
+
+21
+00:00:38,940 --> 00:00:42,020
+2025 was a very, very big year for us.
+Năm 2025 là một năm rất, rất lớn với chúng tôi.
+
+
+22
+00:00:42,355 --> 00:00:43,815
+It really was.
+Đúng là như vậy.
+
+
+23
+00:00:43,815 --> 00:00:46,135
+I feel a little emotional today.
+Hôm nay tôi cảm thấy hơi xúc động.
+
+
+24
+00:00:46,135 --> 00:00:50,555
+We started this year with a small dream, and now look at us.
+Chúng tôi bắt đầu năm nay với một ước mơ nhỏ, và giờ hãy nhìn chúng tôi này.
+
+
+25
+00:00:50,595 --> 00:00:51,414
+Yes.
+Đúng vậy.
+
+
+26
+00:00:51,414 --> 00:00:55,755
+We started with just a few listeners, and now we have friends from so many countries.
+Chúng tôi bắt đầu chỉ với vài người nghe, và giờ đã có bạn bè từ rất nhiều quốc gia.
+
+
+27
+00:00:56,120 --> 00:00:59,739
+And all because of you, our amazing learners.
+Và tất cả là nhờ các bạn, những người học tuyệt vời của chúng tôi.
+
+
+28
+00:00:59,739 --> 00:01:02,640
+Thank you for practicing English with us every week.
+Cảm ơn các bạn đã cùng chúng tôi luyện tập tiếng Anh mỗi tuần.
+
+
+29
+00:01:02,760 --> 00:01:03,500
+Yes.
+Đúng vậy.
+
+
+30
+00:01:03,500 --> 00:01:04,959
+Thank you so much.
+Cảm ơn các bạn rất nhiều.
+
+
+31
+00:01:05,080 --> 00:01:07,759
+Your support gives us energy to keep going.
+Sự ủng hộ của các bạn cho chúng tôi năng lượng để tiếp tục tiến lên.
+
+
+32
+00:01:07,880 --> 00:01:13,835
+So today, let's talk about our favorite moments from this year and our goals for 2026.
+Vậy hôm nay, hãy cùng nói về những khoảnh khắc yêu thích của chúng tôi trong năm nay và mục tiêu cho năm 2026.
+
+
+33
+00:01:13,875 --> 00:01:15,415
+That sounds great.
+Nghe hay đấy.
+
+
+34
+00:01:15,415 --> 00:01:19,515
+And everyone, you can also think about your own goals while listening.
+Và mọi người, các bạn cũng có thể nghĩ về mục tiêu của riêng mình trong khi lắng nghe.
+
+
+35
+00:01:19,635 --> 00:01:20,634
+Exactly.
+Chính xác.
+
+
+36
+00:01:20,675 --> 00:01:23,675
+Learning English is a journey and we are walking together.
+Học tiếng Anh là một hành trình và chúng ta đang cùng nhau bước đi.
+
+
+37
+00:01:24,290 --> 00:01:28,809
+So, Emma, what was your favorite moment this year on Learn Smooth English?
+Vậy, Emma, khoảnh khắc yêu thích của bạn trong năm nay trên Learn Smooth English là gì?
+
+
+38
+00:01:28,930 --> 00:01:29,909
+I agree.
+Tôi đồng ý.
+
+
+39
+00:01:29,909 --> 00:01:33,849
+We learned so much this year and our listeners learned so much too.
+Chúng tôi đã học được rất nhiều trong năm nay và thính giả của chúng tôi cũng học được rất nhiều.
+
+
+40
+00:01:33,970 --> 00:01:37,209
+I see so many people speaking better English every week.
+Tôi thấy rất nhiều người nói tiếng Anh tốt hơn mỗi tuần.
+
+
+41
+00:01:37,505 --> 00:01:38,325
+Yes.
+Vâng.
+
+
+42
+00:01:38,325 --> 00:01:44,824
+Before we talk about our news, we want to say something very important to everyone listening.
+Trước khi nói về tin tức của chúng tôi, chúng tôi muốn nói điều rất quan trọng với tất cả mọi người đang lắng nghe.
+
+
+43
+00:01:44,865 --> 00:01:45,924
+Oh, yes.
+Ồ, vâng.
+
+
+44
+00:01:45,924 --> 00:01:48,505
+A very big thank you to all of you.
+Một lời cảm ơn rất lớn gửi đến tất cả các bạn.
+
+
+45
+00:01:48,465 --> 00:01:51,380
+Thank you for every like you gave our videos.
+Cảm ơn vì mỗi lượt thích các bạn dành cho video của chúng tôi.
+
+
+46
+00:01:51,380 --> 00:01:54,999
+Thank you for every time you click that subscribe button.
+Cảm ơn vì mỗi lần các bạn nhấn nút đăng ký đó.
+
+
+47
+00:01:54,960 --> 00:01:57,399
+It helps our channel grow so much.
+Điều đó giúp kênh của chúng tôi phát triển rất nhiều.
+
+
+48
+00:01:57,760 --> 00:02:00,020
+And thank you for the comments, Emma.
+Và cảm ơn vì những bình luận, Emma.
+
+
+49
+00:02:00,020 --> 00:02:01,399
+I love the comments.
+Tôi yêu những bình luận.
+
+
+50
+00:02:01,360 --> 00:02:04,839
+Every morning, I drink my coffee and read the comments from our students.
+Mỗi sáng, tôi uống cà phê và đọc bình luận từ học viên của chúng tôi.
+
+
+51
+00:02:05,195 --> 00:02:06,815
+Me too, James.
+Mình cũng vậy, James.
+
+
+52
+00:02:06,815 --> 00:02:09,155
+It is my favorite part of the day.
+Đó là phần yêu thích nhất trong ngày của mình.
+
+
+53
+00:02:09,195 --> 00:02:13,635
+Some people tell us about their families, some tell us about their jobs.
+Một số người kể cho chúng tôi về gia đình họ, một số kể về công việc của họ.
+
+
+54
+00:02:13,595 --> 00:02:15,635
+It feels like we are all friends.
+Cảm giác như tất cả chúng ta đều là bạn bè.
+
+
+55
+00:02:15,915 --> 00:02:16,735
+Yes.
+Đúng vậy.
+
+
+56
+00:02:16,735 --> 00:02:20,195
+We see people from many countries and many parts of the world.
+Chúng tôi thấy mọi người từ nhiều quốc gia và nhiều nơi trên thế giới.
+
+
+57
+00:02:20,460 --> 00:02:25,040
+When you share our podcasts with your friends and family, it makes us so happy.
+Khi bạn chia sẻ podcast của chúng tôi với bạn bè và gia đình, điều đó khiến chúng tôi rất hạnh phúc.
+
+
+58
+00:02:25,040 --> 00:02:27,540
+We want to thank you for your trust.
+Chúng tôi muốn cảm ơn bạn vì sự tin tưởng của bạn.
+
+
+59
+00:02:27,580 --> 00:02:29,920
+We know that learning English is a journey.
+Chúng tôi biết rằng học tiếng Anh là một hành trình.
+
+
+60
+00:02:29,920 --> 00:02:31,680
+It is a long road.
+Đó là một con đường dài.
+
+
+61
+00:02:31,680 --> 00:02:32,560
+That's right.
+Đúng vậy.
+
+
+62
+00:02:32,560 --> 00:02:35,940
+And let's be honest, learning English is not always easy.
+Và hãy thành thật mà nói, học tiếng Anh không phải lúc nào cũng dễ dàng.
+
+
+63
+00:02:36,165 --> 00:02:38,364
+Sometimes it is very hard.
+Đôi khi nó rất khó khăn.
+
+
+64
+00:02:38,405 --> 00:02:39,705
+Oh, I know.
+Ồ, tôi biết mà.
+
+
+65
+00:02:39,705 --> 00:02:43,325
+English has many difficult words and fast talking.
+Tiếng Anh có nhiều từ khó và cách nói nhanh.
+
+
+66
+00:02:43,445 --> 00:02:44,924
+It can be stressful.
+Điều đó có thể gây căng thẳng.
+
+
+67
+00:02:44,965 --> 00:02:45,784
+Yes.
+Đúng vậy.
+
+
+68
+00:02:45,784 --> 00:02:49,245
+Like when I was tired talking about those numbers in the big report
+Giống như lúc tôi mệt mỏi khi nói về những con số trong báo cáo lớn
+
+
+69
+00:02:49,260 --> 00:02:53,360
+or when you were stressed about finding the perfect blue dress for the wedding.
+hoặc khi bạn căng thẳng về việc tìm chiếc váy xanh hoàn hảo cho đám cưới.
+
+
+70
+00:02:53,360 --> 00:02:54,420
+Exactly.
+Chính xác.
+
+
+71
+00:02:54,540 --> 00:02:58,420
+We show real life here because life is not perfect.
+Chúng tôi thể hiện cuộc sống thực ở đây vì cuộc sống không hoàn hảo.
+
+
+72
+00:02:58,540 --> 00:03:02,180
+We want to help you with real English for real situations.
+Chúng tôi muốn giúp bạn với tiếng Anh thực tế cho các tình huống thực tế.
+
+
+73
+00:03:02,625 --> 00:03:03,925
+That is our goal.
+Đó là mục tiêu của chúng tôi.
+
+
+74
+00:03:03,925 --> 00:03:06,565
+We want to give you content that really helps.
+Chúng tôi muốn mang đến cho bạn nội dung thực sự hữu ích.
+
+
+75
+00:03:06,565 --> 00:03:12,325
+Not just grammar rules, but how to talk to a friend, how to save money, and how to feel confident.
+Không chỉ là quy tắc ngữ pháp, mà còn là cách nói chuyện với bạn bè, cách tiết kiệm tiền và cách cảm thấy tự tin.
+
+
+76
+00:03:12,325 --> 00:03:15,704
+We are so happy you are with us in this phase of learning.
+Chúng tôi rất vui vì bạn đang đồng hành cùng chúng tôi trong giai đoạn học tập này.
+
+
+77
+00:03:15,820 --> 00:03:20,019
+Thank you for staying with us even when the lessons are a little difficult.
+Cảm ơn bạn đã ở lại cùng chúng tôi ngay cả khi các bài học hơi khó khăn.
+
+
+78
+00:03:19,980 --> 00:03:22,019
+You are all so brave.
+Các bạn đều rất dũng cảm.
+
+
+79
+00:03:21,980 --> 00:03:24,720
+Speaking a new language takes a lot of courage.
+Nói một ngôn ngữ mới đòi hỏi rất nhiều can đảm.
+
+
+80
+00:03:24,720 --> 00:03:27,700
+We see your growth and we are very proud of you.
+Chúng tôi thấy sự tiến bộ của bạn và chúng tôi rất tự hào về bạn.
+
+
+81
+00:03:27,660 --> 00:03:28,400
+Yes.
+Đúng vậy.
+
+
+82
+00:03:28,400 --> 00:03:29,299
+Very proud.
+Rất tự hào.
+
+
+83
+00:03:29,525 --> 00:03:32,765
+So Emma, 2025 is almost over.
+Vậy Emma, năm 2025 sắp kết thúc rồi.
+
+
+84
+00:03:32,805 --> 00:03:35,325
+What are we doing for 2026?
+Chúng ta sẽ làm gì cho năm 2026?
+
+
+85
+00:03:35,285 --> 00:03:37,305
+Oh, 2026.
+Ồ, 2026.
+
+
+86
+00:03:37,305 --> 00:03:38,925
+I am so excited.
+Tôi rất hào hứng.
+
+
+87
+00:03:38,885 --> 00:03:41,484
+Next year will be a year of big challenges.
+Năm tới sẽ là một năm của những thử thách lớn.
+
+
+88
+00:03:41,940 --> 00:03:42,600
+Yes.
+Đúng vậy.
+
+
+89
+00:03:42,600 --> 00:03:46,060
+We have big projects for the Learn Smooth English Channel.
+Chúng tôi có những dự án lớn cho kênh Learn Smooth English.
+
+
+90
+00:03:46,020 --> 00:03:48,940
+We want to make the podcast even better for you.
+Chúng tôi muốn làm podcast tốt hơn nữa cho các bạn.
+
+
+91
+00:03:48,980 --> 00:03:55,500
+We are working on new ideas, new topics, new ways to help you listen and maybe some surprises.
+Chúng tôi đang làm việc trên những ý tưởng mới, chủ đề mới, cách thức mới để giúp bạn nghe và có thể có một vài bất ngờ.
+
+
+92
+00:03:55,765 --> 00:03:57,645
+Oh, surprises.
+Ồ, bất ngờ.
+
+
+93
+00:03:57,605 --> 00:03:59,085
+I love surprises.
+Tôi thích bất ngờ.
+
+
+94
+00:03:59,125 --> 00:04:00,445
+Me too.
+Tôi cũng vậy.
+
+
+95
+00:04:00,485 --> 00:04:04,845
+We want to take the best English content to everyone in the world.
+Chúng tôi muốn mang nội dung tiếng Anh tốt nhất đến với mọi người trên thế giới.
+
+
+96
+00:04:04,805 --> 00:04:07,325
+We want to improve our videos and our stories.
+Chúng tôi muốn cải thiện video và câu chuyện của chúng tôi.
+
+
+97
+00:04:07,730 --> 00:04:11,770
+So everyone, please stay tuned.
+Vì vậy, mọi người hãy tiếp tục theo dõi nhé.
+
+
+98
+00:04:11,890 --> 00:04:17,770
+Stay with us next year because we have many new things coming very soon.
+Hãy ở bên chúng tôi vào năm tới vì chúng tôi có nhiều điều mới sắp đến rất sớm.
+
+
+99
+00:04:18,209 --> 00:04:20,650
+It is going to be a great year.
+Nó sẽ là một năm tuyệt vời.
+
+
+100
+00:04:21,135 --> 00:04:25,894
+We want to be your English partners for a long long time.
+Chúng tôi muốn là đối tác tiếng Anh của bạn trong một thời gian rất rất dài.
+
+
+101
+00:04:26,255 --> 00:04:27,795
+I agree, James.
+Tôi đồng ý, James.
+
+
+102
+00:04:27,795 --> 00:04:29,495
+I am ready for the challenge.
+Tôi đã sẵn sàng cho thử thách này.
+
+
+103
+00:04:29,455 --> 00:04:30,614
+Are you ready?
+Bạn đã sẵn sàng chưa?
+
+
+104
+00:04:30,575 --> 00:04:31,815
+I am ready.
+Tôi đã sẵn sàng.
+
+
+105
+00:04:31,854 --> 00:04:34,215
+I have my notebook and my pen.
+Tôi có sổ tay và bút của mình rồi.
+
+
+106
+00:04:34,599 --> 00:04:38,720
+I am ready to plan a wonderful 2026.
+Tôi sẵn sàng để lên kế hoạch cho một năm 2026 tuyệt vời.
+
+
+107
+00:04:38,840 --> 00:04:40,240
+That's the spirit.
+Đó mới là tinh thần.
+
+
+108
+00:04:40,200 --> 00:04:46,320
+But James, before we say goodbye to 2025, let's remember what we talked about today.
+Nhưng James, trước khi chúng ta nói lời tạm biệt với năm 2025, hãy cùng nhớ lại những gì chúng ta đã nói hôm nay.
+
+
+109
+00:04:46,359 --> 00:04:47,680
+That's a good idea.
+Ý kiến hay đấy.
+
+
+110
+00:04:48,315 --> 00:04:54,115
+We talked about how 2025 was a year of a lot of learning for everyone.
+Chúng ta đã nói về việc năm 2025 là một năm học hỏi rất nhiều cho mọi người.
+
+
+111
+00:04:54,315 --> 00:04:55,155
+Yes.
+Vâng.
+
+
+112
+00:04:55,114 --> 00:05:01,315
+And we said a very big thank you for all the likes, the shares, and the amazing comments.
+Và chúng tôi đã gửi lời cảm ơn chân thành vì tất cả lượt thích, chia sẻ và những bình luận tuyệt vời.
+
+
+113
+00:05:01,560 --> 00:05:05,440
+We also talked about how learning English is a journey.
+Chúng tôi cũng đã nói về việc học tiếng Anh là một hành trình.
+
+
+114
+00:05:05,560 --> 00:05:11,040
+It is not always easy, but we are here to help with real life situations.
+Nó không phải lúc nào cũng dễ dàng, nhưng chúng tôi luôn ở đây để giúp đỡ với những tình huống thực tế.
+
+
+115
+00:05:11,159 --> 00:05:13,520
+And we are so excited for next year.
+Và chúng tôi rất hào hứng cho năm tới.
+
+
+116
+00:05:13,815 --> 00:05:20,315
+2026 will have big projects and many surprises to help everyone speak English better.
+2026 sẽ có những dự án lớn và nhiều bất ngờ để giúp mọi người nói tiếng Anh tốt hơn.
+
+
+117
+00:05:20,315 --> 00:05:21,294
+Yes.
+Vâng.
+
+
+118
+00:05:21,495 --> 00:05:24,415
+It was a year of growth and friendship.
+Đó là một năm của sự phát triển và tình bạn.
+
+
+119
+00:05:24,695 --> 00:05:27,515
+I feel very lucky to be part of this channel.
+Tôi cảm thấy rất may mắn khi là một phần của kênh này.
+
+
+120
+00:05:27,515 --> 00:05:28,815
+Me too, James.
+Tôi cũng vậy, James.
+
+
+121
+00:05:29,070 --> 00:05:32,150
+Well, this is it for 2025.
+Vâng, đây là video cuối cùng của năm 2025.
+
+
+122
+00:05:32,109 --> 00:05:35,509
+Thank you again for your trust and your time.
+Một lần nữa cảm ơn các bạn vì sự tin tưởng và thời gian của các bạn.
+
+
+123
+00:05:35,789 --> 00:05:38,470
+You are the reason we make these podcasts.
+Các bạn chính là lý do chúng tôi làm những podcast này.
+
+
+124
+00:05:38,909 --> 00:05:43,030
+Please don't forget to leave one last comment for 2025.
+Xin đừng quên để lại một bình luận cuối cùng cho năm 2025.
+
+
+125
+00:05:43,495 --> 00:05:50,255
+Tell us what your favorite thing was that you learned this year or tell us your English goal for 2026.
+Hãy cho chúng tôi biết điều bạn thích nhất mà bạn đã học được trong năm nay hoặc mục tiêu tiếng Anh của bạn cho năm 2026.
+
+
+126
+00:05:50,455 --> 00:05:52,495
+We love to read your plans.
+Chúng tôi rất thích đọc kế hoạch của các bạn.
+
+
+127
+00:05:52,534 --> 00:05:53,455
+Yes.
+Đúng vậy.
+
+
+128
+00:05:53,414 --> 00:05:55,195
+Share this episode with a friend
+Hãy chia sẻ tập này với một người bạn
+
+
+129
+00:05:55,195 --> 00:05:57,295
+who is starting their English journey too
+người cũng đang bắt đầu hành trình học tiếng Anh của họ
+
+
+130
+00:05:57,390 --> 00:06:00,470
+and we will see you very soon in the New Year.
+và chúng tôi sẽ gặp lại các bạn rất sớm trong Năm Mới.
+
+
+131
+00:06:00,429 --> 00:06:02,130
+Happy New Year, everyone.
+Chúc mừng năm mới, mọi người.
+
+
+132
+00:06:02,130 --> 00:06:03,410
+Happy New Year.
+Chúc mừng năm mới.
+
+
+133
+00:06:03,410 --> 00:06:05,430
+See you in 2026.
+Hẹn gặp lại vào năm 2026.
+
+
+134
+00:06:05,390 --> 00:06:06,370
+Bye bye.
+Tạm biệt.
+
+
+135
+00:06:06,370 --> 00:06:06,850
+Bye.
+Tạm biệt.
+
+
+    `;
+
+    // 2. BỘ PHÂN TÍCH TỰ ĐỘNG (Auto-Parser)
+    function parseSRT(text) {
+      // Tự động dọn dẹp các tag rác
+      const cleanText = text.replace(/\\s*/g, '').trim();
+      const lines = cleanText.split('\n').map(l => l.trim()).filter(l => l !== '');
+      
+      const result = [];
+      let currentItem = null;
+      const timeRegex = /(\d{2}):(\d{2}):(\d{2}),(\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2}),(\d{3})/;
+
+      function toSec(h, m, s, ms) {
+        return parseInt(h) * 3600 + parseInt(m) * 60 + parseInt(s) + parseInt(ms) / 1000;
+      }
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const t = line.match(timeRegex);
+
+        if (t) {
+          if (currentItem && currentItem.en) result.push(currentItem);
+          currentItem = {
+            start: toSec(t[1], t[2], t[3], t[4]),
+            end: toSec(t[5], t[6], t[7], t[8]),
+            en: "",
+            vi: ""
+          };
+        } else if (currentItem) {
+          // Bỏ qua các số thứ tự phân đoạn của SRT
+          if (/^\d+$/.test(line) && i + 1 < lines.length && lines[i+1].match(timeRegex)) continue;
+          
+          if (!currentItem.en) {
+            currentItem.en = line;
+          } else if (!currentItem.vi) {
+            currentItem.vi = line;
+          } else {
+            currentItem.vi += " " + line;
+          }
+        }
+      }
+      if (currentItem && currentItem.en) result.push(currentItem);
+      return result;
+    }
+
+    const transcriptData = parseSRT(rawSrt);
+
+    // 3. UI Tương tác
+    let showTranslation = true;
+    function toggleTranslation() {
+      showTranslation = !showTranslation;
+      document.documentElement.style.setProperty('--vi-display', showTranslation ? 'block' : 'none');
+    }
+
+    const scriptContainer = document.getElementById('script-container');
+    
+    // Đẩy dữ liệu ra màn hình
+    transcriptData.forEach((line, index) => {
+      const div = document.createElement('div');
+      div.className = 'script-line';
+      div.id = 'line-' + index;
+      
+      const enDiv = document.createElement('div');
+      enDiv.className = 'en-text';
+      enDiv.innerText = line.en;
+
+      const viDiv = document.createElement('div');
+      viDiv.className = 'vi-text';
+      viDiv.innerText = line.vi || " "; // Xử lý câu không có tiếng Việt
+
+      div.appendChild(enDiv);
+      div.appendChild(viDiv);
+
+     div.onclick = () => {
+        if(player && player.seekTo && line.start !== null) {
+          autoPauseTriggered = false; // Reset trạng thái tự động dừng
+          player.seekTo(line.start, true);
+          player.playVideo();
+        }
+      };
+
+      scriptContainer.appendChild(div);
+    });
+
+    // 4. API YouTube & Xử lý nháy sáng câu
+    let player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('ytplayer', {
+        height: '100%',
+        width: '100%',
+        videoId: 'UkVjzLr2QA0', 
+        playerVars: { 'autoplay': 0, 'controls': 1 },
+        events: {
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+let checkInterval;
+    let currentLineIndex = -1;
+    let autoPauseTriggered = false; // Thêm biến theo dõi trạng thái tự động
+
+    function onPlayerStateChange(event) {
+      if (event.data == YT.PlayerState.PLAYING) {
+        // TĂNG TỐC ĐỘ QUÉT lên 50ms để bắt thời gian chuẩn xác nhất (thay vì 200ms)
+        checkInterval = setInterval(updateHighlight, 50); 
+      } else {
+        clearInterval(checkInterval);
+      }
+    }
+
+    function updateHighlight() {
+      if(!player || !player.getCurrentTime) return;
+      const time = player.getCurrentTime();
+      let foundLine = -1;
+
+      // 1. Tìm câu đang khớp với thời gian video
+      for (let i = 0; i < transcriptData.length; i++) {
+        if (time >= transcriptData[i].start && time <= transcriptData[i].end) {
+          foundLine = i;
+          break;
+        }
+      }
+
+      // 2. LOGIC TỰ ĐỘNG DỪNG VÀ KHÓA CÂU (Sửa lỗi chấm 0%)
+      if (currentLineIndex !== -1 && !autoPauseTriggered) {
+        // Bắt thời điểm sát nút kết thúc câu (trừ hao 0.1 giây để không bị lẹm sang câu sau)
+        if (time >= transcriptData[currentLineIndex].end - 0.1) {
+          autoPauseTriggered = true; // Đánh dấu đã kích hoạt auto-pause
+          player.pauseVideo();       // Dừng video ngay lập tức
+          
+          // CRITICAL FIX: Ép hệ thống giữ nguyên câu hiện tại (không cho nhảy sang câu tiếp theo lúc dừng)
+          foundLine = currentLineIndex; 
+
+          // Bật mic thu âm sau 300ms để tránh tạp âm từ video
+          setTimeout(() => {
+            if (!isRecording) {
+              recordBtn.click();
+            }
+          }, 300);
+        }
+      }
+
+      // 3. LOGIC ĐỔI MÀU VÀ CHUYỂN CÂU MỚI
+      if (foundLine !== -1 && currentLineIndex !== foundLine) {
+        autoPauseTriggered = false; // Reset lại biến khi video nhảy sang một câu mới hoàn toàn
+
+        if (currentLineIndex !== -1) {
+          document.getElementById('line-' + currentLineIndex).classList.remove('active');
+        }
+        const activeLine = document.getElementById('line-' + foundLine);
+        activeLine.classList.add('active');
+       
+        // Căn lề mượt mà
+        if (window.innerWidth <= 992) {
+          activeLine.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        currentLineIndex = foundLine; // Cập nhật câu hiện tại
+      }
+    }
+
+    // 5. Chức năng nhận diện giọng nói (Shadowing Evaluation)
+    const recordBtn = document.getElementById('recordBtn');
+    const resultText = document.getElementById('resultText');
+    const scorePron = document.getElementById('score-pron');
+    const scoreAcc = document.getElementById('score-acc');
+    const scoreFlu = document.getElementById('score-flu');
+    const scoreComp = document.getElementById('score-comp');
+
+    let recognition;
+    let isRecording = false;
+    let recordStartTime = 0;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRec();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = function(event) {
+        const spoken = event.results[0][0].transcript;
+        const confidence = event.results[0][0].confidence; // Điểm tự tin của API (0.0 đến 1.0)
+        const durationSeconds = (Date.now() - recordStartTime) / 1000;
+        
+        resultText.innerText = `"${spoken}"`;
+        calculateAdvancedScores(spoken, confidence, durationSeconds);
+      };
+
+      recognition.onerror = function(event) {
+        resultText.innerText = "Error recognizing speech. Try again.";
+        resetRecordButton();
+      };
+
+      recognition.onend = function() {
+        if (isRecording) resetRecordButton();
+      };
+
+      recordBtn.onclick = () => {
+        if (!isRecording) {
+          if(player && player.pauseVideo) player.pauseVideo();
+          recordStartTime = Date.now();
+          recognition.start();
+          isRecording = true;
+          recordBtn.innerText = "Stop & Evaluate";
+          recordBtn.classList.add('recording');
+          resultText.innerText = "Listening...";
+          
+          // Reset điểm số
+          ['pron', 'acc', 'flu', 'comp'].forEach(id => {
+            document.getElementById(`score-${id}`).innerText = '--%';
+            document.getElementById(`score-${id}`).style.color = "#444";
+          });
+
+        } else {
+          recognition.stop();
+          resetRecordButton();
+        }
+      };
+    } else {
+      resultText.innerText = "Speech API not supported. Please use Chrome/Edge.";
+    }
+
+    function resetRecordButton() {
+      isRecording = false;
+      recordBtn.innerText = "Click to Speak";
+      recordBtn.classList.remove('recording');
+    }
+
+    function getColorForScore(score) {
+      if (score >= 85) return "#4CAF50"; // Xanh lá
+      if (score >= 60) return "#FF9800"; // Cam
+      return "#ff6a88"; // Đỏ hồng
+    }
+
+    function calculateAdvancedScores(spoken, apiConfidence, durationSec) {
+      if (currentLineIndex === -1) {
+        resultText.innerText = "Please select a sentence first!";
+        return;
+      }
+      
+      const targetText = transcriptData[currentLineIndex].en.toLowerCase().replace(/[^\w\s]/gi, '');
+      const spokenText = spoken.toLowerCase().replace(/[^\w\s]/gi, '');
+      
+      const targetWords = targetText.split(' ').filter(w => w);
+      const spokenWords = spokenText.split(' ').filter(w => w);
+      
+      if (targetWords.length === 0) return;
+
+      // 1. Completeness: Mức độ hoàn thiện (số từ đọc được / tổng số từ cần đọc)
+      let matchedTargetWords = 0;
+      targetWords.forEach(word => {
+        if (spokenWords.includes(word)) matchedTargetWords++;
+      });
+      let completeness = Math.round((matchedTargetWords / targetWords.length) * 100);
+      
+      // 2. Accuracy: Độ chính xác (số từ đúng / tổng số từ đã phát âm)
+      let accuracy = 0;
+      if (spokenWords.length > 0) {
+        accuracy = Math.round((matchedTargetWords / spokenWords.length) * 100);
+      }
+      // Giới hạn Accuracy không vượt quá 100 và không nhỏ hơn Completeness nếu đọc ít từ hơn
+      if (accuracy > 100) accuracy = 100;
+
+      // 3. Pronunciation: Sử dụng độ tin cậy của AI khi nhận diện giọng nói
+      let pronunciation = Math.round(apiConfidence * 100);
+      // Nếu đọc sai quá nhiều từ, phạt điểm Pronunciation
+      if (accuracy < 50) pronunciation -= 20; 
+      pronunciation = Math.max(0, Math.min(100, pronunciation));
+
+      // 4. Fluency: Tính bằng tốc độ đọc (Words Per Minute) kết hợp với Completeness
+      const expectedWPM = 130; 
+      const spokenWPM = (spokenWords.length / durationSec) * 60;
+      let fluency = 100;
+      if (spokenWPM < 80) fluency -= (80 - spokenWPM); // Đọc chậm quá bị trừ
+      if (spokenWPM > 200) fluency -= (spokenWPM - 200); // Đọc nhanh quá bị trừ
+      // Trừ thêm nếu ấp úng (thời gian dài nhưng ra ít chữ hoàn chỉnh)
+      fluency = Math.round((fluency * 0.6) + (completeness * 0.4));
+      fluency = Math.max(0, Math.min(100, fluency));
+
+      // Hiển thị điểm số và đổ màu
+      const metrics = [
+        { el: scorePron, val: pronunciation },
+        { el: scoreAcc, val: accuracy },
+        { el: scoreFlu, val: fluency },
+        { el: scoreComp, val: completeness }
+      ];
+
+      metrics.forEach(m => {
+        m.el.innerText = `${m.val}%`;
+        m.el.style.color = getColorForScore(m.val);
+      });
+    }
+  </script>
+</body>
+</html>
