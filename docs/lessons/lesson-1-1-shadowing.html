@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shadowing Practice | SnapEnglish</title>
+  <link rel="icon" type="image/png" href="ảnh.png">
+<style>
+  :root {
+    --vi-display: block;
+    --primary-pastel: #fbc2eb;
+    --secondary-pastel: #a6c1ee;
+    --glass-bg: rgba(255, 255, 255, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.8);
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    min-height: 100vh; 
+    box-sizing: border-box;
+    background: linear-gradient(135deg, var(--primary-pastel) 0%, var(--secondary-pastel) 100%);
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #333;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .container {
+    display: flex;
+    width: 100vw;
+    height: 100vh; 
+    min-height: 700px;
+    flex-direction: row;
+  }
+
+  .left-col {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    box-sizing: border-box;
+    gap: 24px;
+  }
+
+  .right-col {
+    width: 40%;
+    padding: 24px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  }
+
+  .top-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+    margin-bottom: 10px;
+  }
+
+  .top-controls h2 {
+    margin: 0;
+    font-size: 1.4em;
+    color: #444;
+  }
+
+  .toggle-btn {
+    background: white;
+    border: 1px solid #ddd;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #555;
+    transition: all 0.2s;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  }
+
+  .toggle-btn:hover {
+    background: #f0f0f0;
+  }
+
+  .video-wrapper {
+    width: 100%;
+    aspect-ratio: 16/9;
+    border-radius: 24px;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .video-wrapper iframe {
+    width: 100%;
+    height: 100%;
+  }
+
+  .record-wrapper {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    padding: 15px 25px;
+    box-sizing: border-box;
+    gap: 20px;
+    overflow: hidden;
+    min-height: 110px;
+  }
+
+  .feedback-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+    min-width: 0;
+  }
+
+  .record-btn {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+    border: none;
+    padding: 14px 30px;
+    border-radius: 30px;
+    color: #444;
+    font-size: 1.1em;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 154, 158, 0.4);
+    transition: all 0.2s ease-in-out;
+    margin-bottom: 0;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .record-btn:active {
+    transform: scale(0.96);
+  }
+
+  .record-btn.recording {
+    background: linear-gradient(135deg, #ff6a88 0%, #ff99ac 100%);
+    color: white;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 106, 136, 0.6); }
+    70% { box-shadow: 0 0 0 15px rgba(255, 106, 136, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 106, 136, 0); }
+  }
+
+  .result-box {
+    width: 100%;
+    min-height: 40px;
+    background: rgba(255, 255, 255, 0.7);
+    border-radius: 12px;
+    padding: 8px 15px;
+    margin: 0;
+    font-style: italic;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+    font-size: 0.95em;
+  }
+
+  .metrics-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .metric {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 6px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+
+  .metric .label {
+    font-size: 0.65em;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+  }
+
+  .metric .value {
+    font-size: 1.1em;
+    font-weight: 800;
+    color: #444;
+  }
+
+  .script-container {
+    overflow-y: auto;
+    padding-right: 10px;
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .script-container::-webkit-scrollbar {
+    width: 6px;
+  }
+  .script-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+  }
+  .script-container::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+  }
+
+  .script-line {
+    padding: 16px 20px;
+    border-radius: 18px;
+    transition: 0.3s ease;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid transparent;
+  }
+
+  .script-line:hover {
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .script-line.active {
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    transform: scale(1.02);
+    border-left: 6px solid #ff9a9e;
+    border-right: 1px solid rgba(255,255,255,0.8);
+    border-top: 1px solid rgba(255,255,255,0.8);
+    border-bottom: 1px solid rgba(255,255,255,0.8);
+  }
+
+  .script-line.active .en-text {
+    color: #d81b60;
+  }
+
+  .en-text {
+    font-size: 1.15em;
+    font-weight: 600;
+    color: #333;
+    line-height: 1.5;
+    transition: color 0.3s ease;
+  }
+
+  .vi-text {
+    font-size: 0.95em;
+    color: #666;
+    margin-top: 8px;
+    line-height: 1.4;
+    display: var(--vi-display);
+  }
+
+  /* Responsive Design cho Mobile */
+  @media (max-width: 992px) {
+    .container {
+      flex-direction: column;
+      height: auto;
+      min-height: 100vh;
+    }
+    .script-line {
+      scroll-margin-top: calc(56.25vw + 280px); 
+    }
+    .left-col {
+      width: 100%;
+      height: auto;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: linear-gradient(135deg, var(--primary-pastel) 0%, var(--secondary-pastel) 100%);
+      padding: 12px;
+      gap: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
+    }
+    .right-col {
+      width: 100%;
+      height: auto;
+      padding: 12px;
+    }
+    .record-wrapper {
+      flex-direction: column; /* Xếp dọc trên điện thoại để không bị ép ngang */
+      padding: 12px;
+      gap: 12px;
+      min-height: auto;
+    }
+    .record-btn {
+      width: 100%;
+      margin: 0;
+    }
+    .metrics-grid {
+      flex-wrap: wrap; 
+      gap: 6px;
+    }
+    .metric {
+      min-width: 45%; 
+    }
+    .script-container {
+      max-height: none; 
+      overflow-y: visible;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="left-col">
+      <div class="video-wrapper glass">
+        <div id="ytplayer"></div>
+      </div>
+      
+      <div class="record-wrapper glass">
+        <button id="recordBtn" class="record-btn">Click to Speak</button>
+        
+        <div class="feedback-container">
+          <div id="resultText" class="result-box">Your voice will appear here...</div>
+          
+          <div class="metrics-grid">
+            <div class="metric">
+              <span class="label">Pronunciation</span>
+              <span class="value" id="score-pron">--%</span>
+            </div>
+            <div class="metric">
+              <span class="label">Accuracy</span>
+              <span class="value" id="score-acc">--%</span>
+            </div>
+            <div class="metric">
+              <span class="label">Fluency</span>
+              <span class="value" id="score-flu">--%</span>
+            </div>
+            <div class="metric">
+              <span class="label">Completeness</span>
+              <span class="value" id="score-comp">--%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-col glass">
+      <div class="top-controls">
+        <h2>Transcript</h2>
+        <button class="toggle-btn" onclick="toggleTranslation()">Toggle Translation</button>
+      </div>
+      <div class="script-container" id="script-container"></div>
+    </div>
+  </div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script>
+    // 1. DÁN TOÀN BỘ TEXT TỪ FILE .SRT VÀO GIỮA 2 DẤU MẶC KÉP NGƯỢC (`) DƯỚI ĐÂY
+    // Không cần xóa các tag , hệ thống sẽ tự động dọn dẹp giúp bạn.
+    const rawSrt = `
+1
+00:00:00,080 --> 00:00:05,900
+A few years ago, I was sitting in a small room holding an English book in my hands,
+Vài năm trước, mình đang ngồi trong một căn phòng nhỏ, cầm một quyển sách tiếng Anh trên tay,
+
+
+2
+00:00:05,900 --> 00:00:09,379
+trying again and again to understand grammar rules.
+cố gắng hết lần này đến lần khác để hiểu các quy tắc ngữ pháp.
+
+
+3
+00:00:09,379 --> 00:00:15,405
+But no matter how hard I tried, nothing stayed in my mind, and I felt completely stuck.
+Nhưng dù có cố gắng thế nào, chẳng có gì đọng lại trong đầu, và mình cảm thấy hoàn toàn bế tắc.
+
+
+4
+00:00:15,405 --> 00:00:21,305
+Every day, I would memorize new words, and every day, I would forget most of them.
+Mỗi ngày, mình đều học thuộc từ mới, và mỗi ngày, mình lại quên hầu hết chúng.
+
+
+5
+00:00:21,305 --> 00:00:23,945
+And when someone spoke English in front of me,
+Và khi ai đó nói tiếng Anh trước mặt mình,
+
+
+6
+00:00:23,945 --> 00:00:29,025
+my mind went blank, and I could not say even a simple sentence.
+đầu óc mình trống rỗng, và mình không thể nói được dù chỉ một câu đơn giản.
+
+
+7
+00:00:29,189 --> 00:00:31,850
+I remember one moment very clearly.
+Mình nhớ rất rõ một khoảnh khắc.
+
+
+8
+00:00:31,850 --> 00:00:37,790
+Someone asked me a simple question in English, and I understood it, but I could not answer.
+Có người hỏi mình một câu hỏi đơn giản bằng tiếng Anh, mình hiểu câu hỏi đó, nhưng không thể trả lời.
+
+
+9
+00:00:37,790 --> 00:00:43,189
+And that small moment made me feel so embarrassed that I decided something had to change.
+Và khoảnh khắc nhỏ ấy khiến mình xấu hổ đến nỗi mình quyết định rằng phải thay đổi điều gì đó.
+
+
+10
+00:00:43,455 --> 00:00:46,675
+So I stopped doing what everyone told me to do.
+Vậy nên mình ngừng làm những gì mọi người bảo mình làm.
+
+
+11
+00:00:46,675 --> 00:00:49,715
+I stopped focusing on grammar rules all the time
+Mình đã ngừng tập trung vào các quy tắc ngữ pháp mọi lúc
+
+
+12
+00:00:49,715 --> 00:00:53,815
+and I stopped forcing myself to memorize long vocabulary lists
+và mình cũng ngừng ép bản thân học thuộc danh sách từ vựng dài
+
+
+13
+00:00:53,815 --> 00:00:55,854
+because it was not helping me speak.
+bởi vì điều đó không giúp mình nói được.
+
+
+14
+00:00:55,940 --> 00:01:03,280
+Instead, I started doing just one simple thing every day and that one thing completely changed my English.
+Thay vào đó, mình bắt đầu làm một điều đơn giản mỗi ngày và điều đó đã thay đổi hoàn toàn En của mình
+
+
+15
+00:01:03,280 --> 00:01:06,280
+I started listening every single day.
+Mình bắt đầu nghe mỗi ngày.
+
+
+16
+00:01:06,280 --> 00:01:08,021
+Not just random listening, 
+Không chỉ là nghe ngẫu nhiên,
+
+
+17
+00:01:08,021 --> 00:01:11,977
+but simple and easy English that I could slowly understand
+mà là tiếng Anh đơn giản và dễ hiểu mà mình có thể từ từ hiểu được
+
+
+18
+00:01:11,977 --> 00:01:15,385
+ even if I did not understand everything at first.
+ngay cả khi ban đầu mình không hiểu hết mọi thứ.
+
+
+19
+00:01:15,385 --> 00:01:20,284
+At the beginning, it felt strange because I was not studying like before.
+Lúc đầu, cảm giác thật lạ vì mình không học như trước đây.
+
+
+20
+00:01:20,205 --> 00:01:26,260
+And I thought maybe I was wasting my time, but I trusted the process and continued.
+Và mình nghĩ có lẽ mình đang lãng phí thời gian, nhưng mình đã tin tưởng vào quy trình và tiếp tục.
+
+
+21
+00:01:26,260 --> 00:01:28,340
+I listened to short stories.
+Mình đã nghe những câu chuyện ngắn.
+
+
+22
+00:01:28,340 --> 00:01:30,299
+I listened to conversations.
+Mình đã nghe các đoạn hội thoại.
+
+
+23
+00:01:30,220 --> 00:01:37,099
+And sometimes, I listened to the same audio again and again until the sounds started to feel familiar.
+Và đôi khi, mình nghe đi nghe lại cùng một đoạn âm thanh cho đến khi những âm thanh ấy bắt đầu trở nên quen thuộc.
+
+
+24
+00:01:37,265 --> 00:01:40,645
+Slowly, something surprising started to happen.
+Dần dần, một điều đáng ngạc nhiên bắt đầu xảy ra.
+
+
+25
+00:01:40,645 --> 00:01:45,125
+My brain began to understand English without translating every word.
+Não của mình bắt đầu hiểu tiếng Anh mà không cần dịch từng từ.
+
+
+26
+00:01:45,125 --> 00:01:50,865
+And I noticed that I was not thinking about grammar rules anymore, but I was still understanding.
+Và mình nhận ra rằng mình không còn nghĩ về các quy tắc ngữ pháp nữa, nhưng mình vẫn hiểu.
+
+
+27
+00:01:51,310 --> 00:01:55,450
+After some weeks, I started understanding more than before.
+Sau vài tuần, mình bắt đầu hiểu nhiều hơn trước.
+
+
+28
+00:01:55,450 --> 00:02:01,149
+And after some months, I noticed that I could think in English without forcing myself.
+Và sau vài tháng, mình nhận thấy mình có thể suy nghĩ bằng tiếng Anh mà không cần ép buộc bản thân.
+
+
+29
+00:02:01,230 --> 00:02:07,225
+And then one day, I spoke a full sentence naturally without fear,
+Và rồi một ngày, mình nói một câu hoàn chỉnh một cách tự nhiên mà không sợ hãi,
+
+
+30
+00:02:07,225 --> 00:02:10,205
+without stopping, and without thinking too much.
+không ngập ngừng, và không suy nghĩ quá nhiều.
+
+
+31
+00:02:10,205 --> 00:02:16,785
+That was the moment I realized fluency is not about grammar and it is not about memorizing.
+Đó là khoảnh khắc mình nhận ra rằng sự lưu loát không phải là về ngữ pháp hay ghi nhớ.
+
+
+32
+00:02:16,705 --> 00:02:20,385
+Fluency comes from daily exposure and simple listening.
+Sự lưu loát đến từ việc tiếp xúc hàng ngày và nghe đơn giản.
+
+
+33
+00:02:20,580 --> 00:02:24,339
+So if you want to improve your English, do this.
+Vì vậy, nếu bạn muốn cải thiện tiếng Anh của mình, hãy làm điều này.
+
+
+34
+00:02:24,420 --> 00:02:26,860
+Start listening to easy English every day.
+Bắt đầu nghe tiếng Anh dễ mỗi ngày.
+
+
+35
+00:02:26,860 --> 00:02:29,120
+Choose simple stories and conversations.
+Chọn những câu chuyện và cuộc hội thoại đơn giản.
+
+
+36
+00:02:29,120 --> 00:02:32,660
+Do not worry if you do not understand everything.
+Đừng lo lắng nếu bạn không hiểu hết mọi thứ.
+
+
+37
+00:02:32,660 --> 00:02:34,819
+Just keep listening and stay patient.
+Chỉ cần tiếp tục nghe và kiên nhẫn.
+
+
+38
+00:02:34,895 --> 00:02:40,255
+You can listen while walking, while resting, or even before sleeping.
+Bạn có thể nghe khi đi bộ, khi nghỉ ngơi, hoặc thậm chí trước khi ngủ.
+
+
+39
+00:02:40,335 --> 00:02:44,815
+Because the more you listen, the more your brain learns quietly.
+Bởi vì bạn càng nghe nhiều, não bộ của bạn càng học một cách lặng lẽ.
+
+
+40
+00:02:44,895 --> 00:02:48,715
+And slowly without pressure, your English will improve.
+Và từ từ, không áp lực, tiếng Anh của bạn sẽ cải thiện.
+
+
+41
+00:02:48,715 --> 00:02:51,910
+So from today, start this one simple habit.
+Vậy từ hôm nay, hãy bắt đầu thói quen đơn giản này.
+
+
+42
+00:02:51,990 --> 00:02:58,310
+Daily listening. Trust the process, stay consistent and you will see the change.
+Nghe hàng ngày. Hãy tin vào quy trình, kiên trì và bạn sẽ thấy sự thay đổi.
+
+
+43
+00:02:58,310 --> 00:03:00,810
+If I can do it, you can do it too.
+Nếu mình làm được, bạn cũng làm được.
+
+
+44
+00:03:00,810 --> 00:03:06,981
+If you like this video, don't forget to like, subscribe, and comment.
+Nếu bạn thích video này, đừng quên like, subscribe và bình luận.
+
+
+45
+00:03:06,901 --> 00:03:08,981
+I will listen every day.
+Mình sẽ nghe mỗi ngày.
+
+
+46
+00:03:08,981 --> 00:03:10,460
+See you in the next video.
+Hẹn gặp bạn ở video tiếp theo.
+
+
+    `;
+
+    // 2. BỘ PHÂN TÍCH TỰ ĐỘNG (Auto-Parser)
+    function parseSRT(text) {
+      // Tự động dọn dẹp các tag rác
+      const cleanText = text.replace(/\\s*/g, '').trim();
+      const lines = cleanText.split('\n').map(l => l.trim()).filter(l => l !== '');
+      
+      const result = [];
+      let currentItem = null;
+      const timeRegex = /(\d{2}):(\d{2}):(\d{2}),(\d{3})\s*-->\s*(\d{2}):(\d{2}):(\d{2}),(\d{3})/;
+
+      function toSec(h, m, s, ms) {
+        return parseInt(h) * 3600 + parseInt(m) * 60 + parseInt(s) + parseInt(ms) / 1000;
+      }
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const t = line.match(timeRegex);
+
+        if (t) {
+          if (currentItem && currentItem.en) result.push(currentItem);
+          currentItem = {
+            start: toSec(t[1], t[2], t[3], t[4]),
+            end: toSec(t[5], t[6], t[7], t[8]),
+            en: "",
+            vi: ""
+          };
+        } else if (currentItem) {
+          // Bỏ qua các số thứ tự phân đoạn của SRT
+          if (/^\d+$/.test(line) && i + 1 < lines.length && lines[i+1].match(timeRegex)) continue;
+          
+          if (!currentItem.en) {
+            currentItem.en = line;
+          } else if (!currentItem.vi) {
+            currentItem.vi = line;
+          } else {
+            currentItem.vi += " " + line;
+          }
+        }
+      }
+      if (currentItem && currentItem.en) result.push(currentItem);
+      return result;
+    }
+
+    const transcriptData = parseSRT(rawSrt);
+
+    // 3. UI Tương tác
+    let showTranslation = true;
+    function toggleTranslation() {
+      showTranslation = !showTranslation;
+      document.documentElement.style.setProperty('--vi-display', showTranslation ? 'block' : 'none');
+    }
+
+    const scriptContainer = document.getElementById('script-container');
+    
+    // Đẩy dữ liệu ra màn hình
+    transcriptData.forEach((line, index) => {
+      const div = document.createElement('div');
+      div.className = 'script-line';
+      div.id = 'line-' + index;
+      
+      const enDiv = document.createElement('div');
+      enDiv.className = 'en-text';
+      enDiv.innerText = line.en;
+
+      const viDiv = document.createElement('div');
+      viDiv.className = 'vi-text';
+      viDiv.innerText = line.vi || " "; // Xử lý câu không có tiếng Việt
+
+      div.appendChild(enDiv);
+      div.appendChild(viDiv);
+
+     div.onclick = () => {
+        if(player && player.seekTo && line.start !== null) {
+          autoPauseTriggered = false; // Reset trạng thái tự động dừng
+          player.seekTo(line.start, true);
+          player.playVideo();
+        }
+      };
+
+      scriptContainer.appendChild(div);
+    });
+
+    // 4. API YouTube & Xử lý nháy sáng câu
+    let player;
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('ytplayer', {
+        height: '100%',
+        width: '100%',
+        videoId: 'qET8vc9aUME', 
+        playerVars: { 'autoplay': 0, 'controls': 1 },
+        events: {
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+let checkInterval;
+    let currentLineIndex = -1;
+    let autoPauseTriggered = false; // Thêm biến theo dõi trạng thái tự động
+
+    function onPlayerStateChange(event) {
+      if (event.data == YT.PlayerState.PLAYING) {
+        // TĂNG TỐC ĐỘ QUÉT lên 50ms để bắt thời gian chuẩn xác nhất (thay vì 200ms)
+        checkInterval = setInterval(updateHighlight, 50); 
+      } else {
+        clearInterval(checkInterval);
+      }
+    }
+
+    function updateHighlight() {
+      if(!player || !player.getCurrentTime) return;
+      const time = player.getCurrentTime();
+      let foundLine = -1;
+
+      // 1. Tìm câu đang khớp với thời gian video
+      for (let i = 0; i < transcriptData.length; i++) {
+        if (time >= transcriptData[i].start && time <= transcriptData[i].end) {
+          foundLine = i;
+          break;
+        }
+      }
+
+      // 2. LOGIC TỰ ĐỘNG DỪNG VÀ KHÓA CÂU (Sửa lỗi chấm 0%)
+      if (currentLineIndex !== -1 && !autoPauseTriggered) {
+        // Bắt thời điểm sát nút kết thúc câu (trừ hao 0.1 giây để không bị lẹm sang câu sau)
+        if (time >= transcriptData[currentLineIndex].end - 0.1) {
+          autoPauseTriggered = true; // Đánh dấu đã kích hoạt auto-pause
+          player.pauseVideo();       // Dừng video ngay lập tức
+          
+          // CRITICAL FIX: Ép hệ thống giữ nguyên câu hiện tại (không cho nhảy sang câu tiếp theo lúc dừng)
+          foundLine = currentLineIndex; 
+
+          // Bật mic thu âm sau 300ms để tránh tạp âm từ video
+          setTimeout(() => {
+            if (!isRecording) {
+              recordBtn.click();
+            }
+          }, 300);
+        }
+      }
+
+      // 3. LOGIC ĐỔI MÀU VÀ CHUYỂN CÂU MỚI
+      if (foundLine !== -1 && currentLineIndex !== foundLine) {
+        autoPauseTriggered = false; // Reset lại biến khi video nhảy sang một câu mới hoàn toàn
+
+        if (currentLineIndex !== -1) {
+          document.getElementById('line-' + currentLineIndex).classList.remove('active');
+        }
+        const activeLine = document.getElementById('line-' + foundLine);
+        activeLine.classList.add('active');
+       
+        // Căn lề mượt mà
+        if (window.innerWidth <= 992) {
+          activeLine.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          activeLine.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        currentLineIndex = foundLine; // Cập nhật câu hiện tại
+      }
+    }
+
+    // 5. Chức năng nhận diện giọng nói (Shadowing Evaluation)
+    const recordBtn = document.getElementById('recordBtn');
+    const resultText = document.getElementById('resultText');
+    const scorePron = document.getElementById('score-pron');
+    const scoreAcc = document.getElementById('score-acc');
+    const scoreFlu = document.getElementById('score-flu');
+    const scoreComp = document.getElementById('score-comp');
+
+    let recognition;
+    let isRecording = false;
+    let recordStartTime = 0;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRec();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = function(event) {
+        const spoken = event.results[0][0].transcript;
+        const confidence = event.results[0][0].confidence; // Điểm tự tin của API (0.0 đến 1.0)
+        const durationSeconds = (Date.now() - recordStartTime) / 1000;
+        
+        resultText.innerText = `"${spoken}"`;
+        calculateAdvancedScores(spoken, confidence, durationSeconds);
+      };
+
+      recognition.onerror = function(event) {
+        resultText.innerText = "Error recognizing speech. Try again.";
+        resetRecordButton();
+      };
+
+      recognition.onend = function() {
+        if (isRecording) resetRecordButton();
+      };
+
+      recordBtn.onclick = () => {
+        if (!isRecording) {
+          if(player && player.pauseVideo) player.pauseVideo();
+          recordStartTime = Date.now();
+          recognition.start();
+          isRecording = true;
+          recordBtn.innerText = "Stop & Evaluate";
+          recordBtn.classList.add('recording');
+          resultText.innerText = "Listening...";
+          
+          // Reset điểm số
+          ['pron', 'acc', 'flu', 'comp'].forEach(id => {
+            document.getElementById(`score-${id}`).innerText = '--%';
+            document.getElementById(`score-${id}`).style.color = "#444";
+          });
+
+        } else {
+          recognition.stop();
+          resetRecordButton();
+        }
+      };
+    } else {
+      resultText.innerText = "Speech API not supported. Please use Chrome/Edge.";
+    }
+
+    function resetRecordButton() {
+      isRecording = false;
+      recordBtn.innerText = "Click to Speak";
+      recordBtn.classList.remove('recording');
+    }
+
+    function getColorForScore(score) {
+      if (score >= 85) return "#4CAF50"; // Xanh lá
+      if (score >= 60) return "#FF9800"; // Cam
+      return "#ff6a88"; // Đỏ hồng
+    }
+
+    function calculateAdvancedScores(spoken, apiConfidence, durationSec) {
+      if (currentLineIndex === -1) {
+        resultText.innerText = "Please select a sentence first!";
+        return;
+      }
+      
+      const targetText = transcriptData[currentLineIndex].en.toLowerCase().replace(/[^\w\s]/gi, '');
+      const spokenText = spoken.toLowerCase().replace(/[^\w\s]/gi, '');
+      
+      const targetWords = targetText.split(' ').filter(w => w);
+      const spokenWords = spokenText.split(' ').filter(w => w);
+      
+      if (targetWords.length === 0) return;
+
+      // 1. Completeness: Mức độ hoàn thiện (số từ đọc được / tổng số từ cần đọc)
+      let matchedTargetWords = 0;
+      targetWords.forEach(word => {
+        if (spokenWords.includes(word)) matchedTargetWords++;
+      });
+      let completeness = Math.round((matchedTargetWords / targetWords.length) * 100);
+      
+      // 2. Accuracy: Độ chính xác (số từ đúng / tổng số từ đã phát âm)
+      let accuracy = 0;
+      if (spokenWords.length > 0) {
+        accuracy = Math.round((matchedTargetWords / spokenWords.length) * 100);
+      }
+      // Giới hạn Accuracy không vượt quá 100 và không nhỏ hơn Completeness nếu đọc ít từ hơn
+      if (accuracy > 100) accuracy = 100;
+
+      // 3. Pronunciation: Sử dụng độ tin cậy của AI khi nhận diện giọng nói
+      let pronunciation = Math.round(apiConfidence * 100);
+      // Nếu đọc sai quá nhiều từ, phạt điểm Pronunciation
+      if (accuracy < 50) pronunciation -= 20; 
+      pronunciation = Math.max(0, Math.min(100, pronunciation));
+
+      // 4. Fluency: Tính bằng tốc độ đọc (Words Per Minute) kết hợp với Completeness
+      const expectedWPM = 130; 
+      const spokenWPM = (spokenWords.length / durationSec) * 60;
+      let fluency = 100;
+      if (spokenWPM < 80) fluency -= (80 - spokenWPM); // Đọc chậm quá bị trừ
+      if (spokenWPM > 200) fluency -= (spokenWPM - 200); // Đọc nhanh quá bị trừ
+      // Trừ thêm nếu ấp úng (thời gian dài nhưng ra ít chữ hoàn chỉnh)
+      fluency = Math.round((fluency * 0.6) + (completeness * 0.4));
+      fluency = Math.max(0, Math.min(100, fluency));
+
+      // Hiển thị điểm số và đổ màu
+      const metrics = [
+        { el: scorePron, val: pronunciation },
+        { el: scoreAcc, val: accuracy },
+        { el: scoreFlu, val: fluency },
+        { el: scoreComp, val: completeness }
+      ];
+
+      metrics.forEach(m => {
+        m.el.innerText = `${m.val}%`;
+        m.el.style.color = getColorForScore(m.val);
+      });
+    }
+  </script>
+</body>
+</html>
