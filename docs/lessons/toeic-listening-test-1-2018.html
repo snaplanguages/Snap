@@ -2224,6 +2224,7 @@ function deleteAttempt(attemptId) {
         timerDuration = parseInt(document.getElementById('inputTime').value) * 60;
         document.getElementById('setupModal').classList.remove('show');
         renderTest();
+        updateCardView();
         buildNavGrid();
         startTimer();
 
@@ -2583,26 +2584,28 @@ window.selectAnswer = function(id, val) {
     document.getElementById('answeredCount').innerText = answeredCount;
 };
 
-// Nâng cấp hàm scrollToQ để tự đóng bảng điều hướng trên mobile khi bấm vào số
 window.scrollToQ = function(id) {
     let tab = 1;
     if(id > 6) tab = 2;
     if(id >= 32) tab = 3;
     if(id >= 71) tab = 4;
-    switchTab(tab);
+    switchTab(tab); // Gọi switchTab sẽ tự động quét các card
     
-    // Tự động đóng bảng điều hướng
     toggleNavPanel();
 
-    setTimeout(() => {
-        let el = document.getElementById(`card-${id}`);
-        if(el) {
-            el.scrollIntoView({behavior: "smooth", block: "center"});
-            el.style.transition = "box-shadow 0.5s";
-            el.style.boxShadow = "0 0 0 4px var(--secondary)";
-            setTimeout(() => el.style.boxShadow = "0 4px 15px rgba(0,0,0,0.02)", 1000);
+    // Tìm card chứa câu hỏi vừa bấm
+    let targetQuestion = document.getElementById(`card-${id}`);
+    if (targetQuestion) {
+        // Tìm q-card bọc ngoài cùng
+        let targetCard = targetQuestion.closest('.q-card');
+        
+        // Tìm vị trí của nó và show lên
+        let index = cardsInCurrentPart.indexOf(targetCard);
+        if(index !== -1) {
+            currentCardIndex = index;
+            updateCardView();
         }
-    }, 300);
+    }
 };
 
 function requestSubmit() {
