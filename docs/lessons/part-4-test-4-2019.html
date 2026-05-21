@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part 4 - Test 4 - 2019 | SnapEnglish</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Tông màu: Indigo & Teal (Đồng bộ với Part 3) */
+        :root {
+            --primary: #4f46e5;        
+            --primary-dark: #3730a3; 
+            --primary-light: #e0e7ff;
+            --secondary: #0d9488;    
+            --success: #10b981;      
+            --success-light: #d1fae5;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;       
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --bg-color: #f8fafc;
+            --white: #FFFFFF;
+            
+            /* Highlight Colors for Questions */
+            --hl-q1: #fef08a; /* Vàng nhạt */
+            --hl-q2: #fed7aa; /* Cam đào */
+            --hl-q3: #a7f3d0; /* Xanh mint */
+            
+            --shadow: 0 12px 35px rgba(79, 70, 229, 0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Be Vietnam Pro', sans-serif; }
+        
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-dark); 
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container { 
+            background: var(--bg-color); 
+            width: 100vw; 
+            min-height: 100vh;
+            position: relative; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- BỐ CỤC 2 CỘT & THANH TRƯỢT (RESIZER) --- */
+        .two-col-layout, .script-split {
+            display: flex;
+            align-items: stretch;
+            gap: 0; 
+            max-width: 1200px;
+            margin: 0 auto 30px auto;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 2px solid var(--primary-light);
+            overflow: hidden;
+        }
+
+        .left-col, .right-col, .script-col {
+            padding: 25px;
+            overflow-y: auto; 
+            max-height: 650px;
+        }
+
+        .left-col, .script-col:first-child { flex: 0 0 50%; }
+        .right-col, .script-col:last-child { flex: 1; background: #FAFBFC; }
+
+        /* Thanh trượt ở giữa */
+        .resizer {
+            width: 14px;
+            background-color: var(--primary-light);
+            cursor: col-resize;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background 0.2s;
+            flex-shrink: 0;
+            z-index: 5;
+        }
+
+        .resizer:hover, .resizer.dragging { background-color: var(--primary); }
+        .resizer-handle { width: 4px; height: 40px; background-color: rgba(255,255,255,0.8); border-radius: 4px; }
+        .resizer:not(:hover):not(.dragging) .resizer-handle { background-color: var(--primary-dark); }
+
+        @media (max-width: 1000px) {
+            .two-col-layout, .script-split { flex-direction: column; }
+            .left-col, .script-col:first-child { flex: 0 0 auto; width: 100% !important; max-height: none;}
+            .resizer { display: none; }
+        }
+
+        .screen { display: none; padding: 30px 5%; flex-grow: 1; animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; }
+        .screen.active { display: flex; flex-direction: column; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1, h2 { text-align: center; color: var(--primary-dark); margin-bottom: 15px; font-weight: 800; }
+        .desc { text-align: center; color: var(--text-gray); margin-bottom: 40px; font-size: 1.15rem; }
+
+        .btn { 
+            background: var(--primary); color: white; border: none; padding: 14px 32px; font-size: 1.05rem; 
+            font-weight: 700; border-radius: 16px; cursor: pointer; transition: all 0.3s ease; 
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 6px 15px rgba(79, 70, 229, 0.3);
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4); background: var(--primary-dark); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2.5px solid var(--primary); box-shadow: none; }
+        .btn-outline:hover { background: var(--primary-light); border-color: var(--primary-dark); color: var(--primary-dark); }
+        .btn-success { background: var(--success); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3); }
+        .btn-success:hover { background: #059669; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); }
+
+        /* Test Screen Styles */
+        .audio-wrapper {
+            background: var(--white); padding: 30px; border-radius: 24px; box-shadow: var(--shadow);
+            max-width: 900px; margin: 0 auto 30px auto; width: 100%; text-align: center; position: sticky; top: 20px; z-index: 10;
+            border: 2px dashed var(--primary-light);
+        }
+        .audio-player-custom { width: 100%; margin-top: 10px; border-radius: 50px; outline: none; }
+        
+        .mock-status {
+            display: none; color: var(--danger); font-weight: 800; margin-top: 15px; 
+            background: var(--danger-light); padding: 12px 25px; border-radius: 30px; 
+            justify-content: center; align-items: center; gap: 10px; font-size: 1.1rem;
+            border: 1px dashed var(--danger);
+        }
+        .pulse-dot { display:inline-block; width:12px; height:12px; background:var(--danger); border-radius:50%; animation: pulse 1.2s infinite; }
+
+        .questions-wrapper { max-width: 900px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 30px; }
+        .question-block { background: var(--white); padding: 30px; border-radius: 24px; box-shadow: 0 8px 25px rgba(0,0,0,0.03); border-top: 5px solid var(--primary); }
+        .q-title { font-size: 1.2rem; font-weight: 800; color: var(--text-dark); margin-bottom: 20px; }
+        
+        .options-grid { display: flex; flex-direction: column; gap: 12px; }
+        .option-label { 
+            display: flex; align-items: center; cursor: pointer; padding: 16px 20px; background: #FFFFFF;
+            border-radius: 16px; border: 2px solid #E2E8F0; transition: all 0.2s ease; font-weight: 600; font-size: 1.05rem; color: var(--text-dark);
+        }
+        .option-label:hover { border-color: var(--primary-light); background: #F8FAFC; transform: translateX(4px); }
+        .option-label input { display: none; }
+        .custom-radio { 
+            width: 24px; height: 24px; border: 2.5px solid #CBD5E1; border-radius: 50%; 
+            margin-right: 15px; position: relative; transition: all 0.3s; background: var(--white); flex-shrink: 0;
+        }
+        .option-label input:checked + .custom-radio { border-color: var(--primary); }
+        .option-label input:checked + .custom-radio::after { 
+            content: ""; width: 12px; height: 12px; background: var(--primary); 
+            border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+        }
+        .option-label input:checked ~ span { color: var(--primary-dark); font-weight: 700;}
+        .option-label.selected-ui { border-color: var(--primary); background: var(--primary-light); }
+
+        .graphic-box { margin-bottom: 20px; text-align: center; background: #f8fafc; padding: 20px; border-radius: 16px; border: 2px dashed #cbd5e1; }
+        .graphic-box img { max-width: 100%; height: auto; border-radius: 10px; }
+        .graphic-box table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; font-size: 0.95rem; margin-top: 10px;}
+        .graphic-box th, .graphic-box td { border: 1px solid #E2E8F0; padding: 10px; text-align: center; }
+        .graphic-box th { background: #F1F5F9; font-weight: 800; color: var(--primary-dark);}
+
+        .nav-footer { display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: 40px auto 20px auto; width: 100%; }
+
+        /* Results Screen */
+        .score-box { text-align: center; padding: 40px; background: var(--white); border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 40px; border: 2px solid var(--primary-light); }
+        .score-number { font-size: 4.5rem; font-weight: 800; color: var(--primary-dark); margin: 10px 0; }
+        .result-list { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .result-passage-card { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); display: flex; justify-content: space-between; align-items: center; border-left: 6px solid var(--primary);}
+        .result-passage-info h3 { color: var(--primary-dark); margin-bottom: 5px; font-weight: 800;}
+        .result-passage-info p { color: var(--text-gray); font-size: 0.95rem;}
+        
+        /* Modal Giải thích */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px); justify-content: center; align-items: center; padding: 20px;}
+        .modal-content { 
+            background: var(--bg-color); width: 100%; max-width: 1150px; max-height: 95vh; 
+            border-radius: 28px; padding: 40px; overflow-y: auto; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            scroll-behavior: smooth;
+        }
+        .close-modal { position: absolute; right: 30px; top: 30px; font-size: 40px; cursor: pointer; color: #9CA3AF; transition: 0.2s; line-height: 1; z-index: 10;}
+        .close-modal:hover { color: var(--danger); transform: rotate(90deg); }
+
+        /* Confirmation Modals */
+        .confirm-box {
+            background: var(--white); border-radius: 25px; padding: 40px; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.2); animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes scaleUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .confirm-title { font-size: 24px; color: var(--primary-dark); margin-bottom: 15px; font-weight: 800; }
+        .confirm-desc { color: var(--text-gray); margin-bottom: 30px; font-size: 1.05rem; }
+        .confirm-actions { display: flex; justify-content: center; gap: 15px; }
+
+        /* History Modals */
+        .custom-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 99999; }
+        .custom-modal { background: white; padding: 35px; border-radius: 20px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); width: 90%; max-width: 500px; text-align: center; border: 2px solid var(--primary-dark); animation: fadeUp 0.3s ease-out; }
+        #historyList { max-height: 350px; overflow-y: auto; text-align: left; margin-bottom: 20px; padding-right: 5px; }
+        #historyList::-webkit-scrollbar { width: 6px; }
+        #historyList::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 3px; }
+        .history-item { background: #f8f9fa; border: 1px solid #e9ecef; padding: 16px; border-radius: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .history-item:hover { border-color: var(--primary-dark); background: white; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); }
+        .history-info { display: flex; flex-direction: column; gap: 6px; }
+        .history-date { font-weight: 700; color: var(--text-dark); font-size: 1rem; }
+        .history-score { color: var(--primary-dark); font-size: 0.95rem; font-weight: 600; }
+        .btn-review { background: var(--primary-light); color: var(--primary-dark); border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit;}
+        .btn-review:hover { background: var(--primary-dark); color: white; }
+        .btn-delete-history { background: var(--danger-light); color: var(--danger); border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1.1rem; }
+        .btn-delete-history:hover { background: var(--danger); color: white; }
+        .modal-actions { display: flex; gap: 15px; margin-top: 20px; justify-content: center;}
+
+        /* Highlight Classes */
+        .hl-q1 { background-color: var(--hl-q1); padding: 2px 4px; border-radius: 4px; font-weight: 700; color: #ca8a04; }
+        .hl-q2 { background-color: var(--hl-q2); padding: 2px 4px; border-radius: 4px; font-weight: 700; color: #c2410c; }
+        .hl-q3 { background-color: var(--hl-q3); padding: 2px 4px; border-radius: 4px; font-weight: 700; color: #047857; }
+        
+        .legend-box { background: white; padding: 15px 25px; border-radius: 12px; margin-bottom: 20px; display: inline-flex; gap: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); font-weight: 700;}
+
+        /* Split Script Layout */
+        .script-col { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.02); }
+        .script-col h3 { color: var(--primary-dark); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;}
+        .script-text { font-size: 1.05rem; line-height: 1.8; color: var(--text-dark); white-space: pre-wrap;}
+        .script-en-col { border-left: 4px solid var(--primary); }
+        .script-vi-col { border-left: 4px solid var(--secondary); }
+        .script-vi-col h3 { color: var(--secondary); }
+
+        /* Explained Question Block */
+        .exp-q-block { background: var(--white); padding: 30px; border-radius: 20px; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border-left: 6px solid #CBD5E1; }
+        .exp-q-block.color-q1 { border-left-color: var(--hl-q1); }
+        .exp-q-block.color-q2 { border-left-color: var(--hl-q2); }
+        .exp-q-block.color-q3 { border-left-color: var(--hl-q3); }
+
+        .exp-q-title { font-size: 1.2rem; font-weight: 800; color: var(--text-dark); margin-bottom: 5px;}
+        .exp-q-title-vi { font-size: 1.05rem; color: var(--text-gray); margin-bottom: 15px; font-style: italic;}
+        
+        .exp-options { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px; }
+        .exp-opt { padding: 12px 15px; border-radius: 12px; background: #F8FAFC; font-size: 1.05rem; display: flex; gap: 10px; align-items: flex-start;}
+        .exp-opt.correct { background: var(--success-light); border: 1px solid rgba(16, 185, 129, 0.3); color: #059669; font-weight: 700;}
+        .exp-opt.wrong { opacity: 0.7; }
+        .opt-char { font-weight: 800; min-width: 25px; }
+
+        .exp-detail-box { background: var(--primary-light); padding: 20px; border-radius: 16px; border-left: 4px solid var(--primary); font-size: 1.05rem; line-height: 1.7; color: var(--primary-dark);}
+        .exp-detail-box strong { color: var(--primary-dark); }
+
+        @media (max-width: 900px) { 
+            .nav-footer { flex-direction: column; gap: 15px; }
+            .btn { width: 100%; }
+            .legend-box { flex-direction: column; gap: 10px;}
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="screen-welcome" class="screen active">
+        <div style="max-width: 800px; margin: auto; text-align: center; background: white; padding: 50px 30px; border-radius: 30px; box-shadow: var(--shadow); border: 2px solid var(--primary-light);">
+            <div style="font-size: 5rem; margin-bottom: 20px;">🎤</div>
+            <h1>TOEIC Part 4 (Test 4 - 2019)</h1>
+            <p class="desc">Luyện kỹ năng nghe bài nói ngắn từ Câu 71 đến Câu 100.<br>Đã nâng cấp Lịch sử làm bài, tính giờ và Lưu dữ liệu lên hệ thống.</p>
+            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <button class="btn btn-outline" onclick="openHistoryModal()">🕒 Lịch sử</button>
+                <button class="btn btn-outline" onclick="promptStart('practice')">🌿 Luyện tập</button>
+                <button class="btn" onclick="promptStart('mock')">🔥 Thi thử </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-test" class="screen">
+        <div class="audio-wrapper">
+            <h2 id="passage-title" style="color: var(--primary-dark); margin-bottom: 5px;">Questions 71-73</h2>
+            <p style="color: var(--text-gray); font-size: 0.95rem;">Listen to the talk and answer the questions.</p>
+            <div id="audio-container">
+                <audio id="q-audio" class="audio-player-custom" controls controlsList="nodownload"></audio>
+            </div>
+            <div id="mock-msg" class="mock-status">
+                <span class="pulse-dot"></span> Audio đang phát (Chế độ thi thử)... Tự động chuyển đoạn!
+            </div>
+        </div>
+
+        <div class="questions-wrapper" id="questions-container"></div>
+
+        <div class="nav-footer">
+            <button id="btn-prev" class="btn btn-outline" onclick="changePassage(-1)">⬅ Đoạn trước</button>
+            <button id="btn-next" class="btn" onclick="changePassage(1)">Đoạn tiếp theo ➡</button>
+            <button id="btn-submit" class="btn btn-success" style="display:none;" onclick="promptSubmit()">Nộp bài ngay ✨</button>
+        </div>
+    </div>
+
+    <div id="screen-result" class="screen">
+        <div class="score-box">
+            <h2>Kết Quả Của Bạn 🏆</h2>
+            <div class="score-number" id="final-score">0/0</div>
+            <p style="color: var(--text-gray); font-size: 1.1rem;">Bấm vào từng đoạn để xem giải thích Tiếng Việt và Vị trí Highlight Đáp Án!</p>
+        </div>
+        
+        <div class="result-list" id="result-list"></div>
+
+        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <button class="btn btn-outline" onclick="location.reload()">🏠 Về trang chủ</button>
+            <button class="btn" onclick="promptStart('practice')">🔄 Làm Lại Từ Đầu</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-start-confirm" class="modal" style="display: none; z-index: 2000;">
+    <div class="confirm-box">
+        <div class="confirm-title">Bắt đầu làm bài? 🚀</div>
+        <div class="confirm-desc">Bạn đã chuẩn bị sẵn sàng cho bài nghe Part 4 chưa?</div>
+        <div class="confirm-actions">
+            <button class="btn btn-outline" onclick="cancelStart()">Từ từ đã</button>
+            <button class="btn" onclick="confirmStart()">Chiến luôn!</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-submit-confirm" class="modal" style="display: none; z-index: 2000;">
+    <div class="confirm-box">
+        <div class="confirm-title">Nộp bài ngay? ✨</div>
+        <div class="confirm-desc">Bạn có chắc chắn muốn nộp bài? Kết quả của bạn sẽ được lưu lên hệ thống.</div>
+        <div class="confirm-actions">
+            <button class="btn btn-outline" onclick="cancelSubmit()">Kiểm tra lại</button>
+            <button class="btn btn-success" onclick="confirmSubmit()">Nộp luôn!</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-detail" class="modal">
+    <div class="modal-content" id="modal-content-area">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <h2 id="modal-title" style="text-align: left; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 2px dashed var(--primary-light);">Phân tích chi tiết</h2>
+        
+        <div style="text-align: center; margin-bottom: 15px;">
+            <div class="legend-box">
+                <div><span class="hl-q1"> Câu 1 (Q1) </span></div>
+                <div><span class="hl-q2"> Câu 2 (Q2) </span></div>
+                <div><span class="hl-q3"> Câu 3 (Q3) </span></div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 25px; text-align: center;">
+            <audio id="modal-audio" class="audio-player-custom" style="max-width: 600px;" controls></audio>
+        </div>
+        
+        <div class="script-split" id="scriptSplit">
+            <div class="script-col script-en-col" id="scriptEnCol">
+                <h3>🇬🇧 English Script</h3>
+                <div class="script-text" id="m-script-en"></div>
+            </div>
+            
+            <div class="resizer" id="scriptResizer">
+                <div class="resizer-handle"></div>
+            </div>
+
+            <div class="script-col script-vi-col" id="scriptViCol">
+                <h3>🇻🇳 Bản dịch Tiếng Việt</h3>
+                <div class="script-text" id="m-script-vi"></div>
+            </div>
+        </div>
+
+        <h3 style="color: var(--text-dark); margin-top: 30px; margin-bottom: 20px; font-weight: 800;">Phân tích câu hỏi:</h3>
+        <div id="modal-questions-explain"></div>
+    </div>
+</div>
+
+<div id="historyOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2 style="margin-bottom: 20px; color: var(--primary-dark);">🕒 Lịch sử làm bài</h2>
+        <div id="historyList">
+            <div style="text-align:center; color: var(--text-gray); padding: 20px;">Đang tải dữ liệu... 🐾</div>
+        </div>
+        <button class="btn btn-outline" style="width: 100%; margin-top: 15px;" onclick="closeHistoryModal()">Quay lại</button>
+    </div>
+</div>
+
+<div id="customConfirmDeleteOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2 style="color: var(--primary-dark);">Xác nhận xóa 🗑️</h2>
+        <p style="font-size: 1.1rem; color: var(--text-gray); margin-top: 15px; line-height: 1.5;">Cậu có chắc chắn muốn xóa bài làm này khỏi lịch sử không?</p>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeConfirmDelete()">Hủy</button>
+            <button class="btn btn-success" style="background: var(--danger); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);" onclick="executeDelete()">Xóa nhé</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const passagesData = [
+        {
+            id: "71-73",
+            type: "Talk",
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/01/zenlish-71-73-3.mp3",
+            graphic: null,
+            script_en: "M-Au: I’d like to start the meeting with some good news. <span class='hl-q1'>We’ve been awarded a contract from Skycloud Aviation to design seats for their new aircraft.</span> The contract calls for <span class='hl-q2'>seats that can rotate, so travelers can face one another during the flight.</span> Skycloud has given us a list of other specifications they’d like us to incorporate, based on feedback from their customers. I’ll pass around the full specifications list now. <span class='hl-q3'>Let’s take a look at it and determine the best way to plan this project.</span>",
+            script_vi: "M-Au: Tôi muốn bắt đầu cuộc họp với một số tin tốt. Chúng ta đã được giao một hợp đồng từ Hãng Hàng Không Skycloud để thiết kế ghế ngồi cho máy bay mới của họ. Hợp đồng yêu cầu ghế ngồi có thể xoay, vì vậy hành khách thể mặt đối mặt với nhau trong suốt chuyến bay. Skycloud đã cung cấp cho chúng ta danh sách các thông số kỹ thuật khác mà họ muốn kết hợp lại với nhau, dựa trên phản hồi từ khách hàng của họ. Bây giờ tôi sẽ chuyền danh sách thông số kỹ thuật đầy đủ cho mọi người. Hãy đọc và định ra phương án tối ưu để lên kế hoạch cho dự án này.",
+            questions: [
+                {
+                    id: 71, q_en: "What does the speaker announce?", q_vi: "Người nói thông báo điều gì?",
+                    opts: [
+                        { l: "A", text: "A company merger", text_vi: "Sát nhập công ty", isCorrect: false },
+                        { l: "B", text: "A schedule change", text_vi: "Thay đổi lịch trình", isCorrect: false },
+                        { l: "C", text: "A revised travel policy", text_vi: "Chính sách đi lại được chỉnh sửa", isCorrect: false },
+                        { l: "D", text: "A new contract", text_vi: "Hợp đồng mới", isCorrect: true }
+                    ],
+                    explanation: "Dựa vào: <strong>\"We've been awarded a contract...\"</strong>"
+                },
+                {
+                    id: 72, q_en: "According to the speaker, what has Skycloud Aviation requested?", q_vi: "Theo như người nói thì hãng hàng không Skyloud đã yêu cầu gì?",
+                    opts: [
+                        { l: "A", text: "Extra luggage space", text_vi: "Không gian hành lí rộng hơn", isCorrect: false },
+                        { l: "B", text: "In- flight entertainment", text_vi: "Giải trí trong lúc bay", isCorrect: false },
+                        { l: "C", text: "Movable seats", text_vi: "Ghế ngồi chuyển động được", isCorrect: true },
+                        { l: "D", text: "Wireless Internet technology", text_vi: "Công nghệ thông tin không dây", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"seats that can rotate\"</strong> (ghế có thể xoay)."
+                },
+                {
+                    id: 73, q_en: "What are listeners asked to do?", q_vi: "Người nghe được yêu cầu làm gì?",
+                    opts: [
+                        { l: "A", text: "Update their calendars", text_vi: "Cập nhật lịch của họ", isCorrect: false },
+                        { l: "B", text: "Discuss a project plan", text_vi: "Thảo luận kế hoạch dự án", isCorrect: true },
+                        { l: "C", text: "Submit expense reports", text_vi: "Nộp báo cáo chi tiêu", isCorrect: false },
+                        { l: "D", text: "Contact some clients", text_vi: "Liên lạc với một số khách hàng", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"Let's take a look at it and determine the best way to plan this project.\"</strong>"
+                }
+            ]
+        },
+        {
+            id: "74-76",
+            type: "Talk",
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/01/zenlish-74-76-3.mp3",
+            graphic: null,
+            script_en: "W-Am: Hi, Ms. Lee. <span class='hl-q1'>I’m calling to give you some information about the staffing transition plan since today is Angelo's last day in the office. As you suggested, Mariko will be taking over his job responsibilities. I had asked Angelo to train her to create invoices,</span> but <span class='hl-q2'>there's a team meeting this afternoon.</span> <span class='hl-q3'>So I decided to meet with her tomorrow and review the invoice process with her myself.</span> Let me know if you or the other department managers have any questions. Bye.",
+            script_vi: "W-Am: Chào cô Lee. Tôi gọi điện để đưa một số thông tin về kế hoạch chuyển đổi nhân sự vì hôm nay là ngày cuối cùng của Angelo tại văn phòng. Như cô đã đề xuất, Mariko sẽ đảm nhận trách nhiệm của anh ấy. Tôi đã yêu cầu Angelo đào tạo cô ấy về việc lập hóa đơn, nhưng lại có cuộc họp nhóm vào chiều nay. Vì vậy, tôi quyết định là sẽ gặp cô ấy vào ngày mai và tự mình kiểm tra quy trình lập hóa đơn với cô ấy. Hãy cho tôi biết nếu cô hoặc các quản lý bộ phận khác có bất kỳ thắc mắc nào. Tạm biệt.",
+            questions: [
+                {
+                    id: 74, q_en: "Why is the speaker calling?", q_vi: "Tại sao người nói lại gọi đến?",
+                    opts: [
+                        { l: "A", text: "To schedule a meeting", text_vi: "Để lên kế hoạch cuộc họp", isCorrect: false },
+                        { l: "B", text: "To ask for an e-mail address", text_vi: "Để hỏi địa chỉ email", isCorrect: false },
+                        { l: "C", text: "To provide an invoice number", text_vi: "Để đưa số hóa đơn", isCorrect: false },
+                        { l: "D", text: "To review employee training plans", text_vi: "Để xem xét kế hoạch đào tạo nhân viên", isCorrect: true }
+                    ],
+                    explanation: "Người nói đang gọi để thông báo về việc đào tạo nhân sự (Mariko thay thế Angelo) và việc sắp xếp đào tạo về lập hóa đơn. Dựa vào: <strong>\"I’m calling to give you some information about the staffing transition plan... I had asked Angelo to train her...\"</strong>"
+                },
+                {
+                    id: 75, q_en: "What does the speaker mean when she says, ''there's a team meeting this afternoon''?", q_vi: "Người nói có ý gì khi nói “nhưng lại có cuộc họp nhóm vào chiều nay”?",
+                    opts: [
+                        { l: "A", text: "She will be late to another meeting.", text_vi: "Cô ấy sẽ bị muộn cho một cuộc họp khác", isCorrect: false },
+                        { l: "B", text: "Materials need to be prepared.", text_vi: "Cần phải chuẩn bị tài liệu", isCorrect: false },
+                        { l: "C", text: "A staff member is busy.", text_vi: "Một nhân viên đang bận", isCorrect: true },
+                        { l: "D", text: "A project has already been completed.", text_vi: "Dự án đã hoàn tất", isCorrect: false }
+                    ],
+                    explanation: "Bởi vì có cuộc họp nhóm vào buổi chiều nên việc đào tạo bị gián đoạn, tức là người nhân viên đó (Angelo) đang bận họp và không thể đào tạo cho Mariko."
+                },
+                {
+                    id: 76, q_en: "What will the speaker do tomorrow?", q_vi: "Người nói sẽ làm gì vào ngày mai?",
+                    opts: [
+                        { l: "A", text: "Meet with Mariko", text_vi: "Gặp Mariko", isCorrect: true },
+                        { l: "B", text: "Attend a party for Angelo", text_vi: "Dự cuộc họp với Angelo", isCorrect: false },
+                        { l: "C", text: "Finish a proposal", text_vi: "Hoàn tất bản đề xuất", isCorrect: false },
+                        { l: "D", text: "Print a set of documents", text_vi: "In tài liệu", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"So I decided to meet with her tomorrow and review the invoice process with her myself.\"</strong>"
+                }
+            ]
+        },
+        {
+            id: "77-79",
+            type: "Talk",
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/01/zenlish-77-79-3.mp3",
+            graphic: null,
+            script_en: "W-Br: Good evening. I’m Michelle Yoon for Radio 101.6. In today’s business news, we’ll talk about innovation in the automobile industry. <span class='hl-q1'>The Kendris Company, a local manufacturer of automotive parts, has just invented a new type of brakes for cars.</span> <span class='hl-q2'>These brakes are made from a special lightweight material that cools down more quickly after use, which means these brakes will last much longer than ordinary brakes.</span> Kendris, which was founded just three years ago, will demonstrate their new brakes <span class='hl-q3'>at the Annual Innovation Trade Show in August</span> before offering them for sale the following month. From Radio 101.6, I’m Michelle Yoon.",
+            script_vi: "W-Br: Chào buổi tối. Tôi là Michelle Yoon tại kênh Radio 101.6. Trong mục tin tức kinh doanh hôm nay, chúng ta sẽ nói về sự đổi mới trong ngành công nghiệp ô tô. Công ty Kendris, một nhà sản xuất phụ tùng ô tô địa phương, vừa phát minh ra một loại phanh mới cho ô tô. Những bộ phanh này được làm từ một vật liệu nhẹ đặc biệt có thể nguội nhanh hơn sau khi sử dụng, điều đó có nghĩa là những bộ phanh này sẽ dùng được lâu hơn nhiều so với phanh thông thường. Kendris, là công ty mới được thành lập ba năm trước, sẽ diễn trình hệ thống phanh mới của họ tại Triển lãm thương mại đổi mới thường niên vào tháng 8 trước khi đưa ra bày bán vào tháng sau. Tôi là Michelle Yoon tại kênh Radio 101.6.",
+            questions: [
+                {
+                    id: 77, q_en: "What type of business is Kendris?", q_vi: "Kendris là loại doanh nghiệp gì?",
+                    opts: [
+                        { l: "A", text: "A new car dealership", text_vi: "Đại lý bán xe mới", isCorrect: false },
+                        { l: "B", text: "An auto parts manufacturer", text_vi: "Sản xuất phụ tùng ô tô", isCorrect: true },
+                        { l: "C", text: "An electronics importer", text_vi: "Nhập khẩu thiết bị điện tử", isCorrect: false },
+                        { l: "D", text: "A local marketing firm", text_vi: "Công ty quảng cáo địa phương", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"The Kendris Company, a local manufacturer of automotive parts...\"</strong>"
+                },
+                {
+                    id: 78, q_en: "According to the speaker, what is special about a new product?", q_vi: "Theo như người nói thì sản phẩm có gì đặc biệt?",
+                    opts: [
+                        { l: "A", text: "It is the least expensive on the market.", text_vi: "Rẻ nhất trên thị trường", isCorrect: false },
+                        { l: "B", text: "It is endorsed by a celebrity.", text_vi: "Xác nhận chất lượng bởi người nổi tiếng", isCorrect: false },
+                        { l: "C", text: "It can be customized.", text_vi: "Có thể đặt riêng theo yêu cầu khách hàng", isCorrect: false },
+                        { l: "D", text: "It is made to last longer than others", text_vi: "Được sản xuất để dùng lâu hơn sản phẩm khác", isCorrect: true }
+                    ],
+                    explanation: "Dựa vào: <strong>\"...which means these brakes will last much longer than ordinary brakes.\"</strong>"
+                },
+                {
+                    id: 79, q_en: "According to the speaker, what will take place in August?", q_vi: "Theo như người nói thì sự kiện gì diễn ra trong tháng Tám?",
+                    opts: [
+                        { l: "A", text: "An industry trade show", text_vi: "Hội chợ công nghiệp", isCorrect: true },
+                        { l: "B", text: "A company merger", text_vi: "Sát nhập công ty", isCorrect: false },
+                        { l: "C", text: "A radio interview", text_vi: "Phỏng vấn trên radio", isCorrect: false },
+                        { l: "D", text: "A sporting event", text_vi: "Sự kiện thể thao", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"at the Annual Innovation Trade Show in August\"</strong>"
+                }
+            ]
+        },
+        {
+            id: "80-82",
+            type: "Talk",
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/01/zenlish-80-82-3.mp3",
+            graphic: null,
+            script_en: "M-Au: Good evening! I’m Mark and I’ll be your instructor for tonight’s beginning pottery class. It’s easy to get your clothes dirty here, so <span class='hl-q1'>please make sure to wear an apron. You can find some at the back of the room.</span> This introductory class runs for four weeks; then you can move on to an intermediate class, if you really enjoy pottery. <span class='hl-q2'>Space is limited, so let me know if you think you might be interested.</span> OK, to get started, our first project is a basic bowl. <span class='hl-q3'>Let’s take a look at some examples of previous student work</span> to get you inspired.",
+            script_vi: "M-Au: Chào buổi tối! Tôi là Mark và tôi sẽ là giảng viên lớp làm gốm bắt đầu từ tối nay. Rất dễ làm bẩn quần áo ở đây, vì vậy hãy đảm bảo là đã mặc tạp dề. Các bạn có thể tìm thấy một số áo ở cuối phòng. Lớp nhập môn này diễn ra trong bốn tuần; sau đó bạn có thể chuyển sang một lớp trung cấp, nếu bạn thực sự thích làm gốm. Chỗ ngồi có hạn, vì thế hãy cho tôi biết nếu bạn nghĩ rằng bạn có quan tâm. Được rồi, để bắt đầu, chúng ta sẽ có bài tập đầu tiên là một làm một cái tô đơn giản. Hãy xem một số thành quả ví dụ của học viên khóa trước để lấy cảm hứng.",
+            questions: [
+                {
+                    id: 80, q_en: "What is available at the back of the room?", q_vi: "Có gì ở cuối phòng?",
+                    opts: [
+                        { l: "A", text: "A list of materials", text_vi: "Danh sách vật liệu", isCorrect: false },
+                        { l: "B", text: "Refreshments", text_vi: "Đồ ăn thức uống", isCorrect: false },
+                        { l: "C", text: "Protective clothing", text_vi: "Trang phục bảo hộ", isCorrect: true },
+                        { l: "D", text: "Name tags", text_vi: "Bảng tên", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"please make sure to wear an apron. You can find some at the back of the room.\"</strong>. Áo tạp dề (apron) là một loại trang phục bảo hộ (protective clothing)."
+                },
+                {
+                    id: 81, q_en: "What does the speaker imply when he says, ''Space is limited''?", q_vi: "Người nói có ý gì khi bảo “chỗ ngồi có hạn”?",
+                    opts: [
+                        { l: "A", text: "A class will meet in a bigger room.", text_vi: "Lớp sẽ học ở phòng rộng hơn", isCorrect: false },
+                        { l: "B", text: "A building will be renovated.", text_vi: "Tòa nhà sắp được cải tạo", isCorrect: false },
+                        { l: "C", text: "A mistake should be addressed.", text_vi: "Sai lầm nên được khắc phục", isCorrect: false },
+                        { l: "D", text: "A decision should be made soon.", text_vi: "Nên đưa ra quyết định nhanh", isCorrect: true }
+                    ],
+                    explanation: "Bởi vì chỗ cho lớp học tiếp theo có hạn, nên người nghe cần phải quyết định nhanh chóng và báo cho giảng viên biết nếu họ muốn tiếp tục học."
+                },
+                {
+                    id: 82, q_en: "What will the listeners do next?", q_vi: "Người nghe sẽ làm gì tiếp theo?",
+                    opts: [
+                        { l: "A", text: "Pay a materials fee", text_vi: "Trả tiền vật liệu", isCorrect: false },
+                        { l: "B", text: "Watch a demonstration", text_vi: "Xem trình diễn", isCorrect: false },
+                        { l: "C", text: "View sample artwork", text_vi: "Xem tác phẩm mẫu", isCorrect: true },
+                        { l: "D", text: "Meet a famous artist", text_vi: "Gặp nghệ nhân nổi tiếng", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"Let’s take a look at some examples of previous student work\"</strong>"
+                }
+            ]
+        },
+        {
+            id: "83-85",
+            type: "Talk",
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/01/zenlish-83-85-3.mp3",
+            graphic: null,
+            script_en: "M- Cn: Thank you for attending tonight's Fredrickstown Business Seminar. <span class='hl-q1'>I’m excited to introduce our first speaker, Ms. Janet Colthrup. She’s the founder of Colthrup Accounting.</span> Her company specializes in international tax preparation and does business in more than twenty countries. <span class='hl-q2'>Today she’ll share some of the strategies she used when she started her firm ten years ago, working from her home.</span> As we’ve done in previous sessions, <span class='hl-q3'>if you have questions for our speaker, please write them on the cards provided on your seat.</span> Seminar volunteers will collect these questions throughout the session and then give them to the speaker directly. Without further delay, please help me welcome Janet Colthrup!",
+            script_vi: "M- Cn: Cảm ơn quý vị đã tham dự Hội thảo kinh doanh ở Fredrickstown tối nay. Tôi vui mừng giới thiệu diễn giả đầu tiên của chúng ta, cô Janet Colthrup. Cô ấy là người sáng lập Công Ty Kế toán Colthrup. Công ty chuyên về kê khai thuế quốc tế và hoạt động tại hơn hai mươi quốc gia. Hôm nay cô ấy sẽ chia sẻ một số chiến lược mà cô ấy sử dụng khi thành lập công ty của mình mười năm trước khi làm việc tại nhà. Như chúng ta đã thực hiện trong các buổi trước, nếu quý vị có câu hỏi cho diễn giả, vui lòng viết chúng trên thẻ được đặt trên ghế. Các tình nguyện viên tại hội thảo sẽ thu thập những câu hỏi này trong suốt buổi và sau đó trực tiếp đưa chúng cho diễn giả. Không chậm trễ nữa, xin hãy giúp tôi chào đón Janet Colthrup!",
+            questions: [
+                {
+                    id: 83, q_en: "What industry does Janet Colthrup work in?", q_vi: "Janet Colthrup làm việc tại lĩnh vực nào?",
+                    opts: [
+                        { l: "A", text: "Event planning", text_vi: "Tổ chức sự kiện", isCorrect: false },
+                        { l: "B", text: "Accounting", text_vi: "Kế toán", isCorrect: true },
+                        { l: "C", text: "Tourism", text_vi: "Du lịch", isCorrect: false },
+                        { l: "D", text: "Interior design", text_vi: "Thiết kế nội thất", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"She’s the founder of Colthrup Accounting.\"</strong>"
+                },
+                {
+                    id: 84, q_en: "What will Janet Colthrup discuss?", q_vi: "Janet Colthrup sẽ nói về điều gì?",
+                    opts: [
+                        { l: "A", text: "Tips for starting a business", text_vi: "Lời khuyên khi khởi nghiệp", isCorrect: true },
+                        { l: "B", text: "Strategies for international trade", text_vi: "Chiến lược trong thương mại quốc tế", isCorrect: false },
+                        { l: "C", text: "Modern home-decorating style", text_vi: "Phong cách thiết kế nhà hiện đại", isCorrect: false },
+                        { l: "D", text: "Effective speech-writing techniques", text_vi: "Kĩ thuật soạn diễn văn hiệu quả", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"Today she’ll share some of the strategies she used when she started her firm ten years ago...\"</strong>"
+                },
+                {
+                    id: 85, q_en: "What does the speaker request that listeners do?", q_vi: "Người nói yêu cầu người nghe làm gì?",
+                    opts: [
+                        { l: "A", text: "Take a handout before they leave", text_vi: "Lấy thông báo trước khi về", isCorrect: false },
+                        { l: "B", text: "Submit their questions in writing", text_vi: "Nộp câu hỏi đã được viết ra", isCorrect: true },
+                        { l: "C", text: "Move to the empty seats in the front", text_vi: "Dời đến ghế trống phía trước", isCorrect: false },
+                        { l: "D", text: "Split into small discussion groups", text_vi: "Chia thành nhiều nhóm thảo luận nhỏ", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"if you have questions for our speaker, please write them on the cards provided on your seat.\"</strong>"
+                }
+            ]
+        },
+        {
+            id: "86-88",
+            type: "Talk",
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/01/zenlish-86-88-3.mp3",
+            graphic: null,
+            script_en: "W-Am: You’re listening to News Around Town from WXP Radio out of Riverdale. <span class='hl-q1'>City officials have reported that last weekend’s fund-raising concert at Riverdale Outdoor Theater was a huge success.</span> <span class='hl-q2'>More than $15,000 was raised to fund the creation of a new city park downtown.</span> Even though <span class='hl-q3'>the original event was rescheduled due to rain</span>, attendance was higher than expected. The city still needs to raise another $30,000 before construction can begin on the new park. For more information or to make a donation, please visit the Parks Department Web site.",
+            script_vi: "W-Am: Quý thính giả nghe đài đang nghe Tin tức Thành Phố ở kênh WXP Radio tại Riverdale. Các quan chức thành phố đã báo cáo rằng buổi hòa nhạc gây quỹ vào cuối tuần trước tại Nhà hát ngoài trời Riverdale là một thành công lớn. Hơn 15.000 đô la đã được quyên góp để tài trợ cho việc xây dựng công viên mới ở trung tâm thành phố. Mặc dù sự kiện ban đầu bị dời lại do trời mưa, lượng người tham gia vẫn cao hơn dự kiến. Thành phố vẫn cần gây quỹ thêm 30.000 đô la trước khi khởi công xây dựng công viên mới. Để biết thêm thông tin hoặc để quyên góp, hãy truy cập trang web của Bộ Phận Công viên.",
+            questions: [
+                {
+                    id: 86, q_en: "What event took place last weekend?", q_vi: "Sự kiện nào diễn ra vào cuối tuần trước?",
+                    opts: [
+                        { l: "A", text: "An art exhibit", text_vi: "Triển lãm nghệ thuật", isCorrect: false },
+                        { l: "B", text: "An opening ceremony", text_vi: "Lễ khai mạc", isCorrect: false },
+                        { l: "C", text: "An outdoor concert", text_vi: "Buổi hòa nhạc ngoài trời", isCorrect: true },
+                        { l: "D", text: "An awards dinner", text_vi: "Bữa tối trao giải", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"last weekend’s fund-raising concert at Riverdale Outdoor Theater was a huge success.\"</strong>"
+                },
+                {
+                    id: 87, q_en: "Why is the city raising money?", q_vi: "Tại sao thành phố lại gây quỹ?",
+                    opts: [
+                        { l: "A", text: "To build a park", text_vi: "Xây công viên", isCorrect: true },
+                        { l: "B", text: "To improve roads", text_vi: "Nâng cấp đường xá", isCorrect: false },
+                        { l: "C", text: "To open a museum", text_vi: "Mở viện bảo tàng", isCorrect: false },
+                        { l: "D", text: "To create a monument", text_vi: "Xây đài tưởng niệm", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"More than $15,000 was raised to fund the creation of a new city park downtown.\"</strong>"
+                },
+                {
+                    id: 88, q_en: "Why was the event rescheduled?", q_vi: "Tại sao sự kiện bị dời lịch lại?",
+                    opts: [
+                        { l: "A", text: "Ticket sales were low.", text_vi: "Doanh thu bán vé thấp", isCorrect: false },
+                        { l: "B", text: "A location was unavailable.", text_vi: "Địa điểm không tổ chức được", isCorrect: false },
+                        { l: "C", text: "A celebrity guest canceled.", text_vi: "Khách mời ngôi sao không đến", isCorrect: false },
+                        { l: "D", text: "The weather was bad.", text_vi: "Thời tiết xấu", isCorrect: true }
+                    ],
+                    explanation: "Dựa vào: <strong>\"the original event was rescheduled due to rain\"</strong>"
+                }
+            ]
+        },
+        {
+            id: "89-91",
+            type: "Talk",
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/01/zenlish-89-91-3.mp3",
+            graphic: null,
+            script_en: "M-Cn: <span class='hl-q1'>OK, the tour bus has stopped at this spot for a very special reason. The spectacular view from this side of the bridge is one of my favorites in the area. Across the river you can see the lovely town of Fremont.</span> Today, it’s a town known for its delicious local cuisine, but <span class='hl-q2'>Fremont used to be an important port town where many products were traded.</span> Merchants used to stop in Fremont to buy and sell their goods as they traveled along the river. <span class='hl-q3'>Next we will stop for lunch at the Fremont Inn before continuing up the river.</span>",
+            script_vi: "M-Cn: Được rồi, xe dừng tại đây vì một lý do rất đặc biệt. Khung cảnh ngoạn mục phía bên này của cây cầu là một trong những điểm yêu thích của tôi trong khu vực này. Bên kia sông, bạn có thể thấy thị trấn Fremont xinh đẹp. Ngày nay, đây là một thị trấn nổi tiếng với ẩm thực địa phương khoái khẩu, nhưng Fremont từng là một thị trấn cảng quan trọng nơi giao dịch nhiều thương phẩm. Các thương nhân thường dừng lại ở Fremont để mua và bán hàng hóa của họ khi di chuyển dọc bờ sông. Tiếp theo chúng ta sẽ dừng để ăn trưa tại Nhà trọ Fremont trước khi tiếp tục hướng lên sông.",
+            questions: [
+                {
+                    id: 89, q_en: "Why has the tour bus stopped?", q_vi: "Tại sao xe buýt du lịch dừng lại?",
+                    opts: [
+                        { l: "A", text: "To let the passengers out for shopping", text_vi: "Để cho hành khách ra ngoài mua sắm", isCorrect: false },
+                        { l: "B", text: "To purchase fuel", text_vi: "Để mua nhiên liệu", isCorrect: false },
+                        { l: "C", text: "To allow the guide to point out a view", text_vi: "Để hướng dẫn viên chỉ ra một quan cảnh", isCorrect: true },
+                        { l: "D", text: "To pay a toll", text_vi: "Để trả phí", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào việc người hướng dẫn (guide) bắt đầu chỉ cho mọi người một khung cảnh ngoạn mục: <strong>\"OK, the tour bus has stopped at this spot for a very special reason. The spectacular view from this side of the bridge...\"</strong>"
+                },
+                {
+                    id: 90, q_en: "According to the speaker, why is Fremont historically important?", q_vi: "Theo như người nói vì sao Fremont lại quan trọng trong quá khứ?",
+                    opts: [
+                        { l: "A", text: "It used to be a center of trade.", text_vi: "Nơi đó từng là trung tâm mậu dịch/thương mại", isCorrect: true },
+                        { l: "B", text: "It is the oldest town along the river.", text_vi: "Đây là thị trấn xưa nhất dọc theo con sông", isCorrect: false },
+                        { l: "C", text: "An important battle took place there.", text_vi: "Có trận đánh quan trọng diễn ra ở đây", isCorrect: false },
+                        { l: "D", text: "A famous author was born there.", text_vi: "Tác giả nổi tiếng sinh ra ở đây", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"Fremont used to be an important port town where many products were traded.\"</strong>"
+                },
+                {
+                    id: 91, q_en: "What will the tour group do next?", q_vi: "Nhóm tham quan sẽ làm gì tiếp theo?",
+                    opts: [
+                        { l: "A", text: "Watch a documentary", text_vi: "Xem phim tài liệu", isCorrect: false },
+                        { l: "B", text: "Take a group picture", text_vi: "Chụp ảnh nhóm", isCorrect: false },
+                        { l: "C", text: "Board a boat", text_vi: "Lên thuyền", isCorrect: false },
+                        { l: "D", text: "Have lunch", text_vi: "Ăn trưa", isCorrect: true }
+                    ],
+                    explanation: "Dựa vào: <strong>\"Next we will stop for lunch at the Fremont Inn before continuing up the river.\"</strong>"
+                }
+            ]
+        },
+        {
+            id: "92-94",
+            type: "Talk",
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/01/zenlish-92-94-3.mp3",
+            graphic: null,
+            script_en: "W-Br: <span class='hl-q1'>Does your fitness tracker take too much effort to use? Well, not anymore with the Health Monitor, which is worn around your wrist like a watch. With most wearable devices</span>, <span class='hl-q2'>you have to push a button in the middle of your exercise routine to access your heart rate tracker or to see how many calories you’ve burned. Who wants to do that?</span> The Health Monitor will automatically display these features on its screen so you can see this information easily without interrupting your workout. Plus, <span class='hl-q3'>the price of the Health Monitor has been reduced by ten percent for the next month in honor of its debut on the market, so order one now!</span>",
+            script_vi: "W-Br: Máy theo dõi sức khỏe của bạn mất quá nhiều công sức để dùng? Chà, không còn như vậy nữa với Health Monitor, có thể đeo quanh cổ tay như một chiếc đồng hồ. Với hầu hết các thiết bị đeo được, bạn phải nhấn nút trong quá trình tập luyện để dùng chức năng theo dõi nhịp tim hoặc để xem đã đốt cháy bao nhiêu calo. Ai mà muốn làm vậy chứ? Health Monitor sẽ tự động hiển thị các tính năng này trên màn hình để bạn có thể xem thông tin một cách dễ dàng mà không làm gián đoạn quá trình tập luyện. Thêm vào đó, giá của Health Monitor đã giảm mười phần trăm trong tháng tiếp theo để kỉ niệm lần đầu tiên tung ra trên thị trường, nên hãy đặt hàng ngay bây giờ!",
+            questions: [
+                {
+                    id: 92, q_en: "What is the Health Monitor?", q_vi: "Health Monitor là gì?",
+                    opts: [
+                        { l: "A", text: "A television program", text_vi: "Chương trình tivi", isCorrect: false },
+                        { l: "B", text: "A wearable device", text_vi: "Thiết bị đeo được", isCorrect: true },
+                        { l: "C", text: "A medical Web site", text_vi: "Trang web y tế", isCorrect: false },
+                        { l: "D", text: "A fitness center", text_vi: "Trung tâm thể hình", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào việc nhắc đến thiết bị đeo tay theo dõi sức khỏe: <strong>\"...Health Monitor, which is worn around your wrist like a watch. With most wearable devices...\"</strong>"
+                },
+                {
+                    id: 93, q_en: "What does the speaker mean when she says, ''Who wants to do that''?", q_vi: "Người nói có ý gì khi bảo “ai lại muốn làm vậy chứ”?",
+                    opts: [
+                        { l: "A", text: "A task is inconvenient.", text_vi: "Thao tác bất tiện", isCorrect: true },
+                        { l: "B", text: "A project requires more volunteers.", text_vi: "Dự án yêu cầu nhiều tình nguyện viên hơn", isCorrect: false },
+                        { l: "C", text: "An event is no longer popular.", text_vi: "Sự kiện không còn phổ biến", isCorrect: false },
+                        { l: "D", text: "An application period has begun.", text_vi: "Giai đoạn ứng dụng đã bắt đầu", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào bối cảnh người nói than phiền về việc phải bấm nút trên các thiết bị khác khi đang tập luyện rất bất tiện: <strong>\"you have to push a button in the middle of your exercise routine... Who wants to do that?\"</strong>"
+                },
+                {
+                    id: 94, q_en: "Why are listeners encouraged to act soon?", q_vi: "Tại sao người nghe được khuyến khích hành động sớm?",
+                    opts: [
+                        { l: "A", text: "Some stores are closing.", text_vi: "Một số cửa hiệu đóng cửa", isCorrect: false },
+                        { l: "B", text: "Tickets are almost sold out.", text_vi: "Vé đã gần như bán hết", isCorrect: false },
+                        { l: "C", text: "A product is temporarily discounted.", text_vi: "Sản phẩm tạm thời giảm giá", isCorrect: true },
+                        { l: "D", text: "A deadline has been changed.", text_vi: "Hạn chót đã thay đổi", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"the price of the Health Monitor has been reduced by ten percent for the next month...\"</strong>"
+                }
+            ]
+        },
+        {
+            id: "95-97",
+            type: "Talk",
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/01/zenlish-95-97-3.mp3",
+            graphic: "<img src='https://zenlishtoeic.vn/wp-content/uploads/2023/01/zenlish-1-19.png' style='width:100%; border-radius:10px;'>",
+            script_en: "M-Cn: Hello everyone, <span class='hl-q1'>I hope you’ve enjoyed the sessions so far at this year’s convention on video-game development.</span> Our video-game association is proud to include many notable presenters today for amateur game developers like you. <span class='hl-q2'>I have one change to announce for this afternoon. Unfortunately, due to illness Ms. Naoko Ito can’t join us today. So, Mr. Jun Lee will substitute for Ms. Ito.</span> He’ll give a tutorial on designing platform software that can be used to create many different games. Also, <span class='hl-q3'>don’t forget to submit your feedback forms by the end of the day. All those who turn in forms will automatically be entered in a contest for a tablet computer!</span>",
+            script_vi: "M-Cn: Xin chào mọi người, tôi hy vọng là các bạn đã tận hưởng các buổi trò chuyện tại hội nghị năm nay về phát triển trò chơi điện tử. Hiệp hội trò chơi điện tử tự hào rằng đã mời nhiều diễn giả nổi bật vào ngày hôm nay để trò chuyện cùng các nhà phát triển trò chơi non trẻ các bạn. Tôi muốn thông báo một thay đổi trong chiều nay. Thật không may, vì lí do sức khỏe, cô Naoko Ito không thể tham gia cùng chúng ta hôm nay. Vì vậy, anh Jun Lee sẽ thay thế cho cô Ito. Anh ấy sẽ hướng dẫn về thiết kế phần mềm nền tảng có thể được sử dụng cho nhiều trò chơi khác nhau. Ngoài ra, đừng quên gửi phiếu phản hồi của các bạn vào cuối ngày. Tất cả những người nộp lại sẽ tự động được tham gia một cuộc thi để giành một máy tính bảng!",
+            questions: [
+                {
+                    id: 95, q_en: "Who is the conference intended for?", q_vi: "Hội thảo dành cho ai?",
+                    opts: [
+                        { l: "A", text: "Video-game developers", text_vi: "Nhà phát triển trò chơi điện tử", isCorrect: true },
+                        { l: "B", text: "Photojournalists", text_vi: "Phóng viên ảnh", isCorrect: false },
+                        { l: "C", text: "Health-care professionals", text_vi: "Chuyên gia chăm sóc sức khỏe", isCorrect: false },
+                        { l: "D", text: "Automobile engineers", text_vi: "Kỹ sư ô tô", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"I hope you’ve enjoyed the sessions so far at this year’s convention on video-game development.\"</strong>"
+                },
+                {
+                    id: 96, q_en: "Look at the graphic. Which session has been changed?", q_vi: "Nhìn hình minh họa. Buổi nào bị thay đổi?",
+                    opts: [
+                        { l: "A", text: "Session 1", text_vi: "Buổi 1", isCorrect: false },
+                        { l: "B", text: "Session 2", text_vi: "Buổi 2", isCorrect: false },
+                        { l: "C", text: "Session 3", text_vi: "Buổi 3", isCorrect: true },
+                        { l: "D", text: "Session 4", text_vi: "Buổi 4", isCorrect: false }
+                    ],
+                    explanation: "Người nói báo sự thay đổi về diễn giả: <strong>\"Ms. Naoko Ito can’t join us today. So, Mr. Jun Lee will substitute for Ms. Ito.\"</strong>. Nhìn vào lịch trình (graphic), bài của Naoko Ito nằm ở Session 3."
+                },
+                {
+                    id: 97, q_en: "How can listeners enter a contest?", q_vi: "Người nghe phải làm cách nào để tham dự cuộc thi?",
+                    opts: [
+                        { l: "A", text: "By submitting a work sample", text_vi: "Gửi mẫu sản phẩm", isCorrect: false },
+                        { l: "B", text: "By providing some feedback", text_vi: "Cung cấp một số phản hồi", isCorrect: true },
+                        { l: "C", text: "By subscribing to a newsletter", text_vi: "Đăng ký nhận bản tin", isCorrect: false },
+                        { l: "D", text: "By moderating at a session", text_vi: "Kiểm duyệt tại buổi trò chuyện", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"don’t forget to submit your feedback forms... All those who turn in forms will automatically be entered in a contest\"</strong>"
+                }
+            ]
+        },
+        {
+            id: "98-100",
+            type: "Talk",
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/01/zenlish-98-100-3.mp3",
+            graphic: "<img src='https://zenlishtoeic.vn/wp-content/uploads/2023/01/zenlish-2-6.jpg' style='width:100%; border-radius:10px;'>",
+            script_en: "W-Am: Good morning. <span class='hl-q1'>I called this staff meeting to discuss the reorganization of our warehouse. On average, each of you spends five minutes finding the products you need to complete an order for shipment. But, I think we can get that number down by making the most popular items easier to find.</span> Here’s a map of the warehouse. <span class='hl-q2'>I’ve added some new shelving units between the order station and the employee lounge.</span> That’s where we’ll place our high-demand products. Now, I’ll need some people to help rearrange the inventory. So, <span class='hl-q3'>if you’re willing to work a few extra hours, please add your name to the sign-up sheet in my office.</span>",
+            script_vi: "W-Am: Chào buổi sáng. Tôi triệu tập cuộc họp nhân viên này để thảo luận về việc sắp xếp lại kho của chúng ta. Trung bình, mỗi người dành năm phút để tìm kiếm các sản phẩm cần cho một đơn hàng để vận chuyển. Nhưng, tôi nghĩ rằng chúng ta có thể giảm số thời gian đó bằng cách làm cho các mặt hàng phổ biến nhất dễ tìm hơn. Đây là bản đồ của nhà kho. Tôi đã thêm một số đơn vị kệ mới giữa trạm đơn hàng và phòng nghỉ nhân viên. Đó là nơi chúng ta sẽ đặt các sản phẩm nhu cầu cao của công ty. Bây giờ, tôi sẽ cần một số người để giúp sắp xếp lại kho. Vì vậy, nếu các bạn sẵn lòng tăng ca thêm một vài giờ, hãy điền tên vào bảng đăng ký trong văn phòng của tôi.",
+            questions: [
+                {
+                    id: 98, q_en: "Why is a change being made?", q_vi: "Tại sao lại thay đổi?",
+                    opts: [
+                        { l: "A", text: "To improve efficiency", text_vi: "Tăng hiệu suất", isCorrect: true },
+                        { l: "B", text: "To follow a safety procedure", text_vi: "Tuân thủ thủ tục an toàn", isCorrect: false },
+                        { l: "C", text: "To make some repairs", text_vi: "Tiến hành sửa chữa", isCorrect: false },
+                        { l: "D", text: "To prepare for new hires", text_vi: "Chuẩn bị cho nhân viên mới", isCorrect: false }
+                    ],
+                    explanation: "Thay đổi để tiết kiệm thời gian tìm kiếm sản phẩm. Dựa vào: <strong>\"But, I think we can get that number down by making the most popular items easier to find.\"</strong> (giảm số thời gian xuống, tức là cải thiện hiệu suất / improve efficiency)."
+                },
+                {
+                    id: 99, q_en: "Look at the graphic. Where are the new shelves located?", q_vi: "Nhìn hình minh họa. Kệ mới đặt ở đâu?",
+                    opts: [
+                        { l: "A", text: "Area 1", text_vi: "Khu 1", isCorrect: false },
+                        { l: "B", text: "Area 2", text_vi: "Khu 2", isCorrect: false },
+                        { l: "C", text: "Area 3", text_vi: "Khu 3", isCorrect: false },
+                        { l: "D", text: "Area 4", text_vi: "Khu 4", isCorrect: true }
+                    ],
+                    explanation: "Dựa vào: <strong>\"I’ve added some new shelving units between the order station and the employee lounge.\"</strong> Nhìn vào hình, khu vực nằm giữa Order station và Employee lounge là Area 4."
+                },
+                {
+                    id: 100, q_en: "What does the speaker say listeners can find in the office?", q_vi: "Người nói bảo người nghe có thể tìm gì ở văn phòng?",
+                    opts: [
+                        { l: "A", text: "Some work badges", text_vi: "Huy hiệu công việc", isCorrect: false },
+                        { l: "B", text: "Some equipment manuals", text_vi: "Sách hướng dẫn thiết bị", isCorrect: false },
+                        { l: "C", text: "A sign-up sheet", text_vi: "Đơn đăng kí", isCorrect: true },
+                        { l: "D", text: "An employee handbook", text_vi: "Sổ tay nhân viên", isCorrect: false }
+                    ],
+                    explanation: "Dựa vào: <strong>\"please add your name to the sign-up sheet in my office.\"</strong>"
+                }
+            ]
+        }
+    ];
+
+    let currentMode = '';
+    let passageIndex = 0;
+    let userAnswers = {}; 
+    let startTime = 0;
+    const LOCAL_HISTORY_KEY = "snapenglish_p4_test4_2019_history";
+    const audio = document.getElementById('q-audio');
+    let autoNextTimeout;
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if (!audio.paused) audio.pause();
+        window.scrollTo(0, 0); 
+    }
+
+    function promptStart(selectedMode) {
+        pendingMode = selectedMode;
+        document.getElementById('modal-start-confirm').style.display = 'flex';
+    }
+
+    function cancelStart() { document.getElementById('modal-start-confirm').style.display = 'none'; }
+    
+    function confirmStart() {
+        document.getElementById('modal-start-confirm').style.display = 'none';
+        currentMode = pendingMode;
+        passageIndex = 0;
+        userAnswers = {};
+        startTime = Date.now();
+        showScreen('screen-test');
+        renderPassage();
+    }
+
+    function renderPassage() {
+        if (!passagesData || passagesData.length === 0) {
+            alert("⚠️ Vui lòng dán dữ liệu passagesData vào mã nguồn trước khi chạy!");
+            return;
+        }
+
+        const pData = passagesData[passageIndex];
+        document.getElementById('passage-title').innerText = `Questions ${pData.id}`;
+        
+        if(pData.audio) {
+            audio.src = pData.audio;
+            audio.style.display = 'block';
+            document.getElementById('mock-msg').style.display = currentMode === 'mock' ? 'flex' : 'none';
+        } else {
+            audio.src = '';
+            audio.style.display = 'none';
+            document.getElementById('mock-msg').style.display = 'none';
+        }
+
+        const qContainer = document.getElementById('questions-container');
+        qContainer.innerHTML = '';
+
+        if (pData.graphic) {
+            const layoutWrap = document.createElement('div');
+            layoutWrap.className = 'two-col-layout';
+
+            const leftCol = document.createElement('div');
+            leftCol.className = 'left-col';
+            const gBox = document.createElement('div');
+            gBox.className = 'graphic-box';
+            gBox.innerHTML = pData.graphic;
+            leftCol.appendChild(gBox);
+            layoutWrap.appendChild(leftCol);
+
+            const resizer = document.createElement('div');
+            resizer.className = 'resizer';
+            resizer.innerHTML = '<div class="resizer-handle"></div>';
+            layoutWrap.appendChild(resizer);
+
+            const rightCol = document.createElement('div');
+            rightCol.className = 'right-col';
+            
+            pData.questions.forEach((q, index) => {
+                const qBlock = createQuestionBlock(q, index); 
+                rightCol.appendChild(qBlock);
+            });
+            layoutWrap.appendChild(rightCol);
+            
+            qContainer.appendChild(layoutWrap);
+
+            initResizer(resizer, leftCol, layoutWrap);
+            
+        } else {
+            pData.questions.forEach((q, index) => {
+                const qBlock = createQuestionBlock(q, index);
+                qContainer.appendChild(qBlock);
+            });
+        }
+
+        const isLast = passageIndex === passagesData.length - 1;
+        clearTimeout(autoNextTimeout);
+
+        if (currentMode === 'mock') {
+            document.getElementById('btn-prev').style.display = 'none';
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-submit').style.display = isLast ? 'inline-flex' : 'none';
+            
+            if(pData.audio) {
+                document.getElementById('audio-container').style.display = 'none';
+                let playPromise = audio.play();
+                if (playPromise !== undefined) playPromise.catch(e => console.log("Browser prevented autoplay."));
+            }
+            
+            audio.onended = () => {
+                if (!isLast) {
+                    autoNextTimeout = setTimeout(() => changePassage(1), 3000); 
+                } else {
+                    document.getElementById('mock-msg').innerHTML = "Đã hết Audio bài thi! Hãy nộp bài.";
+                }
+            };
+        } else {
+            document.getElementById('btn-prev').style.display = (passageIndex === 0) ? 'none' : 'inline-flex';
+            document.getElementById('btn-next').style.display = isLast ? 'none' : 'inline-flex';
+            document.getElementById('btn-submit').style.display = isLast ? 'inline-flex' : 'none';
+
+            if(pData.audio) document.getElementById('audio-container').style.display = 'block';
+            audio.onended = null;
+        }
+    }
+
+    function createQuestionBlock(q, index) {
+        let optsHTML = '';
+        q.opts.forEach(o => {
+            const isChecked = userAnswers[q.id] === o.l ? 'checked' : '';
+            const selectedClass = isChecked ? 'selected-ui' : '';
+            optsHTML += `
+                <label class="option-label ${selectedClass}" onclick="handleOptClick(this, ${q.id}, '${o.l}')">
+                    <input type="radio" name="q_${q.id}" value="${o.l}" ${isChecked}>
+                    <div class="custom-radio"></div>
+                    <span>(${o.l}) ${o.text}</span>
+                </label>
+            `;
+        });
+
+        const highlightBorderClass = index === 0 ? "border-color: var(--hl-q1);" : (index === 1 ? "border-color: var(--hl-q2);" : "border-color: var(--hl-q3);");
+        const qBlock = document.createElement('div');
+        qBlock.className = 'question-block';
+        qBlock.style = highlightBorderClass;
+        qBlock.innerHTML = `<div class="q-title">Question ${q.id}: ${q.q_en}</div><div class="options-grid">${optsHTML}</div>`;
+        return qBlock;
+    }
+
+    function handleOptClick(labelEl, qId, val) {
+        userAnswers[qId] = val;
+        const parent = labelEl.closest('.options-grid');
+        parent.querySelectorAll('.option-label').forEach(lbl => lbl.classList.remove('selected-ui'));
+        labelEl.classList.add('selected-ui');
+    }
+
+    function changePassage(step) {
+        passageIndex += step;
+        renderPassage();
+        window.scrollTo(0, 0); 
+    }
+
+    function promptSubmit() { document.getElementById('modal-submit-confirm').style.display = 'flex'; }
+    function cancelSubmit() { document.getElementById('modal-submit-confirm').style.display = 'none'; }
+    function confirmSubmit() {
+        document.getElementById('modal-submit-confirm').style.display = 'none';
+        finishTest();
+    }
+
+    function finishTest(isRestoring = false) {
+        clearTimeout(autoNextTimeout);
+        showScreen('screen-result');
+        let totalCorrect = 0;
+        let totalQs = 0;
+        
+        const listDiv = document.getElementById('result-list');
+        listDiv.innerHTML = '';
+
+        let timeTakenStr = "--:--";
+        if (!isRestoring && startTime > 0) {
+            let diffSeconds = Math.floor((Date.now() - startTime) / 1000);
+            let m = Math.floor(diffSeconds / 60);
+            let s = diffSeconds % 60;
+            timeTakenStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        passagesData.forEach((p, idx) => {
+            let pCorrect = 0;
+            p.questions.forEach(q => {
+                totalQs++;
+                const uAns = userAnswers[q.id];
+                const rightOpt = q.opts.find(o => o.isCorrect).l;
+                if(uAns === rightOpt) { pCorrect++; totalCorrect++; }
+            });
+
+            const pCard = document.createElement('div');
+            pCard.className = 'result-passage-card';
+            pCard.innerHTML = `
+                <div class="result-passage-info">
+                    <h3>Đoạn hội thoại ${p.id}</h3>
+                    <p>Số câu đúng: <strong style="color:var(--primary); font-size:1.1rem;">${pCorrect}/3</strong></p>
+                </div>
+                <button class="btn btn-outline" style="padding: 10px 20px; font-size:0.95rem; border-radius:12px;" onclick="openDetail(${idx})">Xem giải thích ✨</button>
+            `;
+            listDiv.appendChild(pCard);
+        });
+
+        document.getElementById('final-score').innerText = `${totalCorrect}/${totalQs}`;
+
+        if (!isRestoring) {
+            saveLocalHistory(totalCorrect, totalQs, userAnswers, timeTakenStr);
+            if(window.luuDiemTOEICLenFirebase) {
+                window.luuDiemTOEICLenFirebase(totalQs, totalCorrect, "ETS 2019 - Test 4", "Listening", "Part 4", userAnswers, timeTakenStr);
+            }
+        }
+    }
+
+    function openDetail(idx) {
+        const p = passagesData[idx];
+        document.getElementById('modal-title').innerText = `Phân tích Câu ${p.id}`;
+        
+        if(p.audio) {
+            document.getElementById('modal-audio').src = p.audio;
+            document.getElementById('modal-audio').style.display = 'inline-block';
+        } else {
+            document.getElementById('modal-audio').style.display = 'none';
+        }
+        
+        document.getElementById('m-script-en').innerHTML = p.script_en;
+        document.getElementById('m-script-vi').innerHTML = p.script_vi;
+        
+        const expArea = document.getElementById('modal-questions-explain');
+        expArea.innerHTML = '';
+        
+        if(p.graphic_vi) {
+             expArea.innerHTML += `<div class="graphic-box">${p.graphic_vi}</div>`;
+        } else if(p.graphic) {
+             expArea.innerHTML += `<div class="graphic-box">${p.graphic}</div>`;
+        }
+
+        p.questions.forEach((q, index) => {
+            const rightOpt = q.opts.find(o => o.isCorrect).l;
+            const uAns = userAnswers[q.id] || "Trống";
+            const userIcon = uAns === rightOpt ? '✅' : '❌';
+            
+            let optsHTML = '';
+            q.opts.forEach(o => {
+                let cssCls = o.isCorrect ? 'correct' : 'wrong';
+                optsHTML += `
+                    <div class="exp-opt ${cssCls}">
+                        <div class="opt-char">(${o.l})</div>
+                        <div>
+                            <div style="font-weight: 700; margin-bottom: 2px;">${o.text}</div>
+                            <div style="font-size: 0.95rem; color: #555;">${o.text_vi}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const colorClass = index === 0 ? "color-q1" : (index === 1 ? "color-q2" : "color-q3");
+
+            const qBlock = document.createElement('div');
+            qBlock.className = `exp-q-block ${colorClass}`;
+            qBlock.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div class="exp-q-title">Question ${q.id}: ${q.q_en}</div>
+                    <div style="background:#f1f1f1; padding: 4px 10px; border-radius: 8px; font-size: 0.9rem; font-weight:700;">
+                        Bạn chọn: ${uAns} ${userIcon}
+                    </div>
+                </div>
+                <div class="exp-q-title-vi">Dịch: ${q.q_vi}</div>
+                
+                <div class="exp-options">
+                    ${optsHTML}
+                </div>
+                
+                <div class="exp-detail-box">
+                    ${q.explanation}
+                </div>
+            `;
+            expArea.appendChild(qBlock);
+        });
+
+        document.getElementById('modal-detail').style.display = 'flex';
+        document.getElementById('modal-content-area').scrollTop = 0;
+    }
+
+    function closeModal() {
+        document.getElementById('modal-detail').style.display = 'none';
+        document.getElementById('modal-audio').pause();
+    }
+
+    // --- LỊCH SỬ LOGIC ---
+    function saveLocalHistory(score, total, answersObj, timeTakenStr) {
+        let history = JSON.parse(localStorage.getItem(LOCAL_HISTORY_KEY)) || [];
+        let now = new Date();
+        history.unshift({
+            id: Date.now().toString(),
+            date: now.toLocaleDateString('vi-VN'),
+            time: now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+            score: score,
+            total: total,
+            answers: answersObj,
+            timeTaken: timeTakenStr
+        });
+        localStorage.setItem(LOCAL_HISTORY_KEY, JSON.stringify(history));
+    }
+
+    function openHistoryModal() {
+        document.getElementById('historyOverlay').style.display = 'flex';
+        renderHistoryList();
+    }
+
+    function closeHistoryModal() { document.getElementById('historyOverlay').style.display = 'none'; }
+
+    function renderHistoryList() {
+        let listEl = document.getElementById("historyList");
+        if (window.currentUserUid && window.layLichSuTuFirebase) {
+            window.layLichSuTuFirebase().then(firebaseHistory => {
+                hienThiDanhSach(firebaseHistory, listEl, true);
+            });
+        } else {
+            let localHistory = JSON.parse(localStorage.getItem(LOCAL_HISTORY_KEY)) || [];
+            hienThiDanhSach(localHistory, listEl, false);
+        }
+    }
+
+    function hienThiDanhSach(historyArray, listEl, isCloud) {
+        if (!historyArray || historyArray.length === 0) {
+            listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px;">Bạn chưa làm bài lần nào. ${isCloud ? '(Cloud)' : '(Thiết bị này)'} 🐾</div>`;
+            return;
+        }
+
+        listEl.innerHTML = historyArray.map((item, index) => {
+            let soCauDung = item.correctQ !== undefined ? item.correctQ : item.score;
+            let tongSoCau = item.totalQ !== undefined ? item.totalQ : item.total;
+            let diemQuyDoi = isCloud && item.score !== undefined && item.score > tongSoCau ? ` (Điểm TOEIC: ${item.score})` : '';
+
+            return `
+            <div class="history-item">
+                <div class="history-info">
+                    <span class="history-date">Lần ${historyArray.length - index}: ${item.time || ''} ${item.date}</span>
+                    <span class="history-score">Đúng: ${soCauDung}/${tongSoCau} câu${diemQuyDoi} ${isCloud ? '☁️' : '📱'}</span>
+                    <span style="color: var(--text-gray); font-size: 0.85rem;">⏱ Thời gian: ${item.timeTaken || '--:--'}</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-review" onclick='restoreAttempt(${JSON.stringify(item.answers || {})})'>Xem lại</button>
+                    <button class="btn-delete-history" onclick="deleteAttempt('${item.id}', ${isCloud})" title="Xóa">&times;</button>
+                </div>
+            </div>
+            `;
+        }).join("");
+    }
+
+    let pendingDelete = { id: null, isCloud: false };
+    function deleteAttempt(id, isCloud) {
+        pendingDelete = { id, isCloud };
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'flex';
+    }
+    function closeConfirmDelete() {
+        pendingDelete = { id: null, isCloud: false };
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+    }
+    function executeDelete() {
+        if (!pendingDelete.id) return;
+        if (pendingDelete.isCloud && window.xoaLichSuFirebase) {
+            window.xoaLichSuFirebase(pendingDelete.id).then(() => {
+                closeConfirmDelete();
+                renderHistoryList();
+            });
+        } else {
+            let history = JSON.parse(localStorage.getItem(LOCAL_HISTORY_KEY)) || [];
+            history = history.filter(h => h.id !== pendingDelete.id);
+            localStorage.setItem(LOCAL_HISTORY_KEY, JSON.stringify(history));
+            closeConfirmDelete();
+            renderHistoryList();
+        }
+    }
+
+    function restoreAttempt(answersObj) {
+        if (!answersObj || Object.keys(answersObj).length === 0) return;
+        userAnswers = answersObj;
+        closeHistoryModal();
+        finishTest(true); 
+    }
+
+    // KÉO THẢ THANH TRƯỢT
+    function initResizer(resizer, leftElement, container) {
+        let isDragging = false;
+        resizer.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            resizer.classList.add('dragging');
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none'; 
+        });
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            const containerRect = container.getBoundingClientRect();
+            let newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+            if (newWidth < 20) newWidth = 20;
+            if (newWidth > 80) newWidth = 80;
+            leftElement.style.flex = `0 0 ${newWidth}%`;
+        });
+        document.addEventListener('mouseup', function() {
+            if (isDragging) {
+                isDragging = false;
+                resizer.classList.remove('dragging');
+                document.body.style.cursor = 'default';
+                document.body.style.userSelect = 'auto';
+            }
+        });
+    }
+
+    // Modal Kịch bản
+    document.addEventListener('DOMContentLoaded', function() {
+        const modalResizer = document.getElementById('scriptResizer');
+        const modalLeftCol = document.getElementById('scriptEnCol');
+        const modalContainer = document.getElementById('scriptSplit');
+        if(modalResizer) initResizer(modalResizer, modalLeftCol, modalContainer);
+    });
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    function showInGameToast(msg) {
+        let toast = document.createElement("div");
+        toast.innerText = msg;
+        toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:var(--primary); color:white; padding:15px 20px; border-radius:12px; font-weight:bold; font-family:'Be Vietnam Pro',sans-serif; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0; transition:all 0.4s ease;";
+        document.body.appendChild(toast);
+        
+        setTimeout(() => { toast.style.transform = "translateY(0)"; toast.style.opacity = "1"; }, 100);
+        setTimeout(() => { toast.style.transform = "translateY(100px)"; toast.style.opacity = "0"; }, 3500);
+        setTimeout(() => { toast.remove(); }, 4000);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+        } else {
+            showInGameToast("⚠️ Bạn đang học dưới dạng Khách, lịch sử sẽ chỉ lưu trên thiết bị này!");
+        }
+    });
+
+    function calculateToeicScore(skill, correct, total) {
+        let percentage = correct / total;
+        let maxScore = (skill === 'Listening' || skill === 'Reading') ? 495 : 200;
+        let step = (skill === 'Listening' || skill === 'Reading') ? 5 : 10;
+        let estimated = Math.round((percentage * maxScore) / step) * step;
+        if (estimated > maxScore) return maxScore;
+        if (estimated < 5 && (skill === 'Listening' || skill === 'Reading')) return 5;
+        if (estimated < 0) return 0;
+        return estimated;
+    }
+
+    window.luuDiemTOEICLenFirebase = async function(tongSoCau, soCauDung, tenBai, kyNang, tenPart, answersData, timeTakenStr) {
+        if (!window.currentUserUid) return; 
+
+        let diemQuyDoi = calculateToeicScore(kyNang, soCauDung, tongSoCau);
+        let timestamp = Date.now();
+        let docId = window.currentUserUid + "_toeic_" + timestamp;
+        
+        try {
+            await setDoc(doc(db, "user_toeic_scores", docId), {
+                email: window.currentUserEmail || "Khách",
+                skill: kyNang,           
+                testName: tenBai,        
+                partName: tenPart,       
+                totalQ: tongSoCau,
+                correctQ: soCauDung,
+                score: diemQuyDoi,       
+                date: new Date().toLocaleDateString('vi-VN'),
+                time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+                timestamp: timestamp,
+                answers: answersData || {},
+                timeTaken: timeTakenStr || "--"
+            });
+            showInGameToast("☁️ Đã đồng bộ điểm số lên Máy Chủ!");
+        } catch (error) {
+            console.error("Lỗi khi lưu điểm Firebase:", error);
+            showInGameToast("❌ Lỗi lưu điểm lên máy chủ!");
+        }
+    }
+
+    window.layLichSuTuFirebase = async function() {
+        if (!window.currentUserEmail) return [];
+        try {
+            const q = query(
+                collection(db, "user_toeic_scores"),
+                where("email", "==", window.currentUserEmail),
+                where("testName", "==", "ETS 2019 - Test 4"),
+                where("partName", "==", "Part 4")
+            );
+            const querySnapshot = await getDocs(q);
+            let history = [];
+            querySnapshot.forEach((doc) => {
+                let data = doc.data();
+                data.id = doc.id; 
+                history.push(data);
+            });
+            history.sort((a, b) => b.timestamp - a.timestamp);
+            return history;
+        } catch (error) {
+            console.error("Lỗi tải lịch sử từ Firebase:", error);
+            showInGameToast("❌ Lỗi đồng bộ dữ liệu. Đang dùng tạm lịch sử trên máy.");
+            return [];
+        }
+    }
+
+    window.xoaLichSuFirebase = async function(docId) {
+        try {
+            await deleteDoc(doc(db, "user_toeic_scores", docId));
+            showInGameToast("🗑 Đã xóa bài làm khỏi Máy Chủ!");
+        } catch (error) {
+            console.error("Lỗi xóa trên Firebase:", error);
+        }
+    }
+</script>
+</body>
+</html>
