@@ -1789,9 +1789,15 @@ if(!isRestoring) {
             answers: answersObj
         };
 
+        // Lưu local dự phòng
         let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
         history.unshift(attempt);
         localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+        // Đồng bộ Firebase
+        if (window.syncHistoryToFirebase) {
+            await window.syncHistoryToFirebase(attempt, TEST_ID);
+        }
     }
 
     async function openHistoryModal() {
@@ -1799,10 +1805,19 @@ if(!isRestoring) {
         document.getElementById('historyOverlay').style.display = 'flex';
         let listEl = document.getElementById("historyList");
 
-        currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang lấy dữ liệu từ Máy chủ... ☁️⏳</div>`;
+
+        if (window.currentUserUid && window.getHistoryFromFirebase) {
+            currentHistoryList = await window.getHistoryFromFirebase(TEST_ID);
+            if (!currentHistoryList || currentHistoryList.length === 0) {
+                currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+            }
+        } else {
+            currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        }
 
         if (currentHistoryList.length === 0) {
-            listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px;">Cậu chưa làm bài lần nào trên máy này. 🐾</div>`;
+            listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px;">Cậu chưa làm bài lần nào trên tài khoản này. 🐾</div>`;
         } else {
             listEl.innerHTML = currentHistoryList.map((item, index) => {
                 let docId = item.docId || item.id;
@@ -1822,26 +1837,15 @@ if(!isRestoring) {
         }
     }
 
-    function closeHistoryModal() {
-        document.getElementById('historyOverlay').style.display = 'none';
-        document.getElementById('setupOverlay').style.display = 'flex';
-    }
-
-    let pendingDeleteId = null;
-    function deleteAttempt(attemptId) {
-        pendingDeleteId = attemptId;
-        document.getElementById('customConfirmDeleteOverlay').style.display = 'flex';
-    }
-    
-    function closeConfirmDelete() {
-        pendingDeleteId = null;
-        document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
-    }
-
     async function executeDelete() {
         if (pendingDeleteId !== null) {
             document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
             let listEl = document.getElementById("historyList");
+            listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang dọn dẹp trên Đám mây... 🗑️☁️</div>`;
+
+            if (window.currentUserUid && window.deleteHistoryDocFirebase && typeof pendingDeleteId === 'string') {
+                await window.deleteHistoryDocFirebase(pendingDeleteId);
+            }
 
             let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
             history = history.filter(h => h.id != pendingDeleteId && h.docId != pendingDeleteId);
@@ -1884,7 +1888,41 @@ if(!isRestoring) {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+window.syncHistoryToFirebase = async function(attempt, testId) {
+        if (!window.currentUserUid) return attempt;
+        let docId = window.currentUserUid + "_" + testId + "_" + attempt.timestamp;
+        attempt.docId = docId;
+        attempt.uid = window.currentUserUid;
+        attempt.testId = testId;
+        try {
+            await setDoc(doc(db, "snapenglish_history", docId), attempt);
+            return attempt;
+        } catch (e) { console.error("Lỗi đồng bộ lịch sử đám mây:", e); return attempt; }
+    };
 
+    window.getHistoryFromFirebase = async function(testId) {
+        if (!window.currentUserUid) return null;
+        try {
+            const q = query(collection(db, "snapenglish_history"), where("uid", "==", window.currentUserUid));
+            const querySnapshot = await getDocs(q);
+            let history = [];
+            querySnapshot.forEach((docSnap) => {
+                let data = docSnap.data();
+                if (data.testId === testId) {
+                    history.push(data);
+                }
+            });
+            history.sort((a, b) => b.timestamp - a.timestamp);
+            return history;
+        } catch (e) { console.error("Lỗi tải lịch sử từ đám mây:", e); return null; }
+    };
+
+    window.deleteHistoryDocFirebase = async function(docId) {
+        if (!window.currentUserUid || !docId) return;
+        try {
+            await deleteDoc(doc(db, "snapenglish_history", docId));
+        } catch (e) { console.error("Lỗi xóa lịch sử:", e); }
+    };
     function showInGameToast(msg) {
         let toast = document.createElement("div");
         toast.innerText = msg;
@@ -1928,8 +1966,8 @@ if(!isRestoring) {
         let inputPhut = parseInt(document.getElementById('timeInput').value) || 55; 
         let tongThoiGianGoc = inputPhut * 60; 
 
-        if (typeof testDuration !== 'undefined') {
-            let thoiGianDaLam = tongThoiGianGoc - testDuration;
+        if (typeof timeLeft !== 'undefined') {
+    let thoiGianDaLam = tongThoiGianGoc - timeLeft;
             if (thoiGianDaLam < 0) thoiGianDaLam = 0; 
             let m = Math.floor(thoiGianDaLam / 60);
             let s = thoiGianDaLam % 60;
