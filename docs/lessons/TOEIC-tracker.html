@@ -690,52 +690,74 @@
         }
 
         function updateSpacedRepetitionState() {
-            if (!records || records.length === 0) {
-                document.getElementById('fixedBulb').classList.add('hidden');
-                return;
-            }
+    if (!records || records.length === 0) {
+        document.getElementById('fixedBulb').classList.add('hidden');
+        return;
+    }
 
-            const latestAttempts = {};
-            records.forEach(r => {
-                const key = r.testName.toLowerCase().trim() + "|" + r.partName.toLowerCase().trim();
-                if (!latestAttempts[key] || r.timestamp > latestAttempts[key].timestamp) {
-                    latestAttempts[key] = r;
-                }
-            });
-
-            const daysThreshold = 7; 
-            const thresholdMs = daysThreshold * 24 * 60 * 60 * 1000;
-            const now = Date.now();
-
-            currentSRList = Object.values(latestAttempts)
-                .filter(r => (now - r.timestamp) > thresholdMs)
-                .sort((a, b) => a.timestamp - b.timestamp); 
-
-            const bulb = document.getElementById('fixedBulb');
-            const bulbCount = document.getElementById('bulbCount');
-
-            // Cập nhật trạng thái bóng đèn cố định
-            if (currentSRList.length > 0) {
-                bulb.classList.remove('hidden');
-                bulbCount.innerText = currentSRList.length;
-            } else {
-                bulb.classList.add('hidden');
-            }
-
-            // Logic hiện popup 1 lần 1 ngày
-            const today = new Date().toDateString();
-            const lastShown = localStorage.getItem('lastSRPopupDate');
-            
-            if (lastShown !== today && currentSRList.length > 0) {
-                renderSRList(currentSRList);
-                setTimeout(() => {
-                    const popup = document.getElementById('srOverlay');
-                    popup.style.display = 'flex';
-                    setTimeout(() => popup.classList.add('active'), 10);
-                    localStorage.setItem('lastSRPopupDate', today);
-                }, 2000); 
+    const testStats = {}; 
+    // Bước 1: Đếm số lần làm bài và tìm lần làm gần nhất cho mỗi đề
+    records.forEach(r => {
+        const key = r.testName.toLowerCase().trim() + "|" + r.partName.toLowerCase().trim();
+        if (!testStats[key]) {
+            testStats[key] = { latestRecord: r, count: 1 };
+        } else {
+            testStats[key].count++;
+            // Cập nhật record mới nhất
+            if (r.timestamp > testStats[key].latestRecord.timestamp) {
+                testStats[key].latestRecord = r;
             }
         }
+    });
+
+    // Bước 2: Thiết lập số ngày cần đợi dựa trên số lần đã làm (bạn có thể tự sửa số ngày ở đây nha)
+    const getIntervalDays = (count) => {
+        if (count === 1) return 7;   // Mới làm 1 lần -> Đợi 7 ngày
+        if (count === 2) return 14;  // Đã làm 2 lần -> Đợi 14 ngày
+        if (count === 3) return 30;  // Đã làm 3 lần -> Đợi 30 ngày
+        return 60;                   // Làm 4 lần trở lên -> Đợi 60 ngày
+    };
+
+    const now = Date.now();
+    
+    // Bước 3: Lọc ra những đề đã tới hạn cần ôn tập
+    currentSRList = Object.values(testStats)
+        .map(stat => {
+            const intervalDays = getIntervalDays(stat.count);
+            const thresholdMs = intervalDays * 24 * 60 * 60 * 1000;
+            return {
+                ...stat.latestRecord,
+                isDue: (now - stat.latestRecord.timestamp) > thresholdMs
+            };
+        })
+        .filter(r => r.isDue)
+        .sort((a, b) => a.timestamp - b.timestamp); 
+
+    const bulb = document.getElementById('fixedBulb');
+    const bulbCount = document.getElementById('bulbCount');
+
+    // Cập nhật trạng thái bóng đèn cố định
+    if (currentSRList.length > 0) {
+        bulb.classList.remove('hidden');
+        bulbCount.innerText = currentSRList.length;
+    } else {
+        bulb.classList.add('hidden');
+    }
+
+    // Logic hiện popup 1 lần 1 ngày
+    const today = new Date().toDateString();
+    const lastShown = localStorage.getItem('lastSRPopupDate');
+    
+    if (lastShown !== today && currentSRList.length > 0) {
+        renderSRList(currentSRList);
+        setTimeout(() => {
+            const popup = document.getElementById('srOverlay');
+            popup.style.display = 'flex';
+            setTimeout(() => popup.classList.add('active'), 10);
+            localStorage.setItem('lastSRPopupDate', today);
+        }, 2000); 
+    }
+}
 
         window.renderTable = function(data) {
             const tbody = document.getElementById('historyTableBody');
