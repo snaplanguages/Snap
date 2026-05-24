@@ -721,15 +721,20 @@
     const mainArea = document.getElementById('mainArea');
     const navDropdown = document.getElementById('navDropdown');
 
+    // --- CÁC HÀM CUSTOM ALERT CHO HIGHLIGHT ---
     function showCustomAlert(message) { document.getElementById('customAlertMessage').innerText = message; document.getElementById('customAlertOverlay').style.display = 'flex'; }
     function closeCustomAlert() { document.getElementById('customAlertOverlay').style.display = 'none'; }
 
+    // --- CHỨC NĂNG HIGHLIGHT CHUỘT PHẢI ---
     const menu = document.getElementById("ctxMenu");
     let targetElement = null;
     let selectedRange = null;
 
     document.addEventListener("contextmenu", (e) => {
-        if (!e.target.closest('.main-area')) { e.preventDefault(); return; }
+        if (!e.target.closest('.main-area')) {
+            e.preventDefault(); 
+            return; 
+        }
         e.preventDefault();
         targetElement = null; selectedRange = null;
         
@@ -758,7 +763,7 @@
         if (selectedRange) {
             try { 
                 let span = document.createElement("span"); span.className = "highlight"; selectedRange.surroundContents(span); 
-            } catch(e) { showCustomAlert("Cậu chỉ có thể highlight trong cùng một dòng thui nhé! Thử lại nha 🐧"); }
+            } catch(e) { showCustomAlert("☀️ Cậu chỉ có thể highlight trong cùng một dòng thui nhé!"); }
             window.getSelection().removeAllRanges();
         }
         menu.style.display = "none";
@@ -773,7 +778,9 @@
         menu.style.display = "none";
     }
 
-    function toggleNavDropdown() { navDropdown.classList.toggle('show'); }
+    function toggleNavDropdown() {
+        navDropdown.classList.toggle('show');
+    }
 
     document.addEventListener('click', function(event) {
         if (!event.target.closest('.controls') && !event.target.closest('.nav-dropdown')) {
@@ -790,7 +797,10 @@
             dot.className = 'nav-dot';
             dot.id = `nav-${index}`;
             dot.innerText = index + 1;
-            dot.onclick = () => { jumpToQuestion(index); navDropdown.classList.remove('show'); };
+            dot.onclick = () => {
+                jumpToQuestion(index);
+                navDropdown.classList.remove('show'); 
+            };
             navDropdown.appendChild(dot);
 
             let card = document.createElement('div');
@@ -810,39 +820,51 @@
             card.innerHTML = `
                 <div class="q-header">
                     <div class="q-header-left">
-                        <div class="q-num">Part 5 🌊</div>
+                        <div class="q-num">Part 5 Practice 🌊</div>
                         <div class="timer-pill" id="card-timer-${index}">⏱ 00:00</div>
                     </div>
-                    <div class="q-counter-pill">Câu ${q.id} / ${questionsData[questionsData.length-1].id}</div>
+                    <div class="q-counter-pill">
+                        Câu ${index + 1} / ${questionsData.length}
+                    </div>
                 </div>
-                <div class="q-text">${q.id}. ${q.q}</div>
-                <div class="options">${optionsHtml}</div>
+                <div class="q-text">
+                    ${q.id}. ${q.q}
+                </div>
+                <div class="options">
+                    ${optionsHtml}
+                </div>
+                
                 <div class="q-nav-buttons">
-                    <button class="btn-nav next" onclick="jumpToQuestion(${index + 1})" ${index === questionsData.length - 1 ? 'disabled' : ''}>Câu tiếp ⏩</button>
+                    <button class="btn-nav next" onclick="jumpToQuestion(${index + 1})" ${index === questionsData.length - 1 ? 'disabled' : ''}>Câu Tiếp Theo ⏩</button>
                 </div>
 
                 <div class="explanation-box" id="exp-${index}">
-                    <div class="exp-main-title">✨ Phân tích chi tiết cùng SnapEnglish ✨</div>
+                    <div class="exp-main-title">✨ Giải Thích Siêu Chi Tiết ✨</div>
+                    
                     <div class="exp-grid">
                         <div class="box box-correct">
-                            <div class="box-title">✅ Đúng</div>
+                            <div class="box-title">✅ Phân Tích Đáp Án Đúng</div>
                             ${q.exp.correct}
                         </div>
+                        
                         <div class="box box-wrong">
-                            <div class="box-title">❌ Sai</div>
+                            <div class="box-title">❌ Vì Sao Các Đáp Án Kia Sai?</div>
                             ${q.exp.wrong}
                         </div>
+                        
                         <div class="box box-grammar">
-                            <div class="box-title">📖 Trạm sạc Ngữ pháp</div>
+                            <div class="box-title">📖 Cấu Trúc / Ngữ Pháp</div>
                             ${q.exp.grammar}
                         </div>
+
                         <div class="box box-vocab">
-                            <div class="box-title">📚 Kho tàng Từ vựng</div>
+                            <div class="box-title">📚 Từ Vựng Cốt Lõi</div>
                             ${q.exp.vocab}
                         </div>
                     </div>
+                    
                     <div class="box box-trans">
-                        <div class="box-title">🌐 Snap Dịch Nghĩa:</div>
+                        <div class="box-title">🌐 Dịch Nghĩa Toàn Câu:</div>
                         "${q.exp.trans}"
                     </div>
                 </div>
@@ -861,7 +883,7 @@
 
     function startTest() {
         document.getElementById('setupOverlay').style.display = 'none';
-        let minutes = parseInt(document.getElementById('timeInput').value) || 15;
+        let minutes = parseInt(document.getElementById('timeInput').value) || 20;
         testDuration = minutes * 60;
         initQuiz();
         jumpToQuestion(0);
@@ -870,12 +892,17 @@
             let m = Math.floor(testDuration / 60);
             let s = testDuration % 60;
             updateCardTimers(m, s);
-            if (--testDuration < 0) { clearInterval(timerInterval); executeSubmit(); }
+
+            if (--testDuration < 0) { 
+                clearInterval(timerInterval); 
+                executeSubmit(); 
+            }
         }, 1000);
     }
 
     function jumpToQuestion(index) {
         if (index < 0 || index >= questionsData.length) return;
+        
         let oldCard = document.getElementById(`card-${currentQIndex}`);
         let oldDot = document.getElementById(`nav-${currentQIndex}`);
         if(oldCard) oldCard.classList.remove('active');
@@ -886,16 +913,23 @@
         let newDot = document.getElementById(`nav-${currentQIndex}`);
         if(newCard) newCard.classList.add('active');
         if(newDot) newDot.classList.add('active');
+        
         mainArea.scrollTo(0, 0);
     }
 
     function selectOption(qIndex, answer, optIndex) {
         if(isSubmitted) return; 
+        
         userAnswers[qIndex] = answer;
-        for(let i=0; i<4; i++) { document.getElementById(`opt-${qIndex}-${i}`).classList.remove('selected'); }
+        for(let i=0; i<4; i++) {
+            document.getElementById(`opt-${qIndex}-${i}`).classList.remove('selected');
+        }
         document.getElementById(`opt-${qIndex}-${optIndex}`).classList.add('selected');
         document.getElementById(`nav-${qIndex}`).classList.add('done');
-        if(qIndex < questionsData.length - 1) { setTimeout(() => jumpToQuestion(qIndex + 1), 350); }
+        
+        if(qIndex < questionsData.length - 1) {
+            setTimeout(() => jumpToQuestion(qIndex + 1), 350);
+        }
     }
 
     function askSubmit() {
@@ -903,7 +937,10 @@
         document.getElementById('confirmOverlay').style.display = 'flex';
     }
 
-    function closeConfirmModal() { document.getElementById('confirmOverlay').style.display = 'none'; }
+    function closeConfirmModal() {
+        document.getElementById('confirmOverlay').style.display = 'none';
+    }
+    
     function closeResultModal() {
         document.getElementById('resultOverlay').style.display = 'none';
         jumpToQuestion(0);
@@ -930,7 +967,7 @@
 
             let unAnsweredWarning = "";
             if (!uAns) {
-                unAnsweredWarning = `<div style="background: #fefce8; color: #b45309; padding: 15px 20px; border-radius: 12px; margin-bottom: 25px; font-weight: 800; border: 2px solid #fef08a;">⚠️ Oops! Lạc trôi mất tiêu câu này rồi. Đừng bỏ trống khi đi thi thật nha!</div>`;
+                unAnsweredWarning = `<div style="background: #fffbeb; color: #b45309; padding: 15px 20px; border-radius: 12px; margin-bottom: 25px; font-weight: 800; border: 2px solid #fde68a;">⚠️ Ôi! Bạn đã bỏ trống câu này mất rồi!</div>`;
             }
 
             for(let i=0; i<4; i++) {
@@ -942,7 +979,7 @@
                 if (optText === q.a) {
                     optEl.classList.add('correct'); 
                     if (optText === uAns) {
-                        badgeEl.innerHTML = "✅ Đỉnh chóp!";
+                        badgeEl.innerHTML = "✅ Xứng đáng 10 điểm!";
                         badgeEl.style.color = "var(--correct-text)";
                     } else {
                         badgeEl.innerHTML = "👈 Đáp án đúng ở đây nè";
@@ -950,7 +987,7 @@
                     }
                 } else if (optText === uAns) {
                     optEl.classList.add('wrong'); 
-                    badgeEl.innerHTML = "❌ Trượt tay thôi!";
+                    badgeEl.innerHTML = "❌ Hơi tiếc một xíu";
                     badgeEl.style.color = "var(--wrong-text)";
                 }
             }
@@ -970,13 +1007,21 @@
         if (!isRestoring) {
             document.getElementById('resultMessage').innerHTML = `
                 <strong style="font-size: 46px; color: var(--primary-dark); display: block; margin-bottom: 15px; text-shadow: 2px 2px 0px var(--border);">${score} / ${questionsData.length}</strong>
-                <p style="font-size: 18px; color: #64748b; font-weight: 600;">Hành trình vạn dặm bắt đầu từ một bước chân!<br>Mở khóa phần giải thích để cày kinh nghiệm ngay nhé 🚀</p>
+                <p style="font-size: 18px; color: #64748b; font-weight: 600;">Hành trình vạn dặm bắt đầu từ một bước chân!<br>Hãy khám phá phần giải thích để học thêm ngàn điều hay nhé 🌊</p>
             `;
             document.getElementById('resultOverlay').style.display = 'flex';
+
+            // Lưu lịch sử làm bài (Local + Đám mây)
             saveAttemptToHistory(score, questionsData.length, userAnswers);
+
+            // Đồng bộ điểm lên Firestore TOEIC score
+            if (window.luuDiemTOEICLenFirebase) {
+                window.luuDiemTOEICLenFirebase(questionsData.length, score, "ETS 2018 - Test 5", "Reading", "Part 5");
+            }
         }
     }
 
+    // --- BỘ QUẢN LÝ LỊCH SỬ (FIREBASE & LOCAL) ---
     const TEST_ID = "p5_test_5_2018"; 
     const HISTORY_KEY = "snapenglish_" + TEST_ID + "_history";
     let currentHistoryList = []; 
@@ -985,23 +1030,44 @@
         let now = new Date();
         let timestamp = Date.now();
         let attempt = {
-            id: timestamp, timestamp: timestamp, 
+            id: timestamp, 
+            timestamp: timestamp, 
             date: now.toLocaleDateString('vi-VN'),
             time: now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-            score: score, total: total, answers: answersArray
+            score: score,
+            total: total,
+            answers: answersArray
         };
+
+        // Lưu local
         let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
         history.unshift(attempt);
         localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+        // Đồng bộ Firebase
+        if (window.syncHistoryToFirebase) {
+            await window.syncHistoryToFirebase(attempt, TEST_ID);
+        }
     }
 
     async function openHistoryModal() {
         document.getElementById('setupOverlay').style.display = 'none';
         document.getElementById('historyOverlay').style.display = 'flex';
         let listEl = document.getElementById("historyList");
-        currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+
+        listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang lấy dữ liệu từ Máy chủ... ☁️⏳</div>`;
+
+        if (window.currentUserUid && window.getHistoryFromFirebase) {
+            currentHistoryList = await window.getHistoryFromFirebase(TEST_ID);
+            if (!currentHistoryList || currentHistoryList.length === 0) {
+                currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+            }
+        } else {
+            currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        }
+
         if (currentHistoryList.length === 0) {
-            listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px;">Cậu chưa cày cuốc lần nào trên máy này. 🐾</div>`;
+            listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px;">Cậu chưa làm bài lần nào trên tài khoản này. 🐾</div>`;
         } else {
             listEl.innerHTML = currentHistoryList.map((item, index) => {
                 let docId = item.docId || item.id;
@@ -1015,7 +1081,8 @@
                         <button class="btn-review" onclick="restoreAttempt(${index})">Xem lại</button>
                         <button class="btn-delete-history" onclick="deleteAttempt('${docId}')" title="Xóa bài này">&times;</button>
                     </div>
-                </div>`;
+                </div>
+                `;
             }).join("");
         }
     }
@@ -1039,9 +1106,17 @@
     async function executeDelete() {
         if (pendingDeleteId !== null) {
             document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+            let listEl = document.getElementById("historyList");
+            listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang dọn dẹp trên Đám mây... 🗑️☁️</div>`;
+
+            if (window.currentUserUid && window.deleteHistoryDocFirebase && typeof pendingDeleteId === 'string') {
+                await window.deleteHistoryDocFirebase(pendingDeleteId);
+            }
+
             let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
             history = history.filter(h => h.id != pendingDeleteId && h.docId != pendingDeleteId);
             localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
             pendingDeleteId = null;
             openHistoryModal(); 
         }
@@ -1050,9 +1125,12 @@
     function restoreAttempt(index) {
         let attempt = currentHistoryList[index];
         if(!attempt) return;
+
         document.getElementById('historyOverlay').style.display = 'none';
+        
         initQuiz();
         jumpToQuestion(0);
+        
         userAnswers = attempt.answers || [];
         userAnswers.forEach((ans, qIndex) => {
             if (ans !== null && ans !== undefined) {
@@ -1063,8 +1141,140 @@
                 }
             }
         });
+
         isSubmitted = false; 
         executeSubmit(true); 
+        
+        let toastMsg = document.createElement("div");
+        toastMsg.innerText = "✨ Đã khôi phục bài làm từ Đám mây!";
+        toastMsg.style.cssText = "position:fixed; top:30px; right:30px; background:linear-gradient(135deg, var(--primary), var(--secondary)); color:white; padding:16px 24px; border-radius:14px; font-weight:700; z-index:99999; box-shadow:0 10px 30px rgba(56, 189, 248, 0.4); border: 2px solid #fff;";
+        document.body.appendChild(toastMsg);
+        setTimeout(() => toastMsg.remove(), 3500);
+    }
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Toast notification được thiết kế lại theo tone màu Xanh Biển/Teal
+    function showInGameToast(msg) {
+        let toast = document.createElement("div");
+        toast.innerText = msg;
+        toast.style.cssText = "position:fixed; bottom:30px; right:30px; background:linear-gradient(135deg, var(--primary), var(--secondary)); color:white; padding:16px 24px; border-radius:14px; font-weight:700; font-family:'Be Vietnam Pro',sans-serif; z-index:99999; box-shadow:0 10px 30px rgba(56, 189, 248, 0.4); transform:translateY(100px) scale(0.9); opacity:0; transition:all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); border: 2px solid #fff;";
+        document.body.appendChild(toast);
+        
+        setTimeout(() => { toast.style.transform = "translateY(0) scale(1)"; toast.style.opacity = "1"; }, 100);
+        setTimeout(() => { toast.style.transform = "translateY(100px) scale(0.9)"; toast.style.opacity = "0"; }, 3500);
+        setTimeout(() => { toast.remove(); }, 4000);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+        } else {
+            showInGameToast("⚠️ Bạn đang học dưới dạng Khách, điểm sẽ không lưu lên kho nhé!");
+        }
+    });
+
+    window.syncHistoryToFirebase = async function(attempt, testId) {
+        if (!window.currentUserUid) return attempt;
+        let docId = window.currentUserUid + "_" + testId + "_" + attempt.timestamp;
+        attempt.docId = docId;
+        attempt.uid = window.currentUserUid;
+        attempt.testId = testId;
+        try {
+            await setDoc(doc(db, "snapenglish_history", docId), attempt);
+            return attempt;
+        } catch (e) { console.error("Lỗi đồng bộ lịch sử đám mây:", e); return attempt; }
+    };
+
+    window.getHistoryFromFirebase = async function(testId) {
+        if (!window.currentUserUid) return null;
+        try {
+            const q = query(collection(db, "snapenglish_history"), where("uid", "==", window.currentUserUid));
+            const querySnapshot = await getDocs(q);
+            let history = [];
+            querySnapshot.forEach((docSnap) => {
+                let data = docSnap.data();
+                if (data.testId === testId) {
+                    history.push(data);
+                }
+            });
+            history.sort((a, b) => b.timestamp - a.timestamp);
+            return history;
+        } catch (e) { console.error("Lỗi tải lịch sử từ đám mây:", e); return null; }
+    };
+
+    window.deleteHistoryDocFirebase = async function(docId) {
+        if (!window.currentUserUid || !docId) return;
+        try {
+            await deleteDoc(doc(db, "snapenglish_history", docId));
+        } catch (e) { console.error("Lỗi xóa lịch sử:", e); }
+    };
+
+    function calculateToeicScore(skill, correct, total) {
+        let percentage = correct / total;
+        let maxScore = (skill === 'Listening' || skill === 'Reading') ? 495 : 200;
+        let step = (skill === 'Listening' || skill === 'Reading') ? 5 : 10;
+        let estimated = Math.round((percentage * maxScore) / step) * step;
+        if (estimated > maxScore) return maxScore;
+        if (estimated < 5 && (skill === 'Listening' || skill === 'Reading')) return 5;
+        if (estimated < 0) return 0;
+        return estimated;
+    }
+
+    window.luuDiemTOEICLenFirebase = async function(tongSoCau, soCauDung, tenBai, kyNang, tenPart) {
+        if (!window.currentUserUid) return; 
+
+        let diemQuyDoi = calculateToeicScore(kyNang, soCauDung, tongSoCau);
+        let thoiGianHienTai = "--";
+        let inputPhut = parseInt(document.getElementById('timeInput').value) || 20; 
+        let tongThoiGianGoc = inputPhut * 60;
+
+        if (typeof testDuration !== 'undefined') {
+            let thoiGianDaLam = tongThoiGianGoc - testDuration;
+            if (thoiGianDaLam < 0) thoiGianDaLam = 0; 
+            
+            let m = Math.floor(thoiGianDaLam / 60);
+            let s = thoiGianDaLam % 60;
+            thoiGianHienTai = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+        let timestamp = Date.now();
+        let docId = window.currentUserUid + "_toeic_" + timestamp;
+        
+        try {
+            await setDoc(doc(db, "user_toeic_scores", docId), {
+                email: window.currentUserEmail,
+                skill: kyNang,
+                testName: tenBai,
+                partName: tenPart,
+                timeTaken: thoiGianHienTai,
+                totalQ: tongSoCau,
+                correctQ: soCauDung,
+                score: diemQuyDoi,
+                date: new Date().toLocaleDateString('vi-VN'),
+                timestamp: timestamp
+            });
+            showInGameToast("☁️ Tuyệt vời! Đã đồng bộ điểm số lên Máy Chủ thành công!");
+        } catch (error) {
+            console.error("Lỗi đồng bộ:", error);
+        }
     }
 </script>
 </body>
