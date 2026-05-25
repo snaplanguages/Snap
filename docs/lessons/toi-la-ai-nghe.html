@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Tôi là ai? | SnapChinese</title>
+  <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        :root {
+            /* Tone màu mới: Teal (Xanh mòng két) & Amber (Cam hổ phách) cho sự tập trung */
+            --bg-main: #f0fdfa; /* Teal nhạt */
+            --box-bg: #ffffff;
+            --pastel-blue: #e0f2fe;
+            --pastel-yellow: #fef3c7;
+            --text-main: #0f172a;
+            --text-pinyin: #d97706; /* Cam hổ phách */
+            --highlight: #0d9488; /* Teal đậm */
+            --highlight-hover: #0f766e;
+            --tooltip-bg: #1e293b;
+            --quiz-bg: #f8fafc;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+            background: var(--box-bg);
+            border-radius: 24px;
+            box-shadow: 0 10px 25px rgba(13, 148, 136, 0.15);
+            padding: 30px;
+        }
+
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { color: var(--highlight); font-size: 30px; margin: 0 0 8px 0; font-weight: 700; }
+        .header p { font-size: 18px; color: #475569; margin: 0; font-weight: 500;}
+        .badge { background: #f59e0b; color: white; padding: 4px 10px; border-radius: 20px; font-size: 13px; font-weight: 700; vertical-align: middle; margin-left: 10px;}
+
+        /* --- AUDIO & CONTROLS --- */
+        .controls-bar {
+            background: var(--pastel-blue);
+            padding: 15px 25px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+            border: 2px dashed #bae6fd;
+        }
+
+        .audio-player audio {
+            height: 44px;
+            outline: none;
+            border-radius: 22px;
+        }
+
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .btn-action {
+            background: var(--highlight);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            box-shadow: 0 4px 6px rgba(13, 148, 136, 0.2);
+        }
+        .btn-action:hover { background: var(--highlight-hover); transform: translateY(-2px); }
+        .btn-action.off { background: #64748b; box-shadow: none; }
+
+        /* --- READER AREA --- */
+        .reader-wrapper { display: flex; gap: 20px; margin-bottom: 30px; }
+        .column { flex: 1; padding: 25px; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);}
+        
+        .chinese-content { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 15px 8px; line-height: 2.3; }
+        
+        .word-group { display: inline-flex; flex-direction: column; align-items: center; position: relative; cursor: pointer; }
+        .pinyin { font-size: 13px; color: var(--text-pinyin); font-weight: 700; margin-bottom: -2px; transition: opacity 0.3s; opacity: 0; } /* Ẩn pinyin mặc định cho bài nghe */
+        .char { font-size: 26px; color: var(--text-main); font-weight: 500; transition: all 0.2s ease; }
+        
+        .word-group:hover .char { color: var(--highlight); transform: scale(1.15); }
+        .word-group:active .char { transform: scale(0.9); }
+
+        .word-group::after {
+            content: attr(data-tooltip);
+            position: absolute; top: 105%; left: 50%; transform: translateX(-50%) translateY(8px);
+            background: var(--tooltip-bg); color: white; padding: 6px 14px; border-radius: 8px;
+            font-size: 14px; white-space: nowrap; opacity: 0; visibility: hidden; transition: all 0.25s ease; z-index: 10;
+        }
+        .word-group:hover::after { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+
+        .viet-content { font-size: 17px; color: #475569; line-height: 1.9; text-align: justify; filter: blur(6px); transition: filter 0.4s; user-select: none; }
+        .viet-content.show { filter: blur(0); user-select: auto; }
+
+        .blur-notice { text-align: center; font-size: 14px; color: #f59e0b; font-weight: 600; margin-bottom: 15px; }
+
+        /* --- GRAMMAR & QUIZ SECTION --- */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .info-box { padding: 22px; border-radius: 16px; font-size: 15px; line-height: 1.7; }
+        .grammar-box { background: var(--pastel-yellow); border: 1px solid #fde68a; }
+        .quiz-box { background: var(--quiz-bg); border: 1px solid #cbd5e1; display: flex; flex-direction: column; }
+        
+        .info-box h3 { margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .grammar-box h3 { color: #b45309; }
+        .quiz-box h3 { color: #334155; }
+        
+        /* Quiz Styles */
+        .quiz-question { font-weight: 700; margin-bottom: 15px; font-size: 16px; color: var(--highlight); }
+        .quiz-option {
+            background: white; border: 2px solid #e2e8f0; padding: 12px 15px; 
+            border-radius: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; font-weight: 500;
+        }
+        .quiz-option:hover { border-color: var(--highlight); background: var(--pastel-blue); }
+        .quiz-option.correct { background: #10b981; color: white; border-color: #10b981; }
+        .quiz-option.wrong { background: #f43f5e; color: white; border-color: #f43f5e; }
+        #quiz-feedback { margin-top: 10px; font-weight: 700; font-size: 15px; display: none; text-align: center; }
+
+        /* --- NAVIGATION --- */
+        .nav-fixed { position: fixed; bottom: 25px; right: 25px; display: flex; flex-direction: column; gap: 10px; z-index: 100; }
+        .btn { padding: 12px 22px; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 14px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: 0.2s; }
+        .btn-list { background: #ffffff; color: #475569; border: 1px solid #e2e8f0; }
+        .btn-list:hover { background: #f1f5f9; }
+        .btn-next { background: var(--highlight); color: white; }
+        .btn-next:hover { background: var(--highlight-hover); transform: translateX(5px); }
+
+        @media (max-width: 900px) {
+            .reader-wrapper { flex-direction: column; }
+            .info-grid { grid-template-columns: 1fr; }
+            .controls-bar { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Tôi là ai? <span class="badge">Luyện Nghe</span></h1>
+        <p>我是谁</p>
+    </div>
+
+    <!-- Thanh công cụ -->
+    <div class="controls-bar">
+        <div class="audio-player">
+            <audio controls>
+                <source src="https://traffic.libsyn.com/secure/learnchinese/1064.mp3" type="audio/mpeg">
+                Trình duyệt không hỗ trợ audio.
+            </audio>
+        </div>
+        <div class="btn-group">
+            <button class="btn-action off" onclick="togglePinyin()" id="btnPinyin">
+                🙈 Hiện Pinyin
+            </button>
+            <button class="btn-action off" onclick="toggleTranslate()" id="btnTranslate">
+                🙈 Hiện Bản Dịch
+            </button>
+        </div>
+    </div>
+
+    <div class="reader-wrapper">
+        <!-- Cột Tiếng Trung -->
+        <div class="column">
+            <div id="chineseText" class="chinese-content">
+                <!-- Câu 1 -->
+                <div class="word-group" data-tooltip="Của tôi" onclick="speak(this)"><span class="pinyin">wǒ de</span><span class="char">我的</span></div>
+                <div class="word-group" data-tooltip="Tên" onclick="speak(this)"><span class="pinyin">míng zì</span><span class="char">名字</span></div>
+                <div class="word-group" data-tooltip="Gọi là" onclick="speak(this)"><span class="pinyin">jiào</span><span class="char">叫</span></div>
+                <div class="word-group" data-tooltip="Lý Đại Vệ (David)" onclick="speak(this)"><span class="pinyin">Lǐ Dàwèi</span><span class="char">李大卫</span></div>
+                <span class="char">，</span>
+                
+                <div class="word-group" data-tooltip="Tôi" onclick="speak(this)"><span class="pinyin">wǒ</span><span class="char">我</span></div>
+                <div class="word-group" data-tooltip="Là" onclick="speak(this)"><span class="pinyin">shì</span><span class="char">是</span></div>
+                <div class="word-group" data-tooltip="Nước Mỹ" onclick="speak(this)"><span class="pinyin">Měi guó</span><span class="char">美国</span></div>
+                <div class="word-group" data-tooltip="Người" onclick="speak(this)"><span class="pinyin">rén</span><span class="char">人</span></div>
+                <span class="char">，</span>
+                
+                <div class="word-group" data-tooltip="Nhưng mà" onclick="speak(this)"><span class="pinyin">dàn shì</span><span class="char">但是</span></div>
+                <div class="word-group" data-tooltip="Ở" onclick="speak(this)"><span class="pinyin">zài</span><span class="char">在</span></div>
+                <div class="word-group" data-tooltip="Nhật Bản" onclick="speak(this)"><span class="pinyin">Rì běn</span><span class="char">日本</span></div>
+                <div class="word-group" data-tooltip="Lớn lên" onclick="speak(this)"><span class="pinyin">zhǎng dà</span><span class="char">长大</span></div>
+                <span class="char">，</span>
+                
+                <div class="word-group" data-tooltip="Ở" onclick="speak(this)"><span class="pinyin">zài</span><span class="char">在</span></div>
+                <div class="word-group" data-tooltip="Nước Anh" onclick="speak(this)"><span class="pinyin">Yīng guó</span><span class="char">英国</span></div>
+                <div class="word-group" data-tooltip="Học đại học" onclick="speak(this)"><span class="pinyin">shàng dà xué</span><span class="char">上大学</span></div>
+                <span class="char">，</span>
+                
+                <div class="word-group" data-tooltip="Hiện tại" onclick="speak(this)"><span class="pinyin">xiàn zài</span><span class="char">现在</span></div>
+                <div class="word-group" data-tooltip="Ở" onclick="speak(this)"><span class="pinyin">zài</span><span class="char">在</span></div>
+                <div class="word-group" data-tooltip="Trung Quốc" onclick="speak(this)"><span class="pinyin">Zhōng guó</span><span class="char">中国</span></div>
+                <div class="word-group" data-tooltip="Làm việc" onclick="speak(this)"><span class="pinyin">gōng zuò</span><span class="char">工作</span></div>
+                <span class="char">。</span>
+                
+                <div style="width: 100%; height: 10px;"></div>
+                
+                <!-- Câu 2 -->
+                <div class="word-group" data-tooltip="Tôi" onclick="speak(this)"><span class="pinyin">wǒ</span><span class="char">我</span></div>
+                <div class="word-group" data-tooltip="Ở" onclick="speak(this)"><span class="pinyin">zài</span><span class="char">在</span></div>
+                <div class="word-group" data-tooltip="Đại học" onclick="speak(this)"><span class="pinyin">dà xué</span><span class="char">大学</span></div>
+                <div class="word-group" data-tooltip="Học tập" onclick="speak(this)"><span class="pinyin">xué xí</span><span class="char">学习</span></div>
+                <div class="word-group" data-tooltip="Lịch sử" onclick="speak(this)"><span class="pinyin">lì shǐ</span><span class="char">历史</span></div>
+                <div class="word-group" data-tooltip="Và" onclick="speak(this)"><span class="pinyin">hé</span><span class="char">和</span></div>
+                <div class="word-group" data-tooltip="Tiếng Anh" onclick="speak(this)"><span class="pinyin">Yīng yǔ</span><span class="char">英语</span></div>
+                <span class="char">，</span>
+                
+                <div class="word-group" data-tooltip="Hiện tại" onclick="speak(this)"><span class="pinyin">xiàn zài</span><span class="char">现在</span></div>
+                <div class="word-group" data-tooltip="Là" onclick="speak(this)"><span class="pinyin">shì</span><span class="char">是</span></div>
+                <div class="word-group" data-tooltip="Một" onclick="speak(this)"><span class="pinyin">yī</span><span class="char">一</span></div>
+                <div class="word-group" data-tooltip="Người/Cái" onclick="speak(this)"><span class="pinyin">gè</span><span class="char">个</span></div>
+                <div class="word-group" data-tooltip="Tiếng Anh" onclick="speak(this)"><span class="pinyin">Yīng yǔ</span><span class="char">英语</span></div>
+                <div class="word-group" data-tooltip="Giáo viên" onclick="speak(this)"><span class="pinyin">lǎo shī</span><span class="char">老师</span></div>
+                <span class="char">，</span>
+                
+                <div class="word-group" data-tooltip="Tôi" onclick="speak(this)"><span class="pinyin">wǒ</span><span class="char">我</span></div>
+                <div class="word-group" data-tooltip="Vô cùng" onclick="speak(this)"><span class="pinyin">fēi cháng</span><span class="char">非常</span></div>
+                <div class="word-group" data-tooltip="Thích" onclick="speak(this)"><span class="pinyin">xǐ huān</span><span class="char">喜欢</span></div>
+                <div class="word-group" data-tooltip="Của tôi" onclick="speak(this)"><span class="pinyin">wǒ de</span><span class="char">我的</span></div>
+                <div class="word-group" data-tooltip="Công việc" onclick="speak(this)"><span class="pinyin">gōng zuò</span><span class="char">工作</span></div>
+                <span class="char">。</span>
+                
+                <div style="width: 100%; height: 10px;"></div>
+                
+                <!-- Câu 3 -->
+                <div class="word-group" data-tooltip="Học sinh" onclick="speak(this)"><span class="pinyin">xué shēng</span><span class="char">学生</span></div>
+                <div class="word-group" data-tooltip="Các" onclick="speak(this)"><span class="pinyin">men</span><span class="char">们</span></div>
+                <div class="word-group" data-tooltip="Rất" onclick="speak(this)"><span class="pinyin">hěn</span><span class="char">很</span></div>
+                <div class="word-group" data-tooltip="Tốt/Ngoan" onclick="speak(this)"><span class="pinyin">hǎo</span><span class="char">好</span></div>
+                <span class="char">，</span>
+                
+                <div class="word-group" data-tooltip="Trường học" onclick="speak(this)"><span class="pinyin">xué xiào</span><span class="char">学校</span></div>
+                <div class="word-group" data-tooltip="Cũng" onclick="speak(this)"><span class="pinyin">yě</span><span class="char">也</span></div>
+                <div class="word-group" data-tooltip="Rất" onclick="speak(this)"><span class="pinyin">hěn</span><span class="char">很</span></div>
+                <div class="word-group" data-tooltip="Tốt" onclick="speak(this)"><span class="pinyin">hǎo</span><span class="char">好</span></div>
+                <span class="char">。</span>
+            </div>
+        </div>
+
+        <!-- Cột Tiếng Việt (Bị làm mờ để ép nghe) -->
+        <div class="column">
+            <div class="blur-notice" id="blurNotice">🎧 Hãy nghe audio thật kỹ trước khi xem bản dịch nhé!</div>
+            <div class="viet-content" id="vietText">
+                <p>Tên của tôi là Lý Đại Vệ (David Lee). Tôi là người Mỹ, nhưng lớn lên ở Nhật Bản, học đại học tại Anh Quốc, và hiện tại đang làm việc ở Trung Quốc.</p>
+                <p>Ở trường đại học, tôi đã học môn Lịch sử và Tiếng Anh. Hiện tại, tôi là một giáo viên tiếng Anh và tôi vô cùng yêu thích công việc của mình.</p>
+                <p>Các học sinh đều rất ngoan, và trường học cũng rất tốt.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Góc Ngữ Pháp & Luyện Tập -->
+    <div class="info-grid">
+        <div class="info-box grammar-box">
+            <h3>💡 Ghi chú Từ vựng & Ngữ pháp</h3>
+            <p>• <b>长大 (zhǎng dà)</b>: Lớn lên, trưởng thành.<br><i>Ví dụ: 在日本长大 (Lớn lên ở Nhật Bản).</i></p>
+            <p>• <b>上大学 (shàng dà xué)</b>: Đi học đại học. Chữ <b>上 (shàng)</b> ở đây có nghĩa là tham gia vào một môi trường học tập/làm việc (như 上班 - đi làm, 上网 - lên mạng).</p>
+            <p>• <b>非常 (fēi cháng)</b>: Vô cùng, hết sức. Cấp độ cao hơn chữ 很 (hěn).</p>
+        </div>
+        
+        <div class="info-box quiz-box">
+            <h3>🎯 Trắc nghiệm Nghe hiểu</h3>
+            <div class="quiz-question">李大卫现在在哪里工作？<br><span style="font-size:14px; color:#64748b; font-weight: 500;">(David Lee hiện tại đang làm việc ở đâu?)</span></div>
+            <div class="quiz-option" onclick="checkAnswer(this, false)">A. 美国 (Nước Mỹ)</div>
+            <div class="quiz-option" onclick="checkAnswer(this, false)">B. 日本 (Nhật Bản)</div>
+            <div class="quiz-option" onclick="checkAnswer(this, true)">C. 中国 (Trung Quốc)</div>
+            <div class="quiz-option" onclick="checkAnswer(this, false)">D. 英国 (Nước Anh)</div>
+            <div id="quiz-feedback"></div>
+        </div>
+    </div>
+</div>
+
+<div class="nav-fixed">
+    <a href="ban-co-biet-ho-khong-nghe.html" class="btn btn-next">Bài tiếp theo ➜</a>
+</div>
+
+<script>
+    // 1. Chức năng Ẩn/Hiện Pinyin (Mặc định ẩn)
+    let isPinyinVisible = false;
+    function togglePinyin() {
+        const pinyins = document.querySelectorAll('.pinyin');
+        const btn = document.getElementById('btnPinyin');
+        
+        isPinyinVisible = !isPinyinVisible;
+        
+        pinyins.forEach(p => {
+            p.style.opacity = isPinyinVisible ? '1' : '0';
+        });
+
+        if(isPinyinVisible) {
+            btn.innerHTML = "👁️ Ẩn Pinyin";
+            btn.classList.remove('off');
+        } else {
+            btn.innerHTML = "🙈 Hiện Pinyin";
+            btn.classList.add('off');
+        }
+    }
+
+    // 2. Chức năng Ẩn/Hiện Bản Dịch (Mặc định làm mờ)
+    let isTranslateVisible = false;
+    function toggleTranslate() {
+        const vietText = document.getElementById('vietText');
+        const blurNotice = document.getElementById('blurNotice');
+        const btn = document.getElementById('btnTranslate');
+        
+        isTranslateVisible = !isTranslateVisible;
+        
+        if(isTranslateVisible) {
+            vietText.classList.add('show');
+            blurNotice.style.display = 'none';
+            btn.innerHTML = "👁️ Ẩn Bản Dịch";
+            btn.classList.remove('off');
+        } else {
+            vietText.classList.remove('show');
+            blurNotice.style.display = 'block';
+            btn.innerHTML = "🙈 Hiện Bản Dịch";
+            btn.classList.add('off');
+        }
+    }
+
+    // 3. Đọc từ khi click vào chữ (Dành cho những từ chưa nghe rõ)
+    const synth = window.speechSynthesis;
+    function speak(element) {
+        synth.cancel();
+        const text = element.querySelector('.char').innerText;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'zh-CN'; 
+        synth.speak(utterance);
+    }
+
+    // 4. Logic chấm điểm Quiz
+    function checkAnswer(element, isCorrect) {
+        const options = document.querySelectorAll('.quiz-option');
+        options.forEach(opt => {
+            opt.classList.remove('correct', 'wrong');
+            opt.style.pointerEvents = 'none';
+        });
+
+        const feedback = document.getElementById('quiz-feedback');
+        feedback.style.display = 'block';
+
+        if (isCorrect) {
+            element.classList.add('correct');
+            feedback.innerHTML = "✅ Chính xác! Anh ấy đang làm việc ở Trung Quốc (现在在中国工作).";
+            feedback.style.color = "#059669";
+        } else {
+            element.classList.add('wrong');
+            feedback.innerHTML = "❌ Sai rồi! Hãy nghe lại đoạn cuối câu đầu tiên nhé.";
+            feedback.style.color = "#e11d48";
+            // Hiện đáp án đúng (C)
+            options[2].classList.add('correct');
+        }
+    }
+</script>
+
+</body>
+</html>
