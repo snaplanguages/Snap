@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề số 1 | SnapChinese</title>
+  <link rel="icon" type="image/png" href="ảnh.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #E53935;
+            --primary-light: #ff6f60;
+            --secondary: #FFC107;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+            --success: #4CAF50;
+            --error: #F44336;
+            --border: #e0e0e0;
+            --shadow: 0 8px 16px rgba(0,0,0,0.08);
+            --radius: 16px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Quicksand', 'Noto Sans SC', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; }
+
+        /* Tiện ích */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .cn-text { font-family: 'Noto Sans SC', sans-serif; font-size: 1.2rem; }
+        .btn {
+            padding: 12px 24px; border: none; border-radius: 30px; font-size: 16px; font-weight: 600;
+            cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.15); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-secondary { background: white; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-warning { background: var(--secondary); color: #333; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+
+        /* Container & Screens */
+        .app-container { max-width: 800px; margin: 0 auto; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; }
+        .screen { flex: 1; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Màn hình Home */
+        .home-wrap { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; }
+        .logo-wrap { font-size: 3rem; color: var(--primary); margin-bottom: 20px; }
+        .home-title { font-size: 2.2rem; margin-bottom: 10px; color: var(--primary); font-weight: 700; }
+        .home-subtitle { color: var(--text-muted); margin-bottom: 40px; font-size: 1.1rem; }
+        .mode-buttons { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .mode-btn { display: flex; flex-direction: column; align-items: center; padding: 30px; background: white; border-radius: var(--radius); width: 160px; cursor: pointer; box-shadow: var(--shadow); transition: 0.3s; border: 2px solid transparent; }
+        .mode-btn i { font-size: 2.5rem; margin-bottom: 15px; color: var(--primary); }
+        .mode-btn:hover { border-color: var(--primary); transform: translateY(-5px); }
+
+        /* Header Quiz */
+        .quiz-header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: var(--radius); margin-bottom: 20px; box-shadow: var(--shadow); }
+        .timer { font-size: 1.2rem; font-weight: bold; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .progress-text { font-weight: 600; color: var(--text-muted); }
+        
+        /* Audio Player */
+        .audio-container { background: white; padding: 15px; border-radius: var(--radius); margin-bottom: 20px; box-shadow: var(--shadow); text-align: center; }
+        audio { width: 100%; height: 40px; outline: none; }
+        .audio-mock-notice { color: var(--error); font-weight: bold; font-size: 0.9rem; }
+
+        /* Thẻ câu hỏi (Card) */
+        .question-card { background: white; border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow); margin-bottom: 20px; }
+        .part-title { text-align: center; font-size: 1.3rem; font-weight: bold; color: var(--primary); margin-bottom: 20px; border-bottom: 2px dashed var(--border); padding-bottom: 10px; }
+        .question-img { max-width: 100%; height: auto; border-radius: 8px; margin: 15px 0; display: block; margin-left: auto; margin-right: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        
+        /* Options */
+        .options-grid { display: grid; gap: 15px; margin-top: 20px; }
+        .options-grid.grid-3 { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); }
+        .option-label { display: flex; align-items: center; padding: 15px; border: 2px solid var(--border); border-radius: 12px; cursor: pointer; transition: 0.2s; font-size: 1.1rem; font-weight: 600; }
+        .option-label:hover { border-color: var(--primary-light); background: #fff8f8; }
+        .option-label input { display: none; }
+        .option-label.selected { border-color: var(--primary); background: #ffebee; color: var(--primary); }
+        
+        /* Navigation Buttons */
+        .quiz-nav { display: flex; justify-content: space-between; align-items: center; }
+        
+        /* Kết quả & Lịch sử */
+        .result-card, .history-card { background: white; border-radius: var(--radius); padding: 40px 20px; text-align: center; box-shadow: var(--shadow); }
+        .score-circle { width: 150px; height: 150px; border-radius: 50%; border: 8px solid var(--primary); display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .score-circle h2 { font-size: 2.5rem; color: var(--primary); line-height: 1; }
+        .score-circle p { color: var(--text-muted); font-size: 0.9rem; margin-top: 5px; }
+        
+        /* Share Badge (ẩn đi, chỉ dùng để chụp ảnh) */
+        #share-badge-wrap { position: absolute; left: -9999px; top: -9999px; }
+        .share-badge { width: 400px; padding: 30px; background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); border-radius: 20px; text-align: center; color: #333; font-family: 'Quicksand', sans-serif; position: relative; overflow: hidden; }
+        .share-badge::before { content: 'HSK 1'; position: absolute; font-size: 120px; opacity: 0.05; font-weight: bold; top: 10px; right: -10px; transform: rotate(-15deg); }
+        .share-header { font-size: 1.5rem; font-weight: bold; color: var(--primary); margin-bottom: 20px; }
+        .share-user { font-size: 1.8rem; font-weight: 700; margin-bottom: 15px; color: #d32f2f; }
+        .share-stats { display: flex; justify-content: space-around; background: rgba(255,255,255,0.7); padding: 15px; border-radius: 15px; margin-bottom: 20px; }
+        .stat-item h4 { font-size: 1.8rem; color: var(--primary); }
+        .share-footer { font-size: 0.8rem; color: #666; }
+
+        /* Giải thích chi tiết */
+        .exp-item { background: white; border-radius: var(--radius); padding: 20px; margin-bottom: 20px; box-shadow: var(--shadow); text-align: left; border-left: 5px solid var(--primary); }
+        .exp-item.correct { border-left-color: var(--success); }
+        .exp-item.wrong { border-left-color: var(--error); }
+        .exp-status { font-weight: bold; margin-bottom: 10px; }
+        .status-c { color: var(--success); }
+        .status-w { color: var(--error); }
+        .exp-content { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 15px; font-size: 1rem; }
+        .exp-content h4 { color: var(--primary); margin-bottom: 5px; font-size: 1.1rem; }
+        .exp-content .cn { font-family: 'Noto Sans SC'; color: #1976D2; font-size: 1.15rem; }
+        .exp-content .vi { color: var(--text-muted); font-style: italic; margin-bottom: 10px; }
+        .exp-content .tip { background: #fff3e0; padding: 10px; border-radius: 6px; border-left: 3px solid #FF9800; margin-top: 10px; }
+
+        /* Lịch sử Table */
+        .history-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .history-table th, .history-table td { padding: 12px; border-bottom: 1px solid var(--border); text-align: left; }
+        .history-table th { background: #f9f9f9; color: var(--text-muted); }
+
+        /* Custom Popup UI (Modal) */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(3px); }
+        .modal-box { background: white; padding: 30px; border-radius: var(--radius); width: 90%; max-width: 400px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.2); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-icon { font-size: 3rem; margin-bottom: 15px; }
+        .modal-icon.warning { color: var(--secondary); }
+        .modal-icon.info { color: #2196F3; }
+        .modal-icon.success { color: var(--success); }
+        .modal-title { font-size: 1.4rem; font-weight: bold; margin-bottom: 10px; }
+        .modal-desc { color: var(--text-muted); margin-bottom: 25px; }
+        .modal-actions { display: flex; gap: 15px; justify-content: center; }
+        .modal-actions button { flex: 1; }
+        .modal-input { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 8px; margin-bottom: 20px; font-size: 1rem; outline: none; transition: 0.3s; }
+        .modal-input:focus { border-color: var(--primary); }
+
+        @media (max-width: 600px) {
+            .quiz-nav { flex-direction: column; gap: 15px; }
+            .quiz-nav button { width: 100%; }
+            .mode-btn { width: 100%; max-width: 250px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <div id="screen-home" class="screen home-wrap">
+        <div class="logo-wrap"><i class="fas fa-yin-yang"></i></div>
+        <h1 class="home-title">Ôn Luyện HSK 1</h1>
+        <p class="home-subtitle">Nền tảng thi thử & luyện tập thông minh</p>
+        
+        <div class="mode-buttons">
+            <div class="mode-btn" onclick="initQuiz('practice')">
+                <i class="fas fa-headphones"></i>
+                <h3>Luyện Tập</h3>
+                <span style="font-size:0.8rem; color:#888; margin-top:5px; text-align:center;">Hiển thị audio, tua lại thoải mái</span>
+            </div>
+            <div class="mode-btn" onclick="initQuiz('exam')">
+                <i class="fas fa-stopwatch"></i>
+                <h3>Thi Thử</h3>
+                <span style="font-size:0.8rem; color:#888; margin-top:5px; text-align:center;">Phát tự động, tính giờ 15 phút</span>
+            </div>
+            <div class="mode-btn" onclick="showHistory()">
+                <i class="fas fa-history"></i>
+                <h3>Lịch Sử</h3>
+                <span style="font-size:0.8rem; color:#888; margin-top:5px; text-align:center;">Xem lại kết quả các lần làm</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-quiz" class="screen hidden">
+        <div class="quiz-header">
+            <div class="progress-text" id="quiz-progress">Câu 1/20</div>
+            <div class="timer hidden" id="quiz-timer"><i class="far fa-clock"></i> <span id="time-display">15:00</span></div>
+        </div>
+
+        <div class="audio-container">
+            <audio id="hsk-audio" src="https://traffic.libsyn.com/secure/learnchinese/H10901.mp3"></audio>
+            <p id="audio-notice" class="audio-mock-notice hidden">Chế độ thi thử: Audio sẽ phát tự động và không thể tua!</p>
+        </div>
+
+        <div id="question-container">
+            </div>
+
+        <div class="quiz-nav">
+            <button class="btn btn-outline" id="btn-prev" onclick="navQuestion(-1)"><i class="fas fa-arrow-left"></i> Câu trước</button>
+            <button class="btn btn-warning" id="btn-submit" onclick="requestSubmit()">Nộp Bài <i class="fas fa-check-circle"></i></button>
+            <button class="btn btn-primary" id="btn-next" onclick="navQuestion(1)">Câu tiếp <i class="fas fa-arrow-right"></i></button>
+        </div>
+    </div>
+
+    <div id="screen-result" class="screen hidden">
+        <div class="result-card">
+            <h2 style="color: var(--primary); margin-bottom: 10px;">Chúc mừng bạn đã hoàn thành! 🎉</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">Sự nỗ lực của bạn hôm nay là thành công của ngày mai.</p>
+            
+            <div class="score-circle">
+                <h2 id="res-score">100</h2>
+                <p>Điểm</p>
+            </div>
+            
+            <div style="font-size: 1.2rem; margin-bottom: 30px;">
+                Số câu đúng: <strong style="color: var(--success);"><span id="res-correct">20</span>/20</strong>
+            </div>
+
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <button class="btn btn-primary" onclick="showSharePrompt()"><i class="fas fa-share-alt"></i> Khoe Kết Quả</button>
+                <button class="btn btn-secondary" onclick="viewExplanations()"><i class="fas fa-book-open"></i> Xem Lời Giải Chi Tiết</button>
+                <button class="btn btn-outline" onclick="goHome()"><i class="fas fa-home"></i> Về Trang Chủ</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-explanation" class="screen hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="color: var(--primary);"><i class="fas fa-chalkboard-teacher"></i> Lời Giải Từ Chuyên Gia</h2>
+            <button class="btn btn-outline" onclick="goHome()"><i class="fas fa-home"></i></button>
+        </div>
+        <div id="explanation-container">
+            </div>
+        <div class="text-center" style="margin-top: 20px;">
+            <button class="btn btn-primary" onclick="window.scrollTo(0,0)"><i class="fas fa-arrow-up"></i> Lên Đầu Trang</button>
+        </div>
+    </div>
+
+    <div id="screen-history" class="screen hidden">
+        <div class="history-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: var(--primary);"><i class="fas fa-history"></i> Lịch Sử Làm Bài</h2>
+                <button class="btn btn-outline" onclick="goHome()"><i class="fas fa-home"></i></button>
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Thời gian</th>
+                            <th>Chế độ</th>
+                            <th>Số câu đúng</th>
+                            <th>Điểm</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history-body">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="modal-confirm" class="modal-overlay hidden">
+    <div class="modal-box">
+        <div class="modal-icon warning"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="modal-title" id="mc-title">Xác nhận</div>
+        <div class="modal-desc" id="mc-desc">Bạn có chắc chắn muốn thực hiện?</div>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeModal('modal-confirm')">Hủy</button>
+            <button class="btn btn-primary" id="mc-btn-ok">Đồng ý</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-alert" class="modal-overlay hidden">
+    <div class="modal-box">
+        <div class="modal-icon info" id="ma-icon"><i class="fas fa-info-circle"></i></div>
+        <div class="modal-title" id="ma-title">Thông báo</div>
+        <div class="modal-desc" id="ma-desc">Nội dung thông báo</div>
+        <div class="modal-actions">
+            <button class="btn btn-primary" onclick="closeModal('modal-alert')">Đã hiểu</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-prompt" class="modal-overlay hidden">
+    <div class="modal-box">
+        <div class="modal-icon success"><i class="fas fa-medal"></i></div>
+        <div class="modal-title">Lưu Tên Chia Sẻ</div>
+        <div class="modal-desc">Nhập tên của bạn để hệ thống tạo thẻ vinh danh cực đẹp nhé!</div>
+        <input type="text" id="mp-input" class="modal-input" placeholder="Ví dụ: Nguyễn Văn A">
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeModal('modal-prompt')">Hủy</button>
+            <button class="btn btn-primary" onclick="processShare()">Tạo Ảnh</button>
+        </div>
+    </div>
+</div>
+
+<div id="share-badge-wrap">
+    <div class="share-badge" id="share-badge">
+        <div class="share-header">🎉 CHỨNG NHẬN HSK 1 🎉</div>
+        <div class="share-user" id="sb-name">Tên Học Viên</div>
+        <div class="share-stats">
+            <div class="stat-item">
+                <p>Số điểm</p>
+                <h4 id="sb-score">100</h4>
+            </div>
+            <div class="stat-item">
+                <p>Câu đúng</p>
+                <h4 id="sb-correct">20/20</h4>
+            </div>
+        </div>
+        <div class="share-footer" id="sb-time"></div>
+        <div style="margin-top: 10px; font-weight: bold; color: var(--primary);">Nền tảng Ôn luyện HSK Master</div>
+    </div>
+</div>
+
+<script>
+    /* =========================================================
+       DỮ LIỆU CÂU HỎI (Mô phỏng 20 câu chuẩn HSK1 từ ảnh của bạn)
+       Kèm theo Lời giải chuyên gia siêu chi tiết.
+       ========================================================= */
+    const quizData = [
+        // PHẦN 1: Tích Đúng/Sai (1-5)
+        {
+            id: 1, part: "第 一 部 分 (Phần 1: Nghe và phán đoán Đúng/Sai)",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_1.png",
+            options: [{v: "true", t: "TRUE (Đúng)"}, {v: "false", t: "FALSE (Sai)"}],
+            answer: "true",
+            explanation: {
+                cn: "男: 这是一本书。 (Zhè shì yī běn shū.)",
+                vi: "Nam: Đây là một cuốn sách.",
+                tip: "Gia sư lưu ý: Trong hình là một cuốn sách. Từ khóa cần nghe là 书 (shū: sách). Hình khớp với audio nên đáp án là ĐÚNG. Lượng từ 本 (běn) chuyên dùng cho sách vở, nhớ kỹ nhé!"
+            }
+        },
+        {
+            id: 2, part: "第 一 部 分",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_2.png",
+            options: [{v: "true", t: "TRUE"}, {v: "false", t: "FALSE"}],
+            answer: "false",
+            explanation: {
+                cn: "女: 他在睡觉。 (Tā zài shuìjiào.)",
+                vi: "Nữ: Anh ấy đang ngủ.",
+                tip: "Bẫy từ vựng! Trong hình người đàn ông đang ăn cơm (吃饭 - chī fàn), nhưng audio lại đọc là 睡觉 (shuìjiào - ngủ). Do đó phương án này SAI."
+            }
+        },
+        {
+            id: 3, part: "第 一 部 分",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_3.png",
+            options: [{v: "true", t: "TRUE"}, {v: "false", t: "FALSE"}],
+            answer: "false",
+            explanation: {
+                cn: "男: 两个杯子。 (Liǎng gè bēizi.)",
+                vi: "Nam: Hai cái cốc.",
+                tip: "Nhìn hình chúng ta thấy có 3 cái cốc (三个 - sān gè), nhưng audio lại đọc là 两个 (liǎng gè - 2 cái). HSK1 rất hay bẫy về con số, hãy nghe thật kỹ số đếm!"
+            }
+        },
+        {
+            id: 4, part: "第 一 部 分",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_4.png",
+            options: [{v: "true", t: "TRUE"}, {v: "false", t: "FALSE"}],
+            answer: "true",
+            explanation: {
+                cn: "女: 医生。 (Yīshēng.)",
+                vi: "Nữ: Bác sĩ.",
+                tip: "Hình ảnh rõ ràng là một nữ bác sĩ đeo tai nghe y tế. Từ khóa 医生 (yīshēng - bác sĩ) hoàn toàn khớp. Chú ý phân biệt với 护士 (hùshi - y tá)."
+            }
+        },
+        {
+            id: 5, part: "第 一 部 分",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_5.png",
+            options: [{v: "true", t: "TRUE"}, {v: "false", t: "FALSE"}],
+            answer: "true",
+            explanation: {
+                cn: "男: 下雨了。 (Xià yǔ le.)",
+                vi: "Nam: Trời mưa rồi.",
+                tip: "Hình cô gái che ô dưới trời mưa. Từ khóa 下雨 (xià yǔ - trời mưa). Trợ từ 了 (le) biểu thị sự thay đổi trạng thái (trời đã bắt đầu mưa)."
+            }
+        },
+        // PHẦN 2: Nghe và Chọn ABC (6-10)
+        {
+            id: 6, part: "第 二 部 分 (Phần 2: Nghe chọn tranh A, B, C)",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_6.png",
+            options: [{v: "A", t: "A"}, {v: "B", t: "B"}, {v: "C", t: "C"}],
+            answer: "B",
+            explanation: {
+                cn: "女: 对不起。男: 没关系。 (Duìbùqǐ. - Méiguānxi.)",
+                vi: "Nữ: Xin lỗi. Nam: Không có gì.",
+                tip: "Gia sư lưu ý: Hình B vẽ cảnh một người lỡ làm đổ nước và xin lỗi, người kia xua tay. Cặp từ đối đáp kinh điển HSK1: 对不起 - 没关系."
+            }
+        },
+        {
+            id: 7, part: "第 二 部 分",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_7-1.jpg",
+            options: [{v: "A", t: "A"}, {v: "B", t: "B"}, {v: "C", t: "C"}],
+            answer: "A",
+            explanation: {
+                cn: "男: 这是我的猫。 (Zhè shì wǒ de māo.)",
+                vi: "Nam: Đây là con mèo của tôi.",
+                tip: "Từ khóa 猫 (māo - con mèo). Hình A là con mèo, B là con chó (狗), C là con chim (鸟). Nhớ hình âm của bộ 'Khuyển' (犭) thường liên quan đến động vật nhé."
+            }
+        },
+        {
+            id: 8, part: "第 二 部 分",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_8.jpg",
+            options: [{v: "A", t: "A"}, {v: "B", t: "B"}, {v: "C", t: "C"}],
+            answer: "C",
+            explanation: {
+                cn: "女: 他在打电话。 (Tā zài dǎ diànhuà.)",
+                vi: "Nữ: Anh ấy đang gọi điện thoại.",
+                tip: "Cấu trúc 在 + Động từ (đang làm gì). 打电话 (gọi điện thoại) khớp với hình C."
+            }
+        },
+        {
+            id: 9, part: "第 二 部 分",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_9.jpg",
+            options: [{v: "A", t: "A"}, {v: "B", t: "B"}, {v: "C", t: "C"}],
+            answer: "B",
+            explanation: {
+                cn: "男: 我喜欢吃苹果。 (Wǒ xǐhuān chī píngguǒ.)",
+                vi: "Nam: Tôi thích ăn táo.",
+                tip: "Từ khóa 苹果 (píngguǒ - táo). Hình B là quả táo."
+            }
+        },
+        {
+            id: 10, part: "第 二 部 分",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_10.jpg",
+            options: [{v: "A", t: "A"}, {v: "B", t: "B"}, {v: "C", t: "C"}],
+            answer: "A",
+            explanation: {
+                cn: "女: 我们坐出租车去吧。 (Wǒmen zuò chūzūchē qù ba.)",
+                vi: "Nữ: Chúng ta đi taxi đi.",
+                tip: "Từ khóa 出租车 (chūzūchē - xe taxi). Hình A là xe taxi. Động từ 坐 (zuò - ngồi) dùng cho các phương tiện giao thông (trừ xe đạp/ngựa dùng 骑)."
+            }
+        },
+        // PHẦN 3: Nối âm thanh với hình A-F (11-15) - Giả lập
+        {
+            id: 11, part: "第 三 部 分 (Phần 3: Nghe đoạn hội thoại và nối với tranh A-F)",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_part3.jpg",
+            options: [{v:"A",t:"A"},{v:"B",t:"B"},{v:"D",t:"D"},{v:"E",t:"E"},{v:"F",t:"F"}], // C là ví dụ
+            answer: "E",
+            explanation: {
+                cn: "男: 你看见我的狗了吗？女: 在桌子下面。 (Nǐ kànjiàn wǒ de gǒu le ma? - Zài zhuōzi xiàmiàn.)",
+                vi: "Nam: Bạn có thấy con chó của tôi không? Nữ: Ở dưới cái bàn.",
+                tip: "Hình E vẽ con chó dưới gầm bàn. Ôn tập từ chỉ phương hướng 下面 (xiàmiàn - bên dưới)."
+            }
+        },
+        {
+            id: 12, part: "第 三 部 分",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_part3.jpg",
+            options: [{v:"A",t:"A"},{v:"B",t:"B"},{v:"D",t:"D"},{v:"E",t:"E"},{v:"F",t:"F"}],
+            answer: "A",
+            explanation: {
+                cn: "女: 几点了？男: 三点十分。 (Jǐ diǎn le? - Sān diǎn shí fēn.)",
+                vi: "Nữ: Mấy giờ rồi? Nam: 3 giờ 10 phút.",
+                tip: "Hình A là cái đồng hồ chỉ 3:10. Chú ý cấu trúc hỏi giờ 几点了？"
+            }
+        },
+        {
+            id: 13, part: "第 三 部 分",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_part3.jpg",
+            options: [{v:"A",t:"A"},{v:"B",t:"B"},{v:"D",t:"D"},{v:"E",t:"E"},{v:"F",t:"F"}],
+            answer: "F",
+            explanation: {
+                cn: "男: 今天天气怎么样？女: 很冷，下雪了。 (Jīntiān tiānqì zěnmeyàng? - Hěn lěng, xià xuě le.)",
+                vi: "Nam: Thời tiết hôm nay thế nào? Nữ: Rất lạnh, tuyết rơi rồi.",
+                tip: "Hình F có cảnh người tuyết/mặc áo ấm. Từ vựng 冷 (lěng - lạnh) đối nghĩa với 热 (rè - nóng)."
+            }
+        },
+        {
+            id: 14, part: "第 三 部 分",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_part3.jpg",
+            options: [{v:"A",t:"A"},{v:"B",t:"B"},{v:"D",t:"D"},{v:"E",t:"E"},{v:"F",t:"F"}],
+            answer: "B",
+            explanation: {
+                cn: "女: 你会做饭吗？男: 我会。 (Nǐ huì zuò fàn ma? - Wǒ huì.)",
+                vi: "Nữ: Bạn biết nấu ăn không? Nam: Tôi biết.",
+                tip: "Hình B là người đang nấu ăn. Trợ động từ 会 (huì) chỉ kỹ năng học được qua rèn luyện."
+            }
+        },
+        {
+            id: 15, part: "第 三 部 分",
+            img: "https://mandarinbean.com/wp-content/uploads/2020/12/H1_part3.jpg",
+            options: [{v:"A",t:"A"},{v:"B",t:"B"},{v:"D",t:"D"},{v:"E",t:"E"},{v:"F",t:"F"}],
+            answer: "D",
+            explanation: {
+                cn: "男: 这是谁的衣服？女: 是我女儿的。 (Zhè shì shéi de yīfu? - Shì wǒ nǚ'ér de.)",
+                vi: "Nam: Đây là quần áo của ai? Nữ: Là của con gái tôi.",
+                tip: "Hình D vẽ quần áo trẻ em. Từ khóa 衣服 (yīfu - quần áo)."
+            }
+        },
+        // PHẦN 4: Trắc nghiệm theo đoạn thoại (16-20)
+        {
+            id: 16, part: "第 四 部 分 (Phần 4: Nghe hiểu trả lời câu hỏi)",
+            img: "",
+            options: [{v:"A",t:"A. 他的(tā de)"}, {v:"B",t:"B. 我的(wǒ de)"}, {v:"C",t:"C. 同学的(tóngxué de)"}],
+            answer: "C",
+            explanation: {
+                cn: "男: 这本书是你的吗？女: 不是我的，是同学的。<br>问: 书是谁的？",
+                vi: "Nam: Cuốn sách này là của bạn à? Nữ: Không phải của tôi, là của bạn học.<br>Hỏi: Sách của ai?",
+                tip: "Gia sư nhắc nhở: Bẫy phủ định! Người nữ nói '不是我的' (không phải của tôi). Đáp án nằm ở vế sau '同学的'."
+            }
+        },
+        {
+            id: 17, part: "第 四 部 分",
+            img: "",
+            options: [{v:"A",t:"A. 星期三(xīngqīsān)"}, {v:"B",t:"B. 星期五(xīngqīwǔ)"}, {v:"C",t:"C. 星期六(xīngqīliù)"}],
+            answer: "B",
+            explanation: {
+                cn: "女: 昨天星期四。男: 那明天是星期六了。<br>问: 今天星期几？",
+                vi: "Nữ: Hôm qua thứ Năm. Nam: Vậy ngày mai là thứ Bảy rồi.<br>Hỏi: Hôm nay thứ mấy?",
+                tip: "Dạng bài suy luận thời gian cực kỳ phổ biến. Hôm qua thứ 4, ngày mai thứ 6 -> Hôm nay là thứ 5 (星期五). Nhớ 星期 + số đếm (trừ Chủ nhật là 星期天/日)."
+            }
+        },
+        {
+            id: 18, part: "第 四 部 分",
+            img: "",
+            options: [{v:"A",t:"A. 5"}, {v:"B",t:"B. 15"}, {v:"C",t:"C. 50"}],
+            answer: "C",
+            explanation: {
+                cn: "男: 这个杯子多少钱？女: 五十块。<br>问: 杯子多少钱？",
+                vi: "Nam: Cái cốc này bao nhiêu tiền? Nữ: 50 tệ.<br>Hỏi: Cái cốc bao nhiêu tiền?",
+                tip: "Phân biệt phát âm: 15 (shí wǔ) và 50 (wǔ shí). Chú ý trọng âm rơi vào âm nào. Ở đây là 五十 (50)."
+            }
+        },
+        {
+            id: 19, part: "第 四 部 分",
+            img: "",
+            options: [{v:"A",t:"A. 茶(chá)"}, {v:"B",t:"B. 苹果(píngguǒ)"}, {v:"C",t:"C. 杯子(bēizi)"}],
+            answer: "A",
+            explanation: {
+                cn: "女: 你想喝什么？男: 我想喝茶。<br>问: 男的想喝什么？",
+                vi: "Nữ: Bạn muốn uống gì? Nam: Tôi muốn uống trà.<br>Hỏi: Người nam muốn uống gì?",
+                tip: "Từ khóa động từ 喝 (hē - uống). Táo và cốc không uống được, đáp án chắc chắn là 茶 (trà)."
+            }
+        },
+        {
+            id: 20, part: "第 四 部 分",
+            img: "",
+            options: [{v:"A",t:"A. 爱学习(ài xuéxí)"}, {v:"B",t:"B. 很漂亮(hěn piàoliang)"}, {v:"C",t:"C. 想回家(xiǎng huí jiā)"}],
+            answer: "B",
+            explanation: {
+                cn: "男: 你觉得她怎么样？女: 她很漂亮。<br>问: 女的觉得她怎么样？",
+                vi: "Nam: Bạn cảm thấy cô ấy thế nào? Nữ: Cô ấy rất xinh đẹp.<br>Hỏi: Người nữ cảm thấy cô ấy thế nào?",
+                tip: "Cấu trúc 觉得...怎么样？ dùng để hỏi ý kiến. Đáp lại là cụm tính từ 很漂亮 (rất xinh đẹp)."
+            }
+        }
+    ];
+
+    /* =========================================================
+       STATE & BIẾN TOÀN CỤC
+       ========================================================= */
+    let currentMode = 'practice'; // 'practice' hoặc 'exam'
+    let currentQuestion = 0;
+    let userAnswers = new Array(quizData.length).fill(null);
+    let examTimer = null;
+    let timeRemaining = 15 * 60; // 15 phút
+
+    /* =========================================================
+       HỆ THỐNG CUSTOM MODAL
+       ========================================================= */
+    function showCustomConfirm(title, desc, onConfirm) {
+        document.getElementById('mc-title').innerText = title;
+        document.getElementById('mc-desc').innerText = desc;
+        document.getElementById('modal-confirm').classList.remove('hidden');
+        
+        let btnOk = document.getElementById('mc-btn-ok');
+        // Clear old event listeners
+        let newBtnOk = btnOk.cloneNode(true);
+        btnOk.parentNode.replaceChild(newBtnOk, btnOk);
+        
+        newBtnOk.addEventListener('click', () => {
+            closeModal('modal-confirm');
+            onConfirm();
+        });
+    }
+
+    function showCustomAlert(title, desc, type="info") {
+        document.getElementById('ma-title').innerText = title;
+        document.getElementById('ma-desc').innerText = desc;
+        let icon = document.getElementById('ma-icon');
+        icon.className = "modal-icon " + type;
+        if(type==='success') icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+        else if(type==='warning') icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+        else icon.innerHTML = '<i class="fas fa-info-circle"></i>';
+        
+        document.getElementById('modal-alert').classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.add('hidden');
+    }
+
+    /* =========================================================
+       LOGIC BÀI THI
+       ========================================================= */
+    function initQuiz(mode) {
+        let title = mode === 'exam' ? "Bắt đầu Thi Thử?" : "Bắt đầu Luyện Tập?";
+        let desc = mode === 'exam' 
+            ? "Lưu ý: Bạn có 15 phút. Audio sẽ ẩn thanh điều khiển, không thể tua. Hết giờ sẽ tự động nộp bài." 
+            : "Chế độ luyện tập không giới hạn thời gian. Bạn có thể nghe lại audio nhiều lần.";
+        
+        showCustomConfirm(title, desc, () => {
+            currentMode = mode;
+            startQuiz();
+        });
+    }
+
+    function startQuiz() {
+        // Reset state
+        currentQuestion = 0;
+        userAnswers = new Array(quizData.length).fill(null);
+        clearInterval(examTimer);
+
+        // Switch screens
+        document.getElementById('screen-home').classList.add('hidden');
+        document.getElementById('screen-quiz').classList.remove('hidden');
+        window.scrollTo(0, 0);
+
+        // Setup Audio
+        let audio = document.getElementById('hsk-audio');
+        let audioNotice = document.getElementById('audio-notice');
+        audio.currentTime = 0;
+
+        if (currentMode === 'exam') {
+            document.getElementById('quiz-timer').classList.remove('hidden');
+            audio.removeAttribute('controls');
+            audioNotice.classList.remove('hidden');
+
+            // Hiển thị trạng thái đang tải nếu mạng chậm
+            document.getElementById('time-display').innerText = "Đang tải audio...";
+
+            // Kiểm tra xem audio đã tải xong metadata chưa
+            if (audio.readyState >= 1) {
+                // Đã có dữ liệu thời gian (thường do file đã lưu trong cache)
+                setupAudioTimer(audio.duration);
+                playAudioExam(audio);
+            } else {
+                // Đợi trình duyệt tải xong thông tin file audio
+                audio.onloadedmetadata = function() {
+                    setupAudioTimer(audio.duration);
+                    playAudioExam(audio);
+                };
+            }
+
+            // Bắt sự kiện khi audio chạy đến giây cuối cùng
+            audio.onended = function() {
+                if(currentMode === 'exam') {
+                    clearInterval(examTimer);
+                    showCustomAlert("Kết thúc", "File nghe đã kết thúc. Hệ thống tự động nộp bài!", "warning");
+                    submitQuiz();
+                }
+            };
+
+        } else {
+            // Chế độ luyện tập
+            document.getElementById('quiz-timer').classList.add('hidden');
+            audio.setAttribute('controls', 'controls');
+            audioNotice.classList.add('hidden');
+            
+            // Xóa các sự kiện tự động nộp bài để học viên nghe lại thoải mái
+            audio.onloadedmetadata = null;
+            audio.onended = null;
+        }
+
+        renderQuestion(currentQuestion);
+    }
+
+    // --- 2 HÀM PHỤ TRỢ THÊM VÀO ĐỂ CODE GỌN HƠN ---
+
+    function setupAudioTimer(durationSeconds) {
+        // Làm tròn số giây của file audio (ví dụ 14 phút 30 giây -> 870 giây)
+        timeRemaining = Math.floor(durationSeconds);
+        startTimer(); // Gọi hàm chạy đồng hồ đếm ngược có sẵn
+    }
+
+    function playAudioExam(audio) {
+        // Tự động phát, thêm catch để bắt lỗi nếu trình duyệt khắt khe chặn Auto-play
+        audio.play().catch(e => {
+            showCustomAlert("Chú ý", "Trình duyệt đang chặn phát âm thanh tự động. Vui lòng bấm 'Đã hiểu' và click vào màn hình để bắt đầu tính giờ.", "warning");
+        });
+    }
+        renderQuestion(currentQuestion);
+    }
+
+    function renderQuestion(index) {
+        let q = quizData[index];
+        let container = document.getElementById('question-container');
+        document.getElementById('quiz-progress').innerText = `Câu ${index + 1}/${quizData.length}`;
+
+        let imgHtml = q.img ? `<img src="${q.img}" class="question-img" alt="Question Image">` : '';
+        
+        // Render Options
+        let gridClass = q.options.length === 2 ? 'grid-2' : 'grid-3';
+        let optionsHtml = `<div class="options-grid ${gridClass}">`;
+        
+        q.options.forEach((opt) => {
+            let selectedClass = userAnswers[index] === opt.v ? 'selected' : '';
+            optionsHtml += `
+                <label class="option-label ${selectedClass}" onclick="selectOption(${index}, '${opt.v}', this)">
+                    <input type="radio" name="q${index}" value="${opt.v}" ${userAnswers[index] === opt.v ? 'checked' : ''}>
+                    ${opt.t}
+                </label>
+            `;
+        });
+        optionsHtml += `</div>`;
+
+        container.innerHTML = `
+            <div class="question-card">
+                <div class="part-title">${q.part}</div>
+                <h3 class="text-center" style="margin-bottom:10px;">Câu ${index + 1}</h3>
+                ${imgHtml}
+                ${optionsHtml}
+            </div>
+        `;
+
+        // Nút điều hướng
+        document.getElementById('btn-prev').style.visibility = index === 0 ? 'hidden' : 'visible';
+        
+        let btnNext = document.getElementById('btn-next');
+        let btnSubmit = document.getElementById('btn-submit');
+        if (index === quizData.length - 1) {
+            btnNext.classList.add('hidden');
+            btnSubmit.classList.remove('hidden');
+        } else {
+            btnNext.classList.remove('hidden');
+            btnSubmit.classList.add('hidden');
+        }
+    }
+
+    function selectOption(qIndex, value, labelElement) {
+        userAnswers[qIndex] = value;
+        // Bỏ class selected ở các label khác
+        let labels = labelElement.parentElement.querySelectorAll('.option-label');
+        labels.forEach(l => l.classList.remove('selected'));
+        // Thêm class vào label được click
+        labelElement.classList.add('selected');
+    }
+
+    function navQuestion(dir) {
+        let nextIndex = currentQuestion + dir;
+        if (nextIndex >= 0 && nextIndex < quizData.length) {
+            currentQuestion = nextIndex;
+            renderQuestion(currentQuestion);
+        }
+    }
+
+    function requestSubmit() {
+        let unanswered = userAnswers.filter(a => a === null).length;
+        let warningText = unanswered > 0 ? ` Bạn còn ${unanswered} câu chưa làm.` : "";
+        showCustomConfirm("Xác nhận nộp bài", "Bạn có chắc chắn muốn nộp bài ngay lúc này?" + warningText, submitQuiz);
+    }
+
+    function submitQuiz() {
+        clearInterval(examTimer);
+        document.getElementById('hsk-audio').pause();
+        
+        let correctCount = 0;
+        quizData.forEach((q, i) => {
+            if(userAnswers[i] === q.answer) correctCount++;
+        });
+
+        let score = (correctCount / quizData.length) * 100; // Điểm hệ 100
+
+        // Lưu vào History
+        saveToHistory(currentMode, correctCount, score);
+
+        // Hiển thị kết quả
+        document.getElementById('screen-quiz').classList.add('hidden');
+        document.getElementById('screen-result').classList.remove('hidden');
+        
+        document.getElementById('res-score').innerText = score;
+        document.getElementById('res-correct').innerText = correctCount;
+
+        buildExplanations();
+        window.scrollTo(0,0);
+    }
+
+    function startTimer() {
+        let display = document.getElementById('time-display');
+        examTimer = setInterval(() => {
+            timeRemaining--;
+            let m = Math.floor(timeRemaining / 60);
+            let s = timeRemaining % 60;
+            display.innerText = `${m < 10 ? '0':''}${m}:${s < 10 ? '0':''}${s}`;
+            
+            if (timeRemaining <= 0) {
+                clearInterval(examTimer);
+                showCustomAlert("Hết giờ", "Thời gian làm bài đã kết thúc. Hệ thống sẽ tự động nộp bài.", "warning");
+                submitQuiz();
+            }
+        }, 1000);
+    }
+
+    /* =========================================================
+       CHỨC NĂNG CHIA SẺ (html2canvas)
+       ========================================================= */
+    function showSharePrompt() {
+        document.getElementById('mp-input').value = ""; // Xóa text cũ
+        document.getElementById('modal-prompt').classList.remove('hidden');
+    }
+
+    function processShare() {
+        let name = document.getElementById('mp-input').value.trim();
+        if(!name) {
+            showCustomAlert("Lỗi", "Vui lòng nhập tên của bạn để tạo ảnh nhé!", "warning");
+            return;
+        }
+        closeModal('modal-prompt');
+        
+        // Cập nhật thẻ ẩn
+        document.getElementById('sb-name').innerText = name;
+        document.getElementById('sb-score').innerText = document.getElementById('res-score').innerText + " Điểm";
+        document.getElementById('sb-correct').innerText = document.getElementById('res-correct').innerText + " Câu";
+        
+        let now = new Date();
+        document.getElementById('sb-time').innerText = `Ngày thi: ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${now.getHours()}:${now.getMinutes()}`;
+
+        // Chụp ảnh thẻ
+        let shareCard = document.getElementById('share-badge');
+        shareCard.style.position = 'relative'; // Tạm thời để render
+        shareCard.parentElement.style.left = '0';
+        shareCard.parentElement.style.top = '0';
+        shareCard.parentElement.style.zIndex = '-1';
+
+        html2canvas(shareCard, { backgroundColor: null, scale: 2 }).then(canvas => {
+            // Trả lại trạng thái ẩn
+            shareCard.parentElement.style.left = '-9999px';
+            shareCard.parentElement.style.top = '-9999px';
+
+            canvas.toBlob(function(blob) { 
+                try {
+                    // Cố gắng copy vào clipboard (Chỉ hoạt động trên HTTPS và trình duyệt hỗ trợ)
+                    const item = new ClipboardItem({ "image/png": blob });
+                    navigator.clipboard.write([item]).then(() => {
+                        showCustomAlert("Thành công! 🎉", "Ảnh kết quả siêu đẹp đã được Tự Động Copy vào bộ nhớ tạm. Bạn có thể Paste (Ctrl+V) gửi cho bạn bè hoặc lên Facebook ngay!", "success");
+                    }).catch(err => fallbackDownload(canvas));
+                } catch(e) {
+                    fallbackDownload(canvas); // Nếu thiết bị ko hỗ trợ Clipboard API
+                }
+            });
+        });
+    }
+
+    function fallbackDownload(canvas) {
+        let link = document.createElement('a');
+        link.download = 'HSK1_Result.png';
+        link.href = canvas.toDataURL();
+        link.click();
+        showCustomAlert("Thành công! 🎉", "Ảnh kết quả đã được tải xuống máy của bạn do trình duyệt không hỗ trợ Copy trực tiếp.", "success");
+    }
+
+    /* =========================================================
+       GIẢI THÍCH CHI TIẾT (Dưới góc độ Chuyên gia)
+       ========================================================= */
+    function buildExplanations() {
+        let container = document.getElementById('explanation-container');
+        let html = '';
+
+        quizData.forEach((q, i) => {
+            let uAns = userAnswers[i];
+            let isCorrect = uAns === q.answer;
+            let statusText = isCorrect ? '<i class="fas fa-check-circle"></i> Chính xác' : '<i class="fas fa-times-circle"></i> Sai';
+            let statusClass = isCorrect ? 'status-c' : 'status-w';
+            
+            // Format hiển thị đáp án
+            let userAnsText = q.options.find(o => o.v === uAns)?.t || "Chưa làm";
+            let correctAnsText = q.options.find(o => o.v === q.answer).t;
+
+            html += `
+                <div class="exp-item ${isCorrect ? 'correct' : 'wrong'}">
+                    <div class="exp-status ${statusClass}">Câu ${i+1}: ${statusText}</div>
+                    <div style="font-size: 0.95rem;">
+                        <div><strong>Đáp án của bạn:</strong> ${userAnsText}</div>
+                        <div><strong>Đáp án đúng:</strong> <span style="color:var(--success)">${correctAnsText}</span></div>
+                    </div>
+                    <div class="exp-content">
+                        <h4><i class="fas fa-lightbulb"></i> Phân tích từ Gia sư:</h4>
+                        <div class="cn">${q.explanation.cn}</div>
+                        <div class="vi">${q.explanation.vi}</div>
+                        <div class="tip"><strong>💡 Mẹo HSK 1:</strong> ${q.explanation.tip}</div>
+                    </div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+
+    function viewExplanations() {
+        document.getElementById('screen-result').classList.add('hidden');
+        document.getElementById('screen-explanation').classList.remove('hidden');
+        window.scrollTo(0,0);
+    }
+
+    /* =========================================================
+       LỊCH SỬ LOCAL STORAGE
+       ========================================================= */
+    function saveToHistory(mode, correct, score) {
+        let history = JSON.parse(localStorage.getItem('hsk1_history')) || [];
+        let now = new Date();
+        let dateStr = `${now.getHours()}:${now.getMinutes()} - ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
+        
+        history.unshift({
+            date: dateStr,
+            mode: mode === 'exam' ? 'Thi Thử' : 'Luyện Tập',
+            correct: `${correct}/${quizData.length}`,
+            score: score
+        });
+
+        // Giữ tối đa 10 lần gần nhất
+        if(history.length > 10) history.pop();
+        localStorage.setItem('hsk1_history', JSON.stringify(history));
+    }
+
+    function showHistory() {
+        let history = JSON.parse(localStorage.getItem('hsk1_history')) || [];
+        let tbody = document.getElementById('history-body');
+        
+        if (history.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center">Chưa có dữ liệu. Hãy làm bài để lưu lại nhé!</td></tr>';
+        } else {
+            let html = '';
+            history.forEach(item => {
+                let colorScore = item.score >= 60 ? 'var(--success)' : 'var(--error)'; // Đậu HSK1 là 60%
+                html += `
+                    <tr>
+                        <td>${item.date}</td>
+                        <td><strong>${item.mode}</strong></td>
+                        <td>${item.correct}</td>
+                        <td style="color:${colorScore}; font-weight:bold;">${item.score}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+
+        document.getElementById('screen-home').classList.add('hidden');
+        document.getElementById('screen-history').classList.remove('hidden');
+    }
+
+    /* =========================================================
+       ĐIỀU HƯỚNG CHUNG
+       ========================================================= */
+    function goHome() {
+        document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
+        document.getElementById('screen-home').classList.remove('hidden');
+        document.getElementById('hsk-audio').pause();
+        window.scrollTo(0,0);
+    }
+</script>
+</body>
+</html>
