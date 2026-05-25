@@ -211,7 +211,7 @@
 
     <div id="screen-explanation" class="screen hidden">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="color: var(--primary);"><i class="fas fa-chalkboard-teacher"></i> Lời Giải Từ Chuyên Gia</h2>
+            <h2 style="color: var(--primary);"><i class="fas fa-chalkboard-teacher"></i> Lời Giải Từ SnapChinese</h2>
             <button class="btn btn-outline" onclick="goHome()"><i class="fas fa-home"></i></button>
         </div>
         <div id="explanation-container">
@@ -225,7 +225,10 @@
         <div class="history-card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2 style="color: var(--primary);"><i class="fas fa-history"></i> Lịch Sử Làm Bài</h2>
-                <button class="btn btn-outline" onclick="goHome()"><i class="fas fa-home"></i></button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn" style="background: var(--error); color: white;" onclick="promptClearHistory()"><i class="fas fa-trash"></i> Xóa Lịch Sử</button>
+                    <button class="btn btn-outline" onclick="goHome()"><i class="fas fa-home"></i></button>
+                </div>
             </div>
             <div style="overflow-x: auto;">
                 <table class="history-table">
@@ -235,6 +238,7 @@
                             <th>Chế độ</th>
                             <th>Số câu đúng</th>
                             <th>Điểm</th>
+                            <th>Thao tác</th>
                         </tr>
                     </thead>
                     <tbody id="history-body">
@@ -297,15 +301,12 @@
             </div>
         </div>
         <div class="share-footer" id="sb-time"></div>
-        <div style="margin-top: 10px; font-weight: bold; color: var(--primary);">Nền tảng Ôn luyện HSK Master</div>
+        <div style="margin-top: 10px; font-weight: bold; color: var(--primary);">SnapChinese</div>
     </div>
 </div>
 
 <script>
-    /* =========================================================
-       DỮ LIỆU CÂU HỎI (Mô phỏng 20 câu chuẩn HSK1 từ ảnh của bạn)
-       Kèm theo Lời giải chuyên gia siêu chi tiết.
-       ========================================================= */
+    
     const quizData = [
         // PHẦN 1: Tích Đúng/Sai (1-5)
         {
@@ -316,7 +317,7 @@
             explanation: {
                 cn: "男: 这是一本书。 (Zhè shì yī běn shū.)",
                 vi: "Nam: Đây là một cuốn sách.",
-                tip: "Gia sư lưu ý: Trong hình là một cuốn sách. Từ khóa cần nghe là 书 (shū: sách). Hình khớp với audio nên đáp án là ĐÚNG. Lượng từ 本 (běn) chuyên dùng cho sách vở, nhớ kỹ nhé!"
+                tip: "Lưu ý: Trong hình là một cuốn sách. Từ khóa cần nghe là 书 (shū: sách). Hình khớp với audio nên đáp án là ĐÚNG. Lượng từ 本 (běn) chuyên dùng cho sách vở, nhớ kỹ nhé!"
             }
         },
         {
@@ -372,7 +373,7 @@
             explanation: {
                 cn: "女: 对不起。男: 没关系。 (Duìbùqǐ. - Méiguānxi.)",
                 vi: "Nữ: Xin lỗi. Nam: Không có gì.",
-                tip: "Gia sư lưu ý: Hình B vẽ cảnh một người lỡ làm đổ nước và xin lỗi, người kia xua tay. Cặp từ đối đáp kinh điển HSK1: 对不起 - 没关系."
+                tip: "Lưu ý: Hình B vẽ cảnh một người lỡ làm đổ nước và xin lỗi, người kia xua tay. Cặp từ đối đáp kinh điển HSK1: 对不起 - 没关系."
             }
         },
         {
@@ -484,7 +485,7 @@
             explanation: {
                 cn: "男: 这本书是你的吗？女: 不是我的，是同学的。<br>问: 书是谁的？",
                 vi: "Nam: Cuốn sách này là của bạn à? Nữ: Không phải của tôi, là của bạn học.<br>Hỏi: Sách của ai?",
-                tip: "Gia sư nhắc nhở: Bẫy phủ định! Người nữ nói '不是我的' (không phải của tôi). Đáp án nằm ở vế sau '同学的'."
+                tip: "Nhắc nhở: Bẫy phủ định! Người nữ nói '不是我的' (không phải của tôi). Đáp án nằm ở vế sau '同学的'."
             }
         },
         {
@@ -834,15 +835,16 @@
         showCustomAlert("Thành công! 🎉", "Ảnh kết quả đã được tải xuống máy của bạn do trình duyệt không hỗ trợ Copy trực tiếp.", "success");
     }
 
-    /* =========================================================
-       GIẢI THÍCH CHI TIẾT (Dưới góc độ Chuyên gia)
-       ========================================================= */
-    function buildExplanations() {
+   
+    function buildExplanations(customAnswers = null) {
+        // Nếu truyền vào customAnswers (từ lịch sử) thì dùng, không thì dùng userAnswers hiện tại
+        let answersToRender = customAnswers || userAnswers; 
+        
         let container = document.getElementById('explanation-container');
         let html = '';
 
         quizData.forEach((q, i) => {
-            let uAns = userAnswers[i];
+            let uAns = answersToRender[i]; // Đổi từ userAnswers[i] sang answersToRender[i]
             let isCorrect = uAns === q.answer;
             let statusText = isCorrect ? '<i class="fas fa-check-circle"></i> Chính xác' : '<i class="fas fa-times-circle"></i> Sai';
             let statusClass = isCorrect ? 'status-c' : 'status-w';
@@ -859,7 +861,7 @@
                         <div><strong>Đáp án đúng:</strong> <span style="color:var(--success)">${correctAnsText}</span></div>
                     </div>
                     <div class="exp-content">
-                        <h4><i class="fas fa-lightbulb"></i> Phân tích từ Gia sư:</h4>
+                        <h4><i class="fas fa-lightbulb"></i> Phân tích:</h4>
                         <div class="cn">${q.explanation.cn}</div>
                         <div class="vi">${q.explanation.vi}</div>
                         <div class="tip"><strong>💡 Mẹo HSK 1:</strong> ${q.explanation.tip}</div>
@@ -869,7 +871,6 @@
         });
         container.innerHTML = html;
     }
-
     function viewExplanations() {
         document.getElementById('screen-result').classList.add('hidden');
         document.getElementById('screen-explanation').classList.remove('hidden');
@@ -879,7 +880,7 @@
     /* =========================================================
        LỊCH SỬ LOCAL STORAGE
        ========================================================= */
-    function saveToHistory(mode, correct, score) {
+   function saveToHistory(mode, correct, score) {
         let history = JSON.parse(localStorage.getItem('hsk1_history')) || [];
         let now = new Date();
         let dateStr = `${now.getHours()}:${now.getMinutes()} - ${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`;
@@ -888,7 +889,8 @@
             date: dateStr,
             mode: mode === 'exam' ? 'Thi Thử' : 'Luyện Tập',
             correct: `${correct}/${quizData.length}`,
-            score: score
+            score: score,
+            savedAnswers: [...userAnswers] // LƯU LẠI MẢNG ĐÁP ÁN ĐỂ XEM LẠI
         });
 
         // Giữ tối đa 10 lần gần nhất
@@ -901,27 +903,34 @@
         let tbody = document.getElementById('history-body');
         
         if (history.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center">Chưa có dữ liệu. Hãy làm bài để lưu lại nhé!</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center">Chưa có dữ liệu. Hãy làm bài để lưu lại nhé!</td></tr>';
         } else {
             let html = '';
-            history.forEach(item => {
-                let colorScore = item.score >= 60 ? 'var(--success)' : 'var(--error)'; // Đậu HSK1 là 60%
+            history.forEach((item, index) => {
+                let colorScore = item.score >= 60 ? 'var(--success)' : 'var(--error)';
+                
+                // Nút xem lại chỉ hiển thị nếu bản ghi có lưu savedAnswers
+                let actionBtn = item.savedAnswers 
+                    ? `<button class="btn btn-secondary" style="padding: 5px 12px; font-size: 0.9rem;" onclick="viewPastExam(${index})"><i class="fas fa-eye"></i> Xem lại</button>` 
+                    : '<span style="color:#999; font-size:0.8rem;">Không có dl</span>';
+
                 html += `
                     <tr>
                         <td>${item.date}</td>
                         <td><strong>${item.mode}</strong></td>
                         <td>${item.correct}</td>
                         <td style="color:${colorScore}; font-weight:bold;">${item.score}</td>
+                        <td>${actionBtn}</td>
                     </tr>
                 `;
             });
             tbody.innerHTML = html;
         }
 
+        document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
         document.getElementById('screen-home').classList.add('hidden');
         document.getElementById('screen-history').classList.remove('hidden');
     }
-
     /* =========================================================
        ĐIỀU HƯỚNG CHUNG
        ========================================================= */
@@ -929,6 +938,40 @@
         document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
         document.getElementById('screen-home').classList.remove('hidden');
         document.getElementById('hsk-audio').pause();
+        window.scrollTo(0,0);
+    }
+    /* =========================================================
+       CHỨC NĂNG XÓA VÀ XEM LẠI LỊCH SỬ
+       ========================================================= */
+    function promptClearHistory() {
+        showCustomConfirm(
+            "Xóa Lịch Sử", 
+            "Bạn có chắc chắn muốn xóa toàn bộ lịch sử làm bài? Hành động này không thể hoàn tác.", 
+            clearHistory
+        );
+    }
+
+    function clearHistory() {
+        localStorage.removeItem('hsk1_history');
+        showHistory(); // Refresh lại bảng
+        showCustomAlert("Thành công", "Đã xóa toàn bộ lịch sử làm bài.", "success");
+    }
+
+    function viewPastExam(index) {
+        let history = JSON.parse(localStorage.getItem('hsk1_history')) || [];
+        let pastExam = history[index];
+        
+        if (!pastExam || !pastExam.savedAnswers) {
+            showCustomAlert("Lỗi", "Không tìm thấy dữ liệu chi tiết của lần thi này.", "warning");
+            return;
+        }
+
+        // Truyền đáp án của lần thi cũ vào hàm render
+        buildExplanations(pastExam.savedAnswers);
+
+        // Chuyển sang màn hình giải thích
+        document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
+        document.getElementById('screen-explanation').classList.remove('hidden');
         window.scrollTo(0,0);
     }
 </script>
