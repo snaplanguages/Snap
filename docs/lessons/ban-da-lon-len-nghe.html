@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Con lớn rồi! | SnapChinese</title>
+  <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        :root {
+            /* Hệ màu mới rực rỡ: San hô (Coral) kết hợp Xanh biển thẫm & Ngọc bích */
+            --bg-main: #fffaf8; 
+            --box-bg: #ffffff;
+            --pastel-coral: #ffe4e6;
+            --pastel-mint: #e6f4ea;
+            --text-main: #1e293b;
+            --text-pinyin: #0d9488; /* Màu xanh Ngọc bích nổi bật */
+            --highlight: #f43f5e; /* Màu Coral/Hồng san hô chủ đạo */
+            --highlight-hover: #e11d48;
+            --tooltip-bg: #0f172a;
+            --quiz-bg: #f8fafc;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+            background: var(--box-bg);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(244, 63, 94, 0.08);
+            padding: 30px;
+        }
+
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { color: var(--highlight); font-size: 30px; margin: 0 0 8px 0; font-weight: 700; }
+        .header p { font-size: 18px; color: #64748b; margin: 0; font-weight: 500;}
+        .badge { background: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; vertical-align: middle; margin-left: 10px;}
+
+        /* --- AUDIO & CONTROLS --- */
+        .controls-bar {
+            background: var(--pastel-coral);
+            padding: 15px 25px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+            border: 2px solid #fecdd3;
+        }
+
+        .audio-player audio {
+            height: 44px;
+            outline: none;
+            border-radius: 22px;
+        }
+
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .btn-action {
+            background: var(--highlight);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            box-shadow: 0 4px 6px rgba(244, 63, 94, 0.2);
+        }
+        .btn-action:hover { background: var(--highlight-hover); transform: translateY(-2px); }
+        .btn-action.off { background: #64748b; box-shadow: none; }
+
+        /* --- READER AREA --- */
+        .reader-wrapper { display: flex; gap: 20px; margin-bottom: 30px; }
+        .column { flex: 1; padding: 25px; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.01);}
+        
+        .chinese-content { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 15px 8px; line-height: 2.3; }
+        
+        .word-group { display: inline-flex; flex-direction: column; align-items: center; position: relative; cursor: pointer; }
+        .pinyin { font-size: 13px; color: var(--text-pinyin); font-weight: 700; margin-bottom: -2px; transition: opacity 0.3s; opacity: 0; } /* Ẩn mặc định cho bài nghe */
+        .char { font-size: 26px; color: var(--text-main); font-weight: 500; transition: all 0.2s ease; }
+        
+        .word-group:hover .char { color: var(--highlight); transform: scale(1.15); }
+        .word-group:active .char { transform: scale(0.9); }
+
+        .word-group::after {
+            content: attr(data-tooltip);
+            position: absolute; top: 105%; left: 50%; transform: translateX(-50%) translateY(8px);
+            background: var(--tooltip-bg); color: white; padding: 6px 14px; border-radius: 8px;
+            font-size: 14px; white-space: nowrap; opacity: 0; visibility: hidden; transition: all 0.25s ease; z-index: 10;
+        }
+        .word-group:hover::after { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+
+        .viet-content { font-size: 17px; color: #475569; line-height: 1.9; text-align: justify; filter: blur(6px); transition: filter 0.4s; user-select: none; }
+        .viet-content.show { filter: blur(0); user-select: auto; }
+
+        .blur-notice { text-align: center; font-size: 14px; color: #e11d48; font-weight: 600; margin-bottom: 15px; }
+
+        /* --- GRAMMAR & CAROUSEL QUIZ SECTION --- */
+        .info-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; }
+        .info-box { padding: 22px; border-radius: 16px; font-size: 15px; line-height: 1.7; }
+        .grammar-box { background: var(--pastel-mint); border: 1px solid #a7f3d0; height: fit-content; }
+        .quiz-box { background: var(--quiz-bg); border: 2px solid #cbd5e1; display: flex; flex-direction: column; justify-content: space-between; min-height: 320px; }
+        
+        .info-box h3 { margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+        .grammar-box h3 { color: #065f46; }
+        .quiz-box h3 { color: #1e293b; border-bottom: 1px dashed #cbd5e1; padding-bottom: 8px;}
+        
+        /* Quiz Carousel Styles */
+        .quiz-container { flex-grow: 1; }
+        .quiz-step { display: none; }
+        .quiz-step.active { display: block; animation: fadeIn 0.4s ease; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quiz-question { font-weight: 700; margin-bottom: 15px; font-size: 16px; color: #1e293b; line-height: 1.5; }
+        .quiz-question small { color: #64748b; font-weight: 500; font-size: 13.5px; display: block; margin-top: 4px;}
+        
+        .quiz-option {
+            background: white; border: 1px solid #cbd5e1; padding: 11px 15px; 
+            border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; font-weight: 500;
+        }
+        .quiz-option:hover { border-color: var(--highlight); background: #fff1f2; }
+        .quiz-option.correct { background: #10b981 !important; color: white !important; border-color: #10b981 !important; }
+        .quiz-option.wrong { background: #f43f5e !important; color: white !important; border-color: #f43f5e !important; }
+        
+        #quiz-feedback { margin: 8px 0; font-weight: 700; font-size: 14.5px; min-height: 22px; text-align: center; }
+
+        /* Quiz Navigation inside the Box */
+        .quiz-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .btn-quiz-nav {
+            background: #475569; color: white; border: none; padding: 8px 14px;
+            border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; transition: 0.2s;
+        }
+        .btn-quiz-nav:hover:not(:disabled) { background: #1e293b; }
+        .btn-quiz-nav:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; }
+        #quiz-progress { font-weight: 700; color: #64748b; font-size: 13.5px; }
+
+        @media (max-width: 900px) {
+            .reader-wrapper { flex-direction: column; }
+            .info-grid { grid-template-columns: 1fr; }
+            .controls-bar { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Con Lớn Rồi! <span class="badge">Luyện Nghe Chủ Động</span></h1>
+        <p>你长大了</p>
+    </div>
+
+    <div class="controls-bar">
+        <div class="audio-player">
+            <audio controls>
+                <source src="https://traffic.libsyn.com/secure/learnchinese/1062.mp3" type="audio/mpeg">
+                Trình duyệt không hỗ trợ audio.
+            </audio>
+        </div>
+        <div class="btn-group">
+            <button class="btn-action off" onclick="togglePinyin()" id="btnPinyin">
+                👁️ Hiện Pinyin
+            </button>
+            <button class="btn-action off" onclick="toggleTranslate()" id="btnTranslate">
+                👁️ Hiện Bản Dịch
+            </button>
+        </div>
+    </div>
+
+    <div class="reader-wrapper">
+        <div class="column">
+            <div id="chineseText" class="chinese-content">
+                <div class="word-group" data-tooltip="Đứa trẻ" onclick="speak(this)"><span class="pinyin">hái zi</span><span class="char">孩子</span></div>
+                <div class="word-group" data-tooltip="Thường xuyên" onclick="speak(this)"><span class="pinyin">jīng cháng</span><span class="char">经常</span></div>
+                <div class="word-group" data-tooltip="Tìm/Đến gặp" onclick="speak(this)"><span class="pinyin">zhǎo</span><span class="char">找</span></div>
+                <div class="word-group" data-tooltip="Ba mẹ" onclick="speak(this)"><span class="pinyin">bà ba mā ma</span><span class="char">爸爸妈妈</span></div>
+                <div class="word-group" data-tooltip="Đòi tiền" onclick="speak(this)"><span class="pinyin">yào qián</span><span class="char">要钱</span></div>
+                <div class="word-group" data-tooltip="Mua đồ" onclick="speak(this)"><span class="pinyin">mǎi dōng xi</span><span class="char">买东西</span></div>
+                <span class="char">。</span>
+                
+                <div class="word-group" data-tooltip="Ngày hôm đó" onclick="speak(this)"><span class="pinyin">zhè yī tiān</span><span class="char">这一天</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Đứa trẻ" onclick="speak(this)"><span class="pinyin">hái zi</span><span class="char">孩子</span></div>
+                <div class="word-group" data-tooltip="Lại" onclick="speak(this)"><span class="pinyin">yòu</span><span class="char">又</span></div>
+                <div class="word-group" data-tooltip="Tìm" onclick="speak(this)"><span class="pinyin">zhǎo</span><span class="char">找</span></div>
+                <div class="word-group" data-tooltip="Ba" onclick="speak(this)"><span class="pinyin">bà ba</span><span class="char">爸爸</span></div>
+                <div class="word-group" data-tooltip="Đòi tiền" onclick="speak(this)"><span class="pinyin">yào qián</span><span class="char">要钱</span></div>
+                <span class="char">。</span>
+                
+                <div style="width: 100%; height: 5px;"></div>
+                
+                <div class="word-group" data-tooltip="Đứa trẻ" onclick="speak(this)"><span class="pinyin">hái zi</span><span class="char">孩子</span></div>
+                <div class="word-group" data-tooltip="Nói" onclick="speak(this)"><span class="pinyin">shuō</span><span class="char">说</span></div>
+                <span class="char">： “</span>
+                <div class="word-group" data-tooltip="Ba" onclick="speak(this)"><span class="pinyin">bà ba</span><span class="char">爸爸</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Cho con" onclick="speak(this)"><span class="pinyin">gěi wǒ</span><span class="char">给我</span></div>
+                <div class="word-group" data-tooltip="5 hào (0.5 tệ)" onclick="speak(this)"><span class="pinyin">wǔ máo qián</span><span class="char">五毛钱</span></div>
+                <div class="word-group" data-tooltip="Đi/Nhé" onclick="speak(this)"><span class="pinyin">ba</span><span class="char">吧</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Con muốn" onclick="speak(this)"><span class="pinyin">wǒ xiǎng</span><span class="char">我想</span></div>
+                <div class="word-group" data-tooltip="Mua đồ ăn" onclick="speak(this)"><span class="pinyin">mǎi chī de dōng xi</span><span class="char">买吃的东西</span></div>
+                <span class="char">。 ”</span>
+                
+                <div style="width: 100%; height: 5px;"></div>
+                
+                <div class="word-group" data-tooltip="Ba" onclick="speak(this)"><span class="pinyin">bà ba</span><span class="char">爸爸</span></div>
+                <div class="word-group" data-tooltip="Nói" onclick="speak(this)"><span class="pinyin">shuō</span><span class="char">说</span></div>
+                <span class="char">： “</span>
+                <div class="word-group" data-tooltip="Con" onclick="speak(this)"><span class="pinyin">nǐ</span><span class="char">你</span></div>
+                <span class="char">10</span>
+                <div class="word-group" data-tooltip="Tuổi" onclick="speak(this)"><span class="pinyin">suì</span><span class="char">岁</span></div>
+                <div class="word-group" data-tooltip="Rồi" onclick="speak(this)"><span class="pinyin">le</span><span class="char">了</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Đã" onclick="speak(this)"><span class="pinyin">yǐ jīng</span><span class="char">已经</span></div>
+                <div class="word-group" data-tooltip="Lớn rồi" onclick="speak(this)"><span class="pinyin">zhǎng dà le</span><span class="char">长大了</span></div>
+                <span class="char">。</span>
+                <div class="word-group" data-tooltip="Hôm qua" onclick="speak(this)"><span class="pinyin">zuó tiān</span><span class="char">昨天</span></div>
+                <div class="word-group" data-tooltip="Con đã đòi" onclick="speak(this)"><span class="pinyin">nǐ yào le</span><span class="char">你要了</span></div>
+                <div class="word-group" data-tooltip="5 hào" onclick="speak(this)"><span class="pinyin">wǔ máo qián</span><span class="char">五毛钱</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Hôm nay" onclick="speak(this)"><span class="pinyin">jīn tiān</span><span class="char">今天</span></div>
+                <div class="word-group" data-tooltip="Con lại đòi" onclick="speak(this)"><span class="pinyin">nǐ yòu yào</span><span class="char">你又要</span></div>
+                <div class="word-group" data-tooltip="5 hào" onclick="speak(this)"><span class="pinyin">wǔ máo qián</span><span class="char">五毛钱</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Ngày mai" onclick="speak(this)"><span class="pinyin">míng tiān</span><span class="char">明天</span></div>
+                <div class="word-group" data-tooltip="Còn đòi" onclick="speak(this)"><span class="pinyin">hái yào</span><span class="char">还要</span></div>
+                <div class="word-group" data-tooltip="5 hào" onclick="speak(this)"><span class="pinyin">wǔ máo qián</span><span class="char">五毛钱</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Như thế này" onclick="speak(this)"><span class="pinyin">zhè yàng</span><span class="char">这样</span></div>
+                <div class="word-group" data-tooltip="Không tốt" onclick="speak(this)"><span class="pinyin">bù hǎo</span><span class="char">不好</span></div>
+                <div class="word-group" data-tooltip="Đâu nhỉ" onclick="speak(this)"><span class="pinyin">ba</span><span class="char">吧</span></div>
+                <span class="char">？</span>
+                <div class="word-group" data-tooltip="Trẻ con lớn" onclick="speak(this)"><span class="pinyin">dà hái zi</span><span class="char">大孩子</span></div>
+                <div class="word-group" data-tooltip="Sẽ làm vậy không" onclick="speak(this)"><span class="pinyin">huì zhè yàng zuò ma</span><span class="char">会这样做吗</span></div>
+                <span class="char">？ ”</span>
+                
+                <div style="width: 100%; height: 5px;"></div>
+                
+                <div class="word-group" data-tooltip="Đứa trẻ" onclick="speak(this)"><span class="pinyin">hái zi</span><span class="char">孩子</span></div>
+                <div class="word-group" data-tooltip="Suy nghĩ một chút" onclick="speak(this)"><span class="pinyin">xiǎng le xiǎng</span><span class="char">想了想</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Nói" onclick="speak(this)"><span class="pinyin">shuō</span><span class="char">说</span></div>
+                <span class="char">： “</span>
+                <div class="word-group" data-tooltip="Ba" onclick="speak(this)"><span class="pinyin">bà ba</span><span class="char">爸爸</span></div>
+                <div class="word-group" data-tooltip="Ba nói đúng" onclick="speak(this)"><span class="pinyin">nǐ shuō de duì</span><span class="char">你说得对</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Như thế này" onclick="speak(this)"><span class="pinyin">zhè yàng</span><span class="char">这样</span></div>
+                <div class="word-group" data-tooltip="Không tốt" onclick="speak(this)"><span class="pinyin">bù hǎo</span><span class="char">不好</span></div>
+                <span class="char">。</span>
+                <div class="word-group" data-tooltip="Con là" onclick="speak(this)"><span class="pinyin">wǒ shì</span><span class="char">我是</span></div>
+                <div class="word-group" data-tooltip="Trẻ lớn rồi" onclick="speak(this)"><span class="pinyin">dà hái zi le</span><span class="char">大孩子了</span></div>
+                <span class="char">，</span>
+                <div class="word-group" data-tooltip="Vậy thì" onclick="speak(this)"><span class="pinyin">nà</span><span class="char">那</span></div>
+                <div class="word-group" data-tooltip="Ba" onclick="speak(this)"><span class="pinyin">nǐ</span><span class="char">你</span></div>
+                <div class="word-group" data-tooltip="Hôm nay" onclick="speak(this)"><span class="pinyin">jīn tiān</span><span class="char">今天</span></div>
+                <div class="word-group" data-tooltip="Cho con" onclick="speak(this)"><span class="pinyin">gěi wǒ</span><span class="char">给我</span></div>
+                <div class="word-group" data-tooltip="5 tệ đi!" onclick="speak(this)"><span class="pinyin">wǔ kuài qián ba</span><span class="char">五块钱吧</span></div>
+                <span class="char">! ”</span>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="blur-notice" id="blurNotice">🎧 Hãy rèn luyện tai nghe thật kỹ trước khi mở xem dịch nghĩa nhé!</div>
+            <div class="viet-content" id="vietText">
+                <p>Đứa trẻ thường xuyên tìm bố mẹ để đòi tiền mua đồ. Ngày hôm đó, đứa trẻ lại đến tìm bố đòi tiền.</p>
+                <p>Đứa trẻ nói: <i>"Bố ơi, cho con năm hào đi, con muốn mua đồ ăn ạ."</i></p>
+                <p>Bố bảo: <i>"Con mười tuổi rồi, đã là trẻ lớn rồi. Hôm qua con đòi năm hào, hôm nay lại đòi năm hào, ngày mai lại đòi năm hào nữa, như thế này không tốt đâu nhỉ? Trẻ lớn rồi có ai làm thế không con?"</i></p>
+                <p>Đứa trẻ ngẫm nghĩ một lát rồi đáp: <i>"Bố nói đúng ạ, như thế không tốt thật. Con là trẻ lớn rồi, vậy thì hôm nay bố cho con... năm tệ luôn đi ạ!"</i></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-box grammar-box">
+            <h3>💡 Phân tích trọng tâm HSK</h3>
+            <p>• <b>找... 要钱 (zhǎo... yào qián)</b>: Tìm ai đó để đòi tiền / xin tiền.</p>
+            <p>• <b>又... 又... (yòu)</b>: Biểu thị một hành động lặp lại liên tục mang tính chất phàn nàn. (Hôm nay *lại* xin, ngày mai *lại* xin).</p>
+            <p>• <b>想了想 (xiǎng le xiǎng)</b>: Hình thức lặp lại động từ, nghĩa là "suy nghĩ một lát, suy nghĩ một chút".</p>
+            <p>• <b>Đơn vị tiền tệ tệ Trung Quốc:</b><br>
+               - <b>毛 (máo)</b>: Hào (0.1 Tệ)<br>
+               - <b>块 (kuài)</b>: Tệ / Đồng (1 Tệ = 10 Hào).
+            </p>
+        </div>
+        
+        <div class="info-box quiz-box">
+            <h3>🎯 Thử Thách Nghe Hiểu (Quiz)</h3>
+            
+            <div class="quiz-container">
+                <div class="quiz-step active" data-step="1" data-correct="1">
+                    <div class="quiz-question">Câu 1: 孩子这一天找谁要钱？<br><small>(Hôm đó đứa trẻ tìm ai để xin tiền?)</small></div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">A. 妈妈 (Mẹ)</div>
+                    <div class="quiz-option" onclick="selectOption(this, true)">B. 爸爸 (Bố)</div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">C. 老师 (Giáo viên)</div>
+                </div>
+
+                <div class="quiz-step" data-step="2" data-correct="1">
+                    <div class="quiz-question">Câu 2: 孩子今年几岁了？<br><small>(Đứa trẻ năm nay bao nhiêu tuổi rồi?)</small></div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">A. 五岁 (5 tuổi)</div>
+                    <div class="quiz-option" onclick="selectOption(this, true)">B. 十岁 (10 tuổi)</div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">C. 五十岁 (50 tuổi)</div>
+                </div>
+
+                <div class="quiz-step" data-step="3" data-correct="0">
+                    <div class="quiz-question">Câu 3: 孩子一开始想要多少钱？<br><small>(Ban đầu đứa trẻ muốn xin bao nhiêu tiền?)</small></div>
+                    <div class="quiz-option" onclick="selectOption(this, true)">A. 五毛钱 (5 hào)</div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">B. 五块钱 (5 tệ)</div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">C. 五毛块 (Sai ngữ pháp)</div>
+                </div>
+
+                <div class="quiz-step" data-step="4" data-correct="1">
+                    <div class="quiz-question">Câu 4: 为什么孩子最后想要“五块钱”？<br><small>(Tại sao cuối cùng đứa trẻ lại đòi hẳn 5 tệ?)</small></div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">A. 因为买吃的东西变贵 le (Vì đồ ăn tăng giá)</div>
+                    <div class="quiz-option" onclick="selectOption(this, true)">B. 因为他是大孩子 le, không nên đòi tiền lặt vặt vài hào mỗi ngày (Vì cậu nghĩ trẻ lớn thì phải xin tiền mệnh giá lớn hơn)</div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">C. 因为爸爸不高兴 (Vì bố không vui)</div>
+                </div>
+            </div>
+
+            <div id="quiz-feedback"></div>
+
+            <div class="quiz-nav">
+                <button class="btn-quiz-nav" id="btnPrev" onclick="changeQuestion(-1)" disabled>⬅ Quay lại</button>
+                <span id="quiz-progress">Câu 1 / 4</span>
+                <button class="btn-quiz-nav" id="btnNext" onclick="changeQuestion(1)">Tiếp theo ➡</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Quản lý Ẩn/Hiện Pinyin
+    let isPinyinVisible = false;
+    function togglePinyin() {
+        const pinyins = document.querySelectorAll('.pinyin');
+        const btn = document.getElementById('btnPinyin');
+        isPinyinVisible = !isPinyinVisible;
+        
+        pinyins.forEach(p => p.style.opacity = isPinyinVisible ? '1' : '0');
+
+        if(isPinyinVisible) {
+            btn.innerHTML = "👁️ Ẩn Pinyin";
+            btn.classList.remove('off');
+        } else {
+            btn.innerHTML = "👁️ Hiện Pinyin";
+            btn.classList.add('off');
+        }
+    }
+
+    // 2. Quản lý Ẩn/Hiện Bản Dịch Tiếng Việt
+    let isTranslateVisible = false;
+    function toggleTranslate() {
+        const vietText = document.getElementById('vietText');
+        const blurNotice = document.getElementById('blurNotice');
+        const btn = document.getElementById('btnTranslate');
+        isTranslateVisible = !isTranslateVisible;
+        
+        if(isTranslateVisible) {
+            vietText.classList.add('show');
+            blurNotice.style.display = 'none';
+            btn.innerHTML = "👁️ Ẩn Bản Dịch";
+            btn.classList.remove('off');
+        } else {
+            vietText.classList.remove('show');
+            blurNotice.style.display = 'block';
+            btn.innerHTML = "👁️ Hiện Bản Dịch";
+            btn.classList.add('off');
+        }
+    }
+
+    // 3. TTS phát âm cụm từ khi bấm trực tiếp vào chữ chữ
+    const synth = window.speechSynthesis;
+    function speak(element) {
+        synth.cancel();
+        const text = element.querySelector('.char').innerText;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'zh-CN'; 
+        synth.speak(utterance);
+    }
+
+    // 4. Logic Hệ thống Câu hỏi Trắc nghiệm Carousel (Chuyển slide trong khung)
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    function changeQuestion(direction) {
+        // Ẩn câu hỏi hiện tại
+        document.querySelector(`.quiz-step[data-step="${currentStep}"]`).classList.remove('active');
+        
+        currentStep += direction;
+        
+        // Hiển thị câu hỏi mới
+        document.querySelector(`.quiz-step[data-step="${currentStep}"]`).classList.add('active');
+        
+        // Cập nhật trạng thái các nút bấm điều hướng
+        document.getElementById('btnPrev').disabled = (currentStep === 1);
+        document.getElementById('btnNext').disabled = (currentStep === totalSteps);
+        document.getElementById('quiz-progress').innerText = `Câu ${currentStep} / ${totalSteps}`;
+        
+        // Reset dòng chữ nhận xét phản hồi
+        const feedback = document.getElementById('quiz-feedback');
+        feedback.innerHTML = "";
+    }
+
+    function selectOption(element, isCorrect) {
+        // Tìm bước câu hỏi hiện tại để khóa các lựa chọn khác lại
+        const currentQuizStep = element.closest('.quiz-step');
+        const options = currentQuizStep.querySelectorAll('.quiz-option');
+        
+        options.forEach(opt => {
+            opt.classList.remove('correct', 'wrong');
+            opt.style.pointerEvents = 'none'; // Không cho bấm lại sau khi đã chọn
+        });
+
+        const feedback = document.getElementById('quiz-feedback');
+
+        if (isCorrect) {
+            element.classList.add('correct');
+            feedback.innerHTML = "🎉 Xuất sắc! Bạn đã nghe và hiểu rất chính xác.";
+            feedback.style.color = "#10b981";
+        } else {
+            element.classList.add('wrong');
+            feedback.innerHTML = "❌ Chưa đúng rồi! Thử nghe lại audio đoạn đó nhé.";
+            feedback.style.color = "#f43f5e";
+            
+            // Tự động tìm và làm nổi bật đáp án đúng cho học viên học lại
+            const correctIndex = currentQuizStep.getAttribute('data-correct');
+            options[correctIndex].classList.add('correct');
+        }
+    }
+</script>
+
+</body>
+</html>
