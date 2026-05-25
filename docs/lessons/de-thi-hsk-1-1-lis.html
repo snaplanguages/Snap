@@ -909,10 +909,13 @@
             history.forEach((item, index) => {
                 let colorScore = item.score >= 60 ? 'var(--success)' : 'var(--error)';
                 
-                // Nút xem lại chỉ hiển thị nếu bản ghi có lưu savedAnswers
-                let actionBtn = item.savedAnswers 
-                    ? `<button class="btn btn-secondary" style="padding: 5px 12px; font-size: 0.9rem;" onclick="viewPastExam(${index})"><i class="fas fa-eye"></i> Xem lại</button>` 
-                    : '<span style="color:#999; font-size:0.8rem;">Không có dữ liệu</span>';
+                // Nút xem lại
+                let viewBtn = item.savedAnswers 
+                    ? `<button class="btn btn-secondary" style="padding: 5px 12px; font-size: 0.9rem;" onclick="viewPastExam(${index})"><i class="fas fa-eye"></i> Xem</button>` 
+                    : '<span style="color:#999; font-size:0.8rem; margin-right: 10px;">Không có dl</span>';
+
+                // Nút xóa riêng lẻ
+                let deleteBtn = `<button class="btn" style="background: var(--error); color: white; padding: 5px 12px; font-size: 0.9rem; margin-left: 5px;" onclick="promptDeletePastExam(${index})"><i class="fas fa-times"></i> Xóa</button>`;
 
                 html += `
                     <tr>
@@ -920,7 +923,12 @@
                         <td><strong>${item.mode}</strong></td>
                         <td>${item.correct}</td>
                         <td style="color:${colorScore}; font-weight:bold;">${item.score}</td>
-                        <td>${actionBtn}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; justify-content: flex-start;">
+                                ${viewBtn}
+                                ${deleteBtn}
+                            </div>
+                        </td>
                     </tr>
                 `;
             });
@@ -931,18 +939,14 @@
         document.getElementById('screen-home').classList.add('hidden');
         document.getElementById('screen-history').classList.remove('hidden');
     }
-    /* =========================================================
-       ĐIỀU HƯỚNG CHUNG
-       ========================================================= */
+    
     function goHome() {
         document.querySelectorAll('.screen').forEach(el => el.classList.add('hidden'));
         document.getElementById('screen-home').classList.remove('hidden');
         document.getElementById('hsk-audio').pause();
         window.scrollTo(0,0);
     }
-    /* =========================================================
-       CHỨC NĂNG XÓA VÀ XEM LẠI LỊCH SỬ
-       ========================================================= */
+    
     function promptClearHistory() {
         showCustomConfirm(
             "Xóa Lịch Sử", 
@@ -956,7 +960,28 @@
         showHistory(); // Refresh lại bảng
         showCustomAlert("Thành công", "Đã xóa toàn bộ lịch sử làm bài.", "success");
     }
+function promptDeletePastExam(index) {
+        showCustomConfirm(
+            "Xóa Kết Quả", 
+            "Bạn có chắc chắn muốn xóa bài làm này? Hành động này không thể hoàn tác.", 
+            () => deletePastExam(index)
+        );
+    }
 
+    function deletePastExam(index) {
+        let history = JSON.parse(localStorage.getItem('hsk1_history')) || [];
+        
+        // Cắt bỏ 1 phần tử tại vị trí index
+        history.splice(index, 1); 
+        
+        // Lưu lại mảng mới vào Local Storage
+        localStorage.setItem('hsk1_history', JSON.stringify(history));
+        
+        // Vẽ lại bảng lịch sử ngay lập tức
+        showHistory(); 
+        
+        showCustomAlert("Thành công", "Đã xóa kết quả của lần thi này.", "success");
+    }
     function viewPastExam(index) {
         let history = JSON.parse(localStorage.getItem('hsk1_history')) || [];
         let pastExam = history[index];
