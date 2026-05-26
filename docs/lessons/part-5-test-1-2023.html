@@ -1051,41 +1051,69 @@
     }
 
     async function openHistoryModal() {
-        document.getElementById('setupOverlay').style.display = 'none';
-        document.getElementById('historyOverlay').style.display = 'flex';
-        let listEl = document.getElementById("historyList");
+    document.getElementById('setupOverlay').style.display = 'none';
+    document.getElementById('historyOverlay').style.display = 'flex';
+    let listEl = document.getElementById("historyList");
 
-        listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang lấy dữ liệu từ Máy chủ... ☁️⏳</div>`;
+    listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang đồng bộ dữ liệu... ☁️⏳</div>`;
 
-        if (window.currentUserUid && window.getHistoryFromFirebase) {
-            currentHistoryList = await window.getHistoryFromFirebase(TEST_ID);
-            if (!currentHistoryList || currentHistoryList.length === 0) {
-                currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+    if (window.currentUserUid && window.getHistoryFromFirebase) {
+        // 1. Kéo dữ liệu từ Cloud về
+        let cloudHistory = await window.getHistoryFromFirebase(TEST_ID);
+        if (!cloudHistory) cloudHistory = [];
+        
+        // 2. Lấy dữ liệu cũ ở Local (trên máy hiện tại)
+        let localHistory = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+
+        // 3. THUẬT TOÁN ĐỒNG BỘ THÔNG MINH
+        // Lấy ra danh sách các ID đã có trên mây để đối chiếu
+        let cloudIds = cloudHistory.map(item => item.id);
+        let hasNewSync = false;
+
+        for (let localItem of localHistory) {
+            // Nếu bài ở Local CHƯA CÓ trên Cloud -> Đẩy nó lên Cloud
+            if (!cloudIds.includes(localItem.id)) {
+                await window.syncHistoryToFirebase(localItem, TEST_ID);
+                cloudHistory.push(localItem); // Thêm vào mảng hiện tại để hiển thị
+                hasNewSync = true;
             }
-        } else {
-            currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
         }
 
-        if (currentHistoryList.length === 0) {
-            listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px;">Cậu chưa làm bài lần nào trên tài khoản này. 🐾</div>`;
-        } else {
-            listEl.innerHTML = currentHistoryList.map((item, index) => {
-                let docId = item.docId || item.id;
-                return `
-                <div class="history-item">
-                    <div class="history-info">
-                        <span class="history-date">Lần ${currentHistoryList.length - index}: ${item.time} - ${item.date}</span>
-                        <span class="history-score">Đúng: ${item.score}/${item.total} câu</span>
-                    </div>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn-review" onclick="restoreAttempt(${index})">Xem lại</button>
-                        <button class="btn-delete-history" onclick="deleteAttempt('${docId}')" title="Xóa bài này">&times;</button>
-                    </div>
-                </div>
-                `;
-            }).join("");
+        // Sắp xếp lại danh sách từ mới nhất đến cũ nhất
+        cloudHistory.sort((a, b) => b.timestamp - a.timestamp);
+        currentHistoryList = cloudHistory;
+
+        // Báo hiệu nếu vừa đồng bộ thành công dữ liệu cũ
+        if (hasNewSync && typeof showInGameToast === "function") {
+            showInGameToast("☁️ Đã đồng bộ các lịch sử làm bài cũ lên Máy chủ!");
         }
+
+    } else {
+        // Nếu làm khách (chưa đăng nhập), chỉ xem local
+        currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
     }
+
+    // HIỂN THỊ RA MÀN HÌNH
+    if (currentHistoryList.length === 0) {
+        listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px;">Cậu chưa làm bài lần nào trên tài khoản này. 🐾</div>`;
+    } else {
+        listEl.innerHTML = currentHistoryList.map((item, index) => {
+            let docId = item.docId || item.id;
+            return `
+            <div class="history-item">
+                <div class="history-info">
+                    <span class="history-date">Lần ${currentHistoryList.length - index}: ${item.time} - ${item.date}</span>
+                    <span class="history-score">Đúng: ${item.score}/${item.total} câu</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-review" onclick="restoreAttempt(${index})">Xem lại</button>
+                    <button class="btn-delete-history" onclick="deleteAttempt('${docId}')" title="Xóa bài này">&times;</button>
+                </div>
+            </div>
+            `;
+        }).join("");
+    }
+}
 
     function closeHistoryModal() {
         document.getElementById('historyOverlay').style.display = 'none';
