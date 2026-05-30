@@ -52,7 +52,39 @@
         .btn-outline { background: white; border: 2px solid var(--primary); color: var(--primary); box-shadow: none; }
         .btn-outline:hover { background: var(--primary); color: white; }
         .btn-danger { background: linear-gradient(to right, #ff416c, #ff4b2b); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); }
-
+.preview-item {
+    position: relative;
+    min-width: 120px;
+    height: 120px;
+}
+.preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 15px;
+}
+.preview-item .remove-img-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--danger);
+    color: white;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.entry-images-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
         #authScreen, #profileScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(15px); }
         .auth-box { background: white; padding: 40px; border-radius: 30px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 90%; max-width: 400px; border: 3px solid rgba(255,255,255,0.5); }
         .auth-box h2 { background: -webkit-linear-gradient(45deg, #ff6b81, #70a1ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 800; margin-bottom: 5px;}
@@ -182,10 +214,8 @@
                 <span class="mood" data-mood="💔" onclick="selectMood(this)">💔</span>
             </div>
 
-            <div class="image-preview-container">
-                <img id="postImgPreview" src="" class="frame-none">
-                <div class="remove-img" id="removeImgBtn" onclick="removeImage()"><i class="fas fa-times"></i></div>
-            </div>
+            <div class="image-preview-container" id="previewContainer" style="display: flex; gap: 10px; overflow-x: auto; margin-top: 15px; padding-bottom: 10px;">
+    </div>
 
             <div class="frame-selector" id="frameSelector">
                 <span style="font-size: 14px; font-weight: 700; color: var(--primary); display: flex; align-items: center;">Trang trí ảnh:</span>
@@ -198,7 +228,7 @@
                 <div class="tool-icons">
                     <i class="fas fa-image" title="Tải ảnh lên" onclick="document.getElementById('postImageInput').click()"></i>
                     <i class="fas fa-camera" title="Chụp ảnh trực tiếp" onclick="openCamera()"></i>
-                    <input type="file" id="postImageInput" hidden accept="image/*" onchange="previewPostImage(event)">
+                    <input type="file" id="postImageInput" hidden accept="image/*" multiple onchange="previewPostImage(event)">
                 </div>
                 <button class="btn" onclick="savePost()"><i class="fas fa-paper-plane" style="margin-right: 5px;"></i> Lưu Nhật Ký</button>
             </div>
@@ -249,7 +279,7 @@
         let currentUser = null;
         let currentMood = '😊';
         let currentFrame = 'frame-none';
-        let base64ImageToUpload = null;
+       let base64ImagesToUpload = [];
         let allEntries = [];
         
         async function uploadImageToImgBB(base64Str) {
@@ -451,100 +481,121 @@ window.register = () => {
         const pastelColors = ['#fff5f5', '#f8f4ff', '#f0fbf0', '#fffcf0', '#f0f8ff', '#fdfbfb'];
 
         window.savePost = async () => {
-            const content = document.getElementById('postContent').value;
-            if(!content.trim() && !base64ImageToUpload) return showPopup('warning', 'Chưa có gì', 'Bạn viết một chút gì đó hoặc up 1 bức ảnh nhé!');
+    const content = document.getElementById('postContent').value;
+    if(!content.trim() && base64ImagesToUpload.length === 0) return showPopup('warning', 'Chưa có gì', 'Bạn viết một chút gì đó hoặc up 1 bức ảnh nhé!');
 
-            document.querySelector('.post-area .btn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tải lên...';
-            document.querySelector('.post-area .btn').disabled = true;
+    const btn = document.querySelector('.post-area .btn');
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tải lên...';
+    btn.disabled = true;
 
-            let imageUrl = null;
-            if(base64ImageToUpload) {
-                imageUrl = await uploadImageToImgBB(base64ImageToUpload);
-                if(!imageUrl) {
-                    showPopup('error', 'Lỗi', 'Không thể tải ảnh lên, bạn thử lại nhé!');
-                    document.querySelector('.post-area .btn').innerHTML = '<i class="fas fa-paper-plane"></i> Lưu Nhật Ký';
-                    document.querySelector('.post-area .btn').disabled = false;
-                    return;
-                }
-            }
-
-            const now = new Date();
-            const todayStr = now.toISOString().split('T')[0];
+    let uploadedUrls = [];
+    
+    // Upload nhiều ảnh lên ImgBB cùng lúc
+    if(base64ImagesToUpload.length > 0) {
+        try {
+            const uploadPromises = base64ImagesToUpload.map(base64 => uploadImageToImgBB(base64));
+            uploadedUrls = await Promise.all(uploadPromises);
             
-            const userRef = doc(db, "users", currentUser.uid);
-            const userSnap = await getDoc(userRef);
-            let currentStreak = userSnap.data().streak || 0;
-            let lastPostDate = userSnap.data().lastPostDate;
+            // Nếu có ảnh bị lỗi (trả về null)
+            if(uploadedUrls.includes(null)) {
+                throw new Error("Có ảnh tải lên bị lỗi");
+            }
+        } catch (error) {
+            showPopup('error', 'Lỗi', 'Không thể tải ảnh lên, bạn thử lại nhé!');
+            btn.innerHTML = '<i class="fas fa-paper-plane"></i> Lưu Nhật Ký';
+            btn.disabled = false;
+            return;
+        }
+    }
 
-            if (lastPostDate !== todayStr) {
-                let yesterday = new Date(now);
-                yesterday.setDate(now.getDate() - 1);
-                const yesterdayStr = yesterday.toISOString().split('T')[0];
+    const now = new Date();
+    const todayStr = now.toISOString().split('T')[0];
+    const userRef = doc(db, "users", currentUser.uid);
+    const userSnap = await getDoc(userRef);
+    let currentStreak = userSnap.data().streak || 0;
+    let lastPostDate = userSnap.data().lastPostDate;
 
-                if (lastPostDate === yesterdayStr) {
-                    currentStreak += 1;
-                } else {
-                    currentStreak = 1;
-                }
-                await setDoc(userRef, { streak: currentStreak, lastPostDate: todayStr }, { merge: true });
-                document.getElementById('streakCount').innerText = currentStreak;
+    if (lastPostDate !== todayStr) {
+        let yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+        if (lastPostDate === yesterday.toISOString().split('T')[0]) {
+            currentStreak += 1;
+        } else {
+            currentStreak = 1;
+        }
+        await setDoc(userRef, { streak: currentStreak, lastPostDate: todayStr }, { merge: true });
+        document.getElementById('streakCount').innerText = currentStreak;
+    }
+
+    const color = pastelColors[Math.floor(Math.random() * pastelColors.length)];
+    
+    // Lưu mảng urls thay vì 1 url
+    await addDoc(collection(db, `users/${currentUser.uid}/entries`), {
+        content: content,
+        mood: currentMood,
+        imageUrls: uploadedUrls, // Thay đổi ở đây
+        imageFrame: currentFrame,
+        bgColor: color,
+        createdAt: serverTimestamp(),
+        timestamp: Date.now()
+    });
+
+    // Reset Form
+    document.getElementById('postContent').value = '';
+    base64ImagesToUpload = [];
+    renderPreviews();
+    document.getElementById('postImageInput').value = '';
+    btn.innerHTML = '<i class="fas fa-paper-plane"></i> Lưu Nhật Ký';
+    btn.disabled = false;
+}
+
+function loadEntries() {
+    const q = query(collection(db, `users/${currentUser.uid}/entries`), orderBy("createdAt", "desc"));
+    onSnapshot(q, (snapshot) => {
+        const feed = document.getElementById('diaryFeed');
+        feed.innerHTML = '';
+        allEntries = [];
+
+        if(snapshot.empty) {
+            feed.innerHTML = '<div style="text-align:center; color:#999; padding: 30px; font-weight:600;">Bạn chưa có trang nhật ký nào. Bắt đầu ngay hôm nay nhé! 🌱</div>';
+            return;
+        }
+
+        snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            allEntries.push(data);
+            const id = docSnap.id;
+            const date = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString('vi-VN') : 'Vừa xong...';
+            
+            // Xử lý hiển thị nhiều ảnh
+            let imgHTML = '';
+            
+            // Tương thích ngược: Nếu log cũ dùng imageUrl (1 ảnh), log mới dùng imageUrls (nhiều ảnh)
+            let urlsToRender = data.imageUrls || (data.imageUrl ? [data.imageUrl] : []);
+            
+            if(urlsToRender.length > 0) {
+                imgHTML = '<div class="entry-images-grid">';
+                urlsToRender.forEach(url => {
+                    imgHTML += `<img src="${url}" class="entry-image ${data.imageFrame || 'frame-none'}" style="margin: 0; width: 100%; height: auto;">`;
+                });
+                imgHTML += '</div>';
             }
 
-            const color = pastelColors[Math.floor(Math.random() * pastelColors.length)];
-            await addDoc(collection(db, `users/${currentUser.uid}/entries`), {
-                content: content,
-                mood: currentMood,
-                imageUrl: imageUrl,
-                imageFrame: currentFrame,
-                bgColor: color,
-                createdAt: serverTimestamp(),
-                timestamp: Date.now()
-            });
-
-            document.getElementById('postContent').value = '';
-            removeImage();
-            document.querySelector('.post-area .btn').innerHTML = '<i class="fas fa-paper-plane"></i> Lưu Nhật Ký';
-            document.querySelector('.post-area .btn').disabled = false;
-        }
-
-        function loadEntries() {
-            const q = query(collection(db, `users/${currentUser.uid}/entries`), orderBy("createdAt", "desc"));
-            onSnapshot(q, (snapshot) => {
-                const feed = document.getElementById('diaryFeed');
-                feed.innerHTML = '';
-                allEntries = [];
-
-                if(snapshot.empty) {
-                    feed.innerHTML = '<div style="text-align:center; color:#999; padding: 30px; font-weight:600;">Bạn chưa có trang nhật ký nào. Bắt đầu ngay hôm nay nhé! 🌱</div>';
-                    return;
-                }
-
-                snapshot.forEach((docSnap) => {
-                    const data = docSnap.data();
-                    allEntries.push(data);
-                    const id = docSnap.id;
-                    const date = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString('vi-VN') : 'Vừa xong...';
-                    
-                    let imgHTML = '';
-                    if(data.imageUrl) {
-                        imgHTML = `<img src="${data.imageUrl}" class="entry-image ${data.imageFrame}">`;
-                    }
-
-                    feed.innerHTML += `
-                        <div class="entry-card" style="background: ${data.bgColor}">
-                            <div class="entry-header">
-                                <span style="display: flex; align-items: center; gap: 10px;"><span style="font-size:28px">${data.mood}</span> ${date}</span>
-                                <div class="entry-actions">
-                                    <i class="fas fa-trash-alt" onclick="confirmDelete('${id}')"></i>
-                                </div>
-                            </div>
-                            <div class="entry-content">${data.content}</div>
-                            ${imgHTML}
+            feed.innerHTML += `
+                <div class="entry-card" style="background: ${data.bgColor || '#fff'}">
+                    <div class="entry-header">
+                        <span style="display: flex; align-items: center; gap: 10px;"><span style="font-size:28px">${data.mood || '😊'}</span> ${date}</span>
+                        <div class="entry-actions">
+                            <i class="fas fa-trash-alt" onclick="confirmDelete('${id}')"></i>
                         </div>
-                    `;
-                });
-            });
-        }
+                    </div>
+                    <div class="entry-content">${data.content || ''}</div>
+                    ${imgHTML}
+                </div>
+            `;
+        });
+    });
+}
 
         window.confirmDelete = (id) => {
             showPopup('warning', 'Xóa ký ức?', 'Bạn có chắc chắn muốn xóa trang nhật ký này không? Sẽ không lấy lại được đâu nha!', async () => {
@@ -594,7 +645,78 @@ window.register = () => {
             if (currentStream) { currentStream.getTracks().forEach(t => t.stop()); }
             document.getElementById('cameraContainer').classList.add('hidden');
         }
+// Hàm render ảnh ra màn hình trước khi đăng
+window.renderPreviews = () => {
+    const container = document.getElementById('previewContainer');
+    container.innerHTML = ''; // Xóa trắng
+    
+    if (base64ImagesToUpload.length > 0) {
+        document.getElementById('frameSelector').style.display = 'flex';
+    } else {
+        document.getElementById('frameSelector').style.display = 'none';
+    }
 
+    base64ImagesToUpload.forEach((base64, index) => {
+        container.innerHTML += `
+            <div class="preview-item">
+                <img src="${base64}" class="${currentFrame}">
+                <div class="remove-img-btn" onclick="removeSingleImage(${index})"><i class="fas fa-times"></i></div>
+            </div>
+        `;
+    });
+}
+
+// Xóa 1 ảnh cụ thể
+window.removeSingleImage = (index) => {
+    base64ImagesToUpload.splice(index, 1); // Xóa ảnh khỏi mảng
+    renderPreviews(); // Cập nhật lại UI
+    if(base64ImagesToUpload.length === 0) document.getElementById('postImageInput').value = '';
+}
+
+// Hàm đọc file khi ấn nút tải ảnh lên (hỗ trợ nhiều ảnh)
+window.previewPostImage = (e) => {
+    const files = e.target.files;
+    if(!files || files.length === 0) return;
+    
+    Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            base64ImagesToUpload.push(event.target.result);
+            renderPreviews();
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+// Lắng nghe sự kiện Paste (Ctrl+V) vào ô nhập chữ
+document.getElementById('postContent').addEventListener('paste', (e) => {
+    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+    for (let index in items) {
+        const item = items[index];
+        // Nếu người dùng dán ảnh
+        if (item.kind === 'file' && item.type.includes('image/')) {
+            const blob = item.getAsFile();
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                base64ImagesToUpload.push(event.target.result);
+                renderPreviews();
+            };
+            reader.readAsDataURL(blob);
+        }
+    }
+});
+
+// Cập nhật nút Camera để ném ảnh vào mảng
+window.takeSnapshot = () => {
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    const camBase64 = canvas.toDataURL('image/jpeg');
+    
+    base64ImagesToUpload.push(camBase64);
+    renderPreviews();
+    closeCamera();
+}
         window.showStats = () => {
             const now = new Date();
             let countWeek = 0, countMonth = 0, countYear = 0;
