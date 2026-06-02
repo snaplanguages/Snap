@@ -1,0 +1,1147 @@
+<!DOCTYPE html> 
+<html lang="vi">  
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part 6 - Test 4 - 2023 | SnapEnglish</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Tông màu Emerald / Teal tươi mát, giảm căng thẳng cho mắt */
+            --bg-gradient-1: #ecfdf5; 
+            --bg-gradient-2: #d1fae5; 
+            --bg-gradient-3: #a7f3d0; 
+            --text-dark: #064e3b; 
+            --text-light: #334155;
+            --glass-bg: rgba(255, 255, 255, 0.92);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            
+            --primary-btn: #10b981; 
+            --primary-btn-hover: #059669; 
+            --accent-btn: #f59e0b; 
+            --accent-btn-hover: #d97706; 
+            --highlight-bg: #d1fae5; 
+            
+            --correct-bg: #f0fdf4;
+            --correct-text: #166534;
+            --correct-border: #86efac;
+            --wrong-bg: #fef2f2;
+            --wrong-text: #991b1b;
+            --wrong-border: #fca5a5;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Be Vietnam Pro', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 50%, var(--bg-gradient-3) 100%);
+            color: var(--text-dark);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        ::selection { background: #a7f3d0; color: #064e3b; }
+
+        .full-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #a7f3d0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+            position: relative; 
+        }
+
+        .brand { font-size: 20px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 10px; }
+        .brand span { background: linear-gradient(to right, #10b981, #059669); color: white; padding: 4px 12px; border-radius: 8px; font-size: 15px; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);}
+
+        .header-controls { display: flex; align-items: center; gap: 15px; }
+
+        .btn-nav-toggle {
+            background: #f8fafc; color: var(--text-dark); border: 2px solid #e2e8f0;
+            padding: 8px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; 
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-nav-toggle:hover { background: #f1f5f9; border-color: #cbd5e1; }
+
+        .timer-box { font-size: 15px; font-weight: 700; color: var(--primary-btn-hover); background: #fff; padding: 8px 18px; border-radius: 10px; border: 2px solid #a7f3d0; }
+
+        .progress-indicator { font-weight: 600; color: var(--accent-btn-hover); background: #fff; padding: 8px 18px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); font-size: 14px;}
+
+        .nav-dropdown {
+            position: absolute; top: calc(100% + 10px); right: 2rem;
+            background: #fff; border-radius: 16px; border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15); width: 300px;
+            max-height: 400px; overflow-y: auto; z-index: 999;
+            padding: 20px; display: none; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            opacity: 0; transform: translateY(-10px); transition: 0.3s ease;
+        }
+        .nav-dropdown.show { display: grid; opacity: 1; transform: translateY(0); }
+        .nav-dropdown::-webkit-scrollbar { width: 6px; }
+        .nav-dropdown::-webkit-scrollbar-thumb { background: #6ee7b7; border-radius: 3px; }
+
+        .nav-dot {
+            height: 40px; border: 2px solid #e2e8f0; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700;
+            cursor: pointer; color: var(--text-light); background: #f8fafc; transition: 0.2s;
+        }
+        .nav-dot:hover { border-color: var(--primary-btn); color: var(--primary-btn); }
+        .nav-dot.done { background: var(--highlight-bg); color: var(--primary-btn-hover); border-color: var(--primary-btn); }
+        .nav-dot.correct { background: var(--correct-bg); color: var(--correct-text); border-color: var(--correct-border); }
+        .nav-dot.wrong { background: var(--wrong-bg); color: var(--wrong-text); border-color: var(--wrong-border); }
+        .nav-dot.active { box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3); border-color: var(--primary-btn); }
+
+        #historyList { max-height: 300px; overflow-y: auto; text-align: left; margin-bottom: 20px; padding-right: 5px; }
+        .history-item { background: rgba(255, 255, 255, 0.8); border: 2px solid #e2e8f0; padding: 14px; border-radius: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .history-item:hover { border-color: var(--primary-btn); background: #fff; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.1); }
+        .history-info { display: flex; flex-direction: column; gap: 6px; }
+        .history-date { font-weight: 700; color: var(--text-dark); font-size: 14px; }
+        .history-score { color: var(--primary-btn-hover); font-size: 13px; font-weight: 600; }
+        .btn-review { background: var(--highlight-bg); color: var(--primary-btn-hover); border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 13px;}
+        .btn-review:hover { background: var(--primary-btn); color: white; }
+        .btn-delete-history { background: #ffebee; color: var(--wrong-text); border: none; padding: 0 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 18px; }
+        .btn-delete-history:hover { background: var(--wrong-text); color: white; }
+
+        .highlight { background-color: #fef08a; cursor: pointer; border-radius: 4px; padding: 2px 0; transition: 0.2s; }
+        .highlight:hover { background-color: #fde047; }
+        #ctxMenu { z-index: 100000; }
+        #ctxMenu button:hover { background: #f1f5f9; }
+
+        .main-content { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            flex: 1; 
+            overflow: hidden; 
+            transition: all 0.5s ease;
+        }
+        .main-content.submitted-layout {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .scroll-col {
+            padding: 2.5rem; 
+            overflow-y: auto; 
+            height: 100%;
+        }
+
+        .scroll-col::-webkit-scrollbar { width: 8px; }
+        .scroll-col::-webkit-scrollbar-track { background: transparent; }
+        .scroll-col::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 10px; }
+        .scroll-col::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.6); }
+
+        .passage-col { border-right: 2px dashed #a7f3d0; background: rgba(255,255,255,0.4); font-size: 1.05rem; line-height: 1.7; color: #334155; }
+        .translation-col { border-right: 2px dashed #a7f3d0; background: rgba(255,255,255,0.6); font-size: 1.05rem; line-height: 1.7; color: #1e293b; display: none; }
+        .main-content.submitted-layout .translation-col { display: block; animation: slideIn 0.5s ease; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .passage-col p, .translation-col p { margin-bottom: 1.2rem; }
+        .translation-header { font-weight: 700; color: #047857; margin-bottom: 1rem; font-size: 1.2rem; border-bottom: 2px solid #34d399; padding-bottom: 0.5rem; display: inline-block;}
+
+        .question-block {
+            background: rgba(255, 255, 255, 0.95); padding: 1.5rem; border-radius: 16px;
+            margin-bottom: 1.5rem; border: 1px solid #e2e8f0; transition: transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+        .question-block:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.08); }
+
+        .question-title { font-weight: 700; margin-bottom: 1rem; color: var(--primary-btn-hover); font-size: 1.1rem; }
+
+        .options { display: flex; flex-direction: column; gap: 0.7rem; }
+
+        .option-label {
+            display: flex; align-items: center; cursor: pointer; padding: 0.8rem 1rem;
+            background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; transition: all 0.3s ease; font-size: 0.98rem;
+        }
+        .option-label:hover:not(.disabled) { background: #f8fafc; border-color: var(--primary-btn); }
+        .option-label input[type="radio"] { margin-right: 1rem; accent-color: var(--primary-btn-hover); transform: scale(1.2); }
+        .option-label.selected { background: var(--highlight-bg); border-color: var(--primary-btn); color: var(--primary-btn-hover); }
+        .option-label.disabled { cursor: default; }
+        
+        .option-label.correct { background: var(--correct-bg); border-color: var(--correct-border); color: var(--correct-text); font-weight: 600; }
+        .option-label.wrong { background: var(--wrong-bg); border-color: var(--wrong-border); color: var(--wrong-text); opacity: 0.85; }
+
+        .option-text-en { font-weight: 600; margin-right: 8px; }
+        .option-text-vi { color: #64748b; font-style: italic; font-size: 0.9em; }
+
+        .explanation-box {
+            margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 12px;
+            border: 1px dashed #cbd5e1; font-size: 0.95rem; color: #475569; display: none; line-height: 1.6;
+        }
+        .explanation-box.show { display: block; animation: fadeIn 0.5s ease; }
+        .explanation-box b { color: var(--primary-btn-hover); }
+        .explanation-box ul { padding-left: 20px; margin-top: 8px; }
+        .explanation-box li { margin-bottom: 4px; }
+
+        .footer {
+            padding: 1rem 2rem; border-top: 1px solid #a7f3d0;
+            display: flex; justify-content: space-between; background: rgba(255, 255, 255, 0.7);
+        }
+
+        .btn { padding: 0.7rem 1.8rem; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: inherit;}
+        .btn-prev { background: #ffffff; color: var(--text-dark); border: 1px solid #cbd5e1; }
+        .btn-prev:hover { background: #f1f5f9; border-color: #94a3b8; }
+        .btn-next { background: var(--primary-btn); color: #fff; }
+        .btn-next:hover { background: var(--primary-btn-hover); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+        .btn-submit { background: var(--accent-btn); color: #fff; }
+        .btn-submit:hover { background: var(--accent-btn-hover); box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3); }
+
+        .vocab-btn {
+            position: fixed;
+            bottom: 30px; left: 30px;
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%; display: none; align-items: center; justify-content: center;
+            font-size: 26px; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+            cursor: pointer; z-index: 1000; border: 3px solid #fff;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: float 3s ease-in-out infinite;
+        }
+        .vocab-btn:hover { transform: scale(1.15) rotate(10deg); }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        .result-overlay, .custom-overlay { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            z-index: 99999; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; 
+        }
+        .result-overlay.active, .custom-overlay.active { opacity: 1; pointer-events: all; }
+        .custom-overlay[style*="display: flex;"] { opacity: 1; pointer-events: all; }
+
+        .custom-modal { 
+            background: white; padding: 35px; border-radius: 20px; 
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2); width: 90%; max-width: 450px; text-align: center; 
+            border: 2px solid #34d399; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        
+        .custom-modal h2 { color: var(--primary-btn-hover); font-size: 24px; margin-top: 0; margin-bottom: 12px;}
+        .result-score { font-size: 3.5rem; font-weight: 800; color: var(--text-dark); margin-bottom: 1.5rem; text-shadow: 2px 2px 0px #d1fae5; }
+
+        .modal-actions { display: flex; gap: 15px; margin-top: 25px; justify-content: center; }
+        .modal-actions button { flex: 1; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 15px; border: none; cursor: pointer; transition: 0.2s; font-family: inherit;}
+        .btn-cancel { background: #f1f5f9; color: #475569; }
+        .btn-cancel:hover { background: #e2e8f0; }
+        .btn-confirm { background: var(--primary-btn); color: white; }
+        .btn-confirm:hover { background: var(--primary-btn-hover); }
+
+        #timeInputBox { margin: 25px 0; }
+        #timeInput { width: 90px; padding: 10px; font-size: 16px; text-align: center; border: 2px solid #e2e8f0; border-radius: 10px; outline: none; font-weight: 700; color: var(--primary-btn); transition: 0.3s; font-family: inherit;}
+        #timeInput:focus { border-color: var(--primary-btn); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
+
+        .vocab-modal {
+            background: #fff; width: 90%; max-width: 600px; max-height: 80vh;
+            border-radius: 20px; padding: 30px; overflow-y: auto; text-align: left;
+            position: relative; border: 3px solid #34d399;
+        }
+        .vocab-modal h2 { text-align: center; color: #047857; margin-bottom: 20px; font-size: 22px; display: flex; align-items: center; justify-content: center; gap: 10px;}
+        .vocab-list { list-style: none; padding: 0; }
+        .vocab-list li { padding: 12px 15px; border-bottom: 1px dashed #e2e8f0; display: flex; flex-direction: column; }
+        .vocab-list li:last-child { border-bottom: none; }
+        .vocab-word { font-weight: 700; color: var(--primary-btn-hover); font-size: 1.05rem;}
+        .vocab-meaning { color: #475569; margin-top: 4px; font-size: 0.95rem; }
+        .close-vocab { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 24px; color: #94a3b8; cursor: pointer; transition: 0.2s; }
+        .close-vocab:hover { color: #f43f5e; }
+        .vocab-modal::-webkit-scrollbar { width: 8px; }
+        .vocab-modal::-webkit-scrollbar-thumb { background: #34d399; border-radius: 10px; }
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .main-content { display: flex; flex-direction: column; overflow: hidden; }
+    .main-content.submitted-layout { display: flex; flex-direction: column; }
+    .passage-col { height: 45%; border-right: none; border-bottom: 3px solid #a7f3d0; padding: 1.5rem; }
+    .translation-col { height: 30%; border-right: none; border-bottom: 3px solid #34d399; padding: 1.5rem; }
+    .question-col { flex: 1; height: auto; padding: 1.5rem; }
+    .main-content.submitted-layout .passage-col { height: 30%; }
+    .header { flex-direction: column; gap: 15px; padding: 1rem; }
+    .header-controls { width: 100%; justify-content: space-between; }
+    .nav-dropdown { top: calc(100% + 5px); right: 1rem; width: calc(100% - 2rem); }
+}
+
+@media (max-width: 768px) {
+    .header-controls { flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .nav-dropdown { grid-template-columns: repeat(4, 1fr); }
+    .footer { flex-direction: column; gap: 15px; padding: 1rem; }
+    .footer > div { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-left: 0 !important; }
+    .btn { width: 100%; text-align: center; justify-content: center; }
+    .custom-modal { width: 95%; padding: 25px 20px; }
+    .result-overlay .custom-modal h2 { font-size: 1.6rem !important; }
+    .result-score { font-size: 2.8rem; }
+    .modal-actions { flex-direction: column; }
+    .modal-actions button { width: 100%; }
+}
+
+@media (max-width: 480px) {
+    .brand { font-size: 18px; flex-direction: column; text-align: center; }
+    .nav-dropdown { grid-template-columns: repeat(3, 1fr); }
+}
+    </style>
+</head>
+<body>
+
+<div id="setupOverlay" class="custom-overlay" style="display: flex;">
+    <div class="custom-modal">
+        <h2>Chào mừng đến Part 6 ✨</h2>
+        <p style="font-size: 15px; color: #64748b;">ETS 2023 - Test 4</p>
+        <div id="timeInputBox">
+            <label style="font-size: 16px; font-weight: bold; color: #334155;">Thời gian (phút): </label>
+            <input type="number" id="timeInput" value="15" min="1" max="60">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="openHistoryModal()">🕒 Lịch sử</button>
+            <button class="btn-confirm" onclick="askReady()">Sẵn sàng (OK)</button>
+        </div>
+    </div>
+</div>
+
+<div id="startConfirmOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Xác nhận bắt đầu</h2>
+        <p id="startConfirmMsg" style="font-size: 16px; color: #475569; margin-bottom: 20px; white-space: pre-line; line-height: 1.6;"></p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeStartConfirmModal()">Huỷ</button>
+            <button class="btn-confirm" onclick="startTestActual()">Bắt đầu</button>
+        </div>
+    </div>
+</div>
+
+<div id="historyOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2 style="margin-bottom: 20px;">🕒 Lịch sử làm bài</h2>
+        <div id="historyList"></div>
+        <button class="btn-cancel" style="width: 100%; margin-top: 15px;" onclick="closeHistoryModal()">Quay lại 🍃</button>
+    </div>
+</div>
+
+<div id="customConfirmDeleteOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Xác nhận xóa 🍃</h2>
+        <p style="font-size: 16px; color: #475569; margin-top: 15px; line-height: 1.5; margin-bottom: 20px;">Cậu có chắc chắn muốn xóa bài làm này khỏi lịch sử không?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmDelete()">Hủy 🐢</button>
+            <button class="btn-confirm" onclick="executeDelete()" style="background: var(--wrong-text);">Xóa nhé 🗑️</button>
+        </div>
+    </div>
+</div>
+
+<div id="customAlertOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Chú ý nè 🍀</h2>
+        <p id="customAlertMessage" style="font-size: 16px; color: #475569; margin-top: 15px; line-height: 1.5; margin-bottom: 20px;"></p>
+        <div class="modal-actions" style="justify-content: center;">
+            <button class="btn-confirm" onclick="closeCustomAlert()" style="max-width: 200px;">Đã hiểu 🦊</button>
+        </div>
+    </div>
+</div>
+
+<div id="ctxMenu" style="position: absolute; display: none; background: white; box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-radius: 12px; overflow:hidden; z-index: 100000;">
+    <button onclick="doHighlight()" style="display:block; width:100%; padding:12px 20px; border:none; background:none; cursor:pointer; text-align:left; font-weight:600; color:#475569; font-family:inherit;">🖍 Highlight (Vàng)</button>
+    <button onclick="removeHighlight()" style="display:block; width:100%; padding:12px 20px; border:none; background:none; cursor:pointer; text-align:left; font-weight:600; color:#e02424; font-family:inherit;">🗑 Xóa Highlight</button>
+</div>
+
+<div class="full-container">
+    <div class="header">
+        <div class="brand"><span>SnapEnglish</span> Part 6 - Test 4 - 2023</div>
+        <div class="header-controls">
+            <div class="timer-box">⏱ <span id="timer">00:00</span></div>
+            <button class="btn-nav-toggle" onclick="toggleNavDropdown()">📑 Danh sách câu</button>
+            <div class="progress-indicator" id="progress-text">Đoạn 1 / 4</div>
+        </div>
+        <div class="nav-dropdown" id="navDropdown"></div>
+    </div>
+
+    <div class="main-content" id="mainLayout">
+        <div class="scroll-col passage-col" id="passage-container"></div>
+        <div class="scroll-col translation-col" id="translation-container"></div>
+        <div class="scroll-col question-col" id="questions-container"></div>
+    </div>
+
+    <div class="footer">
+        <button class="btn btn-prev" id="btn-prev" onclick="changePassage(-1)" style="display: none;">Quay lại</button>
+        <div style="display: flex; gap: 1rem; margin-left: auto;">
+            <button class="btn btn-next" id="btn-next" onclick="changePassage(1)">Tiếp theo</button>
+            <button class="btn btn-submit" id="btn-submit" onclick="askSubmit()">Nộp bài</button>
+        </div>
+    </div>
+
+    <div class="result-overlay" id="result-overlay">
+        <div class="custom-modal">
+            <h2>Hoàn thành xuất sắc! 🌟</h2>
+            <div class="result-score"><span id="score-correct">0</span> / <span id="score-total">16</span></div>
+            <p style="margin-bottom: 2rem; color: #64748b; font-size: 1rem;">Bây giờ giao diện sẽ được chia làm 3 cột và hiển thị nút Bóng Đèn Từ Vựng để bạn học sâu hơn nhé!</p>
+            <button class="btn-confirm" style="width: 100%; padding: 1rem; font-size: 1.1rem;" onclick="closeResult()">Xem lại bài & Giải thích</button>
+        </div>
+    </div>
+</div>
+
+<div id="confirmOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Xác nhận nộp bài</h2>
+        <p style="font-size: 16px; color: #475569; margin-bottom: 10px; line-height: 1.6;">Bạn có chắc chắn muốn nộp bài để xem đáp án, phân tích chi tiết và học từ vựng không?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmModal()">Quay lại</button>
+            <button class="btn-submit" onclick="submitQuiz()" style="flex:1; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer;">Nộp bài</button>
+        </div>
+    </div>
+</div>
+
+<div class="vocab-btn" id="vocabBtn" onclick="openVocab()" title="Xem từ vựng quan trọng">💡</div>
+<div id="vocabOverlay" class="custom-overlay">
+    <div class="vocab-modal">
+        <button class="close-vocab" onclick="closeVocab()">✖</button>
+        <h2>💡 Từ Vựng & Cấu Trúc Đáng Nhớ</h2>
+        <ul class="vocab-list">
+            <li><span class="vocab-word">Comprehensively (adv)</span><span class="vocab-meaning">Một cách toàn diện, bao quát.</span></li>
+            <li><span class="vocab-word">Renovation (n)</span><span class="vocab-meaning">Sự cải tạo, tu sửa (công trình, nhà cửa).</span></li>
+            <li><span class="vocab-word">Partnership (n)</span><span class="vocab-meaning">Sự hợp tác, quan hệ đối tác kinh doanh.</span></li>
+            <li><span class="vocab-word">Extend (v)</span><span class="vocab-meaning">Gia hạn (hợp đồng, thời hạn), kéo dài.</span></li>
+            <li><span class="vocab-word">Commitment (n)</span><span class="vocab-meaning">Sự cam kết, lời hứa ràng buộc.</span></li>
+            <li><span class="vocab-word">Deduct (v)</span><span class="vocab-meaning">Khấu trừ, trừ đi (thường dùng trong tài chính).</span></li>
+            <li><span class="vocab-word">Refund (n/v)</span><span class="vocab-meaning">Khoản tiền hoàn lại / Hoàn tiền.</span></li>
+            <li><span class="vocab-word">Statement (n)</span><span class="vocab-meaning">Bản sao kê (ngân hàng), lời tuyên bố.</span></li>
+            <li><span class="vocab-word">Confusion (n)</span><span class="vocab-meaning">Sự nhầm lẫn, sự hoang mang, bối rối.</span></li>
+            <li><span class="vocab-word">Adjustment (n)</span><span class="vocab-meaning">Sự điều chỉnh, sửa đổi (cho đúng).</span></li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    // Dữ liệu chi tiết ETS 2023 - Test 4 - Part 6
+    const quizData = [
+        // PASSAGE 1: Câu 131 - 134
+        {
+            passage: `<p><strong>Evergreen Mountains Scenic Railway</strong></p><p>Evergreen Mountains Scenic Railway has reopened following a year-long renovation project. First built over a century ago, the railway is one of the oldest in the country. The recent closure was necessary to comprehensively upgrade the old tracks and train cars. <b>(131)______</b>, renovations were also made to the historic train stations.</p><p>Sightseers on the railway will enjoy the trip through Evergreen Forest as they <b>(132)______</b> up to the top of Walden Mountain. Here, the train will pause for an hour to visit the new visitor center or <b>(133)______</b> enjoy the views from the region's highest mountain. The return trip follows a different route back to the station. <b>(134)______</b>. Tickets for this amazing journey are available online now.</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p><strong>Đường sắt ngắm cảnh dãy núi Evergreen</strong></p><p>Đường sắt ngắm cảnh dãy núi Evergreen đã mở cửa trở lại sau một dự án cải tạo kéo dài một năm. Được xây dựng lần đầu tiên cách đây hơn một thế kỷ, tuyến đường sắt này là một trong những tuyến lâu đời nhất của đất nước. Việc đóng cửa gần đây là cần thiết để nâng cấp toàn diện các đường ray và toa tàu cũ. <b>(131) Thêm vào đó</b>, việc cải tạo cũng được thực hiện đối với những nhà ga tàu mang tính lịch sử.</p><p>Những người tham quan trên tuyến đường sắt sẽ tận hưởng chuyến đi xuyên qua Rừng Evergreen khi họ <b>(132) đi xe</b> lên đến đỉnh núi Walden. Tại đây, tàu sẽ tạm dừng một giờ để mọi người tham quan trung tâm dành cho khách du lịch mới hoặc <b>(133) đơn giản</b> là tận hưởng quang cảnh từ ngọn núi cao nhất trong vùng. Chuyến trở về đi theo một tuyến đường khác để trở lại nhà ga. <b>(134) Toàn bộ chuyến đi mất khoảng 2,5 giờ.</b> Vé cho cuộc hành trình tuyệt vời này hiện có sẵn trực tuyến.</p>`,
+            questions: [
+                {
+                    id: 131,
+                    text: "131.",
+                    options: [
+                        { text: "A. Additionally (Thêm vào đó)", correct: true },
+                        { text: "B. However (Tuy nhiên)", correct: false },
+                        { text: "C. Nevertheless (Mặc dù vậy)", correct: false },
+                        { text: "D. For example (Ví dụ)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Phân tích mạch văn giữa hai câu:<br>- Câu trước: Việc đóng cửa là cần thiết để nâng cấp <b>đường ray và toa tàu</b> cũ.<br>- Câu chứa khoảng trống: ... việc cải tạo cũng được thực hiện đối với các <b>nhà ga</b> lịch sử.<br>Hai câu này mang tính chất liệt kê bổ sung thêm các hạng mục được nâng cấp. Do đó, trạng từ liên kết <b>Additionally</b> (Thêm vào đó / Ngoài ra) là sự lựa chọn nối ý hoàn hảo nhất."
+                },
+                {
+                    id: 132,
+                    text: "132.",
+                    options: [
+                        { text: "A. ride (Hiện tại đơn - nguyên thể)", correct: true },
+                        { text: "B. riding (V-ing)", correct: false },
+                        { text: "C. rides (Hiện tại đơn - thêm s)", correct: false },
+                        { text: "D. ridden (Phân từ 2)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Mệnh đề phụ bắt đầu bằng liên từ 'as' (khi mà): 'as they [.....] up to the top'. <br>Động từ trong mệnh đề chính 'will enjoy' chia ở tương lai đơn, nên mệnh đề trạng ngữ chỉ thời gian (as) sẽ chia ở thì <b>Hiện tại đơn</b> để diễn tả một sự việc diễn ra theo lịch trình/trải nghiệm chung. Chủ ngữ là đại từ số nhiều <b>they</b> (những người tham quan), nên động từ phải ở dạng nguyên thể không chia. Vì vậy, ta chọn <b>ride</b>."
+                },
+                {
+                    id: 133,
+                    text: "133.",
+                    options: [
+                        { text: "A. simple (Tính từ)", correct: false },
+                        { text: "B. simplest (Tính từ so sánh nhất)", correct: false },
+                        { text: "C. simplify (Động từ)", correct: false },
+                        { text: "D. simply (Trạng từ)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Cấu trúc ngữ pháp: 'to visit ... or [.....] <b>enjoy</b> the views...'. Từ cần điền đứng trước động từ chính 'enjoy' nhằm mục đích bổ nghĩa cho nó. Chức năng bổ nghĩa cho một động từ thường thuộc về <b>Trạng từ (Adverb)</b>. Trong 4 đáp án, chỉ có <b>simply</b> (một cách đơn giản) là trạng từ. <br>Dịch: '...hoặc <i>đơn giản là</i> tận hưởng quang cảnh'."
+                },
+                {
+                    id: 134,
+                    text: "134.",
+                    options: [
+                        { text: "A. The renovations took longer than expected. (Việc cải tạo mất nhiều thời gian hơn dự tính.)", correct: false },
+                        { text: "B. Walden Mountain is the tallest of the Evergreen Mountains. (Núi Walden là ngọn núi cao nhất của Evergreen.)", correct: false },
+                        { text: "C. Other nearby mountains do not have tourist attractions. (Những ngọn núi khác gần đó không có điểm du lịch.)", correct: false },
+                        { text: "D. The entire trip takes approximately 2.5 hours. (Toàn bộ chuyến đi mất khoảng 2,5 giờ.)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đọc câu liền trước: 'Chuyến trở về đi theo một tuyến đường khác để trở lại nhà ga' (mô tả lộ trình kết thúc). Đọc câu liền sau: 'Vé cho cuộc hành trình này hiện có sẵn' (thông tin đặt vé).<br>Để khép lại chuỗi mô tả về lộ trình (đi lên -> dừng lại -> đi về), việc tổng kết thời gian của chuyến đi là logic nhất. Do đó, câu <b>D</b> (Toàn bộ chuyến đi mất khoảng 2.5 giờ) giúp gói gọn lại thông tin mô tả tour một cách tự nhiên trước khi kêu gọi mua vé."
+                }
+            ]
+        },
+        
+        // PASSAGE 2: Câu 135 - 138
+        {
+            passage: `<p>To: Marcus Witt &lt;mwitt@bmail.com&gt;<br>Date: June 1<br>From: Julie Mendell &lt;contracts@nevycorp.com&gt;<br>Subject: Your contract with Nevy<br>Attachment: Renewal form</p><p>Dear Mr. Witt:</p><p>Greetings from Nevy Corporation. I hope this e-mail finds you well.</p><p>As I mentioned during our recent call, we are reviewing our recent <b>(135)______</b>. This includes your agency. <b>(136)______</b> the difficult times this year, we were very impressed with the professionalism and positive results your agency provided. <b>(137)______</b>. Please sign the attached document and return it to us at your earliest convenience.</p><p>We <b>(138)______</b> forward to growing our relationship with you and your team. If you have any questions or concerns, please let us know.</p><p>Sincerely,<br>Julie Mendell<br>Director of Partnerships</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p>Tới: Marcus Witt &lt;mwitt@bmail.com&gt;<br>Ngày: 1 tháng 6<br>Người gửi: Julie Mendell &lt;contracts@nevycorp.com&gt;<br>Chủ đề: Hợp đồng của bạn với Nevy<br>Tệp đính kèm: Biểu mẫu gia hạn</p><p>Thưa ông Witt:</p><p>Lời chào trân trọng từ Tập đoàn Nevy. Tôi hy vọng email này sẽ đến với ông trong lúc ông đang bình an.</p><p>Như tôi đã đề cập trong cuộc gọi gần đây, chúng tôi đang tiến hành rà soát những <b>(135) sự hợp tác</b> gần đây của chúng tôi. Điều này bao gồm cả cơ quan của ông. <b>(136) Bất chấp</b> những thời điểm khó khăn trong năm nay, chúng tôi rất ấn tượng với tính chuyên nghiệp và kết quả tích cực mà cơ quan ông mang lại. <b>(137) Vì vậy, chúng tôi muốn gia hạn hợp đồng của ông thêm hai năm nữa.</b> Vui lòng ký vào tài liệu đính kèm và gửi lại cho chúng tôi trong thời gian sớm nhất có thể.</p><p>Chúng tôi <b>(138) mong đợi</b> được củng cố mối quan hệ của chúng tôi với ông và đội ngũ của ông. Nếu ông có bất kỳ câu hỏi hoặc thắc mắc nào, vui lòng cho chúng tôi biết.</p><p>Trân trọng,<br>Julie Mendell<br>Giám đốc Quan hệ Đối tác</p>`,
+            questions: [
+                {
+                    id: 135,
+                    text: "135.",
+                    options: [
+                        { text: "A. versions (các phiên bản)", correct: false },
+                        { text: "B. contests (các cuộc thi)", correct: false },
+                        { text: "C. equipment (thiết bị)", correct: false },
+                        { text: "D. partnerships (sự hợp tác, quan hệ đối tác)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Dựa vào chức danh của người gửi (Director of Partnerships - Giám đốc Quan hệ Đối tác) và nội dung email nói về việc gia hạn hợp đồng (Renewal form) với một 'agency' (cơ quan/đại lý). Điều này chứng tỏ Nevy Corporation đang rà soát lại các <b>quan hệ đối tác / sự hợp tác (partnerships)</b> của mình để quyết định có tiếp tục ký hợp đồng hay không."
+                },
+                {
+                    id: 136,
+                    text: "136.",
+                    options: [
+                        { text: "A. Although (Mặc dù + Mệnh đề)", correct: false },
+                        { text: "B. Despite (Mặc dù + Cụm danh từ)", correct: true },
+                        { text: "C. Instead (Thay vì)", correct: false },
+                        { text: "D. Since (Bởi vì / Kể từ khi + Mệnh đề)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Phân tích ngữ pháp sau chỗ trống: 'the difficult times this year' (những khoảng thời gian khó khăn năm nay). Đây là một <b>Cụm danh từ (Noun Phrase)</b>, không chứa động từ được chia. <br>- 'Although' và 'Since' phải đi kèm với một mệnh đề đầy đủ (S + V).<br>- 'Instead' (thường dùng Instead of + N, hoặc đứng độc lập).<br>- 'Despite' đi với một danh từ/cụm danh từ mang nghĩa nhượng bộ. Do đó, <b>Despite</b> (Bất chấp / Mặc dù có...) là đáp án chuẩn xác duy nhất."
+                },
+                {
+                    id: 137,
+                    text: "137.",
+                    options: [
+                        { text: "A. Therefore, we would like to extend your contract for another two years. (Vì vậy, chúng tôi muốn gia hạn hợp đồng của bạn thêm hai năm nữa.)", correct: true },
+                        { text: "B. Unfortunately, we were unable to reach you in time. (Thật không may, chúng tôi không thể liên lạc với bạn đúng lúc.)", correct: false },
+                        { text: "C. Please confirm your contact details at your earliest convenience. (Vui lòng xác nhận chi tiết liên lạc của bạn sớm nhất có thể.)", correct: false },
+                        { text: "D. We certainly understand the concerns you raised when we last spoke. (Chúng tôi hiểu những thắc mắc bạn đã nêu ra khi chúng ta nói chuyện lần trước.)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đọc câu trước: Công ty Nevy 'rất ấn tượng' (very impressed) với sự chuyên nghiệp và kết quả tốt mà đối tác mang lại. Đây là một nguyên nhân tích cực. <br>Hệ quả tự nhiên của việc hài lòng với đối tác là gì? Chính là muốn tiếp tục làm việc chung. Câu <b>A</b> (Vì vậy, chúng tôi muốn gia hạn hợp đồng thêm 2 năm) cung cấp một kết quả vô cùng hợp lý, đồng thời giải thích lý do tại sao lại đính kèm 'Renewal form' (Biểu mẫu gia hạn) trong email này."
+                },
+                {
+                    id: 138,
+                    text: "138.",
+                    options: [
+                        { text: "A. were looking (Quá khứ tiếp diễn)", correct: false },
+                        { text: "B. would look (Tương lai trong quá khứ)", correct: false },
+                        { text: "C. looked (Quá khứ đơn)", correct: false },
+                        { text: "D. look (Hiện tại đơn)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Cấu trúc quen thuộc ở cuối các bức thư thương mại: <b>look forward to + V-ing/N</b> (mong đợi/trông chờ điều gì đó). Động từ này diễn tả cảm xúc/trạng thái ở thời điểm hiện tại khi đang viết thư, nên luôn được chia ở thì <b>Hiện tại đơn</b> ('look' hoặc 'are looking' nếu muốn nhấn mạnh tính liên tục). Ở đây ta chọn <b>look</b>."
+                }
+            ]
+        },
+
+        // PASSAGE 3: Câu 139 - 142
+        {
+            passage: `<p><b>Big Savings at Buelo Fitness!</b></p><p>At Buelo Fitness, we seek to improve the physical and mental health of all Carver residents. Because the gym is locally owned, <b>(139)______</b> will provide you with the personal attention and guidance needed to maximize your fitness. <b>(140)______</b> another year is coming to an end, why not get back into shape?</p><p><b>(141)______</b>. But you must act fast! These limited offers are only valid until December 31.</p><p>The Buelo Bundle includes fifteen classes over three months for just $100. The Buelo Unlimited is just $10 for the first month and $100 for each month thereafter. This plan requires a six-month <b>(142)______</b>.</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p><b>Tiết kiệm lớn tại Buelo Fitness!</b></p><p>Tại Buelo Fitness, chúng tôi tìm cách cải thiện sức khỏe thể chất và tinh thần của tất cả cư dân Carver. Vì phòng tập thuộc sở hữu của người địa phương, <b>(139) chúng tôi</b> sẽ cung cấp cho bạn sự quan tâm cá nhân và sự hướng dẫn cần thiết để tối đa hóa thể lực của bạn. <b>(140) Bởi vì</b> một năm nữa lại sắp kết thúc, tại sao không lấy lại vóc dáng khỏe mạnh đi nào?</p><p><b>(141) Chúng tôi đang cung cấp hai ưu đãi đặc biệt để giúp bạn bắt đầu.</b> Nhưng bạn phải hành động nhanh chóng! Những ưu đãi có hạn này chỉ có hiệu lực đến hết ngày 31 tháng 12.</p><p>Gói Buelo Bundle bao gồm 15 lớp học trong vòng 3 tháng chỉ với giá $100. Gói Buelo Unlimited chỉ với $10 cho tháng đầu tiên và $100 cho mỗi tháng sau đó. Gói này yêu cầu một <b>(142) sự cam kết</b> kéo dài sáu tháng.</p>`,
+            questions: [
+                {
+                    id: 139,
+                    text: "139.",
+                    options: [
+                        { text: "A. we (chúng tôi - Đại từ nhân xưng chủ ngữ)", correct: true },
+                        { text: "B. one (một - Đại từ phiếm chỉ)", correct: false },
+                        { text: "C. they (họ - Đại từ nhân xưng chủ ngữ)", correct: false },
+                        { text: "D. mine (của tôi - Đại từ sở hữu)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Câu trước sử dụng đại từ 'we' (chúng tôi) để xưng hô thay mặt cho phòng tập ('we seek to improve...'). Trong câu này, người viết tiếp tục đưa ra lời hứa hẹn về dịch vụ của chính phòng tập mình ('[.....] sẽ cung cấp cho bạn sự quan tâm...'). Do đó, việc duy trì đại từ <b>we</b> làm chủ ngữ là hoàn toàn bắt buộc để đảm bảo sự thống nhất trong xưng hô."
+                },
+                {
+                    id: 140,
+                    text: "140.",
+                    options: [
+                        { text: "A. As (Bởi vì / Khi mà)", correct: true },
+                        { text: "B. During (Trong suốt + Noun)", correct: false },
+                        { text: "C. Beyond (Vượt ra ngoài + Noun)", correct: false },
+                        { text: "D. Following (Theo sau / Sau khi + Noun)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Phân tích cấu trúc ngữ pháp sau chỗ trống: 'another year is coming to an end' (một năm nữa đang đi đến hồi kết). Đây là một mệnh đề đầy đủ có Chủ ngữ (another year) và Động từ (is coming). <br>Trong 4 đáp án, chỉ có liên từ <b>As</b> (Bởi vì / Trong khi) mới có thể đi kèm với một mệnh đề. Các đáp án B, C, D đều là giới từ, bắt buộc phải đi kèm với Cụm danh từ (Noun Phrase) hoặc V-ing."
+                },
+                {
+                    id: 141,
+                    text: "141.",
+                    options: [
+                        { text: "A. Call us if you have any questions. (Hãy gọi cho chúng tôi nếu bạn có bất kỳ câu hỏi nào.)", correct: false },
+                        { text: "B. Check out these positive reviews from customers. (Hãy xem những đánh giá tích cực này từ khách hàng.)", correct: false },
+                        { text: "C. We are offering two special deals to help you begin. (Chúng tôi đang cung cấp hai ưu đãi đặc biệt để giúp bạn bắt đầu.)", correct: true },
+                        { text: "D. Exercise should be combined with healthy eating habits. (Việc tập thể dục nên được kết hợp với thói quen ăn uống lành mạnh.)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đọc đoạn văn tiếp theo, ta thấy quảng cáo giới thiệu hai gói tập cụ thể: 'The Buelo Bundle' và 'The Buelo Unlimited'. Điều này cho thấy câu điền vào chỗ trống ở đoạn trên phải mang tính chất 'giới thiệu' hoặc 'dẫn dắt' cho hai gói tập này. Câu <b>C</b> (Chúng tôi đang cung cấp <b>hai ưu đãi đặc biệt</b>...) đóng vai trò là câu chủ đề hoàn hảo báo trước nội dung chi tiết phía dưới."
+                },
+                {
+                    id: 142,
+                    text: "142.",
+                    options: [
+                        { text: "A. lease (hợp đồng cho thuê nhà/xe)", correct: false },
+                        { text: "B. development (sự phát triển)", correct: false },
+                        { text: "C. opportunity (cơ hội)", correct: false },
+                        { text: "D. commitment (sự cam kết)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Gói tập 'Buelo Unlimited' yêu cầu người mua phải trả $10 tháng đầu, và $100 cho các tháng sau. Cấu trúc giá này (tháng đầu rẻ, các tháng sau đắt) luôn đi kèm với điều kiện bắt buộc khách hàng phải duy trì gói trong một thời gian tối thiểu để phòng tập không bị lỗ. Khái niệm này trong kinh doanh dịch vụ được gọi là 'hợp đồng cam kết thời gian'. Từ vựng chính xác là <b>commitment</b> (a six-month commitment = một bản cam kết kéo dài 6 tháng)."
+                }
+            ]
+        },
+
+        // PASSAGE 4: Câu 143 - 146
+        {
+            passage: `<p>To: jliu@lle.com<br>From: customersupport@gerdenbank.com<br>Subject: Service fee<br>Date: May 27, 10:34 A.M.</p><p>Dear Ms. Liu,</p><p><b>(143)______</b> an error in our internal computer processing system, a service fee was incorrectly deducted from your savings account on May 23. This error has been corrected, and a refund was deposited into your account on May 25. You <b>(144)______</b> this fund on your next statement shown as an "Adjustment fee."</p><p>We apologize if this led to any <b>(145)______</b>. Please contact us if you have any questions. <b>(146)______</b>.</p><p>Sincerely,<br>Jennifer Ayers<br>Customer Support Agent<br>Gerden Bank</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p>Đến: jliu@lle.com<br>Từ: customersupport@gerdenbank.com<br>Chủ đề: Phí dịch vụ<br>Ngày: 27 tháng 5, 10:34 SA</p><p>Cô Lưu thân mến,</p><p><b>(143) Bởi vì</b> một lỗi trong hệ thống xử lý máy tính nội bộ của chúng tôi, một khoản phí dịch vụ đã bị khấu trừ không chính xác từ tài khoản tiết kiệm của cô vào ngày 23 tháng 5. Lỗi này đã được khắc phục và khoản tiền hoàn lại đã được gửi vào tài khoản của cô vào ngày 25 tháng 5. Cô <b>(144) sẽ tìm thấy</b> khoản tiền này trong bản sao kê tiếp theo của mình, được thể hiện dưới dạng "Phí điều chỉnh".</p><p>Chúng tôi xin lỗi nếu điều này đã dẫn đến bất kỳ <b>(145) sự hoang mang / nhầm lẫn</b> nào. Vui lòng liên hệ với chúng tôi nếu cô có bất kỳ câu hỏi nào. <b>(146) Như thường lệ, cảm ơn bạn đã chọn Ngân hàng Gerden.</b></p><p>Trân trọng,<br>Jennifer Ayers<br>Nhân viên Hỗ trợ Khách hàng<br>Ngân hàng Gerden</p>`,
+            questions: [
+                {
+                    id: 143,
+                    text: "143.",
+                    options: [
+                        { text: "A. In fact (Trên thực tế)", correct: false },
+                        { text: "B. Because of (Bởi vì + Danh từ)", correct: true },
+                        { text: "C. In reply to (Để đáp lại)", correct: false },
+                        { text: "D. Except for (Ngoại trừ)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Mệnh đề sau chỗ trống là: 'an error in our internal computer processing system' (một lỗi trong hệ thống...). Đây là một cụm danh từ (Noun Phrase) chỉ <b>nguyên nhân</b> dẫn đến việc tiền của khách bị trừ sai. Do đó, giới từ chỉ nguyên nhân <b>Because of</b> (Bởi vì) là lựa chọn duy nhất mang lại ý nghĩa hợp lý."
+                },
+                {
+                    id: 144,
+                    text: "144.",
+                    options: [
+                        { text: "A. found (Quá khứ đơn)", correct: false },
+                        { text: "B. were finding (Quá khứ tiếp diễn)", correct: false },
+                        { text: "C. will find (Tương lai đơn)", correct: true },
+                        { text: "D. have found (Hiện tại hoàn thành)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Câu trước báo rằng tiền đã được hoàn vào ngày 25/5 (sự việc đã xảy ra). Nhưng câu này nói về việc khách hàng sẽ nhìn thấy khoản tiền đó hiển thị trên <b>'your next statement' (bản sao kê tiếp theo)</b>. Vì bản sao kê tiếp theo là sự việc chưa diễn ra trong tương lai, động từ phải được chia ở thì Tương lai đơn <b>will find</b> (sẽ tìm thấy)."
+                },
+                {
+                    id: 145,
+                    text: "145.",
+                    options: [
+                        { text: "A. confusion (sự nhầm lẫn, hoang mang)", correct: true },
+                        { text: "B. satisfaction (sự hài lòng)", correct: false },
+                        { text: "C. explanation (sự giải thích)", correct: false },
+                        { text: "D. calculation (sự tính toán)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Ngân hàng đang viết thư xin lỗi vì đã trừ nhầm tiền của khách ('We apologize if this led to any...'). Việc tự dưng thấy tài khoản bị mất tiền chắc chắn sẽ khiến khách hàng cảm thấy hoang mang, bối rối hoặc nhầm lẫn. Từ <b>confusion</b> (sự nhầm lẫn / hoang mang) đi với lời xin lỗi là một cách diễn đạt vô cùng phổ biến trong dịch vụ khách hàng."
+                },
+                {
+                    id: 146,
+                    text: "146.",
+                    options: [
+                        { text: "A. We just added 280 new customers to our base. (Chúng tôi vừa thêm 280 khách hàng mới vào hệ thống.)", correct: false },
+                        { text: "B. Please let us know whether you want to open a checking account. (Vui lòng cho biết liệu bạn có muốn mở tài khoản thanh toán không.)", correct: false },
+                        { text: "C. Gerden Bank has an important message for our customers. (Ngân hàng Gerden có một thông báo quan trọng cho khách hàng.)", correct: false },
+                        { text: "D. As always, thank you for choosing Gerden Bank. (Như thường lệ, cảm ơn bạn đã chọn Ngân hàng Gerden.)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Vị trí khoảng trống nằm ở ngay cuối cùng của email, ngay trước phần chào kết (Sincerely). Đối với một email giao tiếp từ doanh nghiệp gửi khách hàng (đặc biệt là sau khi xử lý xong một vấn đề khiếu nại/sự cố), lời kết tiêu chuẩn và lịch sự nhất luôn là một lời cảm ơn khách hàng vì đã sử dụng dịch vụ. Do đó, câu <b>D</b> là câu đóng email hoàn hảo nhất."
+                }
+            ]
+        }
+    ];
+
+    let currentPassageIndex = 0;
+    let selectedAnswers = {};
+    let isSubmitted = false;
+    let timerInterval;
+    let timeLeft = 0;
+
+    function initQuiz() {
+        renderPassage();
+        renderNavDots();
+        updateNavigation();
+    }
+
+    function renderPassage() {
+        const data = quizData[currentPassageIndex];
+        
+        document.getElementById('passage-container').innerHTML = data.passage;
+        document.getElementById('translation-container').innerHTML = data.translation;
+        
+        let html = '';
+        data.questions.forEach((q) => {
+            html += `
+                <div class="question-block" id="q-block-${q.id}">
+                    <div class="question-title">${q.text}</div>
+                    <div class="options">
+            `;
+            
+            q.options.forEach((opt, idx) => {
+                const isChecked = selectedAnswers[q.id] === idx ? 'checked' : '';
+                const disabled = isSubmitted ? 'disabled' : '';
+                let statusClass = '';
+                
+                if (isSubmitted) {
+                    if (opt.correct) statusClass = 'correct';
+                    else if (selectedAnswers[q.id] === idx) statusClass = 'wrong';
+                }
+                
+                let enText = opt.text;
+                let viText = "";
+                let match = opt.text.match(/(.*)\s\((.*)\)$/);
+                if(match) {
+                    enText = match[1];
+                    viText = match[2];
+                }
+
+                html += `
+                    <label class="option-label ${isChecked ? 'selected' : ''} ${statusClass} ${disabled}">
+                        <input type="radio" name="q${q.id}" value="${idx}" ${isChecked} ${disabled} onchange="selectAnswer(${q.id}, ${idx})">
+                        <span class="option-text-en">${enText}</span>
+                        ${(viText && isSubmitted) ? `<span class="option-text-vi">- ${viText}</span>` : ''}
+                    </label>
+                `;
+            });
+            
+            html += `</div>
+                <div class="explanation-box" id="exp-${q.id}">${q.explanation}</div>
+            </div>`;
+        });
+        
+        document.getElementById('questions-container').innerHTML = html;
+        document.getElementById('progress-text').innerText = `Đoạn ${currentPassageIndex + 1} / ${quizData.length}`;
+        
+        if (isSubmitted) {
+            data.questions.forEach(q => {
+                document.getElementById(`exp-${q.id}`).classList.add('show');
+            });
+        }
+    }
+
+    function selectAnswer(qId, optIdx) {
+        if (isSubmitted) return;
+        selectedAnswers[qId] = optIdx;
+        renderPassage();
+        renderNavDots();
+    }
+
+    function changePassage(dir) {
+        currentPassageIndex += dir;
+        renderPassage();
+        updateNavigation();
+    }
+
+    function updateNavigation() {
+        document.getElementById('btn-prev').style.display = currentPassageIndex === 0 ? 'none' : 'block';
+        if (currentPassageIndex === quizData.length - 1) {
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-submit').style.display = 'block';
+        } else {
+            document.getElementById('btn-next').style.display = 'block';
+            document.getElementById('btn-submit').style.display = 'none';
+        }
+    }
+
+    function renderNavDots() {
+        let html = '';
+        quizData.forEach((p, pIdx) => {
+            p.questions.forEach(q => {
+                let cls = 'nav-dot';
+                if (isSubmitted) {
+                    const selected = selectedAnswers[q.id];
+                    if (selected !== undefined && q.options[selected].correct) cls += ' correct';
+                    else cls += ' wrong';
+                } else if (selectedAnswers[q.id] !== undefined) {
+                    cls += ' done';
+                }
+                if (pIdx === currentPassageIndex) cls += ' active';
+                
+                html += `<div class="${cls}" onclick="goToQuestion(${pIdx}, ${q.id})">${q.id}</div>`;
+            });
+        });
+        document.getElementById('navDropdown').innerHTML = html;
+    }
+
+    function goToQuestion(pIdx, qId) {
+        if (pIdx !== currentPassageIndex) {
+            currentPassageIndex = pIdx;
+            renderPassage();
+            updateNavigation();
+            renderNavDots();
+        }
+        document.getElementById(`q-block-${qId}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('navDropdown').classList.remove('show');
+    }
+
+    function toggleNavDropdown() {
+        document.getElementById('navDropdown').classList.toggle('show');
+    }
+
+    function askReady() {
+        const timeInput = document.getElementById('timeInput').value;
+        timeLeft = timeInput * 60;
+        document.getElementById('setupOverlay').style.display = 'none';
+        document.getElementById('startConfirmMsg').innerText = `Bạn có ${timeInput} phút để hoàn thành Part 6.\nChúc bạn làm bài tốt!`;
+        document.getElementById('startConfirmOverlay').classList.add('active');
+    }
+
+    function closeStartConfirmModal() {
+        document.getElementById('startConfirmOverlay').classList.remove('active');
+        document.getElementById('setupOverlay').style.display = 'flex';
+    }
+
+    function startTestActual() {
+        document.getElementById('startConfirmOverlay').classList.remove('active');
+        startTimer();
+        initQuiz();
+    }
+
+    function startTimer() {
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                submitQuiz();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+        const s = (timeLeft % 60).toString().padStart(2, '0');
+        document.getElementById('timer').innerText = `${m}:${s}`;
+    }
+
+    function askSubmit() {
+        document.getElementById('confirmOverlay').classList.add('active');
+    }
+
+    function closeConfirmModal() {
+        document.getElementById('confirmOverlay').classList.remove('active');
+    }
+
+    function submitQuiz(isRestoring = false) {
+        clearInterval(timerInterval);
+        isSubmitted = true;
+        closeConfirmModal();
+        
+        let correctCount = 0;
+        let totalCount = 0; 
+        
+        quizData.forEach(p => {
+            p.questions.forEach(q => {
+                totalCount++;
+                if (selectedAnswers[q.id] !== undefined && q.options[selectedAnswers[q.id]].correct) {
+                    correctCount++;
+                }
+            });
+        });
+        
+        document.getElementById('score-correct').innerText = correctCount;
+        document.getElementById('score-total').innerText = totalCount;
+        document.getElementById('result-overlay').classList.add('active');
+        
+        if(!isRestoring) {
+            saveAttemptToHistory(correctCount, totalCount, selectedAnswers);
+            if(window.luuDiemTOEICLenFirebase) {
+                window.luuDiemTOEICLenFirebase(totalCount, correctCount, "ETS 2023 - Test 4", "Reading", "Part 6");
+            }
+        }
+       
+        document.getElementById('mainLayout').classList.add('submitted-layout');
+        document.getElementById('vocabBtn').style.display = 'flex';
+        
+        currentPassageIndex = 0;
+        renderPassage();
+        updateNavigation();
+        renderNavDots();
+    } 
+
+    function closeResult() {
+        document.getElementById('result-overlay').classList.remove('active');
+    }
+
+    function openVocab() {
+        document.getElementById('vocabOverlay').classList.add('active');
+    }
+
+    function closeVocab() {
+        document.getElementById('vocabOverlay').classList.remove('active');
+    }
+
+    function showCustomAlert(message) { document.getElementById('customAlertMessage').innerText = message; document.getElementById('customAlertOverlay').style.display = 'flex'; }
+    function closeCustomAlert() { document.getElementById('customAlertOverlay').style.display = 'none'; }
+
+    const menu = document.getElementById("ctxMenu");
+    let targetElement = null;
+    let selectedRange = null;
+
+    document.addEventListener("contextmenu", (e) => {
+        if (!e.target.closest('.main-content')) return; 
+        e.preventDefault();
+        targetElement = null; selectedRange = null;
+        
+        if (e.target.classList.contains("highlight")) {
+            targetElement = e.target; showMenu(e.clientX, e.clientY, "remove"); return;
+        }
+        
+        let sel = window.getSelection();
+        if (sel.toString().trim().length > 0) {
+            selectedRange = sel.getRangeAt(0); showMenu(e.clientX, e.clientY, "add");
+        } else { menu.style.display = "none"; }
+    });
+
+    document.addEventListener("click", (e) => { if (menu && !menu.contains(e.target)) menu.style.display = "none"; });
+
+    function showMenu(x, y, mode) {
+        menu.style.display = "block";
+        let mw = menu.offsetWidth, mh = menu.offsetHeight;
+        menu.style.left = (x + mw > window.innerWidth ? window.innerWidth - mw - 10 : x) + "px";
+        menu.style.top = (y + mh > window.innerHeight ? window.innerHeight - mh - 10 : y) + "px";
+        menu.children[0].style.display = (mode === "add") ? "block" : "none";
+        menu.children[1].style.display = (mode === "remove") ? "block" : "none";
+    }
+
+   function doHighlight() {
+        if (selectedRange) {
+            try { 
+                let span = document.createElement("span"); span.className = "highlight"; selectedRange.surroundContents(span); 
+            } catch(e) { showCustomAlert("🍀 Cậu chỉ có thể highlight trong cùng một dòng thui nhé!"); }
+            window.getSelection().removeAllRanges();
+        }
+        menu.style.display = "none";
+    }
+
+    function removeHighlight() {
+        if (targetElement) {
+            let text = document.createTextNode(targetElement.textContent);
+            targetElement.parentNode.replaceChild(text, targetElement);
+            document.querySelector('.main-content').normalize(); 
+        }
+        menu.style.display = "none";
+    }
+
+    const TEST_ID = "p6_test_4_2023"; 
+    const HISTORY_KEY = "snapenglish_" + TEST_ID + "_history";
+    let currentHistoryList = []; 
+
+    async function saveAttemptToHistory(score, total, answersObj) {
+        let now = new Date();
+        let timestamp = Date.now();
+        let attempt = {
+            id: timestamp, 
+            timestamp: timestamp, 
+            date: now.toLocaleDateString('vi-VN'),
+            time: now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+            score: score,
+            total: total,
+            answers: answersObj
+        };
+
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        history.unshift(attempt);
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+        if (window.syncHistoryToFirebase) {
+            await window.syncHistoryToFirebase(attempt, TEST_ID);
+        }
+    }
+
+    async function openHistoryModal() {
+        document.getElementById('setupOverlay').style.display = 'none';
+        document.getElementById('historyOverlay').style.display = 'flex';
+        let listEl = document.getElementById("historyList");
+
+        listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang lấy dữ liệu từ Máy chủ... ☁️⏳</div>`;
+
+        if (window.currentUserUid && window.getHistoryFromFirebase) {
+            currentHistoryList = await window.getHistoryFromFirebase(TEST_ID);
+            if (!currentHistoryList || currentHistoryList.length === 0) {
+                currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+            }
+        } else {
+            currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        }
+
+        if (currentHistoryList.length === 0) {
+            listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px;">Cậu chưa làm bài lần nào trên tài khoản này. 🐾</div>`;
+        } else {
+            listEl.innerHTML = currentHistoryList.map((item, index) => {
+                let docId = item.docId || item.id;
+                return `
+                <div class="history-item">
+                    <div class="history-info">
+                        <span class="history-date">Lần ${currentHistoryList.length - index}: ${item.time} - ${item.date}</span>
+                        <span class="history-score">Đúng: ${item.score}/${item.total} câu</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-review" onclick="restoreAttempt(${index})">Xem lại</button>
+                        <button class="btn-delete-history" onclick="deleteAttempt('${docId}')" title="Xóa bài này">&times;</button>
+                    </div>
+                </div>
+                `;
+            }).join("");
+        }
+    }
+
+    function closeHistoryModal() {
+        document.getElementById('historyOverlay').style.display = 'none';
+        document.getElementById('setupOverlay').style.display = 'flex';
+    }
+
+    let pendingDeleteId = null;
+    function deleteAttempt(attemptId) {
+        pendingDeleteId = attemptId;
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'flex';
+    }
+    
+    function closeConfirmDelete() {
+        pendingDeleteId = null;
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+    }
+
+    async function executeDelete() {
+        if (pendingDeleteId !== null) {
+            document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+            let listEl = document.getElementById("historyList");
+            listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang dọn dẹp trên Đám mây... 🗑️☁️</div>`;
+
+            if (window.currentUserUid && window.deleteHistoryDocFirebase && typeof pendingDeleteId === 'string') {
+                await window.deleteHistoryDocFirebase(pendingDeleteId);
+            }
+
+            let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+            history = history.filter(h => h.id != pendingDeleteId && h.docId != pendingDeleteId);
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+            pendingDeleteId = null;
+            openHistoryModal(); 
+        }
+    }
+
+    function restoreAttempt(index) {
+        let attempt = currentHistoryList[index];
+        if(!attempt) return;
+
+        document.getElementById('historyOverlay').style.display = 'none';
+        currentPassageIndex = 0;
+        
+        for (let key in selectedAnswers) delete selectedAnswers[key];
+        Object.assign(selectedAnswers, attempt.answers || {});
+        
+        isSubmitted = false; 
+        submitQuiz(true);
+        
+        let toastMsg = document.createElement("div");
+        toastMsg.innerText = "✨ Đã khôi phục bài làm từ Đám mây!";
+        toastMsg.style.cssText = "position:fixed; top:20px; right:20px; background:var(--primary-btn); color:white; padding:15px 20px; border-radius:12px; font-weight:bold; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,0.2);";
+        document.body.appendChild(toastMsg);
+        setTimeout(() => toastMsg.remove(), 3000);
+    }
+</script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    function showInGameToast(msg) {
+        let toast = document.createElement("div");
+        toast.innerText = msg;
+        toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:#10b981; color:white; padding:15px 20px; border-radius:12px; font-weight:bold; font-family:'Be Vietnam Pro',sans-serif; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0; transition:all 0.4s ease;";
+        document.body.appendChild(toast);
+        
+        setTimeout(() => { toast.style.transform = "translateY(0)"; toast.style.opacity = "1"; }, 100);
+        setTimeout(() => { toast.style.transform = "translateY(100px)"; toast.style.opacity = "0"; }, 3500);
+        setTimeout(() => { toast.remove(); }, 4000);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+        } else {
+            showInGameToast("⚠️ Bạn đang chơi dưới dạng Khách, điểm sẽ không lưu lên kho!");
+        }
+    });
+
+    window.syncHistoryToFirebase = async function(attempt, testId) {
+        if (!window.currentUserUid) return attempt;
+        let docId = window.currentUserUid + "_" + testId + "_" + attempt.timestamp;
+        attempt.docId = docId;
+        attempt.uid = window.currentUserUid;
+        attempt.testId = testId;
+        try {
+            await setDoc(doc(db, "snapenglish_history", docId), attempt);
+            return attempt;
+        } catch (e) { console.error("Lỗi đồng bộ lịch sử đám mây:", e); return attempt; }
+    };
+
+    window.getHistoryFromFirebase = async function(testId) {
+        if (!window.currentUserUid) return null;
+        try {
+            const q = query(collection(db, "snapenglish_history"), where("uid", "==", window.currentUserUid));
+            const querySnapshot = await getDocs(q);
+            let history = [];
+            querySnapshot.forEach((docSnap) => {
+                let data = docSnap.data();
+                if (data.testId === testId) {
+                    history.push(data);
+                }
+            });
+            history.sort((a, b) => b.timestamp - a.timestamp);
+            return history;
+        } catch (e) { console.error("Lỗi tải lịch sử từ đám mây:", e); return null; }
+    };
+
+    window.deleteHistoryDocFirebase = async function(docId) {
+        if (!window.currentUserUid || !docId) return;
+        try {
+            await deleteDoc(doc(db, "snapenglish_history", docId));
+        } catch (e) { console.error("Lỗi xóa lịch sử:", e); }
+    };
+
+    function calculateToeicScore(skill, correct, total) {
+        let percentage = correct / total;
+        let maxScore = (skill === 'Listening' || skill === 'Reading') ? 495 : 200;
+        let step = (skill === 'Listening' || skill === 'Reading') ? 5 : 10;
+        let estimated = Math.round((percentage * maxScore) / step) * step;
+        if (estimated > maxScore) return maxScore;
+        if (estimated < 5) return 5;
+        return estimated;
+    }
+
+    window.luuDiemTOEICLenFirebase = async function(tongSoCau, soCauDung, tenBai, kyNang, tenPart) {
+        if (!window.currentUserUid) return; 
+
+        let diemQuyDoi = calculateToeicScore(kyNang, soCauDung, tongSoCau);
+        let thoiGianHienTai = "--";
+        let inputPhut = parseInt(document.getElementById('timeInput').value) || 15; 
+        let tongThoiGianGoc = inputPhut * 60;
+
+        if (typeof timeLeft !== 'undefined') {
+            let thoiGianDaLam = tongThoiGianGoc - timeLeft;
+            if (thoiGianDaLam < 0) thoiGianDaLam = 0; 
+            
+            let m = Math.floor(thoiGianDaLam / 60);
+            let s = thoiGianDaLam % 60;
+            thoiGianHienTai = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+        let timestamp = Date.now();
+        let docId = window.currentUserUid + "_toeic_" + timestamp;
+        
+        try {
+            await setDoc(doc(db, "user_toeic_scores", docId), {
+                email: window.currentUserEmail,
+                skill: kyNang,           
+                testName: tenBai,        
+                partName: tenPart,       
+                timeTaken: thoiGianHienTai,
+                totalQ: tongSoCau,
+                correctQ: soCauDung,
+                score: diemQuyDoi,       
+                date: new Date().toLocaleDateString('vi-VN'),
+                timestamp: timestamp
+            });
+            showInGameToast("☁️ Đã đồng bộ điểm số lên Máy Chủ!");
+        } catch (error) {
+            console.error(error);
+        }
+    }
+</script>
+</body>
+</html>
