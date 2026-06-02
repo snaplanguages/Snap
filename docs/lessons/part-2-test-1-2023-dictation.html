@@ -830,36 +830,76 @@
         localStorage.setItem('part2_test1_2023_progress', 0);
         location.reload();
     }
-    // --- TOOL TẠM THỜI ĐỂ FIX THỜI GIAN AUDIO ---
-document.addEventListener('keydown', (e) => {
-    // Nếu đang gõ text trong ô input thì bỏ qua để không bị trùng phím
-    if (document.activeElement === inputField) return;
+// --- TOOL CHỈNH AUDIO SIÊU CHUẨN (CÓ THỂ CHỈNH SỐ LẺ 0.1s) ---
+setTimeout(() => {
+    const inputSection = document.querySelector('.input-section');
+    const editorUI = document.createElement('div');
+    editorUI.innerHTML = `
+        <div style="background: #FFFBEB; padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 2px dashed #F59E0B; text-align: center;">
+            <h4 style="color: #D97706; margin-bottom: 15px; font-size: 18px;">🛠️ Bảng Chỉnh Thời Gian Audio</h4>
+            <div style="display: flex; gap: 20px; justify-content: center; align-items: center; margin-bottom: 15px;">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <label style="font-weight: bold; margin-bottom: 5px; color: #475569;">Start (giây)</label>
+                    <input type="number" id="edit-start" step="0.1" style="width: 90px; padding: 8px; font-size: 16px; border: 1px solid #CBD5E1; border-radius: 8px; text-align: center;">
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <label style="font-weight: bold; margin-bottom: 5px; color: #475569;">End (giây)</label>
+                    <input type="number" id="edit-end" step="0.1" style="width: 90px; padding: 8px; font-size: 16px; border: 1px solid #CBD5E1; border-radius: 8px; text-align: center;">
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                <button onclick="testSegment()" style="padding: 10px 15px; background: #3B82F6; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);">▶️ Nghe thử cắt</button>
+                <button onclick="saveSegment()" style="padding: 10px 15px; background: #10B981; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);">💾 Lưu mốc này</button>
+                <button onclick="exportNewData()" style="padding: 10px 15px; background: #EF4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);">📦 Xuất Data mới</button>
+            </div>
+        </div>
+    `;
+    // Chèn bảng điều khiển lên trên ô gõ chữ
+    inputSection.insertBefore(editorUI, inputSection.firstChild);
 
-    let currentData = lessonData[window.currentIndex];
-    // Lấy thời gian hiện tại của audio đang phát (làm tròn 2 chữ số thập phân)
-    let currentTime = Number(audioElement.currentTime.toFixed(2));
-
-    // Bấm phím [ để chốt thời gian BẮT ĐẦU (start)
-    if (e.key === '[') {
-        currentData.start = currentTime;
-        document.getElementById('system-message').innerText = `✅ Đã gán START: ${currentTime}s`;
-        console.log(`Câu ${window.currentIndex + 1} - START: ${currentTime}`);
+    // Nạp số đo cũ vào ô input
+    window.updateEditorUI = function() {
+        document.getElementById('edit-start').value = lessonData[window.currentIndex].start;
+        document.getElementById('edit-end').value = lessonData[window.currentIndex].end;
     }
-    
-    // Bấm phím ] để chốt thời gian KẾT THÚC (end)
-    if (e.key === ']') {
-        currentData.end = currentTime;
-        document.getElementById('system-message').innerText = `✅ Đã gán END: ${currentTime}s`;
-        console.log(`Câu ${window.currentIndex + 1} - END: ${currentTime}`);
+
+    // Đè hàm updateUI gốc để mỗi lần qua câu mới nó nạp lại số
+    const originalUpdateUI = window.updateUI;
+    window.updateUI = function() {
+        originalUpdateUI();
+        if(document.getElementById('edit-start')) updateEditorUI();
+    };
+    updateEditorUI();
+
+    // Tính năng nghe thử ĐÚNG KHOẢNG ĐÓ
+    window.testSegment = function() {
+        let s = parseFloat(document.getElementById('edit-start').value);
+        let e = parseFloat(document.getElementById('edit-end').value);
+        
+        audioElement.pause();
+        audioElement.src = lessonData[window.currentIndex].audio;
+        audioElement.currentTime = s;
+        audioElement.play();
+        
+        clearTimeout(window.playTimeout);
+        window.playTimeout = setTimeout(() => {
+            audioElement.pause();
+        }, (e - s) * 1000);
     }
 
-    // Bấm phím \ để xuất toàn bộ data mới ra Console
-    if (e.key === '\\') {
-        console.log("👇 DÙNG DATA NÀY ĐỂ THAY THẾ DATA CŨ TRONG CODE 👇");
+    // Tính năng lưu
+    window.saveSegment = function() {
+        lessonData[window.currentIndex].start = parseFloat(document.getElementById('edit-start').value);
+        lessonData[window.currentIndex].end = parseFloat(document.getElementById('edit-end').value);
+        document.getElementById('system-message').innerHTML = "<span style='color: #059669; font-weight: bold;'>✅ Đã chốt thời gian cho câu này!</span>";
+    }
+
+    // Tính năng xuất file
+    window.exportNewData = function() {
         console.log(JSON.stringify(lessonData, null, 4));
-        alert("Đã in bộ Data mới ra Console (Bấm F12 để copy)!");
+        alert("Đã in toàn bộ Data mới ra thẻ Console! Bấm F12 để lấy nhé.");
     }
-});
+}, 500);
 </script>
 </body>
 </html>
