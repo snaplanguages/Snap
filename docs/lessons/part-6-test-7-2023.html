@@ -1,0 +1,1145 @@
+<!DOCTYPE html> 
+<html lang="vi">  
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part 6 - Test 7 - 2023 | SnapEnglish</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Tông màu Emerald / Teal tươi mát, giảm căng thẳng cho mắt */
+            --bg-gradient-1: #ecfdf5; 
+            --bg-gradient-2: #d1fae5; 
+            --bg-gradient-3: #a7f3d0; 
+            --text-dark: #064e3b; 
+            --text-light: #334155;
+            --glass-bg: rgba(255, 255, 255, 0.92);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            
+            --primary-btn: #10b981; 
+            --primary-btn-hover: #059669; 
+            --accent-btn: #f59e0b; 
+            --accent-btn-hover: #d97706; 
+            --highlight-bg: #d1fae5; 
+            
+            --correct-bg: #f0fdf4;
+            --correct-text: #166534;
+            --correct-border: #86efac;
+            --wrong-bg: #fef2f2;
+            --wrong-text: #991b1b;
+            --wrong-border: #fca5a5;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Be Vietnam Pro', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 50%, var(--bg-gradient-3) 100%);
+            color: var(--text-dark);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        ::selection { background: #a7f3d0; color: #064e3b; }
+
+        .full-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #a7f3d0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+            position: relative; 
+        }
+
+        .brand { font-size: 20px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 10px; }
+        .brand span { background: linear-gradient(to right, #10b981, #059669); color: white; padding: 4px 12px; border-radius: 8px; font-size: 15px; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);}
+
+        .header-controls { display: flex; align-items: center; gap: 15px; }
+
+        .btn-nav-toggle {
+            background: #f8fafc; color: var(--text-dark); border: 2px solid #e2e8f0;
+            padding: 8px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; 
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-nav-toggle:hover { background: #f1f5f9; border-color: #cbd5e1; }
+
+        .timer-box { font-size: 15px; font-weight: 700; color: var(--primary-btn-hover); background: #fff; padding: 8px 18px; border-radius: 10px; border: 2px solid #a7f3d0; }
+
+        .progress-indicator { font-weight: 600; color: var(--accent-btn-hover); background: #fff; padding: 8px 18px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); font-size: 14px;}
+
+        .nav-dropdown {
+            position: absolute; top: calc(100% + 10px); right: 2rem;
+            background: #fff; border-radius: 16px; border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15); width: 300px;
+            max-height: 400px; overflow-y: auto; z-index: 999;
+            padding: 20px; display: none; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            opacity: 0; transform: translateY(-10px); transition: 0.3s ease;
+        }
+        .nav-dropdown.show { display: grid; opacity: 1; transform: translateY(0); }
+        .nav-dropdown::-webkit-scrollbar { width: 6px; }
+        .nav-dropdown::-webkit-scrollbar-thumb { background: #6ee7b7; border-radius: 3px; }
+
+        .nav-dot {
+            height: 40px; border: 2px solid #e2e8f0; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700;
+            cursor: pointer; color: var(--text-light); background: #f8fafc; transition: 0.2s;
+        }
+        .nav-dot:hover { border-color: var(--primary-btn); color: var(--primary-btn); }
+        .nav-dot.done { background: var(--highlight-bg); color: var(--primary-btn-hover); border-color: var(--primary-btn); }
+        .nav-dot.correct { background: var(--correct-bg); color: var(--correct-text); border-color: var(--correct-border); }
+        .nav-dot.wrong { background: var(--wrong-bg); color: var(--wrong-text); border-color: var(--wrong-border); }
+        .nav-dot.active { box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3); border-color: var(--primary-btn); }
+
+        #historyList { max-height: 300px; overflow-y: auto; text-align: left; margin-bottom: 20px; padding-right: 5px; }
+        .history-item { background: rgba(255, 255, 255, 0.8); border: 2px solid #e2e8f0; padding: 14px; border-radius: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .history-item:hover { border-color: var(--primary-btn); background: #fff; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.1); }
+        .history-info { display: flex; flex-direction: column; gap: 6px; }
+        .history-date { font-weight: 700; color: var(--text-dark); font-size: 14px; }
+        .history-score { color: var(--primary-btn-hover); font-size: 13px; font-weight: 600; }
+        .btn-review { background: var(--highlight-bg); color: var(--primary-btn-hover); border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 13px;}
+        .btn-review:hover { background: var(--primary-btn); color: white; }
+        .btn-delete-history { background: #ffebee; color: var(--wrong-text); border: none; padding: 0 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 18px; }
+        .btn-delete-history:hover { background: var(--wrong-text); color: white; }
+
+        .highlight { background-color: #fef08a; cursor: pointer; border-radius: 4px; padding: 2px 0; transition: 0.2s; }
+        .highlight:hover { background-color: #fde047; }
+        #ctxMenu { z-index: 100000; }
+        #ctxMenu button:hover { background: #f1f5f9; }
+
+        .main-content { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            flex: 1; 
+            overflow: hidden; 
+            transition: all 0.5s ease;
+        }
+        .main-content.submitted-layout {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .scroll-col {
+            padding: 2.5rem; 
+            overflow-y: auto; 
+            height: 100%;
+        }
+
+        .scroll-col::-webkit-scrollbar { width: 8px; }
+        .scroll-col::-webkit-scrollbar-track { background: transparent; }
+        .scroll-col::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 10px; }
+        .scroll-col::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.6); }
+
+        .passage-col { border-right: 2px dashed #a7f3d0; background: rgba(255,255,255,0.4); font-size: 1.05rem; line-height: 1.7; color: #334155; }
+        .translation-col { border-right: 2px dashed #a7f3d0; background: rgba(255,255,255,0.6); font-size: 1.05rem; line-height: 1.7; color: #1e293b; display: none; }
+        .main-content.submitted-layout .translation-col { display: block; animation: slideIn 0.5s ease; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .passage-col p, .translation-col p { margin-bottom: 1.2rem; }
+        .translation-header { font-weight: 700; color: #047857; margin-bottom: 1rem; font-size: 1.2rem; border-bottom: 2px solid #34d399; padding-bottom: 0.5rem; display: inline-block;}
+
+        .question-block {
+            background: rgba(255, 255, 255, 0.95); padding: 1.5rem; border-radius: 16px;
+            margin-bottom: 1.5rem; border: 1px solid #e2e8f0; transition: transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+        .question-block:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.08); }
+
+        .question-title { font-weight: 700; margin-bottom: 1rem; color: var(--primary-btn-hover); font-size: 1.1rem; }
+
+        .options { display: flex; flex-direction: column; gap: 0.7rem; }
+
+        .option-label {
+            display: flex; align-items: center; cursor: pointer; padding: 0.8rem 1rem;
+            background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; transition: all 0.3s ease; font-size: 0.98rem;
+        }
+        .option-label:hover:not(.disabled) { background: #f8fafc; border-color: var(--primary-btn); }
+        .option-label input[type="radio"] { margin-right: 1rem; accent-color: var(--primary-btn-hover); transform: scale(1.2); }
+        .option-label.selected { background: var(--highlight-bg); border-color: var(--primary-btn); color: var(--primary-btn-hover); }
+        .option-label.disabled { cursor: default; }
+        
+        .option-label.correct { background: var(--correct-bg); border-color: var(--correct-border); color: var(--correct-text); font-weight: 600; }
+        .option-label.wrong { background: var(--wrong-bg); border-color: var(--wrong-border); color: var(--wrong-text); opacity: 0.85; }
+
+        .option-text-en { font-weight: 600; margin-right: 8px; }
+        .option-text-vi { color: #64748b; font-style: italic; font-size: 0.9em; }
+
+        .explanation-box {
+            margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 12px;
+            border: 1px dashed #cbd5e1; font-size: 0.95rem; color: #475569; display: none; line-height: 1.6;
+        }
+        .explanation-box.show { display: block; animation: fadeIn 0.5s ease; }
+        .explanation-box b { color: var(--primary-btn-hover); }
+        .explanation-box ul { padding-left: 20px; margin-top: 8px; }
+        .explanation-box li { margin-bottom: 4px; }
+
+        .footer {
+            padding: 1rem 2rem; border-top: 1px solid #a7f3d0;
+            display: flex; justify-content: space-between; background: rgba(255, 255, 255, 0.7);
+        }
+
+        .btn { padding: 0.7rem 1.8rem; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: inherit;}
+        .btn-prev { background: #ffffff; color: var(--text-dark); border: 1px solid #cbd5e1; }
+        .btn-prev:hover { background: #f1f5f9; border-color: #94a3b8; }
+        .btn-next { background: var(--primary-btn); color: #fff; }
+        .btn-next:hover { background: var(--primary-btn-hover); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+        .btn-submit { background: var(--accent-btn); color: #fff; }
+        .btn-submit:hover { background: var(--accent-btn-hover); box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3); }
+
+        .vocab-btn {
+            position: fixed;
+            bottom: 30px; left: 30px;
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%; display: none; align-items: center; justify-content: center;
+            font-size: 26px; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+            cursor: pointer; z-index: 1000; border: 3px solid #fff;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: float 3s ease-in-out infinite;
+        }
+        .vocab-btn:hover { transform: scale(1.15) rotate(10deg); }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        .result-overlay, .custom-overlay { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            z-index: 99999; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; 
+        }
+        .result-overlay.active, .custom-overlay.active { opacity: 1; pointer-events: all; }
+        .custom-overlay[style*="display: flex;"] { opacity: 1; pointer-events: all; }
+
+        .custom-modal { 
+            background: white; padding: 35px; border-radius: 20px; 
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2); width: 90%; max-width: 450px; text-align: center; 
+            border: 2px solid #34d399; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        
+        .custom-modal h2 { color: var(--primary-btn-hover); font-size: 24px; margin-top: 0; margin-bottom: 12px;}
+        .result-score { font-size: 3.5rem; font-weight: 800; color: var(--text-dark); margin-bottom: 1.5rem; text-shadow: 2px 2px 0px #d1fae5; }
+
+        .modal-actions { display: flex; gap: 15px; margin-top: 25px; justify-content: center; }
+        .modal-actions button { flex: 1; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 15px; border: none; cursor: pointer; transition: 0.2s; font-family: inherit;}
+        .btn-cancel { background: #f1f5f9; color: #475569; }
+        .btn-cancel:hover { background: #e2e8f0; }
+        .btn-confirm { background: var(--primary-btn); color: white; }
+        .btn-confirm:hover { background: var(--primary-btn-hover); }
+
+        #timeInputBox { margin: 25px 0; }
+        #timeInput { width: 90px; padding: 10px; font-size: 16px; text-align: center; border: 2px solid #e2e8f0; border-radius: 10px; outline: none; font-weight: 700; color: var(--primary-btn); transition: 0.3s; font-family: inherit;}
+        #timeInput:focus { border-color: var(--primary-btn); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
+
+        .vocab-modal {
+            background: #fff; width: 90%; max-width: 600px; max-height: 80vh;
+            border-radius: 20px; padding: 30px; overflow-y: auto; text-align: left;
+            position: relative; border: 3px solid #34d399;
+        }
+        .vocab-modal h2 { text-align: center; color: #047857; margin-bottom: 20px; font-size: 22px; display: flex; align-items: center; justify-content: center; gap: 10px;}
+        .vocab-list { list-style: none; padding: 0; }
+        .vocab-list li { padding: 12px 15px; border-bottom: 1px dashed #e2e8f0; display: flex; flex-direction: column; }
+        .vocab-list li:last-child { border-bottom: none; }
+        .vocab-word { font-weight: 700; color: var(--primary-btn-hover); font-size: 1.05rem;}
+        .vocab-meaning { color: #475569; margin-top: 4px; font-size: 0.95rem; }
+        .close-vocab { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 24px; color: #94a3b8; cursor: pointer; transition: 0.2s; }
+        .close-vocab:hover { color: #f43f5e; }
+        .vocab-modal::-webkit-scrollbar { width: 8px; }
+        .vocab-modal::-webkit-scrollbar-thumb { background: #34d399; border-radius: 10px; }
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .main-content { display: flex; flex-direction: column; overflow: hidden; }
+    .main-content.submitted-layout { display: flex; flex-direction: column; }
+    .passage-col { height: 45%; border-right: none; border-bottom: 3px solid #a7f3d0; padding: 1.5rem; }
+    .translation-col { height: 30%; border-right: none; border-bottom: 3px solid #34d399; padding: 1.5rem; }
+    .question-col { flex: 1; height: auto; padding: 1.5rem; }
+    .main-content.submitted-layout .passage-col { height: 30%; }
+    .header { flex-direction: column; gap: 15px; padding: 1rem; }
+    .header-controls { width: 100%; justify-content: space-between; }
+    .nav-dropdown { top: calc(100% + 5px); right: 1rem; width: calc(100% - 2rem); }
+}
+
+@media (max-width: 768px) {
+    .header-controls { flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .nav-dropdown { grid-template-columns: repeat(4, 1fr); }
+    .footer { flex-direction: column; gap: 15px; padding: 1rem; }
+    .footer > div { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-left: 0 !important; }
+    .btn { width: 100%; text-align: center; justify-content: center; }
+    .custom-modal { width: 95%; padding: 25px 20px; }
+    .result-overlay .custom-modal h2 { font-size: 1.6rem !important; }
+    .result-score { font-size: 2.8rem; }
+    .modal-actions { flex-direction: column; }
+    .modal-actions button { width: 100%; }
+}
+
+@media (max-width: 480px) {
+    .brand { font-size: 18px; flex-direction: column; text-align: center; }
+    .nav-dropdown { grid-template-columns: repeat(3, 1fr); }
+}
+    </style>
+</head>
+<body>
+
+<div id="setupOverlay" class="custom-overlay" style="display: flex;">
+    <div class="custom-modal">
+        <h2>Chào mừng đến Part 6 ✨</h2>
+        <p style="font-size: 15px; color: #64748b;">ETS 2023 - Test 7</p>
+        <div id="timeInputBox">
+            <label style="font-size: 16px; font-weight: bold; color: #334155;">Thời gian (phút): </label>
+            <input type="number" id="timeInput" value="15" min="1" max="60">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="openHistoryModal()">🕒 Lịch sử</button>
+            <button class="btn-confirm" onclick="askReady()">Sẵn sàng (OK)</button>
+        </div>
+    </div>
+</div>
+
+<div id="startConfirmOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Xác nhận bắt đầu</h2>
+        <p id="startConfirmMsg" style="font-size: 16px; color: #475569; margin-bottom: 20px; white-space: pre-line; line-height: 1.6;"></p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeStartConfirmModal()">Huỷ</button>
+            <button class="btn-confirm" onclick="startTestActual()">Bắt đầu</button>
+        </div>
+    </div>
+</div>
+
+<div id="historyOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2 style="margin-bottom: 20px;">🕒 Lịch sử làm bài</h2>
+        <div id="historyList"></div>
+        <button class="btn-cancel" style="width: 100%; margin-top: 15px;" onclick="closeHistoryModal()">Quay lại 🍃</button>
+    </div>
+</div>
+
+<div id="customConfirmDeleteOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Xác nhận xóa 🍃</h2>
+        <p style="font-size: 16px; color: #475569; margin-top: 15px; line-height: 1.5; margin-bottom: 20px;">Cậu có chắc chắn muốn xóa bài làm này khỏi lịch sử không?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmDelete()">Hủy 🐢</button>
+            <button class="btn-confirm" onclick="executeDelete()" style="background: var(--wrong-text);">Xóa nhé 🗑️</button>
+        </div>
+    </div>
+</div>
+
+<div id="customAlertOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Chú ý nè 🍀</h2>
+        <p id="customAlertMessage" style="font-size: 16px; color: #475569; margin-top: 15px; line-height: 1.5; margin-bottom: 20px;"></p>
+        <div class="modal-actions" style="justify-content: center;">
+            <button class="btn-confirm" onclick="closeCustomAlert()" style="max-width: 200px;">Đã hiểu 🦊</button>
+        </div>
+    </div>
+</div>
+
+<div id="ctxMenu" style="position: absolute; display: none; background: white; box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-radius: 12px; overflow:hidden; z-index: 100000;">
+    <button onclick="doHighlight()" style="display:block; width:100%; padding:12px 20px; border:none; background:none; cursor:pointer; text-align:left; font-weight:600; color:#475569; font-family:inherit;">🖍 Highlight (Vàng)</button>
+    <button onclick="removeHighlight()" style="display:block; width:100%; padding:12px 20px; border:none; background:none; cursor:pointer; text-align:left; font-weight:600; color:#e02424; font-family:inherit;">🗑 Xóa Highlight</button>
+</div>
+
+<div class="full-container">
+    <div class="header">
+        <div class="brand"><span>SnapEnglish</span> Part 6 - Test 7 - 2023</div>
+        <div class="header-controls">
+            <div class="timer-box">⏱ <span id="timer">00:00</span></div>
+            <button class="btn-nav-toggle" onclick="toggleNavDropdown()">📑 Danh sách câu</button>
+            <div class="progress-indicator" id="progress-text">Đoạn 1 / 4</div>
+        </div>
+        <div class="nav-dropdown" id="navDropdown"></div>
+    </div>
+
+    <div class="main-content" id="mainLayout">
+        <div class="scroll-col passage-col" id="passage-container"></div>
+        <div class="scroll-col translation-col" id="translation-container"></div>
+        <div class="scroll-col question-col" id="questions-container"></div>
+    </div>
+
+    <div class="footer">
+        <button class="btn btn-prev" id="btn-prev" onclick="changePassage(-1)" style="display: none;">Quay lại</button>
+        <div style="display: flex; gap: 1rem; margin-left: auto;">
+            <button class="btn btn-next" id="btn-next" onclick="changePassage(1)">Tiếp theo</button>
+            <button class="btn btn-submit" id="btn-submit" onclick="askSubmit()">Nộp bài</button>
+        </div>
+    </div>
+
+    <div class="result-overlay" id="result-overlay">
+        <div class="custom-modal">
+            <h2>Hoàn thành xuất sắc! 🌟</h2>
+            <div class="result-score"><span id="score-correct">0</span> / <span id="score-total">16</span></div>
+            <p style="margin-bottom: 2rem; color: #64748b; font-size: 1rem;">Bây giờ giao diện sẽ được chia làm 3 cột và hiển thị nút Bóng Đèn Từ Vựng để bạn học sâu hơn nhé!</p>
+            <button class="btn-confirm" style="width: 100%; padding: 1rem; font-size: 1.1rem;" onclick="closeResult()">Xem lại bài & Giải thích</button>
+        </div>
+    </div>
+</div>
+
+<div id="confirmOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Xác nhận nộp bài</h2>
+        <p style="font-size: 16px; color: #475569; margin-bottom: 10px; line-height: 1.6;">Bạn có chắc chắn muốn nộp bài để xem đáp án, phân tích chi tiết và học từ vựng không?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmModal()">Quay lại</button>
+            <button class="btn-submit" onclick="submitQuiz()" style="flex:1; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer;">Nộp bài</button>
+        </div>
+    </div>
+</div>
+
+<div class="vocab-btn" id="vocabBtn" onclick="openVocab()" title="Xem từ vựng quan trọng">💡</div>
+<div id="vocabOverlay" class="custom-overlay">
+    <div class="vocab-modal">
+        <button class="close-vocab" onclick="closeVocab()">✖</button>
+        <h2>💡 Từ Vựng & Cấu Trúc Đáng Nhớ</h2>
+        <ul class="vocab-list">
+            <li><span class="vocab-word">Stain-resistant (adj)</span><span class="vocab-meaning">Chống bám bẩn (thường dùng cho vải vóc).</span></li>
+            <li><span class="vocab-word">Uncomfortable (adj)</span><span class="vocab-meaning">Không thoải mái, bất tiện, khó chịu.</span></li>
+            <li><span class="vocab-word">Locate (v)</span><span class="vocab-meaning">Tọa lạc, bố trí, đặt tại (thường dùng bị động: be located).</span></li>
+            <li><span class="vocab-word">Consequently (adv)</span><span class="vocab-meaning">Do đó, kết quả là (dùng để nối câu nhân - quả).</span></li>
+            <li><span class="vocab-word">Substantially (adv)</span><span class="vocab-meaning">Đáng kể, nhiều (Ví dụ: grown substantially).</span></li>
+            <li><span class="vocab-word">Captivate (v)</span><span class="vocab-meaning">Làm say đắm, thu hút, hấp dẫn (khán giả, khách hàng).</span></li>
+            <li><span class="vocab-word">Redeem (v)</span><span class="vocab-meaning">Đổi (điểm/thẻ quà tặng) để lấy hàng hóa hoặc dịch vụ.</span></li>
+            <li><span class="vocab-word">Expiration (n)</span><span class="vocab-meaning">Sự hết hạn (thường gặp dạng động từ: expire).</span></li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    // Dữ liệu chi tiết ETS 2023 - Test 7 - Part 6
+    const quizData = [
+        // PASSAGE 1: Câu 131 - 134
+        {
+            passage: `<p>Glen and Meadows Home Goods now sells a variety of covers suitable <b>(131)______</b> your sofas and chairs. Our covers are available in a wide selection of sizes and colors. We have plenty of choices for your most heavily used <b>(132)______</b>. There are many beautiful stain-resistant fabrics to choose from. <b>(133)______</b>. If the use of synthetic materials is a concern, you can select from our Naturals Collection. No matter your interior design scheme, you can <b>(134)______</b> change the look of any room with a Glen and Meadows cover.</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p>Glen and Meadows Home Goods hiện bán đa dạng các loại vỏ bọc thích hợp <b>(131) để bảo vệ</b> ghế sofa và ghế tựa của bạn. Vỏ bọc của chúng tôi có sẵn nhiều sự lựa chọn về kích cỡ và màu sắc. Chúng tôi có rất nhiều lựa chọn cho những <b>(132) đồ nội thất</b> được sử dụng nhiều nhất của bạn. Có rất nhiều loại vải chống bám bẩn tuyệt đẹp để lựa chọn. <b>(133) Và chúng tôi đang thêm nhiều lựa chọn hơn mỗi tuần.</b> Nếu việc sử dụng vật liệu tổng hợp là một mối bận tâm, bạn có thể lựa chọn từ Bộ Sưu tập Naturals của chúng tôi. Bất kể kế hoạch thiết kế nội thất của bạn là gì, bạn đều có thể <b>(134) nhanh chóng</b> thay đổi diện mạo của bất kỳ căn phòng nào bằng tấm phủ của Glen and Meadows.</p>`,
+            questions: [
+                {
+                    id: 131,
+                    text: "131.",
+                    options: [
+                        { text: "A. protect (Động từ nguyên mẫu)", correct: false },
+                        { text: "B. to protect (Để bảo vệ)", correct: true },
+                        { text: "C. are protecting (Đang bảo vệ)", correct: false },
+                        { text: "D. protected (Bị động / V-ed)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Cấu trúc chỉ mục đích trong tiếng Anh. Chúng ta dùng <b>to V (để làm gì)</b> để giải thích mục đích hoặc công dụng của một vật. Ở đây, 'vỏ bọc thích hợp [để bảo vệ] ghế sofa...'. Do đó, <b>to protect</b> là lựa chọn chính xác nhất về mặt ngữ pháp."
+                },
+                {
+                    id: 132,
+                    text: "132.",
+                    options: [
+                        { text: "A. furniture (đồ nội thất)", correct: true },
+                        { text: "B. systems (hệ thống)", correct: false },
+                        { text: "C. appliances (thiết bị điện gia dụng)", correct: false },
+                        { text: "D. routes (tuyến đường)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Dựa vào ngữ cảnh câu đầu tiên nhắc đến 'sofas and chairs' (ghế sofa và ghế tựa). Cửa hàng này bán vỏ bọc cho các loại ghế. Trong tiếng Anh, ghế sofa, bàn ghế, tủ giường nói chung được gọi là <b>furniture</b> (đồ nội thất). Không dùng <i>appliances</i> vì đó là các thiết bị máy móc (tủ lạnh, lò vi sóng...)."
+                },
+                {
+                    id: 133,
+                    text: "133.",
+                    options: [
+                        { text: "A. They do not hold up well with frequent use. (Chúng không bền khi sử dụng thường xuyên.)", correct: false },
+                        { text: "B. They are no longer available on our online store. (Chúng không còn có sẵn trên cửa hàng trực tuyến của chúng tôi.)", correct: false },
+                        { text: "C. And we are adding more options every week. (Và chúng tôi đang thêm nhiều lựa chọn hơn mỗi tuần.)", correct: true },
+                        { text: "D. We find them fun and easy to wear. (Chúng tôi thấy chúng thú vị và dễ mặc.)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đọc câu liền trước: 'Có rất nhiều loại vải chống bám bẩn tuyệt đẹp để lựa chọn' (There are many beautiful... fabrics to choose from). Câu này đang nhấn mạnh <b>sự đa dạng, phong phú</b> của sản phẩm. Câu tiếp theo cần phải tiếp nối mạch quảng cáo tích cực đó. Đáp án <b>C</b> (Và chúng tôi đang bổ sung thêm nhiều lựa chọn mỗi tuần) ghép vào tạo thành một chuỗi lợi ích rất logic, hấp dẫn."
+                },
+                {
+                    id: 134,
+                    text: "134.",
+                    options: [
+                        { text: "A. quicken (Động từ)", correct: false },
+                        { text: "B. quickly (Trạng từ)", correct: true },
+                        { text: "C. quicker (Tính từ/Trạng từ so sánh hơn)", correct: false },
+                        { text: "D. quick (Tính từ)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Phân tích ngữ pháp của câu: 'you can [.....] change the look of any room...'. Chúng ta có động từ chính là <b>change</b> (thay đổi). Để bổ nghĩa cho động từ thường, ta phải sử dụng một <b>Trạng từ (Adverb)</b>. Trong 4 đáp án, chỉ có <b>quickly</b> (một cách nhanh chóng) là trạng từ phù hợp. Cấu trúc: <i>can + adv + V-nguyên thể</i>."
+                }
+            ]
+        },
+        
+        // PASSAGE 2: Câu 135 - 138
+        {
+            passage: `<p>To: All staff<br>From: Kosei Masutani<br>Subject: Information<br>Date: January 26</p><p>Some of you may have been a bit <b>(135)______</b> sitting at your desks this morning. That is because one of our building's heating systems broke down. Unfortunately, the repair crew is unable to come and fix it until Thursday. The open office space downstairs is the most affected area, with very little heat. Our interns are <b>(136)______</b> there, so they will be given temporary workspaces on other floors. <b>(137)______</b>, when arriving for work tomorrow morning, interns should see Ms. Connor for their alternate location. <b>(138)______</b>. In the meantime, rest assured that we will keep everyone safe and resolve this issue promptly.</p><p>Kosei Masutani,<br>Facilities Manager</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p>Gửi đến: Toàn thể nhân viên<br>Từ: Kosei Masutani<br>Chủ đề: Thông tin<br>Ngày: 26 tháng 1</p><p>Có thể một số bạn đã cảm thấy hơi <b>(135) không thoải mái</b> khi ngồi tại bàn làm việc sáng nay. Đó là vì một trong những hệ thống sưởi của tòa nhà chúng ta đã bị hỏng. Đáng tiếc là, đội sửa chữa không thể đến khắc phục sự cố cho đến thứ Năm. Khu vực văn phòng mở ở tầng dưới là nơi bị ảnh hưởng nhiều nhất, với rất ít hơi ấm. Các thực tập sinh của chúng ta <b>(136) được bố trí</b> tại đó, vì vậy họ sẽ được cung cấp các không gian làm việc tạm thời ở các tầng khác. <b>(137) Do đó</b>, khi đến làm việc vào sáng ngày mai, các thực tập sinh nên đến gặp cô Connor để nhận vị trí làm việc thay thế của mình. <b>(138) Tôi xin lỗi vì sự bất tiện này.</b> Trong thời gian chờ đợi, xin hãy yên tâm rằng chúng tôi sẽ giữ an toàn cho mọi người và giải quyết vấn đề này một cách nhanh chóng.</p><p>Kosei Masutani,<br>Quản lý Cơ sở vật chất</p>`,
+            questions: [
+                {
+                    id: 135,
+                    text: "135.",
+                    options: [
+                        { text: "A. uncomfortable (không thoải mái)", correct: true },
+                        { text: "B. lonely (cô đơn)", correct: false },
+                        { text: "C. prompt (nhanh chóng, đúng giờ)", correct: false },
+                        { text: "D. overwhelmed (bị choáng ngợp)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đọc câu ngay phía sau: 'Đó là vì một trong những hệ thống sưởi của tòa nhà chúng ta đã bị hỏng' (heating systems broke down). Việc máy sưởi bị hỏng giữa mùa đông lạnh lẽo chắc chắn sẽ khiến nhân viên cảm thấy <b>uncomfortable</b> (bất tiện, lạnh lẽo, không thoải mái). Các tính từ khác hoàn toàn không phù hợp với ngữ cảnh 'máy sưởi hỏng'."
+                },
+                {
+                    id: 136,
+                    text: "136.",
+                    options: [
+                        { text: "A. a location (Danh từ)", correct: false },
+                        { text: "B. to locate (Động từ nguyên mẫu có to)", correct: false },
+                        { text: "C. locating (V-ing)", correct: false },
+                        { text: "D. located (Phân từ 2 - V-ed)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Cấu trúc bị động chỉ vị trí, nơi chốn. Động từ <i>locate</i> khi chỉ vị trí của người hoặc vật thường được dùng ở dạng bị động: <b>be located in/at/there</b> (nằm ở, được bố trí tại). Câu này mang nghĩa: 'Các thực tập sinh của chúng ta <b>được bố trí (are located)</b> tại đó'."
+                },
+                {
+                    id: 137,
+                    text: "137.",
+                    options: [
+                        { text: "A. However (Tuy nhiên)", correct: false },
+                        { text: "B. Likewise (Tương tự như vậy)", correct: false },
+                        { text: "C. Consequently (Do đó, kết quả là)", correct: true },
+                        { text: "D. Otherwise (Nếu không thì)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Mối quan hệ nguyên nhân - kết quả giữa hai câu. <br>- Nguyên nhân (câu trước): Thực tập sinh phải chuyển lên không gian làm việc tạm thời ở các tầng khác.<br>- Kết quả (câu sau): Sáng mai đến làm, họ phải gặp cô Connor để biết chỗ mới của mình.<br>Trạng từ nối <b>Consequently</b> (Do đó / Kết quả là) diễn tả hoàn hảo mối liên hệ này."
+                },
+                {
+                    id: 138,
+                    text: "138.",
+                    options: [
+                        { text: "A. The interns will not arrive here until June. (Các thực tập sinh sẽ không đến đây cho đến tháng Sáu.)", correct: false },
+                        { text: "B. I apologize for the inconvenience. (Tôi xin lỗi vì sự bất tiện này.)", correct: true },
+                        { text: "C. We will soon be renovating the open office space. (Chúng tôi sẽ sớm cải tạo không gian văn phòng mở.)", correct: false },
+                        { text: "D. Heater maintenance is sometimes costly. (Việc bảo trì máy sưởi đôi khi tốn kém.)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đoạn email thông báo về một sự cố (máy sưởi hỏng) gây ảnh hưởng đến môi trường làm việc và bắt buộc một số nhân sự phải di dời chỗ ngồi. Theo văn phong giao tiếp chuyên nghiệp nơi công sở, sau khi trình bày sự cố và hướng giải quyết tạm thời, người quản lý cần gửi lời xin lỗi. Câu <b>B</b> (Tôi xin lỗi vì sự bất tiện này) là câu cửa miệng mang tính tiêu chuẩn nhất trong tình huống xử lý sự cố."
+                }
+            ]
+        },
+
+        // PASSAGE 3: Câu 139 - 142
+        {
+            passage: `<p><b>Southerby Designs</b></p><p>Southerby Designs is a leader in designing retail and showroom spaces in the Greater Chennington area. For nearly three decades, Southerby Designs has collaborated with countless stores, <b>(139)______</b> beautiful designs for their retail spaces. We have <b>(140)______</b> worked with a number of museums and event-production companies to create captivating, uncluttered, and visitor-friendly experiences.</p><p><b>(141)______</b> designing retail show floors to completing projects for premier cultural institutions, Southerby Designs can partner with your organization to develop the perfect design solution for your needs. <b>(142)______</b>. We are confident we can develop a solution to help you!</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p><b>Southerby Designs</b></p><p>Southerby Designs là đơn vị dẫn đầu trong việc thiết kế không gian bán lẻ và trưng bày tại khu vực Greater Chennington. Trong gần ba thập kỷ qua, Southerby Designs đã hợp tác với vô số cửa hàng, <b>(139) sản xuất</b> những thiết kế đẹp cho không gian bán lẻ của họ. Chúng tôi <b>(140) thậm chí</b> đã làm việc với một số bảo tàng và các công ty sản xuất sự kiện để tạo ra những trải nghiệm tham quan hấp dẫn, gọn gàng và thân thiện với du khách.</p><p><b>(141) Từ</b> việc thiết kế các khu trưng bày bán lẻ cho đến hoàn thành các dự án cho những tổ chức văn hóa hàng đầu, Southerby Designs có thể hợp tác với tổ chức của bạn để phát triển giải pháp thiết kế hoàn hảo phù hợp với nhu cầu của bạn. <b>(142) Liên hệ với chúng tôi ngay hôm nay và cho chúng tôi biết những thách thức thiết kế mà bạn đang gặp phải.</b> Chúng tôi tin tưởng rằng chúng tôi có thể phát triển một giải pháp để giúp bạn!</p>`,
+            questions: [
+                {
+                    id: 139,
+                    text: "139.",
+                    options: [
+                        { text: "A. produced (V-ed / Bị động)", correct: false },
+                        { text: "B. have produced (Hiện tại hoàn thành)", correct: false },
+                        { text: "C. was producing (Quá khứ tiếp diễn)", correct: false },
+                        { text: "D. producing (V-ing / Chủ động)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Cấu trúc rút gọn mệnh đề cùng chủ ngữ. Câu gốc có thể hiểu là: 'Southerby Designs has collaborated with... stores, <i>and they have produced</i> beautiful designs...'. Khi rút gọn vế sau mang nghĩa <b>chủ động</b>, ta dùng <b>V-ing</b> (phân từ hiện tại). Do đó, <b>producing</b> là đáp án đúng."
+                },
+                {
+                    id: 140,
+                    text: "140.",
+                    options: [
+                        { text: "A. even (thậm chí)", correct: true },
+                        { text: "B. instead (thay vì)", correct: false },
+                        { text: "C. therefore (do đó)", correct: false },
+                        { text: "D. nevertheless (tuy nhiên)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Câu trước nói về việc công ty chuyên thiết kế không gian cho 'retail and showroom' (bán lẻ và trưng bày). Câu này đưa thêm thông tin mang tính nâng cao uy tín: 'Chúng tôi [.....] đã làm việc với các bảo tàng...'. Trạng từ <b>even</b> (thậm chí) được dùng để nhấn mạnh sự bất ngờ hoặc mức độ bao phủ rộng lớn của dịch vụ."
+                },
+                {
+                    id: 141,
+                    text: "141.",
+                    options: [
+                        { text: "A. By (Bởi, bằng)", correct: false },
+                        { text: "B. Over (Qua, trên)", correct: false },
+                        { text: "C. After (Sau khi)", correct: false },
+                        { text: "D. From (Từ)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Nhìn vào cấu trúc ngữ pháp bao quát cả đoạn: '[.....] designing retail show floors <b>to</b> completing projects...'. Ta thấy ngay cấu trúc đi đôi kinh điển: <b>From A to B</b> (Từ A đến B). 'Từ việc thiết kế sàn bán lẻ cho đến việc hoàn thành dự án cho tổ chức văn hóa...'. Do đó, điền <b>From</b> là chính xác tuyệt đối."
+                },
+                {
+                    id: 142,
+                    text: "142.",
+                    options: [
+                        { text: "A. We worked with a large portfolio of designers and artists at that time. (Chúng tôi đã làm việc với rất nhiều nhà thiết kế và nghệ sĩ vào thời điểm đó.)", correct: false },
+                        { text: "B. Contact us today and let us know what design challenges you are facing. (Liên hệ với chúng tôi ngay hôm nay và cho chúng tôi biết những thách thức thiết kế mà bạn đang gặp phải.)", correct: true },
+                        { text: "C. In fact, we raised our rates for the first time last year. (Trên thực tế, chúng tôi đã tăng giá dịch vụ lần đầu tiên vào năm ngoái.)", correct: false },
+                        { text: "D. In contrast, our business has grown substantially over the past ten years. (Ngược lại, công việc kinh doanh của chúng tôi đã phát triển đáng kể trong mười năm qua.)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đây là đoạn cuối của một bài viết quảng cáo dịch vụ công ty. Thông thường, đoạn kết sẽ là một lời 'kêu gọi hành động' (Call to action) để khuyến khích khách hàng sử dụng dịch vụ. Hơn nữa, câu cuối cùng chốt lại: 'Chúng tôi tin tưởng có thể phát triển một giải pháp giúp bạn!'. Vậy nên câu <b>B</b> (Hãy liên hệ và nói cho chúng tôi vấn đề của bạn) là câu ghép nối mang tính mời chào hoàn hảo."
+                }
+            ]
+        },
+
+        // PASSAGE 4: Câu 143 - 146
+        {
+            passage: `<p>Central Train Service makes it <b>(143)______</b> than ever to give the gift of travel. Our gift cards are the perfect way to give someone an unforgettable special journey. Traveling by train can provide a passenger with a worry-free experience. <b>(144)______</b>. Enjoy touring amazing cities and beautiful national parks.</p><p>Central Train Service gift cards never <b>(145)______</b>. They can be redeemed online or at any major train station. Cards may be purchased in amounts up to $500. There are no additional <b>(146)______</b>. The full value of the gift card can be applied to any ticket purchase.</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p>Dịch vụ Xe lửa Central Train Service làm cho việc tặng quà du lịch trở nên <b>(143) dễ dàng hơn</b> bao giờ hết. Thẻ quà tặng của chúng tôi là cách hoàn hảo để mang đến cho ai đó một hành trình đặc biệt khó quên. Đi du lịch bằng tàu hỏa có thể mang lại cho hành khách một trải nghiệm không cần lo nghĩ. <b>(144) Du khách được tự do thư giãn và tận hưởng cuộc phiêu lưu.</b> Hãy tận hưởng việc tham quan các thành phố tuyệt vời và những công viên quốc gia xinh đẹp.</p><p>Thẻ quà tặng của Central Train Service không bao giờ <b>(145) hết hạn</b>. Chúng có thể được quy đổi trực tuyến hoặc tại bất kỳ nhà ga xe lửa lớn nào. Thẻ có thể được mua với số tiền lên tới $500. Không có bất kỳ <b>(146) khoản phí</b> bổ sung nào. Toàn bộ giá trị của thẻ quà tặng có thể được áp dụng cho bất kỳ giao dịch mua vé nào.</p>`,
+            questions: [
+                {
+                    id: 143,
+                    text: "143.",
+                    options: [
+                        { text: "A. easily (Trạng từ)", correct: false },
+                        { text: "B. easier (Tính từ so sánh hơn)", correct: true },
+                        { text: "C. easy (Tính từ nguyên cấp)", correct: false },
+                        { text: "D. ease (Danh từ / Động từ)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Cấu trúc <b>make + it + Tính từ (Adj)</b> (làm cho việc gì đó trở nên...). Phía sau ta thấy có từ so sánh <b>than</b> ('than ever' - hơn bao giờ hết). Do đó, chỗ trống buộc phải điền một tính từ ở dạng so sánh hơn (Comparative Adjective). Đáp án <b>easier</b> là lựa chọn duy nhất đáp ứng yêu cầu này."
+                },
+                {
+                    id: 144,
+                    text: "144.",
+                    options: [
+                        { text: "A. The tourists often visit Paris and London. (Khách du lịch thường đến thăm Paris và London.)", correct: false },
+                        { text: "B. There are several ways to change your seat selection. (Có một số cách để thay đổi lựa chọn chỗ ngồi.)", correct: false },
+                        { text: "C. Travelers are free to relax and enjoy the adventure. (Du khách được tự do thư giãn và tận hưởng cuộc phiêu lưu.)", correct: true },
+                        { text: "D. Passengers must travel with personal identification. (Hành khách phải mang theo giấy tờ tùy thân.)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Mạch logic của đoạn văn đang nói về lợi ích tinh thần của việc đi du lịch bằng tàu hỏa: 'cung cấp một trải nghiệm không cần lo âu (worry-free experience)'. Câu tiếp theo cần giải thích rõ sự 'không âu lo' đó là gì. Câu <b>C</b>: 'Du khách được <b>tự do thư giãn và tận hưởng</b>...' bổ sung ý nghĩa cực kỳ hoàn chỉnh cho khái niệm 'worry-free'."
+                },
+                {
+                    id: 145,
+                    text: "145.",
+                    options: [
+                        { text: "A. expire (Hiện tại đơn - V nguyên thể)", correct: true },
+                        { text: "B. expiring (V-ing)", correct: false },
+                        { text: "C. expired (V-ed / Quá khứ)", correct: false },
+                        { text: "D. expiration (Danh từ)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Câu này đang mô tả một sự thật hiển nhiên, một đặc điểm, chính sách cố định của sản phẩm (thẻ quà tặng không bao giờ hết hạn). Ta dùng thì <b>Hiện tại đơn</b>. Chủ ngữ là 'gift cards' (số nhiều) nên động từ phải ở dạng nguyên mẫu không chia. Do đó chọn <b>expire</b>."
+                },
+                {
+                    id: 146,
+                    text: "146.",
+                    options: [
+                        { text: "A. comments (bình luận)", correct: false },
+                        { text: "B. instructions (chỉ dẫn)", correct: false },
+                        { text: "C. dates (ngày tháng / cuộc hẹn)", correct: false },
+                        { text: "D. fees (khoản phí)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đoạn cuối nói về các điều kiện tài chính khi mua thẻ quà tặng: 'mua với số tiền lên tới $500', 'toàn bộ giá trị có thể được áp dụng mua vé'. Vì thế, lời khẳng định 'Không có <b>[khoản phí]</b> bổ sung nào (No additional fees)' là một câu cam kết rất phổ biến trong các điều khoản thanh toán, dịch vụ bán hàng."
+                }
+            ]
+        }
+    ];
+
+    let currentPassageIndex = 0;
+    let selectedAnswers = {};
+    let isSubmitted = false;
+    let timerInterval;
+    let timeLeft = 0;
+
+    function initQuiz() {
+        renderPassage();
+        renderNavDots();
+        updateNavigation();
+    }
+
+    function renderPassage() {
+        const data = quizData[currentPassageIndex];
+        
+        document.getElementById('passage-container').innerHTML = data.passage;
+        document.getElementById('translation-container').innerHTML = data.translation;
+        
+        let html = '';
+        data.questions.forEach((q) => {
+            html += `
+                <div class="question-block" id="q-block-${q.id}">
+                    <div class="question-title">${q.text}</div>
+                    <div class="options">
+            `;
+            
+            q.options.forEach((opt, idx) => {
+                const isChecked = selectedAnswers[q.id] === idx ? 'checked' : '';
+                const disabled = isSubmitted ? 'disabled' : '';
+                let statusClass = '';
+                
+                if (isSubmitted) {
+                    if (opt.correct) statusClass = 'correct';
+                    else if (selectedAnswers[q.id] === idx) statusClass = 'wrong';
+                }
+                
+                let enText = opt.text;
+                let viText = "";
+                let match = opt.text.match(/(.*)\s\((.*)\)$/);
+                if(match) {
+                    enText = match[1];
+                    viText = match[2];
+                }
+
+                html += `
+                    <label class="option-label ${isChecked ? 'selected' : ''} ${statusClass} ${disabled}">
+                        <input type="radio" name="q${q.id}" value="${idx}" ${isChecked} ${disabled} onchange="selectAnswer(${q.id}, ${idx})">
+                        <span class="option-text-en">${enText}</span>
+                        ${(viText && isSubmitted) ? `<span class="option-text-vi">- ${viText}</span>` : ''}
+                    </label>
+                `;
+            });
+            
+            html += `</div>
+                <div class="explanation-box" id="exp-${q.id}">${q.explanation}</div>
+            </div>`;
+        });
+        
+        document.getElementById('questions-container').innerHTML = html;
+        document.getElementById('progress-text').innerText = `Đoạn ${currentPassageIndex + 1} / ${quizData.length}`;
+        
+        if (isSubmitted) {
+            data.questions.forEach(q => {
+                document.getElementById(`exp-${q.id}`).classList.add('show');
+            });
+        }
+    }
+
+    function selectAnswer(qId, optIdx) {
+        if (isSubmitted) return;
+        selectedAnswers[qId] = optIdx;
+        renderPassage();
+        renderNavDots();
+    }
+
+    function changePassage(dir) {
+        currentPassageIndex += dir;
+        renderPassage();
+        updateNavigation();
+    }
+
+    function updateNavigation() {
+        document.getElementById('btn-prev').style.display = currentPassageIndex === 0 ? 'none' : 'block';
+        if (currentPassageIndex === quizData.length - 1) {
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-submit').style.display = 'block';
+        } else {
+            document.getElementById('btn-next').style.display = 'block';
+            document.getElementById('btn-submit').style.display = 'none';
+        }
+    }
+
+    function renderNavDots() {
+        let html = '';
+        quizData.forEach((p, pIdx) => {
+            p.questions.forEach(q => {
+                let cls = 'nav-dot';
+                if (isSubmitted) {
+                    const selected = selectedAnswers[q.id];
+                    if (selected !== undefined && q.options[selected].correct) cls += ' correct';
+                    else cls += ' wrong';
+                } else if (selectedAnswers[q.id] !== undefined) {
+                    cls += ' done';
+                }
+                if (pIdx === currentPassageIndex) cls += ' active';
+                
+                html += `<div class="${cls}" onclick="goToQuestion(${pIdx}, ${q.id})">${q.id}</div>`;
+            });
+        });
+        document.getElementById('navDropdown').innerHTML = html;
+    }
+
+    function goToQuestion(pIdx, qId) {
+        if (pIdx !== currentPassageIndex) {
+            currentPassageIndex = pIdx;
+            renderPassage();
+            updateNavigation();
+            renderNavDots();
+        }
+        document.getElementById(`q-block-${qId}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('navDropdown').classList.remove('show');
+    }
+
+    function toggleNavDropdown() {
+        document.getElementById('navDropdown').classList.toggle('show');
+    }
+
+    function askReady() {
+        const timeInput = document.getElementById('timeInput').value;
+        timeLeft = timeInput * 60;
+        document.getElementById('setupOverlay').style.display = 'none';
+        document.getElementById('startConfirmMsg').innerText = `Bạn có ${timeInput} phút để hoàn thành Part 6.\nChúc bạn làm bài tốt!`;
+        document.getElementById('startConfirmOverlay').classList.add('active');
+    }
+
+    function closeStartConfirmModal() {
+        document.getElementById('startConfirmOverlay').classList.remove('active');
+        document.getElementById('setupOverlay').style.display = 'flex';
+    }
+
+    function startTestActual() {
+        document.getElementById('startConfirmOverlay').classList.remove('active');
+        startTimer();
+        initQuiz();
+    }
+
+    function startTimer() {
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                submitQuiz();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+        const s = (timeLeft % 60).toString().padStart(2, '0');
+        document.getElementById('timer').innerText = `${m}:${s}`;
+    }
+
+    function askSubmit() {
+        document.getElementById('confirmOverlay').classList.add('active');
+    }
+
+    function closeConfirmModal() {
+        document.getElementById('confirmOverlay').classList.remove('active');
+    }
+
+    function submitQuiz(isRestoring = false) {
+        clearInterval(timerInterval);
+        isSubmitted = true;
+        closeConfirmModal();
+        
+        let correctCount = 0;
+        let totalCount = 0; 
+        
+        quizData.forEach(p => {
+            p.questions.forEach(q => {
+                totalCount++;
+                if (selectedAnswers[q.id] !== undefined && q.options[selectedAnswers[q.id]].correct) {
+                    correctCount++;
+                }
+            });
+        });
+        
+        document.getElementById('score-correct').innerText = correctCount;
+        document.getElementById('score-total').innerText = totalCount;
+        document.getElementById('result-overlay').classList.add('active');
+        
+        if(!isRestoring) {
+            saveAttemptToHistory(correctCount, totalCount, selectedAnswers);
+            if(window.luuDiemTOEICLenFirebase) {
+                window.luuDiemTOEICLenFirebase(totalCount, correctCount, "ETS 2023 - Test 7", "Reading", "Part 6");
+            }
+        }
+       
+        document.getElementById('mainLayout').classList.add('submitted-layout');
+        document.getElementById('vocabBtn').style.display = 'flex';
+        
+        currentPassageIndex = 0;
+        renderPassage();
+        updateNavigation();
+        renderNavDots();
+    } 
+
+    function closeResult() {
+        document.getElementById('result-overlay').classList.remove('active');
+    }
+
+    function openVocab() {
+        document.getElementById('vocabOverlay').classList.add('active');
+    }
+
+    function closeVocab() {
+        document.getElementById('vocabOverlay').classList.remove('active');
+    }
+
+    function showCustomAlert(message) { document.getElementById('customAlertMessage').innerText = message; document.getElementById('customAlertOverlay').style.display = 'flex'; }
+    function closeCustomAlert() { document.getElementById('customAlertOverlay').style.display = 'none'; }
+
+    const menu = document.getElementById("ctxMenu");
+    let targetElement = null;
+    let selectedRange = null;
+
+    document.addEventListener("contextmenu", (e) => {
+        if (!e.target.closest('.main-content')) return; 
+        e.preventDefault();
+        targetElement = null; selectedRange = null;
+        
+        if (e.target.classList.contains("highlight")) {
+            targetElement = e.target; showMenu(e.clientX, e.clientY, "remove"); return;
+        }
+        
+        let sel = window.getSelection();
+        if (sel.toString().trim().length > 0) {
+            selectedRange = sel.getRangeAt(0); showMenu(e.clientX, e.clientY, "add");
+        } else { menu.style.display = "none"; }
+    });
+
+    document.addEventListener("click", (e) => { if (menu && !menu.contains(e.target)) menu.style.display = "none"; });
+
+    function showMenu(x, y, mode) {
+        menu.style.display = "block";
+        let mw = menu.offsetWidth, mh = menu.offsetHeight;
+        menu.style.left = (x + mw > window.innerWidth ? window.innerWidth - mw - 10 : x) + "px";
+        menu.style.top = (y + mh > window.innerHeight ? window.innerHeight - mh - 10 : y) + "px";
+        menu.children[0].style.display = (mode === "add") ? "block" : "none";
+        menu.children[1].style.display = (mode === "remove") ? "block" : "none";
+    }
+
+   function doHighlight() {
+        if (selectedRange) {
+            try { 
+                let span = document.createElement("span"); span.className = "highlight"; selectedRange.surroundContents(span); 
+            } catch(e) { showCustomAlert("🍀 Cậu chỉ có thể highlight trong cùng một dòng thui nhé!"); }
+            window.getSelection().removeAllRanges();
+        }
+        menu.style.display = "none";
+    }
+
+    function removeHighlight() {
+        if (targetElement) {
+            let text = document.createTextNode(targetElement.textContent);
+            targetElement.parentNode.replaceChild(text, targetElement);
+            document.querySelector('.main-content').normalize(); 
+        }
+        menu.style.display = "none";
+    }
+
+    const TEST_ID = "p6_test_7_2023"; 
+    const HISTORY_KEY = "snapenglish_" + TEST_ID + "_history";
+    let currentHistoryList = []; 
+
+    async function saveAttemptToHistory(score, total, answersObj) {
+        let now = new Date();
+        let timestamp = Date.now();
+        let attempt = {
+            id: timestamp, 
+            timestamp: timestamp, 
+            date: now.toLocaleDateString('vi-VN'),
+            time: now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+            score: score,
+            total: total,
+            answers: answersObj
+        };
+
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        history.unshift(attempt);
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+        if (window.syncHistoryToFirebase) {
+            await window.syncHistoryToFirebase(attempt, TEST_ID);
+        }
+    }
+
+    async function openHistoryModal() {
+        document.getElementById('setupOverlay').style.display = 'none';
+        document.getElementById('historyOverlay').style.display = 'flex';
+        let listEl = document.getElementById("historyList");
+
+        listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang lấy dữ liệu từ Máy chủ... ☁️⏳</div>`;
+
+        if (window.currentUserUid && window.getHistoryFromFirebase) {
+            currentHistoryList = await window.getHistoryFromFirebase(TEST_ID);
+            if (!currentHistoryList || currentHistoryList.length === 0) {
+                currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+            }
+        } else {
+            currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        }
+
+        if (currentHistoryList.length === 0) {
+            listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px;">Cậu chưa làm bài lần nào trên tài khoản này. 🐾</div>`;
+        } else {
+            listEl.innerHTML = currentHistoryList.map((item, index) => {
+                let docId = item.docId || item.id;
+                return `
+                <div class="history-item">
+                    <div class="history-info">
+                        <span class="history-date">Lần ${currentHistoryList.length - index}: ${item.time} - ${item.date}</span>
+                        <span class="history-score">Đúng: ${item.score}/${item.total} câu</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-review" onclick="restoreAttempt(${index})">Xem lại</button>
+                        <button class="btn-delete-history" onclick="deleteAttempt('${docId}')" title="Xóa bài này">&times;</button>
+                    </div>
+                </div>
+                `;
+            }).join("");
+        }
+    }
+
+    function closeHistoryModal() {
+        document.getElementById('historyOverlay').style.display = 'none';
+        document.getElementById('setupOverlay').style.display = 'flex';
+    }
+
+    let pendingDeleteId = null;
+    function deleteAttempt(attemptId) {
+        pendingDeleteId = attemptId;
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'flex';
+    }
+    
+    function closeConfirmDelete() {
+        pendingDeleteId = null;
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+    }
+
+    async function executeDelete() {
+        if (pendingDeleteId !== null) {
+            document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+            let listEl = document.getElementById("historyList");
+            listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang dọn dẹp trên Đám mây... 🗑️☁️</div>`;
+
+            if (window.currentUserUid && window.deleteHistoryDocFirebase && typeof pendingDeleteId === 'string') {
+                await window.deleteHistoryDocFirebase(pendingDeleteId);
+            }
+
+            let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+            history = history.filter(h => h.id != pendingDeleteId && h.docId != pendingDeleteId);
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+            pendingDeleteId = null;
+            openHistoryModal(); 
+        }
+    }
+
+    function restoreAttempt(index) {
+        let attempt = currentHistoryList[index];
+        if(!attempt) return;
+
+        document.getElementById('historyOverlay').style.display = 'none';
+        currentPassageIndex = 0;
+        
+        for (let key in selectedAnswers) delete selectedAnswers[key];
+        Object.assign(selectedAnswers, attempt.answers || {});
+        
+        isSubmitted = false; 
+        submitQuiz(true);
+        
+        let toastMsg = document.createElement("div");
+        toastMsg.innerText = "✨ Đã khôi phục bài làm từ Đám mây!";
+        toastMsg.style.cssText = "position:fixed; top:20px; right:20px; background:var(--primary-btn); color:white; padding:15px 20px; border-radius:12px; font-weight:bold; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,0.2);";
+        document.body.appendChild(toastMsg);
+        setTimeout(() => toastMsg.remove(), 3000);
+    }
+</script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    function showInGameToast(msg) {
+        let toast = document.createElement("div");
+        toast.innerText = msg;
+        toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:#10b981; color:white; padding:15px 20px; border-radius:12px; font-weight:bold; font-family:'Be Vietnam Pro',sans-serif; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0; transition:all 0.4s ease;";
+        document.body.appendChild(toast);
+        
+        setTimeout(() => { toast.style.transform = "translateY(0)"; toast.style.opacity = "1"; }, 100);
+        setTimeout(() => { toast.style.transform = "translateY(100px)"; toast.style.opacity = "0"; }, 3500);
+        setTimeout(() => { toast.remove(); }, 4000);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+        } else {
+            showInGameToast("⚠️ Bạn đang chơi dưới dạng Khách, điểm sẽ không lưu lên kho!");
+        }
+    });
+
+    window.syncHistoryToFirebase = async function(attempt, testId) {
+        if (!window.currentUserUid) return attempt;
+        let docId = window.currentUserUid + "_" + testId + "_" + attempt.timestamp;
+        attempt.docId = docId;
+        attempt.uid = window.currentUserUid;
+        attempt.testId = testId;
+        try {
+            await setDoc(doc(db, "snapenglish_history", docId), attempt);
+            return attempt;
+        } catch (e) { console.error("Lỗi đồng bộ lịch sử đám mây:", e); return attempt; }
+    };
+
+    window.getHistoryFromFirebase = async function(testId) {
+        if (!window.currentUserUid) return null;
+        try {
+            const q = query(collection(db, "snapenglish_history"), where("uid", "==", window.currentUserUid));
+            const querySnapshot = await getDocs(q);
+            let history = [];
+            querySnapshot.forEach((docSnap) => {
+                let data = docSnap.data();
+                if (data.testId === testId) {
+                    history.push(data);
+                }
+            });
+            history.sort((a, b) => b.timestamp - a.timestamp);
+            return history;
+        } catch (e) { console.error("Lỗi tải lịch sử từ đám mây:", e); return null; }
+    };
+
+    window.deleteHistoryDocFirebase = async function(docId) {
+        if (!window.currentUserUid || !docId) return;
+        try {
+            await deleteDoc(doc(db, "snapenglish_history", docId));
+        } catch (e) { console.error("Lỗi xóa lịch sử:", e); }
+    };
+
+    function calculateToeicScore(skill, correct, total) {
+        let percentage = correct / total;
+        let maxScore = (skill === 'Listening' || skill === 'Reading') ? 495 : 200;
+        let step = (skill === 'Listening' || skill === 'Reading') ? 5 : 10;
+        let estimated = Math.round((percentage * maxScore) / step) * step;
+        if (estimated > maxScore) return maxScore;
+        if (estimated < 5) return 5;
+        return estimated;
+    }
+
+    window.luuDiemTOEICLenFirebase = async function(tongSoCau, soCauDung, tenBai, kyNang, tenPart) {
+        if (!window.currentUserUid) return; 
+
+        let diemQuyDoi = calculateToeicScore(kyNang, soCauDung, tongSoCau);
+        let thoiGianHienTai = "--";
+        let inputPhut = parseInt(document.getElementById('timeInput').value) || 15; 
+        let tongThoiGianGoc = inputPhut * 60;
+
+        if (typeof timeLeft !== 'undefined') {
+            let thoiGianDaLam = tongThoiGianGoc - timeLeft;
+            if (thoiGianDaLam < 0) thoiGianDaLam = 0; 
+            
+            let m = Math.floor(thoiGianDaLam / 60);
+            let s = thoiGianDaLam % 60;
+            thoiGianHienTai = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+        let timestamp = Date.now();
+        let docId = window.currentUserUid + "_toeic_" + timestamp;
+        
+        try {
+            await setDoc(doc(db, "user_toeic_scores", docId), {
+                email: window.currentUserEmail,
+                skill: kyNang,           
+                testName: tenBai,        
+                partName: tenPart,       
+                timeTaken: thoiGianHienTai,
+                totalQ: tongSoCau,
+                correctQ: soCauDung,
+                score: diemQuyDoi,       
+                date: new Date().toLocaleDateString('vi-VN'),
+                timestamp: timestamp
+            });
+            showInGameToast("☁️ Đã đồng bộ điểm số lên Máy Chủ!");
+        } catch (error) {
+            console.error(error);
+        }
+    }
+</script>
+</body>
+</html>
