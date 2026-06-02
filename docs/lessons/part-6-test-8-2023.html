@@ -1,0 +1,1147 @@
+<!DOCTYPE html> 
+<html lang="vi">  
+<head>
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part 6 - Test 8 - 2023 | SnapEnglish</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Tông màu Emerald / Teal tươi mát, giảm căng thẳng cho mắt */
+            --bg-gradient-1: #ecfdf5; 
+            --bg-gradient-2: #d1fae5; 
+            --bg-gradient-3: #a7f3d0; 
+            --text-dark: #064e3b; 
+            --text-light: #334155;
+            --glass-bg: rgba(255, 255, 255, 0.92);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            
+            --primary-btn: #10b981; 
+            --primary-btn-hover: #059669; 
+            --accent-btn: #f59e0b; 
+            --accent-btn-hover: #d97706; 
+            --highlight-bg: #d1fae5; 
+            
+            --correct-bg: #f0fdf4;
+            --correct-text: #166534;
+            --correct-border: #86efac;
+            --wrong-bg: #fef2f2;
+            --wrong-text: #991b1b;
+            --wrong-border: #fca5a5;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Be Vietnam Pro', sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 50%, var(--bg-gradient-3) 100%);
+            color: var(--text-dark);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        ::selection { background: #a7f3d0; color: #064e3b; }
+
+        .full-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .header {
+            padding: 1rem 2rem;
+            border-bottom: 1px solid #a7f3d0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+            position: relative; 
+        }
+
+        .brand { font-size: 20px; font-weight: 700; color: var(--text-dark); display: flex; align-items: center; gap: 10px; }
+        .brand span { background: linear-gradient(to right, #10b981, #059669); color: white; padding: 4px 12px; border-radius: 8px; font-size: 15px; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);}
+
+        .header-controls { display: flex; align-items: center; gap: 15px; }
+
+        .btn-nav-toggle {
+            background: #f8fafc; color: var(--text-dark); border: 2px solid #e2e8f0;
+            padding: 8px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; 
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px;
+        }
+        .btn-nav-toggle:hover { background: #f1f5f9; border-color: #cbd5e1; }
+
+        .timer-box { font-size: 15px; font-weight: 700; color: var(--primary-btn-hover); background: #fff; padding: 8px 18px; border-radius: 10px; border: 2px solid #a7f3d0; }
+
+        .progress-indicator { font-weight: 600; color: var(--accent-btn-hover); background: #fff; padding: 8px 18px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); font-size: 14px;}
+
+        .nav-dropdown {
+            position: absolute; top: calc(100% + 10px); right: 2rem;
+            background: #fff; border-radius: 16px; border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15); width: 300px;
+            max-height: 400px; overflow-y: auto; z-index: 999;
+            padding: 20px; display: none; grid-template-columns: repeat(4, 1fr); gap: 10px;
+            opacity: 0; transform: translateY(-10px); transition: 0.3s ease;
+        }
+        .nav-dropdown.show { display: grid; opacity: 1; transform: translateY(0); }
+        .nav-dropdown::-webkit-scrollbar { width: 6px; }
+        .nav-dropdown::-webkit-scrollbar-thumb { background: #6ee7b7; border-radius: 3px; }
+
+        .nav-dot {
+            height: 40px; border: 2px solid #e2e8f0; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700;
+            cursor: pointer; color: var(--text-light); background: #f8fafc; transition: 0.2s;
+        }
+        .nav-dot:hover { border-color: var(--primary-btn); color: var(--primary-btn); }
+        .nav-dot.done { background: var(--highlight-bg); color: var(--primary-btn-hover); border-color: var(--primary-btn); }
+        .nav-dot.correct { background: var(--correct-bg); color: var(--correct-text); border-color: var(--correct-border); }
+        .nav-dot.wrong { background: var(--wrong-bg); color: var(--wrong-text); border-color: var(--wrong-border); }
+        .nav-dot.active { box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3); border-color: var(--primary-btn); }
+
+        #historyList { max-height: 300px; overflow-y: auto; text-align: left; margin-bottom: 20px; padding-right: 5px; }
+        .history-item { background: rgba(255, 255, 255, 0.8); border: 2px solid #e2e8f0; padding: 14px; border-radius: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .history-item:hover { border-color: var(--primary-btn); background: #fff; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.1); }
+        .history-info { display: flex; flex-direction: column; gap: 6px; }
+        .history-date { font-weight: 700; color: var(--text-dark); font-size: 14px; }
+        .history-score { color: var(--primary-btn-hover); font-size: 13px; font-weight: 600; }
+        .btn-review { background: var(--highlight-bg); color: var(--primary-btn-hover); border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 13px;}
+        .btn-review:hover { background: var(--primary-btn); color: white; }
+        .btn-delete-history { background: #ffebee; color: var(--wrong-text); border: none; padding: 0 12px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 18px; }
+        .btn-delete-history:hover { background: var(--wrong-text); color: white; }
+
+        .highlight { background-color: #fef08a; cursor: pointer; border-radius: 4px; padding: 2px 0; transition: 0.2s; }
+        .highlight:hover { background-color: #fde047; }
+        #ctxMenu { z-index: 100000; }
+        #ctxMenu button:hover { background: #f1f5f9; }
+
+        .main-content { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            flex: 1; 
+            overflow: hidden; 
+            transition: all 0.5s ease;
+        }
+        .main-content.submitted-layout {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .scroll-col {
+            padding: 2.5rem; 
+            overflow-y: auto; 
+            height: 100%;
+        }
+
+        .scroll-col::-webkit-scrollbar { width: 8px; }
+        .scroll-col::-webkit-scrollbar-track { background: transparent; }
+        .scroll-col::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 10px; }
+        .scroll-col::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.6); }
+
+        .passage-col { border-right: 2px dashed #a7f3d0; background: rgba(255,255,255,0.4); font-size: 1.05rem; line-height: 1.7; color: #334155; }
+        .translation-col { border-right: 2px dashed #a7f3d0; background: rgba(255,255,255,0.6); font-size: 1.05rem; line-height: 1.7; color: #1e293b; display: none; }
+        .main-content.submitted-layout .translation-col { display: block; animation: slideIn 0.5s ease; }
+
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+
+        .passage-col p, .translation-col p { margin-bottom: 1.2rem; }
+        .translation-header { font-weight: 700; color: #047857; margin-bottom: 1rem; font-size: 1.2rem; border-bottom: 2px solid #34d399; padding-bottom: 0.5rem; display: inline-block;}
+
+        .question-block {
+            background: rgba(255, 255, 255, 0.95); padding: 1.5rem; border-radius: 16px;
+            margin-bottom: 1.5rem; border: 1px solid #e2e8f0; transition: transform 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+        }
+        .question-block:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(16, 185, 129, 0.08); }
+
+        .question-title { font-weight: 700; margin-bottom: 1rem; color: var(--primary-btn-hover); font-size: 1.1rem; }
+
+        .options { display: flex; flex-direction: column; gap: 0.7rem; }
+
+        .option-label {
+            display: flex; align-items: center; cursor: pointer; padding: 0.8rem 1rem;
+            background: #fff; border-radius: 12px; border: 1px solid #e2e8f0; transition: all 0.3s ease; font-size: 0.98rem;
+        }
+        .option-label:hover:not(.disabled) { background: #f8fafc; border-color: var(--primary-btn); }
+        .option-label input[type="radio"] { margin-right: 1rem; accent-color: var(--primary-btn-hover); transform: scale(1.2); }
+        .option-label.selected { background: var(--highlight-bg); border-color: var(--primary-btn); color: var(--primary-btn-hover); }
+        .option-label.disabled { cursor: default; }
+        
+        .option-label.correct { background: var(--correct-bg); border-color: var(--correct-border); color: var(--correct-text); font-weight: 600; }
+        .option-label.wrong { background: var(--wrong-bg); border-color: var(--wrong-border); color: var(--wrong-text); opacity: 0.85; }
+
+        .option-text-en { font-weight: 600; margin-right: 8px; }
+        .option-text-vi { color: #64748b; font-style: italic; font-size: 0.9em; }
+
+        .explanation-box {
+            margin-top: 15px; padding: 15px; background: #f8fafc; border-radius: 12px;
+            border: 1px dashed #cbd5e1; font-size: 0.95rem; color: #475569; display: none; line-height: 1.6;
+        }
+        .explanation-box.show { display: block; animation: fadeIn 0.5s ease; }
+        .explanation-box b { color: var(--primary-btn-hover); }
+        .explanation-box ul { padding-left: 20px; margin-top: 8px; }
+        .explanation-box li { margin-bottom: 4px; }
+
+        .footer {
+            padding: 1rem 2rem; border-top: 1px solid #a7f3d0;
+            display: flex; justify-content: space-between; background: rgba(255, 255, 255, 0.7);
+        }
+
+        .btn { padding: 0.7rem 1.8rem; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-family: inherit;}
+        .btn-prev { background: #ffffff; color: var(--text-dark); border: 1px solid #cbd5e1; }
+        .btn-prev:hover { background: #f1f5f9; border-color: #94a3b8; }
+        .btn-next { background: var(--primary-btn); color: #fff; }
+        .btn-next:hover { background: var(--primary-btn-hover); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+        .btn-submit { background: var(--accent-btn); color: #fff; }
+        .btn-submit:hover { background: var(--accent-btn-hover); box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3); }
+
+        .vocab-btn {
+            position: fixed;
+            bottom: 30px; left: 30px;
+            width: 60px; height: 60px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%; display: none; align-items: center; justify-content: center;
+            font-size: 26px; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+            cursor: pointer; z-index: 1000; border: 3px solid #fff;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: float 3s ease-in-out infinite;
+        }
+        .vocab-btn:hover { transform: scale(1.15) rotate(10deg); }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        .result-overlay, .custom-overlay { 
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(8px); 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            z-index: 99999; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; 
+        }
+        .result-overlay.active, .custom-overlay.active { opacity: 1; pointer-events: all; }
+        .custom-overlay[style*="display: flex;"] { opacity: 1; pointer-events: all; }
+
+        .custom-modal { 
+            background: white; padding: 35px; border-radius: 20px; 
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2); width: 90%; max-width: 450px; text-align: center; 
+            border: 2px solid #34d399; animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        
+        .custom-modal h2 { color: var(--primary-btn-hover); font-size: 24px; margin-top: 0; margin-bottom: 12px;}
+        .result-score { font-size: 3.5rem; font-weight: 800; color: var(--text-dark); margin-bottom: 1.5rem; text-shadow: 2px 2px 0px #d1fae5; }
+
+        .modal-actions { display: flex; gap: 15px; margin-top: 25px; justify-content: center; }
+        .modal-actions button { flex: 1; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 15px; border: none; cursor: pointer; transition: 0.2s; font-family: inherit;}
+        .btn-cancel { background: #f1f5f9; color: #475569; }
+        .btn-cancel:hover { background: #e2e8f0; }
+        .btn-confirm { background: var(--primary-btn); color: white; }
+        .btn-confirm:hover { background: var(--primary-btn-hover); }
+
+        #timeInputBox { margin: 25px 0; }
+        #timeInput { width: 90px; padding: 10px; font-size: 16px; text-align: center; border: 2px solid #e2e8f0; border-radius: 10px; outline: none; font-weight: 700; color: var(--primary-btn); transition: 0.3s; font-family: inherit;}
+        #timeInput:focus { border-color: var(--primary-btn); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
+
+        .vocab-modal {
+            background: #fff; width: 90%; max-width: 600px; max-height: 80vh;
+            border-radius: 20px; padding: 30px; overflow-y: auto; text-align: left;
+            position: relative; border: 3px solid #34d399;
+        }
+        .vocab-modal h2 { text-align: center; color: #047857; margin-bottom: 20px; font-size: 22px; display: flex; align-items: center; justify-content: center; gap: 10px;}
+        .vocab-list { list-style: none; padding: 0; }
+        .vocab-list li { padding: 12px 15px; border-bottom: 1px dashed #e2e8f0; display: flex; flex-direction: column; }
+        .vocab-list li:last-child { border-bottom: none; }
+        .vocab-word { font-weight: 700; color: var(--primary-btn-hover); font-size: 1.05rem;}
+        .vocab-meaning { color: #475569; margin-top: 4px; font-size: 0.95rem; }
+        .close-vocab { position: absolute; top: 15px; right: 20px; background: none; border: none; font-size: 24px; color: #94a3b8; cursor: pointer; transition: 0.2s; }
+        .close-vocab:hover { color: #f43f5e; }
+        .vocab-modal::-webkit-scrollbar { width: 8px; }
+        .vocab-modal::-webkit-scrollbar-thumb { background: #34d399; border-radius: 10px; }
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .main-content { display: flex; flex-direction: column; overflow: hidden; }
+    .main-content.submitted-layout { display: flex; flex-direction: column; }
+    .passage-col { height: 45%; border-right: none; border-bottom: 3px solid #a7f3d0; padding: 1.5rem; }
+    .translation-col { height: 30%; border-right: none; border-bottom: 3px solid #34d399; padding: 1.5rem; }
+    .question-col { flex: 1; height: auto; padding: 1.5rem; }
+    .main-content.submitted-layout .passage-col { height: 30%; }
+    .header { flex-direction: column; gap: 15px; padding: 1rem; }
+    .header-controls { width: 100%; justify-content: space-between; }
+    .nav-dropdown { top: calc(100% + 5px); right: 1rem; width: calc(100% - 2rem); }
+}
+
+@media (max-width: 768px) {
+    .header-controls { flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .nav-dropdown { grid-template-columns: repeat(4, 1fr); }
+    .footer { flex-direction: column; gap: 15px; padding: 1rem; }
+    .footer > div { width: 100%; display: flex; flex-direction: column; gap: 10px; margin-left: 0 !important; }
+    .btn { width: 100%; text-align: center; justify-content: center; }
+    .custom-modal { width: 95%; padding: 25px 20px; }
+    .result-overlay .custom-modal h2 { font-size: 1.6rem !important; }
+    .result-score { font-size: 2.8rem; }
+    .modal-actions { flex-direction: column; }
+    .modal-actions button { width: 100%; }
+}
+
+@media (max-width: 480px) {
+    .brand { font-size: 18px; flex-direction: column; text-align: center; }
+    .nav-dropdown { grid-template-columns: repeat(3, 1fr); }
+}
+    </style>
+</head>
+<body>
+
+<div id="setupOverlay" class="custom-overlay" style="display: flex;">
+    <div class="custom-modal">
+        <h2>Chào mừng đến Part 6 ✨</h2>
+        <p style="font-size: 15px; color: #64748b;">ETS 2023 - Test 8</p>
+        <div id="timeInputBox">
+            <label style="font-size: 16px; font-weight: bold; color: #334155;">Thời gian (phút): </label>
+            <input type="number" id="timeInput" value="15" min="1" max="60">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="openHistoryModal()">🕒 Lịch sử</button>
+            <button class="btn-confirm" onclick="askReady()">Sẵn sàng (OK)</button>
+        </div>
+    </div>
+</div>
+
+<div id="startConfirmOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Xác nhận bắt đầu</h2>
+        <p id="startConfirmMsg" style="font-size: 16px; color: #475569; margin-bottom: 20px; white-space: pre-line; line-height: 1.6;"></p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeStartConfirmModal()">Huỷ</button>
+            <button class="btn-confirm" onclick="startTestActual()">Bắt đầu</button>
+        </div>
+    </div>
+</div>
+
+<div id="historyOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2 style="margin-bottom: 20px;">🕒 Lịch sử làm bài</h2>
+        <div id="historyList"></div>
+        <button class="btn-cancel" style="width: 100%; margin-top: 15px;" onclick="closeHistoryModal()">Quay lại 🍃</button>
+    </div>
+</div>
+
+<div id="customConfirmDeleteOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Xác nhận xóa 🍃</h2>
+        <p style="font-size: 16px; color: #475569; margin-top: 15px; line-height: 1.5; margin-bottom: 20px;">Cậu có chắc chắn muốn xóa bài làm này khỏi lịch sử không?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmDelete()">Hủy 🐢</button>
+            <button class="btn-confirm" onclick="executeDelete()" style="background: var(--wrong-text);">Xóa nhé 🗑️</button>
+        </div>
+    </div>
+</div>
+
+<div id="customAlertOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Chú ý nè 🍀</h2>
+        <p id="customAlertMessage" style="font-size: 16px; color: #475569; margin-top: 15px; line-height: 1.5; margin-bottom: 20px;"></p>
+        <div class="modal-actions" style="justify-content: center;">
+            <button class="btn-confirm" onclick="closeCustomAlert()" style="max-width: 200px;">Đã hiểu 🦊</button>
+        </div>
+    </div>
+</div>
+
+<div id="ctxMenu" style="position: absolute; display: none; background: white; box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-radius: 12px; overflow:hidden; z-index: 100000;">
+    <button onclick="doHighlight()" style="display:block; width:100%; padding:12px 20px; border:none; background:none; cursor:pointer; text-align:left; font-weight:600; color:#475569; font-family:inherit;">🖍 Highlight (Vàng)</button>
+    <button onclick="removeHighlight()" style="display:block; width:100%; padding:12px 20px; border:none; background:none; cursor:pointer; text-align:left; font-weight:600; color:#e02424; font-family:inherit;">🗑 Xóa Highlight</button>
+</div>
+
+<div class="full-container">
+    <div class="header">
+        <div class="brand"><span>SnapEnglish</span> Part 6 - Test 8 - 2023</div>
+        <div class="header-controls">
+            <div class="timer-box">⏱ <span id="timer">00:00</span></div>
+            <button class="btn-nav-toggle" onclick="toggleNavDropdown()">📑 Danh sách câu</button>
+            <div class="progress-indicator" id="progress-text">Đoạn 1 / 4</div>
+        </div>
+        <div class="nav-dropdown" id="navDropdown"></div>
+    </div>
+
+    <div class="main-content" id="mainLayout">
+        <div class="scroll-col passage-col" id="passage-container"></div>
+        <div class="scroll-col translation-col" id="translation-container"></div>
+        <div class="scroll-col question-col" id="questions-container"></div>
+    </div>
+
+    <div class="footer">
+        <button class="btn btn-prev" id="btn-prev" onclick="changePassage(-1)" style="display: none;">Quay lại</button>
+        <div style="display: flex; gap: 1rem; margin-left: auto;">
+            <button class="btn btn-next" id="btn-next" onclick="changePassage(1)">Tiếp theo</button>
+            <button class="btn btn-submit" id="btn-submit" onclick="askSubmit()">Nộp bài</button>
+        </div>
+    </div>
+
+    <div class="result-overlay" id="result-overlay">
+        <div class="custom-modal">
+            <h2>Hoàn thành xuất sắc! 🌟</h2>
+            <div class="result-score"><span id="score-correct">0</span> / <span id="score-total">16</span></div>
+            <p style="margin-bottom: 2rem; color: #64748b; font-size: 1rem;">Bây giờ giao diện sẽ được chia làm 3 cột và hiển thị nút Bóng Đèn Từ Vựng để bạn học sâu hơn nhé!</p>
+            <button class="btn-confirm" style="width: 100%; padding: 1rem; font-size: 1.1rem;" onclick="closeResult()">Xem lại bài & Giải thích</button>
+        </div>
+    </div>
+</div>
+
+<div id="confirmOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2>Xác nhận nộp bài</h2>
+        <p style="font-size: 16px; color: #475569; margin-bottom: 10px; line-height: 1.6;">Bạn có chắc chắn muốn nộp bài để xem đáp án, phân tích chi tiết và học từ vựng không?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmModal()">Quay lại</button>
+            <button class="btn-submit" onclick="submitQuiz()" style="flex:1; border:none; border-radius:12px; font-weight:700; font-size:15px; cursor:pointer;">Nộp bài</button>
+        </div>
+    </div>
+</div>
+
+<div class="vocab-btn" id="vocabBtn" onclick="openVocab()" title="Xem từ vựng quan trọng">💡</div>
+<div id="vocabOverlay" class="custom-overlay">
+    <div class="vocab-modal">
+        <button class="close-vocab" onclick="closeVocab()">✖</button>
+        <h2>💡 Từ Vựng & Cấu Trúc Đáng Nhớ</h2>
+        <ul class="vocab-list">
+            <li><span class="vocab-word">Maker (n)</span><span class="vocab-meaning">Nhà sản xuất, người chế tạo (VD: sign maker).</span></li>
+            <li><span class="vocab-word">Extensive (adj)</span><span class="vocab-meaning">Sâu rộng, bao quát, lớn (VD: extensive experience).</span></li>
+            <li><span class="vocab-word">Set up (v)</span><span class="vocab-meaning">Thiết lập, sắp xếp, bố trí (VD: set up a consultation).</span></li>
+            <li><span class="vocab-word">Retailer (n)</span><span class="vocab-meaning">Nhà bán lẻ, cửa hàng bán lẻ.</span></li>
+            <li><span class="vocab-word">Previously (adv)</span><span class="vocab-meaning">Trước đây, trước đó.</span></li>
+            <li><span class="vocab-word">Through (prep)</span><span class="vocab-meaning">Thông qua, nhờ vào (phương tiện, cách thức).</span></li>
+            <li><span class="vocab-word">Affordable (adj)</span><span class="vocab-meaning">Giá cả phải chăng, có thể chi trả được.</span></li>
+            <li><span class="vocab-word">Afford (v)</span><span class="vocab-meaning">Cung cấp, cho (ai) cái gì; Đủ khả năng chi trả.</span></li>
+            <li><span class="vocab-word">Vacant (adj)</span><span class="vocab-meaning">Trống, chưa có người thuê/sử dụng.</span></li>
+            <li><span class="vocab-word">In addition (adv)</span><span class="vocab-meaning">Ngoài ra, thêm vào đó.</span></li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    // Dữ liệu chi tiết ETS 2023 - Test 8 - Part 6
+    const quizData = [
+        // PASSAGE 1: Câu 131 - 134
+        {
+            passage: `<p>Signs Press Plus is the most established and reliable sign <b>(131)______</b> in the area. Our company creates signs in many sizes and forms—banners, store signs, and even vehicle wraps. <b>(132)______</b>. We use our <b>(133)______</b> experience to design signs that make a client's business stand out from the crowd. We can help you get your business noticed! Call 575-555-0161 to <b>(134)______</b> a consultation.</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p>Signs Press Plus là <b>(131) nhà sản xuất</b> biển hiệu lâu đời và đáng tin cậy nhất trong khu vực. Công ty chúng tôi tạo ra các biển hiệu với nhiều kích thước và hình thức — băng rôn, biển hiệu cửa hàng, và thậm chí cả bọc xe (dán xe). <b>(132) Chúng tôi đã làm công việc này trong hơn 20 năm.</b> Chúng tôi sử dụng kinh nghiệm <b>(133) sâu rộng</b> của mình để thiết kế các biển hiệu giúp doanh nghiệp của khách hàng nổi bật giữa đám đông. Chúng tôi có thể giúp bạn khiến doanh nghiệp của mình được chú ý! Hãy gọi 575-555-0161 để <b>(134) thiết lập (bố trí)</b> một buổi tư vấn.</p>`,
+            questions: [
+                {
+                    id: 131,
+                    text: "131.",
+                    options: [
+                        { text: "A. is made (được tạo ra)", correct: false },
+                        { text: "B. making (V-ing)", correct: false },
+                        { text: "C. to make (để tạo ra)", correct: false },
+                        { text: "D. maker (nhà sản xuất)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Phân tích ngữ pháp: 'is the most established and reliable sign [.....]'. Ở đây ta cần một danh từ để kết hợp với từ 'sign' tạo thành cụm danh từ ghép 'sign maker' (nhà sản xuất biển hiệu), đồng thời làm vị ngữ chỉ người/đơn vị đứng sau to-be 'is'.<br>Vì vậy, <b>maker</b> là đáp án chính xác nhất."
+                },
+                {
+                    id: 132,
+                    text: "132.",
+                    options: [
+                        { text: "A. Your order has been given prompt attention. (Đơn hàng của bạn đã được chú ý xử lý nhanh chóng.)", correct: false },
+                        { text: "B. We have been doing this for over 20 years. (Chúng tôi đã làm công việc này trong hơn 20 năm.)", correct: true },
+                        { text: "C. Some companies have delivery trucks. (Vài công ty có xe tải chuyển hàng.)", correct: false },
+                        { text: "D. These clients include signs in their marketing plans. (Khách hàng đã thêm biển hiệu vào kế hoạch tiếp thị của họ.)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Câu trước giới thiệu về việc công ty tạo ra đa dạng các loại biển hiệu (banners, store signs...). Câu ngay sau chỗ trống nhấn mạnh: 'Chúng tôi sử dụng <b>kinh nghiệm</b>... của mình'. Do đó, câu điền vào chỗ trống cần nêu bật được thâm niên, kinh nghiệm của công ty. Câu <b>B</b> ('làm việc này hơn 20 năm') kết nối hoàn hảo với ý 'kinh nghiệm' ở câu tiếp theo."
+                },
+                {
+                    id: 133,
+                    text: "133.",
+                    options: [
+                        { text: "A. permanent (lâu dài, vĩnh cửu)", correct: false },
+                        { text: "B. rewarding (bổ ích, đáng giá)", correct: false },
+                        { text: "C. extensive (sâu rộng, bao quát)", correct: true },
+                        { text: "D. memorable (đáng nhớ)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Chỗ trống cần một tính từ bổ nghĩa cho danh từ 'experience' (kinh nghiệm). Trong tiếng Anh thương mại, để nói về việc có rất nhiều kinh nghiệm, người ta sử dụng collocation (cụm từ cố định): <b>extensive experience</b> (kinh nghiệm dày dặn, sâu rộng). Các tính từ còn lại không tạo thành cụm từ tự nhiên với 'experience'."
+                },
+                {
+                    id: 134,
+                    text: "134.",
+                    options: [
+                        { text: "A. cancel (hủy bỏ)", correct: false },
+                        { text: "B. set up (thiết lập, bố trí)", correct: true },
+                        { text: "C. provide (cung cấp)", correct: false },
+                        { text: "D. turn down (từ chối / vặn nhỏ)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đây là một câu kêu gọi hành động cuối đoạn quảng cáo: 'Hãy gọi 575-555-0161 để [.....] một buổi tư vấn (a consultation)'. Hành động hợp lý nhất khi gọi điện cho dịch vụ là để <b>đặt lịch / sắp xếp</b> một cuộc hẹn. Cụm động từ <b>set up</b> mang nghĩa thiết lập, sắp xếp hoàn toàn phù hợp với bối cảnh này."
+                }
+            ]
+        },
+        
+        // PASSAGE 2: Câu 135 - 138
+        {
+            passage: `<p><b>Fill-Your-Cup Day Has Returned</b></p><p>COLUMBUS (June 16) — National convenience-store chain Abel's Market announces the return of its popular promotion since its last run three years ago. On June 22, customers <b>(135)______</b> their own cups into participating Abel's Markets to be filled with a fountain drink for half the normal price. The retailer encourages creativity and posted a photo of a flower vase filled with soda as an example on <b>(136)______</b> social media account. <b>(137)______</b>. Abel's Market encourages customers to post photos of creative cups to their own social media accounts and tag the company in the posts.</p><p>Abel's Market has not indicated whether Fill-Your-Cup Day will become a regular event as it was <b>(138)______</b>.</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p><b>Ngày Đổ-Đầy-Cốc Đã Trở Lại</b></p><p>COLUMBUS (ngày 16 tháng 6) — Chuỗi cửa hàng tiện lợi trên toàn quốc Abel's Market thông báo sự trở lại của chương trình khuyến mãi nổi tiếng kể từ lần tổ chức cuối cùng cách đây 3 năm. Vào ngày 22 tháng 6, khách hàng <b>(135) có thể mang</b> cốc của mình đến các cửa hàng Abel's Market có tham gia chương trình để được rót đầy đồ uống với chỉ nửa giá bình thường. Nhà bán lẻ này khuyến khích sự sáng tạo và đã đăng tải hình ảnh một bình hoa chứa đầy nước ngọt làm ví dụ lên tài khoản mạng xã hội <b>(136) của nó</b>. <b>(137) Bất kỳ vật chứa nào vừa với máy bán nước ngọt của cửa hàng đều có thể được sử dụng.</b> Abel's Market khuyến khích khách hàng đăng ảnh những chiếc "cốc" sáng tạo lên tài khoản mạng xã hội của riêng họ và gắn thẻ công ty trong các bài đăng.</p><p>Abel's Market chưa cho biết liệu Ngày Đổ-Đầy-Cốc có trở thành một sự kiện thường xuyên như <b>(138) trước đây</b> hay không.</p>`,
+            questions: [
+                {
+                    id: 135,
+                    text: "135.",
+                    options: [
+                        { text: "A. brought (V-ed / Quá khứ đơn)", correct: false },
+                        { text: "B. can bring (Hiện tại / Tương lai)", correct: true },
+                        { text: "C. would bring (Điều kiện / Quá khứ)", correct: false },
+                        { text: "D. were bringing (Quá khứ tiếp diễn)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đọc ngày tháng trên bài báo: 'June 16' (Ngày 16 tháng 6). Sự kiện được nhắc đến xảy ra vào 'On June 22' (Vào ngày 22 tháng 6 - tương lai gần). Đây là một bản tin thông báo về quy định/thể lệ của một sự kiện sắp diễn ra. Do đó, việc dùng động từ khuyết thiếu <b>can bring</b> (có thể mang) diễn tả sự cho phép, khả năng xảy ra ở hiện tại/tương lai là chính xác nhất."
+                },
+                {
+                    id: 136,
+                    text: "136.",
+                    options: [
+                        { text: "A. its (của nó)", correct: true },
+                        { text: "B. our (của chúng ta/chúng tôi)", correct: false },
+                        { text: "C. your (của bạn)", correct: false },
+                        { text: "D. them (họ / chúng - Tân ngữ)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Chỗ trống cần một tính từ sở hữu đứng trước cụm danh từ 'social media account'. Ta cần xác định chủ sở hữu là ai. Chủ ngữ của câu là 'The retailer' (Nhà bán lẻ - danh từ số ít chỉ một tổ chức/công ty). Đại từ thay thế cho danh từ số ít chỉ tổ chức là 'it', suy ra tính từ sở hữu tương ứng là <b>its</b> (tài khoản mạng xã hội của nó/của công ty)."
+                },
+                {
+                    id: 137,
+                    text: "137.",
+                    options: [
+                        { text: "A. The company has increased its online advertising budget. (Công ty đã tăng ngân sách quảng cáo trực tuyến.)", correct: false },
+                        { text: "B. Note that Abel’s Market no longer provides vases. (Lưu ý rằng Abel’s Market không còn cung cấp bình hoa nữa.)", correct: false },
+                        { text: "C. Fill-Your-Cup Day was once a highly popular event. (Ngày Đổ-Đầy-Cốc đã từng là một sự kiện rất phổ biến.)", correct: false },
+                        { text: "D. Any container that fits under the store’s soda machine may be used. (Bất kỳ vật chứa nào vừa với máy bán nước ngọt của cửa hàng đều có thể được sử dụng.)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Câu ngay phía trước nói về sự sáng tạo: 'công ty đăng ảnh một bình hoa chứa đầy nước ngọt làm ví dụ'. Ý đồ ở đây là khách hàng không nhất thiết phải mang cốc, mang đồ vật khác cũng được. Câu <b>D</b> tiếp nối hoàn hảo thể lệ này: 'Bất kỳ vật chứa nào (container) miễn là đút vừa vào máy rót nước thì đều được chấp nhận'."
+                },
+                {
+                    id: 138,
+                    text: "138.",
+                    options: [
+                        { text: "A. smoothly (một cách êm ả, trôi chảy)", correct: false },
+                        { text: "B. kindly (một cách tử tế)", correct: false },
+                        { text: "C. previously (trước đây)", correct: true },
+                        { text: "D. constantly (liên tục, luôn luôn)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đọc đoạn mở đầu, ta biết sự kiện này đã từng được tổ chức cách đây 3 năm ('since its last run three years ago'). Câu cuối cùng kết luận: 'Abel's Market chưa cho biết liệu sự kiện này có trở thành sự kiện thường xuyên <i>như nó đã từng [.....]</i> hay không'. Trạng từ <b>previously</b> (trước đây) bổ sung ý nghĩa hoàn chỉnh: 'như nó đã từng trước đây'."
+                }
+            ]
+        },
+
+        // PASSAGE 3: Câu 139 - 142
+        {
+            passage: `<p><b>Castak Recruiting: What We Do</b></p><p>Since opening our doors over ten years ago, we have helped many people find jobs <b>(139)______</b> our online job board. However, that is not all we <b>(140)______</b>. We also help employers find talented people to fill vacancies in the shortest time possible. Most human resources managers who use Castak Recruiting <b>(141)______</b> hire a new employee within two weeks of posting an opening on our site. Castak Recruiting's services for businesses are subscription-based, and they are all affordable. <b>(142)______</b>.</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p><b>Castak Recruiting: Chúng tôi làm gì</b></p><p>Kể từ khi mở cửa hoạt động hơn mười năm trước, chúng tôi đã giúp rất nhiều người tìm được việc làm <b>(139) thông qua</b> bảng tin việc làm trực tuyến của chúng tôi. Tuy nhiên, đó không phải là tất cả những gì chúng tôi <b>(140) cung cấp</b>. Chúng tôi cũng giúp các nhà tuyển dụng tìm được những ứng viên tài năng để lấp đầy các vị trí trống trong thời gian ngắn nhất có thể. Hầu hết các giám đốc nhân sự sử dụng Castak Recruiting đều tuyển dụng <b>(141) thành công</b> nhân viên mới trong vòng hai tuần sau khi đăng tin tuyển dụng trên trang web của chúng tôi. Các dịch vụ của Castak Recruiting dành cho doanh nghiệp là dựa trên gói đăng ký, và tất cả chúng đều có giá cả phải chăng. <b>(142) Mức phí sẽ thay đổi dựa trên nhu cầu sử dụng của mỗi công ty.</b></p>`,
+            questions: [
+                {
+                    id: 139,
+                    text: "139.",
+                    options: [
+                        { text: "A. between (ở giữa)", correct: false },
+                        { text: "B. versus (đấu với)", correct: false },
+                        { text: "C. over (vượt quá, trong suốt)", correct: false },
+                        { text: "D. through (thông qua, nhờ vào)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Ngữ cảnh: 'giúp nhiều người tìm được việc làm [.....] bảng tin việc làm trực tuyến'. Để chỉ phương tiện, công cụ, hoặc cách thức mà một hành động được thực hiện, giới từ <b>through</b> (thông qua, nhờ vào) là chính xác nhất (thông qua bảng tin việc làm)."
+                },
+                {
+                    id: 140,
+                    text: "140.",
+                    options: [
+                        { text: "A. offer (cung cấp, đề xuất)", correct: true },
+                        { text: "B. assess (đánh giá, định giá)", correct: false },
+                        { text: "C. suggest (gợi ý, đề xuất)", correct: false },
+                        { text: "D. investigate (điều tra)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Câu trước nói về dịch vụ đầu tiên: giúp người lao động tìm việc. Câu chứa khoảng trống sử dụng cấu trúc tương phản: 'Tuy nhiên, đó không phải là tất cả những gì chúng tôi [.....]'. Với tư cách là một doanh nghiệp dịch vụ, từ vựng chuẩn xác nhất là <b>offer</b> (cung cấp / mang lại). Ý câu này là: 'Đó chưa phải là tất cả những gì chúng tôi cung cấp (chúng tôi còn làm dịch vụ khác nữa)'."
+                },
+                {
+                    id: 141,
+                    text: "141.",
+                    options: [
+                        { text: "A. successful (Tính từ)", correct: false },
+                        { text: "B. successfully (Trạng từ)", correct: true },
+                        { text: "C. succeed (Động từ)", correct: false },
+                        { text: "D. success (Danh từ)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Phân tích cấu trúc câu: 'Most human resources managers ... [.....] hire a new employee...'. Động từ chính ở đây là <b>hire</b> (tuyển dụng). Để bổ nghĩa cho động từ thường, ta phải dùng <b>Trạng từ (Adverb)</b>. Đáp án <b>successfully</b> (một cách thành công) điền vào trước động từ 'hire' là hoàn toàn đúng ngữ pháp."
+                },
+                {
+                    id: 142,
+                    text: "142.",
+                    options: [
+                        { text: "A. Fees vary based on each company’s usage requirements. (Mức phí thay đổi dựa trên nhu cầu sử dụng của mỗi công ty.)", correct: true },
+                        { text: "B. Our database contains many similar positions. (Cơ sở dữ liệu của chúng tôi chứa nhiều vị trí tương tự thế.)", correct: false },
+                        { text: "C. We recommend that you personalize your messages. (Chúng tôi khuyên bạn nên cá nhân hóa tin nhắn của mình.)", correct: false },
+                        { text: "D. We are excited to welcome you to the area. (Chúng tôi rất vui mừng chào đón bạn đến khu vực này.)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đọc câu ngay phía trước: 'Các dịch vụ... dựa trên gói đăng ký, và tất cả đều có <b>giá cả phải chăng (affordable)</b>'. Chủ đề đang được bàn luận ở đây là <b>giá cả/chi phí dịch vụ</b>. Câu <b>A</b> (Mức phí sẽ thay đổi dựa trên nhu cầu...) tiếp nối mạch thông tin liên quan đến vấn đề tài chính/thanh toán một cách cực kỳ logic."
+                }
+            ]
+        },
+
+        // PASSAGE 4: Câu 143 - 146
+        {
+            passage: `<p><b>Medical and Research Space for Lease</b></p><p>The Etoile Center in downtown Brussels is a wonderful place to work. Its ideal location <b>(143)______</b> employees convenient access to public parks and local amenities. The Etoile Center campus is also situated near premier medical and academic institutions. Thus, tenants report that it is quite easy to network with top <b>(144)______</b> who live and work in the area.</p><p><b>(145)______</b>, the Etoile Center campus features amenities such as large conference rooms, coffee shops, and two cafeterias. While the North Tower is currently fully occupied, the majority of the soon-to-open South Tower remains vacant. <b>(146)______</b>.</p>`,
+            translation: `<div class="translation-header">Dịch bài đọc:</div><p><b>Cho thuê không gian Y tế và Nghiên cứu</b></p><p>Trung tâm Etoile ở trung tâm thành phố Brussels là một nơi tuyệt vời để làm việc. Vị trí lý tưởng của nó <b>(143) cung cấp / mang lại</b> cho nhân viên sự tiếp cận thuận tiện đến các công viên công cộng và tiện ích địa phương. Khuôn viên Trung tâm Etoile cũng nằm gần các viện học thuật và y tế hàng đầu. Do đó, những người thuê tại đây cho biết rằng việc kết nối với các <b>(144) nhà khoa học</b> hàng đầu đang sống và làm việc trong khu vực là khá dễ dàng.</p><p><b>(145) Ngoài ra</b>, khuôn viên Trung tâm Etoile có các tiện nghi như phòng hội nghị lớn, quán cà phê và hai nhà ăn tự phục vụ. Mặc dù Tòa tháp phía Bắc hiện đã được thuê kín chỗ, phần lớn Tòa tháp phía Nam sắp khai trương vẫn còn trống. <b>(146) Công trình dự kiến sẽ hoàn thành vào đầu tháng 10.</b></p>`,
+            questions: [
+                {
+                    id: 143,
+                    text: "143.",
+                    options: [
+                        { text: "A. affords (Hiện tại đơn - Thêm s)", correct: true },
+                        { text: "B. afforded (Quá khứ đơn)", correct: false },
+                        { text: "C. had to afford (Quá khứ - bắt buộc)", correct: false },
+                        { text: "D. would be affording (Tương lai trong quá khứ tiếp diễn)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đoạn văn là một bài quảng cáo bất động sản, mô tả những tiện ích và sự thật hiển nhiên về Trung tâm Etoile (vị trí lý tưởng, gần công viên...). Do đó, thì <b>Hiện tại đơn (Present Simple)</b> phải được sử dụng. Động từ <b>afford</b> ở đây mang nghĩa trang trọng là 'cung cấp, mang lại, cho (ai) cái gì'. Chủ ngữ 'Its ideal location' số ít nên động từ chia 'affords'."
+                },
+                {
+                    id: 144,
+                    text: "144.",
+                    options: [
+                        { text: "A. retailers (nhà bán lẻ)", correct: false },
+                        { text: "B. scientists (nhà khoa học)", correct: true },
+                        { text: "C. designers (nhà thiết kế)", correct: false },
+                        { text: "D. chefs (đầu bếp)", correct: false }
+                    ],
+                    explanation: "<b>Giải thích:</b> Dựa vào ngữ cảnh chủ đề của bài khóa (Tiêu đề: Medical and Research Space - Không gian Y tế và Nghiên cứu). Hơn nữa, câu trước đề cập đến việc tòa nhà nằm gần 'các viện học thuật và y tế' (medical and academic institutions). Nhóm người làm việc trong lĩnh vực này chắc chắn là các <b>nhà khoa học (scientists)</b>. "
+                },
+                {
+                    id: 145,
+                    text: "145.",
+                    options: [
+                        { text: "A. In contrast (Trái lại)", correct: false },
+                        { text: "B. As a result (Kết quả là)", correct: false },
+                        { text: "C. On one hand (Một mặt thì...)", correct: false },
+                        { text: "D. In addition (Ngoài ra, thêm vào đó)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Đoạn đầu liệt kê các tiện ích <b>xung quanh</b> tòa nhà (công viên, viện nghiên cứu). Đoạn thứ hai liệt kê các tiện ích <b>bên trong</b> tòa nhà (phòng hội nghị, quán cà phê...). Đây là mối quan hệ bổ sung thêm thông tin. Cụm từ nối <b>In addition (Ngoài ra / Thêm vào đó)</b> là liên từ chuẩn xác để chuyển ý trong trường hợp này."
+                },
+                {
+                    id: 146,
+                    text: "146.",
+                    options: [
+                        { text: "A. However, hiring is down compared with last year. (Tuy nhiên, việc tuyển dụng đã giảm so với năm ngoái.)", correct: false },
+                        { text: "B. Some companies are investing instead in the local economy. (Thay vào đó, một số công ty đang đầu tư vào kinh tế địa phương.)", correct: false },
+                        { text: "C. Time is running out for these firms to join the program. (Thời gian không còn nhiều để các công ty này tham gia chương trình.)", correct: false },
+                        { text: "D. Construction is expected to finish in early October. (Công trình dự kiến sẽ hoàn thành vào đầu tháng 10.)", correct: true }
+                    ],
+                    explanation: "<b>Giải thích:</b> Câu ngay trước chỗ trống thông báo: 'Tòa tháp phía Nam <b>sắp khai trương (soon-to-open)</b> phần lớn vẫn còn trống'. Vì tòa nhà 'sắp khai trương' (tức là đang xây dựng chưa xong hẳn), nên câu tiếp theo cung cấp thông tin về tiến độ: <b>Công trình dự kiến sẽ hoàn thành vào đầu tháng 10 (D)</b> là hoàn toàn logic và phù hợp với bối cảnh cho thuê văn phòng mới."
+                }
+            ]
+        }
+    ];
+
+    let currentPassageIndex = 0;
+    let selectedAnswers = {};
+    let isSubmitted = false;
+    let timerInterval;
+    let timeLeft = 0;
+
+    function initQuiz() {
+        renderPassage();
+        renderNavDots();
+        updateNavigation();
+    }
+
+    function renderPassage() {
+        const data = quizData[currentPassageIndex];
+        
+        document.getElementById('passage-container').innerHTML = data.passage;
+        document.getElementById('translation-container').innerHTML = data.translation;
+        
+        let html = '';
+        data.questions.forEach((q) => {
+            html += `
+                <div class="question-block" id="q-block-${q.id}">
+                    <div class="question-title">${q.text}</div>
+                    <div class="options">
+            `;
+            
+            q.options.forEach((opt, idx) => {
+                const isChecked = selectedAnswers[q.id] === idx ? 'checked' : '';
+                const disabled = isSubmitted ? 'disabled' : '';
+                let statusClass = '';
+                
+                if (isSubmitted) {
+                    if (opt.correct) statusClass = 'correct';
+                    else if (selectedAnswers[q.id] === idx) statusClass = 'wrong';
+                }
+                
+                let enText = opt.text;
+                let viText = "";
+                let match = opt.text.match(/(.*)\s\((.*)\)$/);
+                if(match) {
+                    enText = match[1];
+                    viText = match[2];
+                }
+
+                html += `
+                    <label class="option-label ${isChecked ? 'selected' : ''} ${statusClass} ${disabled}">
+                        <input type="radio" name="q${q.id}" value="${idx}" ${isChecked} ${disabled} onchange="selectAnswer(${q.id}, ${idx})">
+                        <span class="option-text-en">${enText}</span>
+                        ${(viText && isSubmitted) ? `<span class="option-text-vi">- ${viText}</span>` : ''}
+                    </label>
+                `;
+            });
+            
+            html += `</div>
+                <div class="explanation-box" id="exp-${q.id}">${q.explanation}</div>
+            </div>`;
+        });
+        
+        document.getElementById('questions-container').innerHTML = html;
+        document.getElementById('progress-text').innerText = `Đoạn ${currentPassageIndex + 1} / ${quizData.length}`;
+        
+        if (isSubmitted) {
+            data.questions.forEach(q => {
+                document.getElementById(`exp-${q.id}`).classList.add('show');
+            });
+        }
+    }
+
+    function selectAnswer(qId, optIdx) {
+        if (isSubmitted) return;
+        selectedAnswers[qId] = optIdx;
+        renderPassage();
+        renderNavDots();
+    }
+
+    function changePassage(dir) {
+        currentPassageIndex += dir;
+        renderPassage();
+        updateNavigation();
+    }
+
+    function updateNavigation() {
+        document.getElementById('btn-prev').style.display = currentPassageIndex === 0 ? 'none' : 'block';
+        if (currentPassageIndex === quizData.length - 1) {
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-submit').style.display = 'block';
+        } else {
+            document.getElementById('btn-next').style.display = 'block';
+            document.getElementById('btn-submit').style.display = 'none';
+        }
+    }
+
+    function renderNavDots() {
+        let html = '';
+        quizData.forEach((p, pIdx) => {
+            p.questions.forEach(q => {
+                let cls = 'nav-dot';
+                if (isSubmitted) {
+                    const selected = selectedAnswers[q.id];
+                    if (selected !== undefined && q.options[selected].correct) cls += ' correct';
+                    else cls += ' wrong';
+                } else if (selectedAnswers[q.id] !== undefined) {
+                    cls += ' done';
+                }
+                if (pIdx === currentPassageIndex) cls += ' active';
+                
+                html += `<div class="${cls}" onclick="goToQuestion(${pIdx}, ${q.id})">${q.id}</div>`;
+            });
+        });
+        document.getElementById('navDropdown').innerHTML = html;
+    }
+
+    function goToQuestion(pIdx, qId) {
+        if (pIdx !== currentPassageIndex) {
+            currentPassageIndex = pIdx;
+            renderPassage();
+            updateNavigation();
+            renderNavDots();
+        }
+        document.getElementById(`q-block-${qId}`).scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('navDropdown').classList.remove('show');
+    }
+
+    function toggleNavDropdown() {
+        document.getElementById('navDropdown').classList.toggle('show');
+    }
+
+    function askReady() {
+        const timeInput = document.getElementById('timeInput').value;
+        timeLeft = timeInput * 60;
+        document.getElementById('setupOverlay').style.display = 'none';
+        document.getElementById('startConfirmMsg').innerText = `Bạn có ${timeInput} phút để hoàn thành Part 6.\nChúc bạn làm bài tốt!`;
+        document.getElementById('startConfirmOverlay').classList.add('active');
+    }
+
+    function closeStartConfirmModal() {
+        document.getElementById('startConfirmOverlay').classList.remove('active');
+        document.getElementById('setupOverlay').style.display = 'flex';
+    }
+
+    function startTestActual() {
+        document.getElementById('startConfirmOverlay').classList.remove('active');
+        startTimer();
+        initQuiz();
+    }
+
+    function startTimer() {
+        updateTimerDisplay();
+        timerInterval = setInterval(() => {
+            timeLeft--;
+            updateTimerDisplay();
+            if (timeLeft <= 0) {
+                clearInterval(timerInterval);
+                submitQuiz();
+            }
+        }, 1000);
+    }
+
+    function updateTimerDisplay() {
+        const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+        const s = (timeLeft % 60).toString().padStart(2, '0');
+        document.getElementById('timer').innerText = `${m}:${s}`;
+    }
+
+    function askSubmit() {
+        document.getElementById('confirmOverlay').classList.add('active');
+    }
+
+    function closeConfirmModal() {
+        document.getElementById('confirmOverlay').classList.remove('active');
+    }
+
+    function submitQuiz(isRestoring = false) {
+        clearInterval(timerInterval);
+        isSubmitted = true;
+        closeConfirmModal();
+        
+        let correctCount = 0;
+        let totalCount = 0; 
+        
+        quizData.forEach(p => {
+            p.questions.forEach(q => {
+                totalCount++;
+                if (selectedAnswers[q.id] !== undefined && q.options[selectedAnswers[q.id]].correct) {
+                    correctCount++;
+                }
+            });
+        });
+        
+        document.getElementById('score-correct').innerText = correctCount;
+        document.getElementById('score-total').innerText = totalCount;
+        document.getElementById('result-overlay').classList.add('active');
+        
+        if(!isRestoring) {
+            saveAttemptToHistory(correctCount, totalCount, selectedAnswers);
+            if(window.luuDiemTOEICLenFirebase) {
+                window.luuDiemTOEICLenFirebase(totalCount, correctCount, "ETS 2023 - Test 8", "Reading", "Part 6");
+            }
+        }
+       
+        document.getElementById('mainLayout').classList.add('submitted-layout');
+        document.getElementById('vocabBtn').style.display = 'flex';
+        
+        currentPassageIndex = 0;
+        renderPassage();
+        updateNavigation();
+        renderNavDots();
+    } 
+
+    function closeResult() {
+        document.getElementById('result-overlay').classList.remove('active');
+    }
+
+    function openVocab() {
+        document.getElementById('vocabOverlay').classList.add('active');
+    }
+
+    function closeVocab() {
+        document.getElementById('vocabOverlay').classList.remove('active');
+    }
+
+    function showCustomAlert(message) { document.getElementById('customAlertMessage').innerText = message; document.getElementById('customAlertOverlay').style.display = 'flex'; }
+    function closeCustomAlert() { document.getElementById('customAlertOverlay').style.display = 'none'; }
+
+    const menu = document.getElementById("ctxMenu");
+    let targetElement = null;
+    let selectedRange = null;
+
+    document.addEventListener("contextmenu", (e) => {
+        if (!e.target.closest('.main-content')) return; 
+        e.preventDefault();
+        targetElement = null; selectedRange = null;
+        
+        if (e.target.classList.contains("highlight")) {
+            targetElement = e.target; showMenu(e.clientX, e.clientY, "remove"); return;
+        }
+        
+        let sel = window.getSelection();
+        if (sel.toString().trim().length > 0) {
+            selectedRange = sel.getRangeAt(0); showMenu(e.clientX, e.clientY, "add");
+        } else { menu.style.display = "none"; }
+    });
+
+    document.addEventListener("click", (e) => { if (menu && !menu.contains(e.target)) menu.style.display = "none"; });
+
+    function showMenu(x, y, mode) {
+        menu.style.display = "block";
+        let mw = menu.offsetWidth, mh = menu.offsetHeight;
+        menu.style.left = (x + mw > window.innerWidth ? window.innerWidth - mw - 10 : x) + "px";
+        menu.style.top = (y + mh > window.innerHeight ? window.innerHeight - mh - 10 : y) + "px";
+        menu.children[0].style.display = (mode === "add") ? "block" : "none";
+        menu.children[1].style.display = (mode === "remove") ? "block" : "none";
+    }
+
+   function doHighlight() {
+        if (selectedRange) {
+            try { 
+                let span = document.createElement("span"); span.className = "highlight"; selectedRange.surroundContents(span); 
+            } catch(e) { showCustomAlert("🍀 Cậu chỉ có thể highlight trong cùng một dòng thui nhé!"); }
+            window.getSelection().removeAllRanges();
+        }
+        menu.style.display = "none";
+    }
+
+    function removeHighlight() {
+        if (targetElement) {
+            let text = document.createTextNode(targetElement.textContent);
+            targetElement.parentNode.replaceChild(text, targetElement);
+            document.querySelector('.main-content').normalize(); 
+        }
+        menu.style.display = "none";
+    }
+
+    const TEST_ID = "p6_test_8_2023"; 
+    const HISTORY_KEY = "snapenglish_" + TEST_ID + "_history";
+    let currentHistoryList = []; 
+
+    async function saveAttemptToHistory(score, total, answersObj) {
+        let now = new Date();
+        let timestamp = Date.now();
+        let attempt = {
+            id: timestamp, 
+            timestamp: timestamp, 
+            date: now.toLocaleDateString('vi-VN'),
+            time: now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+            score: score,
+            total: total,
+            answers: answersObj
+        };
+
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        history.unshift(attempt);
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+        if (window.syncHistoryToFirebase) {
+            await window.syncHistoryToFirebase(attempt, TEST_ID);
+        }
+    }
+
+    async function openHistoryModal() {
+        document.getElementById('setupOverlay').style.display = 'none';
+        document.getElementById('historyOverlay').style.display = 'flex';
+        let listEl = document.getElementById("historyList");
+
+        listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang lấy dữ liệu từ Máy chủ... ☁️⏳</div>`;
+
+        if (window.currentUserUid && window.getHistoryFromFirebase) {
+            currentHistoryList = await window.getHistoryFromFirebase(TEST_ID);
+            if (!currentHistoryList || currentHistoryList.length === 0) {
+                currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+            }
+        } else {
+            currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        }
+
+        if (currentHistoryList.length === 0) {
+            listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px;">Cậu chưa làm bài lần nào trên tài khoản này. 🐾</div>`;
+        } else {
+            listEl.innerHTML = currentHistoryList.map((item, index) => {
+                let docId = item.docId || item.id;
+                return `
+                <div class="history-item">
+                    <div class="history-info">
+                        <span class="history-date">Lần ${currentHistoryList.length - index}: ${item.time} - ${item.date}</span>
+                        <span class="history-score">Đúng: ${item.score}/${item.total} câu</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-review" onclick="restoreAttempt(${index})">Xem lại</button>
+                        <button class="btn-delete-history" onclick="deleteAttempt('${docId}')" title="Xóa bài này">&times;</button>
+                    </div>
+                </div>
+                `;
+            }).join("");
+        }
+    }
+
+    function closeHistoryModal() {
+        document.getElementById('historyOverlay').style.display = 'none';
+        document.getElementById('setupOverlay').style.display = 'flex';
+    }
+
+    let pendingDeleteId = null;
+    function deleteAttempt(attemptId) {
+        pendingDeleteId = attemptId;
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'flex';
+    }
+    
+    function closeConfirmDelete() {
+        pendingDeleteId = null;
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+    }
+
+    async function executeDelete() {
+        if (pendingDeleteId !== null) {
+            document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+            let listEl = document.getElementById("historyList");
+            listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang dọn dẹp trên Đám mây... 🗑️☁️</div>`;
+
+            if (window.currentUserUid && window.deleteHistoryDocFirebase && typeof pendingDeleteId === 'string') {
+                await window.deleteHistoryDocFirebase(pendingDeleteId);
+            }
+
+            let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+            history = history.filter(h => h.id != pendingDeleteId && h.docId != pendingDeleteId);
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+            pendingDeleteId = null;
+            openHistoryModal(); 
+        }
+    }
+
+    function restoreAttempt(index) {
+        let attempt = currentHistoryList[index];
+        if(!attempt) return;
+
+        document.getElementById('historyOverlay').style.display = 'none';
+        currentPassageIndex = 0;
+        
+        for (let key in selectedAnswers) delete selectedAnswers[key];
+        Object.assign(selectedAnswers, attempt.answers || {});
+        
+        isSubmitted = false; 
+        submitQuiz(true);
+        
+        let toastMsg = document.createElement("div");
+        toastMsg.innerText = "✨ Đã khôi phục bài làm từ Đám mây!";
+        toastMsg.style.cssText = "position:fixed; top:20px; right:20px; background:var(--primary-btn); color:white; padding:15px 20px; border-radius:12px; font-weight:bold; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,0.2);";
+        document.body.appendChild(toastMsg);
+        setTimeout(() => toastMsg.remove(), 3000);
+    }
+</script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    function showInGameToast(msg) {
+        let toast = document.createElement("div");
+        toast.innerText = msg;
+        toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:#10b981; color:white; padding:15px 20px; border-radius:12px; font-weight:bold; font-family:'Be Vietnam Pro',sans-serif; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0; transition:all 0.4s ease;";
+        document.body.appendChild(toast);
+        
+        setTimeout(() => { toast.style.transform = "translateY(0)"; toast.style.opacity = "1"; }, 100);
+        setTimeout(() => { toast.style.transform = "translateY(100px)"; toast.style.opacity = "0"; }, 3500);
+        setTimeout(() => { toast.remove(); }, 4000);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+        } else {
+            showInGameToast("⚠️ Bạn đang chơi dưới dạng Khách, điểm sẽ không lưu lên kho!");
+        }
+    });
+
+    window.syncHistoryToFirebase = async function(attempt, testId) {
+        if (!window.currentUserUid) return attempt;
+        let docId = window.currentUserUid + "_" + testId + "_" + attempt.timestamp;
+        attempt.docId = docId;
+        attempt.uid = window.currentUserUid;
+        attempt.testId = testId;
+        try {
+            await setDoc(doc(db, "snapenglish_history", docId), attempt);
+            return attempt;
+        } catch (e) { console.error("Lỗi đồng bộ lịch sử đám mây:", e); return attempt; }
+    };
+
+    window.getHistoryFromFirebase = async function(testId) {
+        if (!window.currentUserUid) return null;
+        try {
+            const q = query(collection(db, "snapenglish_history"), where("uid", "==", window.currentUserUid));
+            const querySnapshot = await getDocs(q);
+            let history = [];
+            querySnapshot.forEach((docSnap) => {
+                let data = docSnap.data();
+                if (data.testId === testId) {
+                    history.push(data);
+                }
+            });
+            history.sort((a, b) => b.timestamp - a.timestamp);
+            return history;
+        } catch (e) { console.error("Lỗi tải lịch sử từ đám mây:", e); return null; }
+    };
+
+    window.deleteHistoryDocFirebase = async function(docId) {
+        if (!window.currentUserUid || !docId) return;
+        try {
+            await deleteDoc(doc(db, "snapenglish_history", docId));
+        } catch (e) { console.error("Lỗi xóa lịch sử:", e); }
+    };
+
+    function calculateToeicScore(skill, correct, total) {
+        let percentage = correct / total;
+        let maxScore = (skill === 'Listening' || skill === 'Reading') ? 495 : 200;
+        let step = (skill === 'Listening' || skill === 'Reading') ? 5 : 10;
+        let estimated = Math.round((percentage * maxScore) / step) * step;
+        if (estimated > maxScore) return maxScore;
+        if (estimated < 5) return 5;
+        return estimated;
+    }
+
+    window.luuDiemTOEICLenFirebase = async function(tongSoCau, soCauDung, tenBai, kyNang, tenPart) {
+        if (!window.currentUserUid) return; 
+
+        let diemQuyDoi = calculateToeicScore(kyNang, soCauDung, tongSoCau);
+        let thoiGianHienTai = "--";
+        let inputPhut = parseInt(document.getElementById('timeInput').value) || 15; 
+        let tongThoiGianGoc = inputPhut * 60;
+
+        if (typeof timeLeft !== 'undefined') {
+            let thoiGianDaLam = tongThoiGianGoc - timeLeft;
+            if (thoiGianDaLam < 0) thoiGianDaLam = 0; 
+            
+            let m = Math.floor(thoiGianDaLam / 60);
+            let s = thoiGianDaLam % 60;
+            thoiGianHienTai = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+        let timestamp = Date.now();
+        let docId = window.currentUserUid + "_toeic_" + timestamp;
+        
+        try {
+            await setDoc(doc(db, "user_toeic_scores", docId), {
+                email: window.currentUserEmail,
+                skill: kyNang,           
+                testName: tenBai,        
+                partName: tenPart,       
+                timeTaken: thoiGianHienTai,
+                totalQ: tongSoCau,
+                correctQ: soCauDung,
+                score: diemQuyDoi,       
+                date: new Date().toLocaleDateString('vi-VN'),
+                timestamp: timestamp
+            });
+            showInGameToast("☁️ Đã đồng bộ điểm số lên Máy Chủ!");
+        } catch (error) {
+            console.error(error);
+        }
+    }
+</script>
+</body>
+</html>
