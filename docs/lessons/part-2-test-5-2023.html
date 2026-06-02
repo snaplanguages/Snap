@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="vi"> 
+<head> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part 2 - Test 5 - ETS 2023 | SnapEnglish</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Tông màu Teal & Orange: Khoa học, tập trung và đẳng cấp quốc tế */
+        :root {
+            --primary: #0D9488;       /* Teal 600 */
+            --primary-dark: #0F766E;  /* Teal 700 */
+            --primary-light: #CCFBF1; /* Teal 50 */
+            --secondary: #F97316;     /* Orange 500 */
+            --success: #10B981;       /* Emerald */
+            --success-light: #D1FAE5;
+            --danger: #EF4444;        /* Red 500 */
+            --danger-light: #FEE2E2;
+            --text-dark: #1E293B;     /* Slate 800 */
+            --text-gray: #64748B;     /* Slate 500 */
+            --bg-color: #F8FAFC;      /* Slate 50 */
+            --white: #FFFFFF;
+            --hl-vocab: #FEF08A;
+            --shadow: 0 12px 35px rgba(13, 148, 136, 0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Be Vietnam Pro', sans-serif; }
+        
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-dark); 
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container { 
+            background: var(--bg-color); 
+            width: 100vw; 
+            min-height: 100vh;
+            position: relative; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen { display: none; padding: 30px 5%; flex-grow: 1; animation: fadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1); overflow-y: auto; }
+        .screen.active { display: flex; flex-direction: column; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        h1, h2 { text-align: center; color: var(--primary-dark); margin-bottom: 15px; font-weight: 800; }
+        .desc { text-align: center; color: var(--text-gray); margin-bottom: 40px; font-size: 1.15rem; line-height: 1.6;}
+
+        .btn { 
+            background: var(--primary); color: white; border: none; padding: 14px 32px; font-size: 1.05rem; 
+            font-weight: 700; border-radius: 16px; cursor: pointer; transition: all 0.3s ease; 
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 6px 15px rgba(13, 148, 136, 0.25);
+        }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(13, 148, 136, 0.4); background: var(--primary-dark); }
+        .btn-outline { background: transparent; color: var(--primary-dark); border: 2.5px solid var(--primary); box-shadow: none; }
+        .btn-outline:hover { background: var(--primary-light); border-color: var(--primary-dark); color: var(--primary-dark); transform: translateY(-3px); }
+        .btn-success { background: var(--success); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.2); }
+        .btn-success:hover { background: #059669; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3); }
+
+        .audio-wrapper {
+            background: var(--white);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            max-width: 800px;
+            margin: 0 auto 30px auto;
+            width: 100%;
+            text-align: center;
+        }
+
+        .icon-listening { font-size: 4.5rem; margin-bottom: 20px; animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px) rotate(0deg); } 50% { transform: translateY(-10px) rotate(5deg); } 100% { transform: translateY(0px) rotate(0deg); } }
+
+        .audio-player-custom { width: 100%; margin-top: 20px; border-radius: 50px; outline: none; }
+        
+        .mock-status {
+            display: none; color: var(--danger); font-weight: 800; margin-top: 20px; 
+            background: var(--danger-light); padding: 12px 25px; border-radius: 30px; 
+            justify-content: center; align-items: center; gap: 10px; font-size: 1.1rem;
+            border: 1px dashed var(--danger);
+        }
+        .pulse-dot { display:inline-block; width:12px; height:12px; background:var(--danger); border-radius:50%; animation: pulse 1.2s infinite; }
+
+        .options-wrapper { max-width: 800px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 15px; }
+        .option-label { 
+            display: flex; align-items: center; cursor: pointer; padding: 20px 25px; background: var(--white);
+            border-radius: 18px; border: 2px solid transparent; box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            transition: all 0.2s ease; font-weight: 700; font-size: 1.1rem; color: var(--text-dark);
+        }
+        .option-label:hover { transform: scale(1.01); border-color: var(--primary-light); background: #F1F5F9; }
+        .option-label input { display: none; }
+        .custom-radio { 
+            width: 26px; height: 26px; border: 3px solid #CBD5E1; border-radius: 50%; 
+            margin-right: 20px; position: relative; transition: all 0.3s; background: var(--white);
+        }
+        .option-label input:checked + .custom-radio { border-color: var(--primary); }
+        .option-label input:checked + .custom-radio::after { 
+            content: ""; width: 12px; height: 12px; background: var(--primary); 
+            border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+        }
+        .option-label input:checked ~ span { color: var(--primary); }
+        .option-label.selected-ui { border-color: var(--primary); background: var(--primary-light); box-shadow: 0 8px 20px rgba(13, 148, 136, 0.15); }
+
+        .nav-footer { 
+            display: flex; justify-content: space-between; align-items: center;
+            max-width: 800px; margin: 40px auto 20px auto; width: 100%;
+        }
+
+        .score-box { text-align: center; padding: 40px; background: var(--white); border-radius: 24px; box-shadow: var(--shadow); margin-bottom: 40px; border-top: 8px solid var(--primary); }
+        .score-number { font-size: 4rem; font-weight: 800; color: var(--primary); margin: 10px 0; }
+        
+        .result-list { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
+        .result-item { 
+            display: flex; align-items: center; justify-content: space-between; padding: 20px 25px; 
+            background: var(--white); border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            flex-wrap: wrap; gap: 10px; border-left: 5px solid var(--primary-light); transition: 0.2s;
+        }
+        .result-item:hover { border-left-color: var(--primary); transform: translateX(5px); }
+        .status-tag { padding: 6px 16px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; letter-spacing: 0.5px; }
+        .tag-correct { background: var(--success-light); color: #065F46; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .tag-wrong { background: var(--danger-light); color: #9F1239; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        /* General Modal Styling */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); justify-content: center; align-items: center; padding: 20px;}
+        .modal-content { 
+            background: var(--bg-color); width: 100%; max-width: 900px; max-height: 90vh; 
+            border-radius: 28px; padding: 40px; overflow-y: auto; position: relative; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            scroll-behavior: smooth;
+        }
+        .close-modal { 
+            position: absolute; right: 25px; top: 25px; font-size: 35px; cursor: pointer; 
+            color: #94A3B8; transition: 0.2s; line-height: 1; 
+        }
+        .close-modal:hover { color: var(--danger); transform: rotate(90deg); }
+
+        /* Confirmation Modals */
+        .confirm-box {
+            background: var(--white); border-radius: 25px; padding: 40px; width: 100%; max-width: 450px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.2); animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 2px solid var(--primary-light);
+        }
+        @keyframes scaleUp { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .confirm-title { font-size: 24px; color: var(--primary-dark); margin-bottom: 15px; font-weight: 800; }
+        .confirm-desc { color: var(--text-gray); margin-bottom: 30px; font-size: 1.05rem; line-height: 1.5; }
+        .confirm-actions { display: flex; justify-content: center; gap: 15px; }
+
+        /* History Modals */
+        .custom-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 99999; }
+        .custom-modal { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.3); width: 90%; max-width: 500px; text-align: center; border: 3px solid var(--primary-light); animation: fadeUp 0.3s ease-out; }
+        #historyList { max-height: 350px; overflow-y: auto; text-align: left; margin-bottom: 20px; padding-right: 5px; }
+        #historyList::-webkit-scrollbar { width: 6px; }
+        #historyList::-webkit-scrollbar-thumb { background: var(--primary-light); border-radius: 3px; }
+        .history-item { background: #F8FAFC; border: 1px solid #E2E8F0; padding: 16px; border-radius: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; }
+        .history-item:hover { border-color: var(--primary); background: white; box-shadow: 0 6px 20px rgba(13, 148, 136, 0.1); transform: translateX(5px); }
+        .history-info { display: flex; flex-direction: column; gap: 6px; }
+        .history-date { font-weight: 700; color: var(--text-dark); font-size: 1rem; }
+        .history-score { color: var(--primary-dark); font-size: 0.95rem; font-weight: 600; }
+        .btn-review { background: var(--primary-light); color: var(--primary-dark); border: none; padding: 8px 14px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; font-family: inherit;}
+        .btn-review:hover { background: var(--primary); color: white; }
+        .btn-delete-history { background: var(--danger-light); color: var(--danger); border: none; padding: 8px 12px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1.1rem; }
+        .btn-delete-history:hover { background: var(--danger); color: white; }
+        .modal-actions { display: flex; gap: 15px; margin-top: 20px; justify-content: center;}
+
+        /* Explanations */
+        .q-context-box { background: var(--white); padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 25px; border-left: 6px solid var(--secondary); }
+        .q-context-en { font-size: 1.3rem; font-weight: 800; color: var(--primary-dark); margin-bottom: 8px; }
+        .q-context-vi { font-size: 1.1rem; color: var(--text-gray); margin-bottom: 15px; font-style: italic; }
+        .q-hint { background: #FFF7ED; padding: 15px 20px; border-radius: 14px; font-size: 1rem; font-weight: 600; color: #C2410C; border: 1px dashed #FDBA74; line-height: 1.5; }
+
+        .opt-block { margin-bottom: 15px; background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.03); border: 2px solid transparent; transition: 0.3s; }
+        .opt-block:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.06); }
+        .opt-block.is-correct { border-color: var(--success); }
+        .opt-block.is-wrong { border-color: #FDA4AF; } /* Đổi màu viền cho lỗi sai */
+        
+        .opt-header { padding: 18px 20px; border-bottom: 1px solid #F1F5F9; display: flex; gap: 15px; }
+        .opt-letter { font-weight: 800; font-size: 1.2rem; min-width: 35px; }
+        .is-correct .opt-letter { color: var(--success); }
+        .is-wrong .opt-letter { color: #BE123C; } /* Đổi màu chữ cái lỗi sai */
+        
+        .opt-text-group { flex-grow: 1; }
+        .opt-en { font-weight: 700; font-size: 1.1rem; margin-bottom: 4px; color: var(--text-dark); }
+        .opt-vi { font-size: 0.95rem; color: var(--text-gray); }
+
+        .opt-body { padding: 15px 20px; font-size: 1.05rem; line-height: 1.6; }
+        .is-correct .opt-body { background: var(--success-light); color: #064E3B; font-weight: 600; }
+        
+        /* ĐIỂM NHẤN CSS ĐƯỢC THAY ĐỔI THEO YÊU CẦU CHO ĐÁP ÁN SAI */
+        .is-wrong .opt-body { background: #FFF1F2; color: #BE123C; font-weight: 600; border-left: 4px solid #E11D48; }
+
+        .trap-tag { display: inline-block; background: #E11D48; color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 800; margin-right: 8px; text-transform: uppercase; box-shadow: 0 2px 5px rgba(225, 29, 72, 0.3); }
+        .bingo-tag { display: inline-block; background: var(--success); color: white; padding: 4px 12px; border-radius: 8px; font-size: 0.85rem; font-weight: 800; margin-right: 8px; text-transform: uppercase; box-shadow: 0 2px 5px rgba(16, 185, 129, 0.3); }
+
+        .vocab-box { background: var(--white); padding: 25px; border-radius: 20px; margin-top: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 2px solid var(--primary-light); }
+        .vocab-box h4 { display: flex; align-items: center; gap: 10px; color: var(--primary-dark); font-size: 1.3rem; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px dashed #CBD5E1; font-weight: 800; }
+        .vocab-list { line-height: 1.8; font-size: 1.05rem; }
+        .vocab-word { color: var(--primary); font-weight: 800; background: var(--primary-light); padding: 2px 8px; border-radius: 6px; margin-right: 5px; }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #F1F5F9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #94A3B8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        @media (max-width: 768px) { 
+            .nav-footer { flex-direction: column; gap: 15px; }
+            .btn { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="screen-welcome" class="screen active">
+        <div style="max-width: 800px; margin: auto; text-align: center; background: white; padding: 50px 30px; border-radius: 30px; box-shadow: var(--shadow); border: 2px solid var(--primary-light);">
+            <div class="icon-listening">🎧</div>
+            <h1>Chinh Phục TOEIC Part 2<br><span style="font-size: 1.8rem; color: var(--secondary);">ETS 2023 - Test 5</span></h1>
+            <p class="desc">Bộ câu hỏi mới nhất từ viện ETS. Đây là lúc để bạn rèn luyện phản xạ nghe, lách qua mọi cái bẫy tinh vi nhất. Hãy tập trung cao độ nhé! 🚀</p>
+            <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <button class="btn btn-outline" onclick="openHistoryModal()">🕒 Lịch sử</button>
+                <button class="btn btn-outline" onclick="promptStart('practice')">🌿 Luyện tập</button>
+                <button class="btn" onclick="promptStart('mock')">🔥 Thi thử</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-test" class="screen">
+        <div class="audio-wrapper">
+            <h2 id="q-number" style="color: var(--primary-dark); font-size: 1.8rem; font-weight: 800;">Question 7</h2>
+            <div class="icon-listening" style="font-size: 3.5rem;">📻</div>
+            <div id="audio-container">
+                <audio id="q-audio" class="audio-player-custom" controls controlsList="nodownload"></audio>
+            </div>
+            <div id="mock-msg" class="mock-status">
+                <span class="pulse-dot"></span> Audio đang phát... Nhớ chọn đáp án nhanh nhé!
+            </div>
+        </div>
+
+        <div class="options-wrapper" id="options-container">
+            <label class="option-label" id="lbl-A">
+                <input type="radio" name="ans" value="A">
+                <div class="custom-radio"></div><span> A</span>
+            </label>
+            <label class="option-label" id="lbl-B">
+                <input type="radio" name="ans" value="B">
+                <div class="custom-radio"></div><span> B</span>
+            </label>
+            <label class="option-label" id="lbl-C">
+                <input type="radio" name="ans" value="C">
+                <div class="custom-radio"></div><span> C</span>
+            </label>
+        </div>
+
+        <div class="nav-footer">
+            <button id="btn-prev" class="btn btn-outline" onclick="changeQuestion(-1)">⬅ Câu trước</button>
+            <button id="btn-next" class="btn" onclick="changeQuestion(1)">Câu tiếp theo ➡</button>
+            <button id="btn-submit" class="btn btn-success" style="display:none;" onclick="promptSubmit()">Nộp bài ngay ✔</button>
+        </div>
+    </div>
+
+    <div id="screen-result" class="screen">
+        <div class="score-box">
+            <h2>Kết Quả Của Bạn 🎉</h2>
+            <div class="score-number" id="final-score">0/0</div>
+            <p id="score-comment" style="color: var(--text-gray); font-size: 1.2rem;">Hãy xem lại thật kỹ các bẫy ở những câu sai nhé!</p>
+        </div>
+        
+        <div class="result-list" id="result-list"></div>
+
+        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <button class="btn btn-outline" onclick="location.reload()">🏠 Về trang chủ</button>
+            <button class="btn" onclick="promptStart('practice')">🔄 Làm Lại Từ Đầu</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-start-confirm" class="modal" style="display: none; z-index: 2000;">
+    <div class="confirm-box">
+        <div class="confirm-title">Sẵn sàng chưa? 🚀</div>
+        <div class="confirm-desc">Hít một hơi thật sâu, đeo tai nghe vào. Chúng ta chuẩn bị cày nát Part 2 nhé!</div>
+        <div class="confirm-actions">
+            <button class="btn btn-outline" onclick="cancelStart()">Khoan đã</button>
+            <button class="btn" onclick="confirmStart()">Chiến luôn!</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-submit-confirm" class="modal" style="display: none; z-index: 2000;">
+    <div class="confirm-box">
+        <div class="confirm-title">Chốt đơn? ✨</div>
+        <div class="confirm-desc">Bạn chắc chắn muốn nộp bài chứ? Điểm số sẽ được ghi nhận vào lịch sử tiến bộ của bạn.</div>
+        <div class="confirm-actions">
+            <button class="btn btn-outline" onclick="cancelSubmit()">Kiểm tra lại</button>
+            <button class="btn btn-success" onclick="confirmSubmit()">Nộp luôn!</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-detail" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <h2 id="modal-title" style="text-align: left; margin-bottom: 20px; border-bottom: 2px solid var(--primary-light); padding-bottom: 10px; font-weight: 800;">Phân tích câu hỏi</h2>
+        
+        <div style="margin-bottom: 20px;">
+            <audio id="modal-audio" class="audio-player-custom" controls style="width: 100%;"></audio>
+        </div>
+        
+        <div class="q-context-box">
+            <div class="q-context-en" id="m-q-en"></div>
+            <div class="q-context-vi" id="m-q-vi"></div>
+            <div class="q-hint" id="m-q-hint"></div>
+        </div>
+
+        <div id="modal-options-area"></div>
+
+        <div class="vocab-box">
+            <h4>📚 Từ vựng chắt lọc</h4>
+            <div class="vocab-list" id="m-vocab"></div>
+        </div>
+    </div>
+</div>
+
+<div id="historyOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2 style="margin-bottom: 20px; color: var(--primary-dark); font-weight: 800;">🕒 Lịch sử cày cuốc</h2>
+        <div id="historyList">
+            <div style="text-align:center; color: var(--text-gray); padding: 20px;">Đang tải dữ liệu... 🐾</div>
+        </div>
+        <button class="btn btn-outline" style="width: 100%; margin-top: 15px;" onclick="closeHistoryModal()">Quay lại</button>
+    </div>
+</div>
+
+<div id="customConfirmDeleteOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2 style="color: var(--danger); font-weight: 800;">Xóa lịch sử 🗑️</h2>
+        <p style="font-size: 1.1rem; color: var(--text-gray); margin-top: 15px; line-height: 1.5;">Bạn có muốn xóa bài làm này không? Xóa xong là mất vĩnh viễn đó nha!</p>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeConfirmDelete()">Hủy</button>
+            <button class="btn btn-success" style="background: var(--danger); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);" onclick="executeDelete()">Xóa luôn</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        {
+            id: 7, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-7.mp3", answer: "B",
+            script_q_en: "Where can I buy tickets for the orchestra’s fund-raiser?", script_q_vi: "Tôi có thể mua vé cho buổi biểu diễn nhạc gây quỹ ở đâu?",
+            script_opt_en: ["(A) Over the next week.", "(B) On the fifth floor.", "(C) I suppose; if you want to."],
+            script_opt_vi: ["(A) Trong tuần tới.", "(B) Ở trên tầng 5.", "(C) Tôi cho rằng; nếu bạn muốn vậy."],
+            vocab: "<span class='vocab-word'>orchestra (n)</span>: dàn nhạc giao hưởng<br><span class='vocab-word'>fund-raiser (n)</span>: sự kiện gây quỹ",
+            general_explain: "Từ khóa cần nắm bắt là <b>Where</b> (Ở đâu). Bạn hãy lắng nghe để tìm một địa điểm hoặc phương hướng cụ thể.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Thời Gian</span> Đây là mốc thời gian dùng để trả lời cho câu hỏi When, không hợp với Where." },
+                { opt: "B", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Chỉ định chính xác một vị trí không gian: 'Ở trên tầng 5'." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Phản Hồi</span> Câu này dùng để đáp lại một lời đề nghị (Vd: Chúng ta đi ăn nhé?), không trả lời địa điểm." }
+            ]
+        },
+        {
+            id: 8, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-8.mp3", answer: "C",
+            script_q_en: "How long does your commute take?", script_q_vi: "Thời gian đi lại của bạn mất bao lâu?",
+            script_opt_en: ["(A) The gym opens early.", "(B) I’ve been working here since March.", "(C) About an hour lately."],
+            script_opt_vi: ["(A) Phòng thể hình mở cửa sớm.", "(B) Tôi đã làm việc ở đây từ tháng 3.", "(C) Gần đây thì khoảng 1 giờ."],
+            vocab: "<span class='vocab-word'>commute (n)</span>: quãng đường/thời gian đi lại (giữa nhà và nơi làm việc)<br><span class='vocab-word'>take (v)</span>: tiêu tốn (thời gian)",
+            general_explain: "Câu hỏi bắt đầu bằng <b>How long</b> (Bao lâu). Hãy tìm một khoảng thời gian (khoảng một tiếng, vài phút, v.v.).",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Lạc Đề</span> 'Phòng gym mở sớm' không liên quan gì đến thời gian đi làm." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy How Long</span> Cũng mang yếu tố thời gian nhưng diễn tả 'làm việc bao lâu' chứ không phải 'đi đường bao lâu'." },
+                { opt: "C", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Nêu rõ khoảng thời gian di chuyển: 'Khoảng một tiếng đồng hồ'." }
+            ]
+        },
+        {
+            id: 9, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-9.mp3", answer: "A",
+            script_q_en: "What’s good to order at this cafe?", script_q_vi: "Món nào ngon để gọi ở quán cà phê này?",
+            script_opt_en: ["(A) I recommend the coffee and baked goods.", "(B) Your food is on the way.", "(C) It was sent this morning."],
+            script_opt_vi: ["(A) Tôi đề xuất cà phê và bánh nướng.", "(B) Đồ ăn của bạn đang trên đường.", "(C) Nó đã được gửi vào sáng nay."],
+            vocab: "<span class='vocab-word'>recommend (v)</span>: đề xuất, gợi ý<br><span class='vocab-word'>baked goods (n)</span>: các loại bánh nướng",
+            general_explain: "Đây là một câu hỏi xin ý kiến gợi ý (What's good...). Bạn cần tìm đáp án đề xuất một món ăn/thức uống cụ thể.",
+            explains: [
+                { opt: "A", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Đưa ra gợi ý chính xác và nhiệt tình: 'Tôi đề xuất cà phê và bánh nướng ở đây'." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Bối Cảnh</span> Dùng để thông báo cho khách đang chờ món, không phải để tư vấn chọn món." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Động Từ</span> Việc 'gửi đồ' (sent) không khớp với việc 'gọi đồ ăn' (order)." }
+            ]
+        },
+        {
+            id: 10, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-10.mp3", answer: "C",
+            script_q_en: "When’s the new office furniture going to be delivered?", script_q_vi: "Nội thất văn phòng mới sẽ được giao đến khi nào?",
+            script_opt_en: ["(A) At the end of the report.", "(B) I already finished the revision.", "(C) It’ll be here next week."],
+            script_opt_vi: ["(A) Tại cuối bản báo cáo.", "(B) Tôi đã hoàn thành xong bản chỉnh sửa.", "(C) Nó sẽ tới đây tuần sau."],
+            vocab: "<span class='vocab-word'>furniture (n)</span>: đồ nội thất<br><span class='vocab-word'>deliver (v)</span>: giao hàng, vận chuyển",
+            general_explain: "Từ để hỏi là <b>When</b> (Khi nào). Hãy tập trung bắt các mốc thời gian trong tương lai.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Vị Trí</span> 'Cuối báo cáo' chỉ vị trí trong tài liệu, trả lời cho Where." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Lạc Đề</span> Việc sửa tài liệu chả liên quan gì đến nội thất." },
+                { opt: "C", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Cung cấp một mốc thời gian rõ ràng: 'Tuần sau' (next week)." }
+            ]
+        },
+        {
+            id: 11, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-11.mp3", answer: "A",
+            script_q_en: "Who’s holding the training session on Thursday?", script_q_vi: "Ai sẽ là người tổ chức buổi đào tạo vào thứ 5?",
+            script_opt_en: ["(A) Marcela’s leading it.", "(B) I exercise regularly.", "(C) He was late today."],
+            script_opt_vi: ["(A) Marcela sẽ dẫn dắt nó.", "(B) Tôi tập thể dục thường xuyên.", "(C) Anh ấy hôm nay đến muộn."],
+            vocab: "<span class='vocab-word'>training session (n)</span>: buổi đào tạo<br><span class='vocab-word'>lead (v)</span>: dẫn dắt, chủ trì",
+            general_explain: "Từ khóa to đùng là <b>Who</b>. Bạn cần lắng nghe một danh từ chỉ người, đại từ hoặc tên riêng.",
+            explains: [
+                { opt: "A", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Nêu đích danh tên người phụ trách: 'Marcela sẽ là người dẫn dắt'." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> Từ 'training' (đào tạo/huấn luyện) dễ làm liên tưởng đến 'exercise' (tập thể dục)." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Đại Từ</span> Đột nhiên nhắc đến 'He' (anh ấy) trong khi không có ngữ cảnh trước đó." }
+            ]
+        },
+        {
+            id: 12, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-12.mp3", answer: "C",
+            script_q_en: "When should we hire extra help for the holidays?", script_q_vi: "Khi nào chúng ta nên thuê thêm người giúp cho kỳ nghỉ lễ?",
+            script_opt_en: ["(A) A helpful assistant.", "(B) A fun party.", "(C) As soon as possible."],
+            script_opt_vi: ["(A) Một người trợ lý hữu ích.", "(B) Một bữa tiệc vui nhộn.", "(C) Càng sớm càng tốt."],
+            vocab: "<span class='vocab-word'>hire extra help</span>: thuê thêm nhân công<br><span class='vocab-word'>as soon as possible</span>: ngay khi có thể, càng sớm càng tốt",
+            general_explain: "Hỏi <b>When</b> (Khi nào). Hãy cẩn thận với những câu trả lời bằng cụm từ cố định chỉ thời gian/mức độ khẩn cấp thay vì một ngày tháng cụ thể.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Cụm Danh Từ</span> Dùng từ 'helpful' để bẫy người nghe từ 'help', không trả lời cho câu hỏi thời gian." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> 'Holidays' dễ làm người nghe nghĩ tới 'party' (tiệc tùng)." },
+                { opt: "C", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> 'As soon as possible' là một câu trả lời kinh điển chỉ thời gian rất gấp rút." }
+            ]
+        },
+        {
+            id: 13, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-13.mp3", answer: "A",
+            script_q_en: "Why did you pick the color green for the product packaging?", script_q_vi: "Tại sao bạn lại chọn màu xanh cho bao bì sản phẩm?",
+            script_opt_en: ["(A) Because it matches our uniforms.", "(B) I will pick it up tomorrow.", "(C) Not until we know the menu options."],
+            script_opt_vi: ["(A) Vì nó phù hợp với đồng phục của chúng ta.", "(B) Tôi sẽ lấy nó vào ngày mai.", "(C) Không cho đến khi chúng ta biết các tùy chọn thực đơn."],
+            vocab: "<span class='vocab-word'>packaging (n)</span>: bao bì<br><span class='vocab-word'>match (v)</span>: phù hợp, trùng khớp, tông xuyệt tông",
+            general_explain: "Hỏi <b>Why</b> (Tại sao). Cần một lý do logic cho quyết định chọn màu sắc thiết kế.",
+            explains: [
+                { opt: "A", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Giải thích cực hợp lý bằng 'Because': Chọn màu xanh vì cho nó tệp màu với đồng phục công ty." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Lặp Từ</span> Cố tình lặp lại từ 'pick', nhưng 'pick up' mang nghĩa là nhặt/lấy đồ, khác với 'pick' là chọn lựa." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> Không liên quan, bao bì sản phẩm không dính dáng gì đến thực đơn (menu)." }
+            ]
+        },
+        {
+            id: 14, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-14.mp3", answer: "B",
+            script_q_en: "When's the budget report due?", script_q_vi: "Bản báo cáo ngân sách đến hạn khi nào?",
+            script_opt_en: ["(A) Sounds too expensive.", "(B) By end of day on Friday.", "(C) I can pay you back tomorrow."],
+            script_opt_vi: ["(A) Nghe có vẻ đắt đấy.", "(B) Vào cuối ngày thứ 6.", "(C) Tôi có thể trả lại bạn vào ngày mai."],
+            vocab: "<span class='vocab-word'>budget report (n)</span>: báo cáo ngân sách<br><span class='vocab-word'>due (adj)</span>: đến hạn",
+            general_explain: "Hỏi <b>When ... due</b> là hỏi hạn chót. Đáp án thường chứa giới từ 'By' hoặc 'Before' + mốc thời gian.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> 'Ngân sách' (budget) dễ liên tưởng tới 'expensive' (đắt đỏ), nhưng sai mục đích hỏi." },
+                { opt: "B", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Đưa ra deadline chuẩn không cần chỉnh: 'Trước cuối ngày Thứ Sáu'." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> Nghe 'ngân sách' nên đưa từ 'pay you back' (trả tiền) vào để tung hỏa mù." }
+            ]
+        },
+        {
+            id: 15, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-15.mp3", answer: "B",
+            script_q_en: "Which shopping bag should I bring?", script_q_vi: "Tôi nên mang túi mua sắm nào nhỉ?",
+            script_opt_en: ["(A) Just outside the store.", "(B) The large one.", "(C) No, it isn’t."],
+            script_opt_vi: ["(A) Ngay ngoài cửa hàng.", "(B) Cái túi to.", "(C) Không, nó không phải."],
+            vocab: "<span class='vocab-word'>shopping bag (n)</span>: túi mua sắm<br><span class='vocab-word'>bring (v)</span>: mang theo",
+            general_explain: "Hỏi <b>Which</b> (Cái nào) đòi hỏi sự chọn lựa giữa nhiều đối tượng. Hãy tìm đáp án có đại từ thay thế 'one(s)' đi kèm tính từ miêu tả.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Địa Điểm</span> Trả lời cho câu hỏi Where (Ở đâu)." },
+                { opt: "B", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Dùng tính từ để xác định rõ đối tượng: 'Lấy cái to (large) ấy'." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Yes/No</span> Câu hỏi Wh- không bao giờ được trả lời bằng Yes/No." }
+            ]
+        },
+        {
+            id: 16, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-16.mp3", answer: "C",
+            script_q_en: "Don’t forget to add another table to the conference room.", script_q_vi: "Đừng quên thêm 1 chiếc bàn khác vào phòng hội nghị.",
+            script_opt_en: ["(A) Probably the yoga class.", "(B) No, they didn’t.", "(C) OK, I’ll do that now."],
+            script_opt_vi: ["(A) Có lẽ là lớp yoga.", "(B) Không, họ không làm.", "(C) OK, tôi sẽ làm bây giờ."],
+            vocab: "<span class='vocab-word'>add (v)</span>: thêm vào<br><span class='vocab-word'>conference room (n)</span>: phòng hội nghị/họp",
+            general_explain: "Đây là một câu mệnh lệnh/nhắc nhở (Đừng quên làm...). Người nghe cần thể hiện sự tuân thủ hoặc báo cáo đã làm xong.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Lạc Đề</span> 'Lớp yoga' hoàn toàn không dính dáng gì đến việc setup phòng họp." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Yes/No</span> Câu nhắc nhở người đối diện làm việc, trả lời 'Họ không làm' là trật lất chủ ngữ." },
+                { opt: "C", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Nhận lệnh và thực thi ngay lập tức: 'OK, tôi làm ngay đây'." }
+            ]
+        },
+        {
+            id: 17, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-17.mp3", answer: "C",
+            script_q_en: "Who from our office is going to the conference?", script_q_vi: "Ai trong văn phòng chúng ta sẽ tới hội nghị?",
+            script_opt_en: ["(A) I am enjoying our new assignment.", "(B) At the hotel downtown.", "(C) Leslie and her support staff."],
+            script_opt_vi: ["(A) Tôi đang tận hưởng nhiệm vụ mới của chúng ta.", "(B) Tại khách sạn cuối phố.", "(C) Leslie và nhân viên hỗ trợ của cô ấy."],
+            vocab: "<span class='vocab-word'>conference (n)</span>: hội nghị<br><span class='vocab-word'>support staff (n)</span>: nhân viên hỗ trợ",
+            general_explain: "Hỏi <b>Who</b> (Ai). Hãy xác định rõ tên riêng hoặc nhóm người được nhắc đến.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Cảm Xúc</span> Thể hiện cảm xúc về công việc, không trả lời việc ai đi công tác." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Vị Trí</span> 'Tại khách sạn' trả lời cho câu hỏi Where (Địa điểm tổ chức ở đâu)." },
+                { opt: "C", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Liệt kê danh sách người đi quá chuẩn xác: 'Leslie và dàn nhân viên của cô ấy'." }
+            ]
+        },
+        {
+            id: 18, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-18.mp3", answer: "B",
+            script_q_en: "Where are the signs for the sale?", script_q_vi: "Bảng hiệu bán hàng (khuyến mãi) ở đâu vậy?",
+            script_opt_en: ["(A) We are advertising a fifteen percent discount.", "(B) On the porch.", "(C) I didn’t know we had sold those items."],
+            script_opt_vi: ["(A) Chúng tôi đang quảng cáo giảm giá 15%.", "(B) Ở trên hiên nhà/cổng vòm.", "(C) Tôi không biết là chúng ta đã bán những sản phẩm đó."],
+            vocab: "<span class='vocab-word'>sign (n)</span>: bảng hiệu, biển báo<br><span class='vocab-word'>porch (n)</span>: mái hiên, cổng vòm",
+            general_explain: "Câu hỏi <b>Where</b> tìm vị trí của đồ vật. Tìm các giới từ chỉ vị trí (In/On/At, v.v.).",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> Nghe 'sale' dễ liên tưởng đến 'discount' (giảm giá), nhưng lạc đề vì không cung cấp vị trí." },
+                { opt: "B", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Chỉ vị trí bằng giới từ không gian: 'On the porch' (Trên hiên)." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> Bẫy tự vựng 'sale' và 'sold', khác hoàn toàn về ý nghĩa." }
+            ]
+        },
+        {
+            id: 19, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-19.mp3", answer: "C",
+            script_q_en: "Do you think we should place an advertisement in the newspaper?", script_q_vi: "Bạn có nghĩ là chúng ta nên đặt một quảng cáo trên báo không?",
+            script_opt_en: ["(A) That’s not what happened.", "(B) No, I already have a subscription.", "(C) Our budget is quite limited this month."],
+            script_opt_vi: ["(A) Đó không phải là những gì đã xảy ra.", "(B) Không, tôi đã đăng ký theo dõi rồi.", "(C) Ngân sách chúng ta tháng này khá hạn chế."],
+            vocab: "<span class='vocab-word'>advertisement (n)</span>: mẩu quảng cáo<br><span class='vocab-word'>subscription (n)</span>: gói đăng ký theo dõi (báo, tạp chí)",
+            general_explain: "Đề xuất xin ý kiến (Nên hay không nên làm gì). Đáp án đúng thường là một lời từ chối khéo léo thông qua việc nêu ra khó khăn.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Phủ Nhận</span> Câu này dùng để đính chính một sự việc đã xảy ra, không dùng cho tương lai." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> 'Báo chí' (newspaper) đi kèm 'subscription' (đăng ký theo dõi) để đánh lừa." },
+                { opt: "C", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Từ chối ngầm một cách thực tế: 'Làm gì có tiền, ngân sách tháng này eo hẹp lắm' (Không chạy quảng cáo đâu)." }
+            ]
+        },
+        {
+            id: 20, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-20.mp3", answer: "B",
+            script_q_en: "I don’t remember where I put my copy of the contract.", script_q_vi: "Tôi không nhớ tôi để bản sao hợp đồng ở đâu.",
+            script_opt_en: ["(A) My calendar is up-to-date.", "(B) I can look around for it.", "(C) I don’t think that’s the best idea."],
+            script_opt_vi: ["(A) Lịch của tôi đã được cập nhật.", "(B) Tôi có thể tìm nó xung quanh giúp bạn.", "(C) Tôi không nghĩ đó là ý kiến tốt nhất."],
+            vocab: "<span class='vocab-word'>put (v)</span>: đặt, để (đồ vật)<br><span class='vocab-word'>look around</span>: tìm quanh, ngó nghiêng tìm kiếm",
+            general_explain: "Đây là câu trần thuật bộc lộ sự khó khăn (bị mất đồ). Người đối diện thường phản hồi bằng một lời đề nghị giúp đỡ.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Lạc Đề</span> Chuyện 'cập nhật lịch' không giúp ích gì cho người đang mất đồ." },
+                { opt: "B", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Xung phong giúp đỡ rất lịch sự: 'Để tôi ngó nghiêng tìm phụ cho'." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Giao Tiếp</span> Câu này dùng để bác bỏ một ý kiến/đề xuất, không dùng khi ai đó làm rơi đồ." }
+            ]
+        },
+        {
+            id: 21, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-21.mp3", answer: "B",
+            script_q_en: "What should we order for dinner?", script_q_vi: "Chúng ta nên gọi món gì cho bữa tối?",
+            script_opt_en: ["(A) Yes, I ate some of that yesterday.", "(B) I’d like something we haven't tried before.", "(C) That makes sense to me."],
+            script_opt_vi: ["(A) Vâng, tôi đã ăn một ít vào hôm qua.", "(B) Tôi muốn món gì đó mà chúng ta chưa từng thử trước đây.", "(C) Điều đó có vẻ hợp lý với tôi đấy."],
+            vocab: "<span class='vocab-word'>order (v)</span>: gọi món ăn<br><span class='vocab-word'>make sense (v)</span>: hợp lý, có ý nghĩa",
+            general_explain: "Câu hỏi <b>What</b> thảo luận về lựa chọn món ăn. Thay vì chỉ đích danh một món, đáp án ở Level cao thường nêu ra tiêu chí chọn món.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Yes/No</span> Câu hỏi Wh- không trả lời bằng 'Yes'. Hơn nữa nhắc đến quá khứ là sai." },
+                { opt: "B", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Trả lời gián tiếp bằng cách nêu tiêu chí: 'Món gì cũng được, miễn là món mới chưa ăn bao giờ'." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Phản Hồi</span> Dùng để đồng ý với một lời giải thích hoặc đề xuất, không dùng khi được hỏi 'Ăn gì?'. " }
+            ]
+        },
+        {
+            id: 22, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-22.mp3", answer: "A",
+            script_q_en: "I thought the new safety training was supposed to start tomorrow.", script_q_vi: "Tôi nghĩ khóa đào tạo an toàn mới đáng lẽ ra nên được bắt đầu vào ngày mai.",
+            script_opt_en: ["(A) Yes, you're right.", "(B) An old computer.", "(C) The ones on the counter."],
+            script_opt_vi: ["(A) Vâng, bạn đúng đấy.", "(B) Một chiếc máy tính cũ.", "(C) Những cái ở trên quầy."],
+            vocab: "<span class='vocab-word'>be supposed to</span>: được cho là (đáng lẽ phải)<br><span class='vocab-word'>safety training (n)</span>: huấn luyện an toàn",
+            general_explain: "Câu trần thuật bày tỏ sự nghi ngờ/nhớ mang máng của người nói. Người nghe cần xác nhận xem điều đó là đúng hay sai.",
+            explains: [
+                { opt: "A", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Xác nhận thông tin trực tiếp, củng cố trí nhớ cho người nói: 'Đúng rồi, trí nhớ bạn tốt đấy'." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Trái Nghĩa</span> Nghe thấy 'new' (mới) liền chêm 'old' (cũ) vào để lừa người nghe yếu từ vựng." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Lựa Chọn</span> 'The ones' dùng để trả lời cho câu hỏi Which (Cái nào)." }
+            ]
+        },
+        {
+            id: 23, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-23.mp3", answer: "C",
+            script_q_en: "Should we buy desktop computers or laptops for the office?", script_q_vi: "Chúng ta nên mua máy tính để bàn hay máy tính xách tay cho văn phòng nhỉ?",
+            script_opt_en: ["(A) The Web site is working now.", "(B) You can buy them at any store.", "(C) Most of our staff travel a lot."],
+            script_opt_vi: ["(A) Hiện tại trang web đang hoạt động.", "(B) Bạn có thể mua chúng ở bất cứ cửa hàng nào.", "(C) Hầu hết nhân viên của chúng ta di chuyển rất nhiều."],
+            vocab: "<span class='vocab-word'>desktop computer (n)</span>: máy tính để bàn<br><span class='vocab-word'>laptop (n)</span>: máy tính xách tay",
+            general_explain: "Câu hỏi Lựa chọn <b>Or</b> (Máy bàn hay Laptop). Phản hồi xuất sắc là đưa ra hoàn cảnh công ty để tự người hỏi suy ra câu trả lời.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> Từ 'computers' làm liên tưởng tới 'website', nhưng lạc đề." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Nơi Chốn</span> Trả lời cho Where (Mua ở đâu), không giúp đưa ra lựa chọn món đồ." },
+                { opt: "C", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Lập luận gián tiếp xuất sắc: Nhân viên hay đi lại (travel a lot), nên tất nhiên phải chọn Laptop rồi." }
+            ]
+        },
+        {
+            id: 24, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-24.mp3", answer: "B",
+            script_q_en: "Will you be attending the reception tomorrow?", script_q_vi: "Bạn sẽ tham dự tiệc chiêu đãi vào ngày mai chứ?",
+            script_opt_en: ["(A) Just another day or so.", "(B) Can you remind me what the topic is?", "(C) I heard that they ran out of them."],
+            script_opt_vi: ["(A) Chỉ một ngày nữa hoặc lâu hơn.", "(B) Bạn có thể nhắc lại cho tôi chủ đề là gì không?", "(C) Tôi nghe nói họ đã hết sạch rồi."],
+            vocab: "<span class='vocab-word'>reception (n)</span>: tiệc chiêu đãi<br><span class='vocab-word'>remind (v)</span>: nhắc nhở<br><span class='vocab-word'>run out of</span>: hết sạch, cạn kiệt",
+            general_explain: "Hỏi Yes/No về dự định tham gia tiệc. Nhưng đôi khi người đáp chưa thể chốt ngay mà phải hỏi ngược lại để xác nhận thông tin.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Thời Gian</span> Trả lời cho How long (Bao lâu nữa), không hợp bối cảnh." },
+                { opt: "B", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Hỏi ngược lại (Chưa quyết định đi hay không): 'Nhắc lại xem chủ đề tiệc là gì để tôi xem có đáng đi không'." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Số Lượng</span> Chuyện 'hết đồ' không liên quan gì đến quyết định đi dự tiệc." }
+            ]
+        },
+        {
+            id: 25, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-25.mp3", answer: "B",
+            script_q_en: "Did you buy your ticket to the baseball game?", script_q_vi: "Bạn đã mua vé cho trận đấu bóng chày chưa?",
+            script_opt_en: ["(A) Sure, after the game is over.", "(B) I thought admission was free.", "(C) A sports tournament."],
+            script_opt_vi: ["(A) Chắc chắn rồi, sau khi trận đấu kết thúc.", "(B) Tôi tưởng vé vào cửa là miễn phí chứ.", "(C) Một giải đấu thể thao."],
+            vocab: "<span class='vocab-word'>baseball game (n)</span>: trận bóng chày<br><span class='vocab-word'>admission (n)</span>: sự vào cửa (phí vào cổng)",
+            general_explain: "Hỏi xác nhận hành động (Mua vé chưa?). Thay vì Yes/No, câu trả lời thể hiện sự bất ngờ vì ngỡ không cần mua.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Logic</span> Ai lại đi mua vé khi trận đấu đã kết thúc (over)? Quá vô lý." },
+                { opt: "B", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Trả lời gián tiếp: Tui chưa mua vì tui tưởng vào cửa miễn phí (free)." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> Bóng chày là môn thể thao, nghe thấy 'sports' dễ bị lừa, nhưng đây chỉ là 1 cụm danh từ cụt lủn." }
+            ]
+        },
+        {
+            id: 26, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-26.mp3", answer: "A",
+            script_q_en: "How can I get more information about the employee party?", script_q_vi: "Làm thế nào để tôi có thể biết thêm thông tin về tiệc nhân viên?",
+            script_opt_en: ["(A) A phone number is included in the invitation.", "(B) The chef is from Italy.", "(C) Where is the employment office?"],
+            script_opt_vi: ["(A) Số điện thoại được bao gồm trong giấy mời.", "(B) Đầu bếp đến từ Ý.", "(C) Văn phòng tuyển dụng ở đâu?"],
+            vocab: "<span class='vocab-word'>information (n)</span>: thông tin<br><span class='vocab-word'>invitation (n)</span>: giấy mời",
+            general_explain: "Hỏi <b>How</b> chỉ phương thức (Bằng cách nào). Người đáp cần chỉ ra công cụ hoặc nguồn để tìm thông tin.",
+            explains: [
+                { opt: "A", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Chỉ dẫn phương thức rõ ràng: 'Cứ gọi vào số điện thoại in trên thiệp mời ấy'." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> Tiệc tùng (party) đi liền với đầu bếp (chef), nhưng lạc đề vì không giúp lấy thêm thông tin." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Từ Vựng</span> 'Employee' (nhân viên) và 'employment' (tuyển dụng) nghe rất giống nhau, cố tình để gài bẫy." }
+            ]
+        },
+        {
+            id: 27, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-27.mp3", answer: "B",
+            script_q_en: "Could you show me how to transfer funds?", script_q_vi: "Bạn có thể chỉ tôi cách chuyển tiền được không?",
+            script_opt_en: ["(A) No, it’s the other one.", "(B) Let me just finish this first.", "(C) Sure, that seems like a reasonable price."],
+            script_opt_vi: ["(A) Không, nó là một cái khác.", "(B) Để tôi làm nốt việc này trước đã.", "(C) Chắc chắn rồi, đó có vẻ là một mức giá hợp lý."],
+            vocab: "<span class='vocab-word'>transfer funds (v)</span>: chuyển tiền, chuyển quỹ<br><span class='vocab-word'>reasonable price (n)</span>: mức giá hợp lý",
+            general_explain: "Cấu trúc <b>Could you show me...</b> là lời nhờ vả lịch sự. Người nghe có thể đồng ý giúp, nhưng xin thêm chút thời gian.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Lựa Chọn</span> 'Cái khác' là để trả lời cho câu hỏi Which, không phải lời nhờ vả." },
+                { opt: "B", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Đồng ý nhưng xin khất một chút thời gian: 'Chờ xíu, để tui làm nốt việc này xong đã rồi tui chỉ cho'." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> Tiền bạc (funds) dễ liên tưởng đến giá cả (price), nhưng sai hoàn cảnh nói chuyện." }
+            ]
+        },
+        {
+            id: 28, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-28.mp3", answer: "C",
+            script_q_en: "Will our gym memberships renew automatically?", script_q_vi: "Thẻ thành viên phòng gym của chúng ta sẽ được tự động gia hạn chứ?",
+            script_opt_en: ["(A) They just saw that.", "(B) About our manager.", "(C) That’s what I was told."],
+            script_opt_vi: ["(A) Họ vừa mới nhìn thấy nó.", "(B) Về người quản lý của chúng tôi.", "(C) Đó là những gì tôi được người ta bảo vậy."],
+            vocab: "<span class='vocab-word'>renew automatically</span>: gia hạn tự động<br><span class='vocab-word'>be told</span>: được nghe kể, được nói cho biết",
+            general_explain: "Hỏi Yes/No về một chính sách. Nếu không chắc chắn 100%, người đáp sẽ trả lời dựa trên những gì mình nghe ngóng được.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Chủ Ngữ</span> Chủ ngữ là 'They' (họ) không ăn nhập gì với bối cảnh 'thẻ của chúng ta' (our memberships)." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Lạc Đề</span> Chuyện 'quản lý' chả liên quan gì đến thẻ gym tự gia hạn." },
+                { opt: "C", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Xác nhận qua lời kể của bên thứ 3: 'Chắc là có đấy, tui cũng nghe người ta bảo thế'." }
+            ]
+        },
+        {
+            id: 29, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-29.mp3", answer: "A",
+            script_q_en: "Isn’t Shinji scheduled to work at the cash register?", script_q_vi: "Không phải Shinji được xếp lịch làm việc ở quầy thu ngân sao?",
+            script_opt_en: ["(A) Yes, he just arrived.", "(B) The price hasn’t changed.", "(C) How much does it cost?"],
+            script_opt_vi: ["(A) Vâng, anh ấy vừa mới đến.", "(B) Giá cả vẫn chưa thay đổi.", "(C) Nó có giá bao nhiêu?"],
+            vocab: "<span class='vocab-word'>scheduled (adj)</span>: được lên lịch<br><span class='vocab-word'>cash register (n)</span>: quầy thu ngân, máy tính tiền",
+            general_explain: "Câu hỏi xác nhận thông tin phủ định (Isn't...). Cần xác nhận 'Đúng/Sai' về tình trạng công việc của người được nhắc tên.",
+            explains: [
+                { opt: "A", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Xác nhận lại thông tin và bổ sung tình trạng: 'Đúng thế, anh ta vừa mới tới chuẩn bị làm rồi kìa'." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> Thu ngân (cash register) thường đi với tiền bạc/giá cả (price), nhưng lạc đề." },
+                { opt: "C", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> Tương tự, hỏi giá (cost) là sai mục đích (đang hỏi vị trí làm việc của Shinji)." }
+            ]
+        },
+        {
+            id: 30, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-30.mp3", answer: "C",
+            script_q_en: "Do you have all the ingredients for the recipe?", script_q_vi: "Bạn đã có tất cả nguyên liệu cho công thức nấu ăn chưa?",
+            script_opt_en: ["(A) We will plant a garden soon.", "(B) Yes, my oven is working again.", "(C) I need to buy some onions."],
+            script_opt_vi: ["(A) Chúng tôi sẽ sớm trồng một khu vườn.", "(B) Vâng, lò nướng của tôi đã hoạt động trở lại.", "(C) Tôi cần mua thêm một ít hành tây."],
+            vocab: "<span class='vocab-word'>ingredients (n)</span>: nguyên liệu (nấu ăn)<br><span class='vocab-word'>recipe (n)</span>: công thức (nấu ăn)",
+            general_explain: "Hỏi Yes/No (Đã đủ chưa?). Nếu chưa đủ, người nói sẽ báo là mình đang thiếu hoặc cần phải mua thêm thứ gì đó.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> Nghĩ tới nguyên liệu (rau củ) thì nhắc đến vườn tược, quá khiên cưỡng." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Bối Cảnh</span> Lò nướng (oven) liên quan đến bếp núc, nhưng không giải đáp việc 'đã đủ nguyên liệu chưa'." },
+                { opt: "C", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Trả lời gián tiếp cực sắc: Chưa đủ đâu, tui vẫn phải đi mua thêm hành tây (onions) đây này." }
+            ]
+        },
+        {
+            id: 31, audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-05-part-2-31.mp3", answer: "C",
+            script_q_en: "You’re in charge of the supplier discount program, right?", script_q_vi: "Bạn phụ trách chương trình giảm giá của nhà cung cấp, đúng không?",
+            script_opt_en: ["(A) The coupons are on the kitchen counter.", "(B) We have all the supplies we need.", "(C) Horatio is the one you want to talk to."],
+            script_opt_vi: ["(A) Phiếu giảm giá ở trên quầy bếp.", "(B) Chúng tôi có đủ nguồn vật tư chúng tôi cần.", "(C) Horatio mới là người bạn cần nói chuyện."],
+            vocab: "<span class='vocab-word'>in charge of</span>: phụ trách, chịu trách nhiệm<br><span class='vocab-word'>supplier (n)</span>: nhà cung cấp",
+            general_explain: "Câu hỏi đuôi (Right?) xác nhận vai trò phụ trách của người nghe. Nếu bị hỏi nhầm người, hãy chỉ điểm sang người đúng nhiệm vụ.",
+            explains: [
+                { opt: "A", type: "wrong", text: "<span class='trap-tag'>Bẫy Liên Tưởng</span> Giảm giá (discount) dễ liên tưởng đến phiếu mua hàng (coupons), nhưng lạc đề hoàn toàn." },
+                { opt: "B", type: "wrong", text: "<span class='trap-tag'>Bẫy Âm Tương Tự</span> Cố tình lừa học viên nghe nhầm 'supplier' (nhà cung cấp) thành 'supplies' (vật tư)." },
+                { opt: "C", type: "correct", text: "<span class='bingo-tag'>Đúng!</span> Đẩy trách nhiệm một cách khéo léo: 'Nhầm người rồi, Horatio mới là người phụ trách chương trình đó'." }
+            ]
+        }
+    ];
+
+    let pendingMode = 'practice';
+    let isMockMode = false;
+    let currentIndex = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+    let startTime = 0;
+    const LOCAL_HISTORY_KEY = "snapenglish_p2_t5_2023_history";
+    const FIREBASE_TEST_NAME = "ETS 2023 - Test 5";
+    const audio = document.getElementById('q-audio');
+
+    // Xử lý chọn đáp án
+    document.querySelectorAll('.option-label input').forEach(input => {
+        input.addEventListener('change', function() {
+            document.querySelectorAll('.option-label').forEach(lbl => lbl.classList.remove('selected-ui'));
+            if(this.checked) {
+                this.closest('.option-label').classList.add('selected-ui');
+                userAnswers[currentIndex] = this.value;
+            }
+        });
+    });
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if (!audio.paused) audio.pause();
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    }
+
+    // Modal Bắt đầu
+    function promptStart(selectedMode) {
+        pendingMode = selectedMode;
+        document.getElementById('modal-start-confirm').style.display = 'flex';
+    }
+    function cancelStart() { document.getElementById('modal-start-confirm').style.display = 'none'; }
+    function confirmStart() {
+        document.getElementById('modal-start-confirm').style.display = 'none';
+        isMockMode = (pendingMode === 'mock');
+        currentIndex = 0;
+        
+        userAnswers = new Array(questions.length).fill(null);
+        startTime = Date.now();
+        showScreen('screen-test');
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        document.getElementById('q-number').innerText = `Question ${q.id}`;
+        audio.src = q.audio;
+        
+        document.querySelectorAll('.option-label').forEach(lbl => lbl.classList.remove('selected-ui'));
+        document.querySelectorAll('.option-label input').forEach(input => {
+            input.checked = (input.value === userAnswers[currentIndex]);
+            if(input.checked) input.closest('.option-label').classList.add('selected-ui');
+        });
+
+        const isLast = currentIndex === questions.length - 1;
+
+        if (isMockMode) {
+            document.getElementById('btn-prev').style.display = 'none';
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-submit').style.display = isLast ? 'inline-flex' : 'none';
+            
+            document.getElementById('audio-container').style.display = 'none';
+            document.getElementById('mock-msg').style.display = 'flex';
+            
+            let playPromise = audio.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(e => console.log("Trình duyệt chặn Autoplay."));
+            }
+            
+            audio.onended = () => {
+                if (!isLast) {
+                    setTimeout(() => changeQuestion(1), 1500); 
+                } else {
+                    document.getElementById('mock-msg').innerHTML = "Đã hết Audio bài thi! Hãy tự tin nộp bài.";
+                }
+            };
+        } else {
+            document.getElementById('btn-prev').style.display = (currentIndex === 0) ? 'none' : 'inline-flex';
+            document.getElementById('btn-next').style.display = isLast ? 'none' : 'inline-flex';
+            document.getElementById('btn-submit').style.display = isLast ? 'inline-flex' : 'none';
+
+            document.getElementById('audio-container').style.display = 'block';
+            document.getElementById('mock-msg').style.display = 'none';
+            audio.onended = null;
+        }
+    }
+
+    function changeQuestion(step) {
+        currentIndex += step;
+        renderQuestion();
+    }
+
+    // Modal Nộp bài
+    function promptSubmit() { document.getElementById('modal-submit-confirm').style.display = 'flex'; }
+    function cancelSubmit() { document.getElementById('modal-submit-confirm').style.display = 'none'; }
+    function confirmSubmit() {
+        document.getElementById('modal-submit-confirm').style.display = 'none';
+        showResult();
+    }
+
+    function showResult(isRestoring = false) {
+        showScreen('screen-result');
+        let correctCount = 0;
+        const listDiv = document.getElementById('result-list');
+        listDiv.innerHTML = '';
+
+        // Tính thời gian
+        let timeTakenStr = "--:--";
+        if (!isRestoring && startTime > 0) {
+            let diffSeconds = Math.floor((Date.now() - startTime) / 1000);
+            let m = Math.floor(diffSeconds / 60);
+            let s = diffSeconds % 60;
+            timeTakenStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        questions.forEach((q, idx) => {
+            const isCorrect = userAnswers[idx] === q.answer;
+            if(isCorrect) correctCount++;
+
+            const item = document.createElement('div');
+            item.className = 'result-item';
+            item.innerHTML = `
+                <div>
+                    <strong style="font-size:1.1rem; color:var(--primary-dark);">Câu ${q.id}:</strong> 
+                    Bạn chốt <b>${userAnswers[idx] || "Trống"}</b> 
+                    <span class="status-tag ${isCorrect ? 'tag-correct' : 'tag-wrong'}" style="margin-left:10px;">
+                        ${isCorrect ? '✔ ĐÚNG' : '✖ SAI'}
+                    </span>
+                </div>
+                <button class="btn btn-outline" style="padding: 8px 20px; font-size:0.9rem; border-radius:12px; font-weight:800;" onclick="openDetail(${idx})">Giải thích</button>
+            `;
+            listDiv.appendChild(item);
+        });
+
+        document.getElementById('final-score').innerText = `${correctCount}/${questions.length}`;
+        if(correctCount === questions.length) {
+            document.getElementById('score-comment').innerText = "Đỉnh của chóp! Tai nghe của bạn hoàn hảo không tì vết 🏆";
+        } else if(correctCount >= questions.length * 0.8) {
+            document.getElementById('score-comment').innerText = "Xuất sắc! Bạn đã lách qua hầu hết các bẫy khó 🚀";
+        } else {
+            document.getElementById('score-comment').innerText = "Đừng nản! Xem lại các câu sai để nhét bộ bẫy vào đầu nhé 💪";
+        }
+
+        if (!isRestoring) {
+            saveLocalHistory(correctCount, questions.length, userAnswers, timeTakenStr);
+            if(window.luuDiemTOEICLenFirebase) {
+                window.luuDiemTOEICLenFirebase(questions.length, correctCount, FIREBASE_TEST_NAME, "Listening", "Part 2", userAnswers, timeTakenStr);
+            }
+        }
+    }
+
+    function openDetail(idx) {
+        const q = questions[idx];
+        document.getElementById('modal-title').innerText = `Câu ${q.id} (Đáp án: ${q.answer})`;
+        document.getElementById('modal-audio').src = q.audio;
+        
+        document.getElementById('m-q-en').innerHTML = `Q: ${q.script_q_en}`;
+        document.getElementById('m-q-vi').innerHTML = `Dịch: ${q.script_q_vi}`;
+        document.getElementById('m-q-hint').innerHTML = `💡 <b>Định hướng nghe:</b> ${q.general_explain}`;
+
+        const optionsArea = document.getElementById('modal-options-area');
+        optionsArea.innerHTML = '';
+        
+        q.explains.forEach((explainObj, i) => {
+            const isCorr = explainObj.type === 'correct';
+            
+            const optEnText = q.script_opt_en[i]; 
+            const optViText = q.script_opt_vi[i];
+
+            const html = `
+                <div class="opt-block ${isCorr ? 'is-correct' : 'is-wrong'}">
+                    <div class="opt-header">
+                        <div class="opt-letter">${optEnText.substring(0, 3)}</div>
+                        <div class="opt-text-group">
+                            <div class="opt-en">${optEnText.substring(3).trim()}</div>
+                            <div class="opt-vi">${optViText.substring(3).trim()}</div>
+                        </div>
+                    </div>
+                    <div class="opt-body">
+                        ${explainObj.text}
+                    </div>
+                </div>
+            `;
+            optionsArea.innerHTML += html;
+        });
+
+        document.getElementById('m-vocab').innerHTML = q.vocab;
+        document.getElementById('modal-detail').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('modal-detail').style.display = 'none';
+        document.getElementById('modal-audio').pause();
+    }
+
+    // --- LỊCH SỬ LOGIC ---
+    function saveLocalHistory(score, total, answersArray, timeTakenStr) {
+        let history = JSON.parse(localStorage.getItem(LOCAL_HISTORY_KEY)) || [];
+        let now = new Date();
+        history.unshift({
+            id: Date.now().toString(),
+            date: now.toLocaleDateString('vi-VN'),
+            time: now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+            score: score,
+            total: total,
+            answers: answersArray,
+            timeTaken: timeTakenStr
+        });
+        localStorage.setItem(LOCAL_HISTORY_KEY, JSON.stringify(history));
+    }
+
+    function openHistoryModal() {
+        document.getElementById('historyOverlay').style.display = 'flex';
+        renderHistoryList();
+    }
+
+    function closeHistoryModal() { document.getElementById('historyOverlay').style.display = 'none'; }
+
+    function renderHistoryList() {
+        let listEl = document.getElementById("historyList");
+        if (window.currentUserUid && window.layLichSuTuFirebase) {
+            window.layLichSuTuFirebase().then(firebaseHistory => {
+                hienThiDanhSach(firebaseHistory, listEl, true);
+            });
+        } else {
+            let localHistory = JSON.parse(localStorage.getItem(LOCAL_HISTORY_KEY)) || [];
+            hienThiDanhSach(localHistory, listEl, false);
+        }
+    }
+
+    function hienThiDanhSach(historyArray, listEl, isCloud) {
+        if (!historyArray || historyArray.length === 0) {
+            listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px;">Trang giấy trắng! Chưa có bài làm nào. ${isCloud ? '(Cloud)' : '(Thiết bị này)'} 🐾</div>`;
+            return;
+        }
+
+        listEl.innerHTML = historyArray.map((item, index) => {
+            let soCauDung = item.correctQ !== undefined ? item.correctQ : item.score;
+            let tongSoCau = item.totalQ !== undefined ? item.totalQ : item.total;
+            let diemQuyDoi = isCloud && item.score !== undefined && item.score > tongSoCau ? ` (Quy đổi: ${item.score})` : '';
+
+            return `
+            <div class="history-item">
+                <div class="history-info">
+                    <span class="history-date">Chuyến đi số ${historyArray.length - index}: ${item.time || ''} ${item.date}</span>
+                    <span class="history-score">Đúng: ${soCauDung}/${tongSoCau} câu${diemQuyDoi} ${isCloud ? '☁️' : '📱'}</span>
+                    <span style="color: var(--text-gray); font-size: 0.85rem;">⏱ Đã luyện trong: ${item.timeTaken || '--:--'}</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-review" onclick='restoreAttempt(${JSON.stringify(item.answers || [])})'>Soi lỗi</button>
+                    <button class="btn-delete-history" onclick="deleteAttempt('${item.id}', ${isCloud})" title="Xóa">&times;</button>
+                </div>
+            </div>
+            `;
+        }).join("");
+    }
+
+    let pendingDelete = { id: null, isCloud: false };
+    function deleteAttempt(id, isCloud) {
+        pendingDelete = { id, isCloud };
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'flex';
+    }
+    function closeConfirmDelete() {
+        pendingDelete = { id: null, isCloud: false };
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+    }
+    function executeDelete() {
+        if (!pendingDelete.id) return;
+        if (pendingDelete.isCloud && window.xoaLichSuFirebase) {
+            window.xoaLichSuFirebase(pendingDelete.id).then(() => {
+                closeConfirmDelete();
+                renderHistoryList();
+            });
+        } else {
+            let history = JSON.parse(localStorage.getItem(LOCAL_HISTORY_KEY)) || [];
+            history = history.filter(h => h.id !== pendingDelete.id);
+            localStorage.setItem(LOCAL_HISTORY_KEY, JSON.stringify(history));
+            closeConfirmDelete();
+            renderHistoryList();
+        }
+    }
+
+    function restoreAttempt(answersArray) {
+        if (!answersArray || answersArray.length === 0) return;
+        userAnswers = answersArray;
+        closeHistoryModal();
+        showResult(true); 
+    }
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    function showInGameToast(msg) {
+        let toast = document.createElement("div");
+        toast.innerText = msg;
+        toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:var(--primary); color:white; padding:15px 20px; border-radius:12px; font-weight:bold; font-family:'Be Vietnam Pro',sans-serif; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0; transition:all 0.4s ease;";
+        document.body.appendChild(toast);
+        
+        setTimeout(() => { toast.style.transform = "translateY(0)"; toast.style.opacity = "1"; }, 100);
+        setTimeout(() => { toast.style.transform = "translateY(100px)"; toast.style.opacity = "0"; }, 3500);
+        setTimeout(() => { toast.remove(); }, 4000);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+        } else {
+            showInGameToast("⚠️ Bạn đang học dưới dạng Khách, lịch sử chỉ lưu trên máy hiện tại!");
+        }
+    });
+
+    function calculateToeicScore(skill, correct, total) {
+        let percentage = correct / total;
+        let maxScore = (skill === 'Listening' || skill === 'Reading') ? 495 : 200;
+        let step = (skill === 'Listening' || skill === 'Reading') ? 5 : 10;
+        let estimated = Math.round((percentage * maxScore) / step) * step;
+        if (estimated > maxScore) return maxScore;
+        if (estimated < 5 && (skill === 'Listening' || skill === 'Reading')) return 5;
+        if (estimated < 0) return 0;
+        return estimated;
+    }
+
+    window.luuDiemTOEICLenFirebase = async function(tongSoCau, soCauDung, tenBai, kyNang, tenPart, answersArray, timeTakenStr) {
+        if (!window.currentUserUid) return; 
+
+        let diemQuyDoi = calculateToeicScore(kyNang, soCauDung, tongSoCau);
+        let timestamp = Date.now();
+        let docId = window.currentUserUid + "_toeic_" + timestamp;
+        
+        try {
+            await setDoc(doc(db, "user_toeic_scores", docId), {
+                email: window.currentUserEmail || "Khách",
+                skill: kyNang,           
+                testName: tenBai,        
+                partName: tenPart,       
+                totalQ: tongSoCau,
+                correctQ: soCauDung,
+                score: diemQuyDoi,       
+                date: new Date().toLocaleDateString('vi-VN'),
+                time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+                timestamp: timestamp,
+                answers: answersArray || [],
+                timeTaken: timeTakenStr || "--"
+            });
+            showInGameToast("☁️ Tuyệt vời! Điểm đã được đồng bộ lên Mây!");
+        } catch (error) {
+            console.error("Lỗi khi lưu điểm Firebase:", error);
+            showInGameToast("❌ Úi! Lỗi lưu điểm lên máy chủ mất rồi!");
+        }
+    }
+
+    window.layLichSuTuFirebase = async function() {
+        if (!window.currentUserEmail) return [];
+        try {
+            const q = query(
+                collection(db, "user_toeic_scores"),
+                where("email", "==", window.currentUserEmail),
+                where("testName", "==", "ETS 2023 - Test 5"),
+                where("partName", "==", "Part 2")
+            );
+            const querySnapshot = await getDocs(q);
+            let history = [];
+            querySnapshot.forEach((doc) => {
+                let data = doc.data();
+                data.id = doc.id; 
+                history.push(data);
+            });
+            history.sort((a, b) => b.timestamp - a.timestamp);
+            return history;
+        } catch (error) {
+            console.error("Lỗi tải lịch sử từ Firebase:", error);
+            showInGameToast("❌ Lỗi đồng bộ dữ liệu. Đang xài tạm lịch sử trên máy.");
+            return [];
+        }
+    }
+
+    window.xoaLichSuFirebase = async function(docId) {
+        try {
+            await deleteDoc(doc(db, "user_toeic_scores", docId));
+            showInGameToast("🗑 Đã xóa lịch sử này khỏi Cloud!");
+        } catch (error) {
+            console.error("Lỗi xóa trên Firebase:", error);
+        }
+    }
+</script>
+</body>
+</html>
