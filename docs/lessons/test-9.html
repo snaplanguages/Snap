@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading Full Test 9 | SnapEnglish</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Theme Chuyên nghiệp - Xanh Hoàng Gia (Royal Blue) */
+            --primary: #2563eb; 
+            --primary-dark: #1e40af; 
+            --accent: #bfdbfe;
+            --bg-body: #eff6ff;
+            --bg-pane: #ffffff;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --border-color: #dbeafe;
+            --highlight-color: #fef08a;
+            --correct: #16a34a;
+            --wrong: #dc2626;
+            --exp-bg: #f0fdf4;
+            --header-h: 70px;
+            --footer-h: 80px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            font-size: 16px;
+        }
+
+        /* --- OVERLAY & MODAL --- */
+        #setupOverlay, .custom-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+        }
+        .setup-modal, .custom-modal {
+            background: white; padding: 35px; border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(37, 99, 235, 0.15);
+            width: 90%; max-width: 500px; text-align: center;
+            border: 2px solid var(--accent);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 90vh; overflow-y: auto;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .setup-modal h2, .custom-modal h2 { color: var(--primary-dark); font-size: 24px; margin-top: 0; font-weight: 700; }
+        .mode-btn {
+            display: block; width: 100%; padding: 14px; margin: 12px 0;
+            border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: 0.3s; font-family: inherit;
+        }
+        .mode-practice { background: #fef2f2; color: #b91c1c; border: 2px solid #fecaca; }
+        .mode-practice:hover, .mode-practice.selected { background: #ef4444; color: white; border-color: #ef4444; }
+        .mode-mock { background: var(--bg-body); color: var(--primary-dark); border: 2px solid var(--accent); }
+        .mode-mock:hover, .mode-mock.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .mode-history { background: #f8fafc; color: #475569; border: 2px solid #cbd5e1; }
+        .mode-history:hover { background: #e2e8f0; border-color: #94a3b8; color: #1e293b; }
+        
+        #practiceOptions {
+            display: none; background: #f8fafc; border: 1px dashed #cbd5e1;
+            padding: 15px; border-radius: 10px; text-align: left; margin: 15px 0;
+        }
+        .passage-cb-container { display: flex; align-items: center; margin-bottom: 8px; font-weight: 500; cursor: pointer;}
+        .passage-cb-container input { margin-right: 10px; transform: scale(1.2); cursor: pointer;}
+
+        #timeInputBox { display: none; margin: 20px 0; }
+        #timeInput { 
+            width: 90px; padding: 8px; font-size: 16px; text-align: center; 
+            border: 2px solid #cbd5e1; border-radius: 8px; font-family: inherit; outline: none;
+            color: var(--primary-dark); font-weight: bold;
+        }
+        #timeInput:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); }
+        
+        .start-btn {
+            background: var(--primary); color: white; border: none; padding: 12px 30px;
+            border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer;
+            margin-top: 15px; transition: 0.3s; display: none; box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+        .start-btn:hover { transform: translateY(-2px); }
+
+        .modal-actions { display: flex; gap: 15px; margin-top: 20px; justify-content: center; }
+        .btn-cancel, .btn-confirm {
+            padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; font-family: inherit; flex: 1; border: none;
+        }
+        .btn-cancel { background: #f1f5f9; color: #475569; border: 2px solid #cbd5e1; }
+        .btn-cancel:hover { background: #e2e8f0; }
+        .btn-confirm { background: var(--primary); color: white; box-shadow: 0 4px 0 var(--primary-dark); }
+        .btn-confirm:active { transform: translateY(4px); box-shadow: none; }
+
+        /* Lịch sử Table */
+        .table-wrapper { width: 100%; overflow-x: auto; border-radius: 10px; border: 1px solid var(--border-color); margin-top: 15px; }
+        #historyTable { width: 100%; border-collapse: collapse; min-width: 400px; background: white;}
+        #historyTable th { background: #f1f5f9; color: var(--primary-dark); padding: 12px; font-weight: 600; font-size: 14px;}
+        #historyTable td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; vertical-align: middle;}
+        #historyTable tr:hover { background: #f8fafc; }
+
+        /* --- HEADER --- */
+        header {
+            height: var(--header-h); background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; z-index: 100;
+        }
+        
+        .brand { font-size: 20px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .brand span { background: var(--primary); color: white; padding: 4px 8px; border-radius: 8px; font-size: 14px; }
+
+        .tab-container { display: flex; background: #f1f5f9; padding: 4px; border-radius: 20px; gap: 4px; overflow-x: auto;}
+        .tab-btn {
+            border: none; background: transparent; padding: 8px 18px; font-size: 15px;
+            font-family: inherit; font-weight: 600; color: var(--text-light);
+            cursor: pointer; border-radius: 15px; transition: all 0.3s; white-space: nowrap;
+        }
+        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        .controls { display: flex; gap: 15px; align-items: center; }
+        .timer-box { 
+            font-family: monospace; font-weight: 700; color: #b91c1c; 
+            background: #fef2f2; padding: 8px 15px; border-radius: 10px; font-size: 18px; border: 1px solid #fecaca;
+        }
+        .btn-submit { 
+            background: var(--primary); color: white; border: none; padding: 8px 20px; 
+            border-radius: 10px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s;
+            font-family: inherit; box-shadow: 0 3px 0 var(--primary-dark); white-space: nowrap;
+        }
+        .btn-submit:active { transform: translateY(3px); box-shadow: none; }
+
+        /* --- LAYOUT --- */
+        .container { 
+            display: flex; 
+            height: calc(100vh - var(--header-h) - var(--footer-h)); 
+            width: 100%;
+        }
+
+        .pane {
+            flex: 1; padding: 30px 40px; overflow-y: auto;
+            position: relative; scroll-behavior: smooth;
+        }
+        .pane-left { 
+            background: #fff; border-right: 2px solid var(--border-color); 
+            font-size: 16px; line-height: 1.7; text-align: justify; color: #334155;
+        }
+        .pane-right { background: #f8fafc; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- CONTENT STYLES --- */
+        .passage-title { text-align: center; color: var(--primary-dark); margin-bottom: 20px; border-bottom: 2px dashed var(--accent); padding-bottom: 12px; font-size: 24px; font-weight: 700;}
+        .paragraph { margin-bottom: 18px; }
+        .paragraph-label { color: var(--primary); font-weight: 700; font-size: 1.05em; margin-right: 5px; }
+        
+        .passage-content, .question-group { display: none; animation: fadeIn 0.3s; }
+        .passage-content.active, .question-group.active { display: block; }
+        .question-group { padding-bottom: 40px; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* EVIDENCE HIGHLIGHTS */
+        .ev-box { 
+            padding: 1px 3px; border-radius: 4px; 
+            transition: all 0.4s ease; 
+            border: 2px solid transparent;
+            background-color: transparent;
+            color: inherit;
+        }
+        .ev-box.focus-blink {
+            border-color: var(--primary-dark) !important;
+            transform: scale(1.02); 
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2) !important; 
+            background-color: var(--highlight-color) !important;
+            z-index: 10; position: relative;
+        }
+
+        /* --- QUESTIONS UI --- */
+        .question-section { padding: 20px; border: 1px solid var(--border-color); background: #fff; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
+        .instruction { color: var(--primary-dark); font-weight: 600; margin-bottom: 15px; font-size: 15px; background: var(--bg-body); padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary);}
+
+        .q-row { display: flex; align-items: baseline; margin-bottom: 15px; font-size: 15px; }
+        .q-num { font-weight: bold; min-width: 30px; color: var(--primary); }
+        .q-content { flex: 1; line-height: 1.7; }
+
+        .input-gap {
+            display: inline-block; width: 140px; height: 32px;
+            border: 2px solid #cbd5e1; border-radius: 6px; 
+            text-align: center; font-weight: 600; color: var(--primary-dark);
+            font-size: 15px; margin: 0 5px; vertical-align: middle; transition: 0.2s; font-family: inherit;
+        }
+        .input-gap:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+        select.input-select {
+            padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 6px;
+            font-size: 15px; cursor: pointer; font-weight: 500; color: var(--text-main); outline: none; margin-top: 6px; margin-right: 8px; font-family: inherit;
+        }
+        select.input-select:focus { border-color: var(--primary); }
+
+        .mcq-item { margin-bottom: 20px; }
+        .mcq-question { font-weight: 600; margin-bottom: 10px; font-size: 15px; display: flex; align-items: baseline;}
+        .mcq-option { display: block; padding: 10px; cursor: pointer; border-radius: 8px; margin-bottom: 5px; border: 1px solid transparent; transition: 0.2s; font-size: 15px;}
+        .mcq-option:hover { background: #f8fafc; border-color: #cbd5e1; }
+        .mcq-option input { margin-right: 10px; transform: scale(1.1);}
+
+        /* Bảng */
+        .q-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .q-table th { text-align: left; padding: 12px; background: #f1f5f9; color: var(--primary-dark); border-bottom: 2px solid var(--border-color); }
+        .q-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+        .q-table td.center { text-align: center; }
+
+        /* Drag and Drop UI */
+        .word-pool-container { background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: center; min-height: 80px; transition: 0.2s;}
+        .word-pool-container.drag-over { border-color: var(--primary); background: var(--bg-body); }
+        
+        .draggable-word {
+            display: inline-block; padding: 8px 16px; margin: 6px; 
+            background: white; border: 2px solid #cbd5e1; border-radius: 8px; 
+            font-weight: 600; color: var(--primary-dark); cursor: grab; user-select: none;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s;
+        }
+        .draggable-word:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(37, 99, 235, 0.15); }
+        .draggable-word.dragging { opacity: 0.4; transform: scale(0.95); }
+        .draggable-word.selected-word { border-color: var(--primary); background: var(--primary); color: white; box-shadow: 0 0 0 4px rgba(37,99,235,0.2); transform: scale(1.05); }
+
+        .drop-zone {
+            display: inline-block; width: 200px; height: 38px;
+            border: 2px dashed #94a3b8; border-radius: 8px; 
+            vertical-align: middle; text-align: center; background: #f1f5f9; 
+            transition: 0.2s; position: relative; margin: 0 5px; cursor: pointer;
+        }
+        .drop-zone.drag-over { border-color: var(--primary); background: var(--bg-body); transform: scale(1.05); }
+        .drop-zone .draggable-word { margin: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; box-shadow: none; border: 2px solid var(--primary); background: var(--bg-body); color: var(--primary-dark); border-radius: 6px; padding: 0;}
+        .drop-zone .draggable-word:hover { transform: none; box-shadow: none; }
+
+        /* --- EXPLANATION BOX --- */
+        .exp-box {
+            display: none; background: #fff;
+            border: 2px solid var(--border-color); border-left: 5px solid var(--primary);
+            padding: 15px; margin-top: 10px; margin-bottom: 15px; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.08); 
+            animation: slideUp 0.3s ease-out;
+        }
+        .exp-box.show { display: block; }
+        .exp-title { 
+            font-weight: 700; color: var(--primary-dark); font-size: 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; margin-bottom: 10px;
+        }
+        .locate-btn {
+            background: var(--bg-body); border: 1px solid var(--accent); color: var(--primary-dark);
+            padding: 4px 10px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; font-family: inherit;
+        }
+        .locate-btn:hover { background: var(--primary); color: white; }
+        
+        .exp-section { margin-bottom: 10px; font-size: 15px; line-height: 1.5; color: #334155; }
+        .exp-label { font-weight: 600; color: var(--primary-dark); display: inline-block; white-space: nowrap; margin-bottom: 5px; }
+        .exp-translate { background: #f8fafc; padding: 8px; border-radius: 4px; border-left: 3px solid #cbd5e1; font-style: italic; margin-top: 4px; }
+        .exp-keywords { background: #fffbeb; padding: 8px; border-radius: 4px; border: 1px dashed #fde68a; margin-top: 4px;}
+        .exp-detail { margin-top: 4px; }
+        .exp-keyword-match { color: #b45309; font-weight: 600; }
+
+        /* --- FOOTER --- */
+        footer {
+            height: var(--footer-h); background: #fff; border-top: 1px solid var(--border-color);
+            display: flex; align-items: center; padding: 0 20px; gap: 15px; z-index: 100;
+        }
+        .palette-scroller { flex: 1; display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; align-items: center;}
+        .nav-dot {
+            min-width: 36px; height: 36px; border: 2px solid #e2e8f0; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold;
+            cursor: pointer; color: #94a3b8; background: white; transition: 0.2s; flex-shrink: 0;
+            display: none; /* Ẩn mặc định, JS sẽ bật lên theo passage được chọn */
+        }
+        .nav-dot.done { background: var(--bg-body); color: var(--primary-dark); border-color: var(--accent); }
+        .nav-dot:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* HIGHLIGHT MENU */
+        .highlight { background-color: var(--highlight-color); cursor: pointer; border-radius: 2px; padding: 1px 0;}
+        #ctxMenu {
+            position: absolute; display: none; background: white; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12); border-radius: 8px; 
+            font-size: 14px; z-index: 99999; border: 1px solid #eee; min-width: 140px; overflow: hidden;
+        }
+        #ctxMenu button {
+            background: none; border: none; padding: 10px 15px; 
+            width: 100%; text-align: left; cursor: pointer; display: block; font-weight: 600; color: #444; font-family: inherit;
+        }
+        #ctxMenu button:hover { background: #f8fafc; color: var(--primary-dark); }
+        #ctxMenu button.delete:hover { background: #fef2f2; color: var(--wrong); }
+
+        .feedback { display: inline-block; font-weight: bold; font-size: 15px; margin-left: 8px; }
+        .correct { color: var(--correct); }
+        .wrong { color: var(--wrong); }
+
+        @media (max-width: 768px) {
+            .container { flex-direction: column; }
+            .pane { height: 50%; padding: 20px; }
+            .pane-left { border-right: none; border-bottom: 2px solid var(--border-color); }
+            header { padding: 10px; height: auto; flex-wrap: wrap; gap: 10px;}
+            .tab-container { width: 100%; order: 3; justify-content: space-between;}
+            .controls { order: 2; }
+            .setup-modal { padding: 25px 20px; }
+            .input-gap, .drop-zone { width: 100%; margin: 5px 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="setupOverlay">
+    <div class="setup-modal" id="setupContent">
+        <h2>Chào mừng đến với Reading Library ✨</h2>
+        <p style="font-size: 15px; color: #64748b; margin-bottom: 20px;">Hôm nay bạn muốn rèn luyện theo cách nào?</p>
+        
+        <button class="mode-btn mode-practice" onclick="selectMode('practice')">🎯 Luyện Tập (Tùy chọn Passage)</button>
+        <button class="mode-btn mode-mock" onclick="selectMode('mock')">🏆 Thi Thử (Full Test 60 phút)</button>
+        <button class="mode-btn mode-history" onclick="openHistoryTab()">🕒 Xem Lịch Sử</button>
+        
+        <div id="practiceOptions">
+            <label style="font-weight: bold; margin-bottom: 12px; display: block; color: var(--primary-dark);">📚 Chọn phần muốn làm:</label>
+            <label class="passage-cb-container"><input type="checkbox" class="passage-cb" value="1" checked onchange="updatePracticeTime()"> Passage 1 (13 câu)</label>
+            <label class="passage-cb-container"><input type="checkbox" class="passage-cb" value="2" checked onchange="updatePracticeTime()"> Passage 2 (13 câu)</label>
+            <label class="passage-cb-container"><input type="checkbox" class="passage-cb" value="3" checked onchange="updatePracticeTime()"> Passage 3 (14 câu)</label>
+            <div style="font-size: 13px; color: #64748b; margin-top: 10px; font-style: italic;">
+                * Điểm sẽ được hệ thống phân tách và lưu riêng từng Passage để theo dõi trên Biểu đồ Tracking.
+            </div>
+        </div>
+
+        <div id="timeInputBox">
+            <label style="font-size: 15px; font-weight: bold; color: #475569;">⏱ Cài đặt thời gian (phút): </label>
+            <input type="number" id="timeInput" value="60" min="5" max="180">
+        </div>
+        
+        <button class="start-btn" id="startBtn" onclick="askReady()">Bắt đầu (OK)</button>
+    </div>
+
+    <div class="setup-modal" id="historyContent" style="display: none;">
+        <h2>Lịch Sử Làm Bài</h2>
+        <div id="historyLoading" style="text-align: center; color: var(--text-light); margin: 15px 0;">Đang tải dữ liệu...</div>
+        
+        <div class="table-wrapper">
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Ngày làm</th>
+                        <th>Phần thi</th>
+                        <th>Kết quả</th>
+                        <th>Band</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn-cancel" style="width: auto;" onclick="backToMenu()">Quay lại Menu</button>
+        </div>
+    </div>
+</div>
+
+<div id="startConfirmOverlay" class="custom-overlay" style="display: none;">
+    <div class="custom-modal">
+        <h2>Xác nhận bắt đầu</h2>
+        <p id="startConfirmMsg" style="font-size: 15px; color: #475569; margin-bottom: 15px; white-space: pre-line;"></p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeStartConfirmModal()">Huỷ</button>
+            <button class="btn-confirm" onclick="startTestActual()">OK</button>
+        </div>
+    </div>
+</div>
+
+<header>
+    <div class="brand">
+        <span>SnapEnglish</span> Test 9
+    </div>
+    
+    <div class="tab-container" id="tab-container">
+        <button class="tab-btn active" id="tab-btn-1" onclick="switchTab(1)">Passage 1</button>
+        <button class="tab-btn" id="tab-btn-2" onclick="switchTab(2)">Passage 2</button>
+        <button class="tab-btn" id="tab-btn-3" onclick="switchTab(3)">Passage 3</button>
+    </div>
+
+    <div class="controls">
+        <div class="timer-box">⏱ <span id="timer">00:00</span></div>
+        <button class="btn-submit" id="btnSubmitMain" onclick="submitTest(true)">NỘP BÀI</button>
+    </div>
+</header>
+
+<div class="container" id="mainContainer">
+    
+    <div class="pane pane-left" id="passagePane">
+        <div id="text-p1" class="passage-content active">
+            <h2 class="passage-title">The Lake Erie Canal</h2>
+            
+            <p class="paragraph">Begun in 1817 and opened in its entirety in 1825, the Erie Canal is considered by some to be the engineering marvel of the nineteenth century. When the federal government concluded that the project was too ambitious to undertake, the State of New York took on the task of carving 363 miles of canal through the wilderness, with nothing but the muscle power of men and horses. Once derided as 'Clinton's Folly' for the Governor who <span id="ev-1-f" class="ev-box">lent his vision and political muscle to the project</span>, the Erie Canal experienced unparalleled success almost overnight. The iconic waterway established settlement patterns for most of the United States during the nineteenth century, <span id="ev-1-b" class="ev-box">made New York the financial capital of the world</span>, provided a critical supply line that <span id="ev-1-d" class="ev-box">helped the North win the Civil War</span>, and precipitated a series of social and economic changes throughout a young America.</p>
+
+            <p class="paragraph">Explorers had long searched for a water route to the west. Throughout the eighteenth and nineteenth centuries, the lack of an efficient and safe transportation network kept populations and trade largely confined to coastal areas. At the beginning of the nineteenth century, the Allegheny Mountains were the Western Frontier. The Northwest Territories that would later become Illinois, Indiana, Michigan and Ohio were rich in timber, minerals, and <span id="ev-10" class="ev-box">fertile land</span> for farming, but it took weeks to reach these things. Travellers were faced with rutted turnpike roads that baked to hardness in the summer sun. In the winter, the roads dissolved into mud.</p>
+
+            <p class="paragraph">An imprisoned <span id="ev-11" class="ev-box">flour</span> merchant named Jesse Hawley envisioned a better way: a canal from Buffalo on the eastern shore of Lake Erie to Albany on the upper Hudson River, a distance of almost 400 miles. Long a proponent of efficient water transportation, Hawley had gone bankrupt trying to move his products to market. Hawley's ideas caught the interest of Assemblyman Joshua Forman, who submitted the first state legislation related to the Erie Canal in 1808, calling for a series of surveys to be made examining the practicality of a water route between Lake Erie and the Hudson River. In 1810, Thomas Eddy, and State Senator Jonas Platt, hoping to get plans for the canal moving forward, approached influential Senator De Witt Clinton, former mayor of New York City, to enlist his support. Though Clinton had been recruited to the canal effort by Eddy and Platt, he quickly became one of the canal's most active supporters and went on to <span id="ev-1-f2" class="ev-box">successfully tie his very political fate to its success</span>.</p>
+
+            <p class="paragraph">On April 15th, 1817, the New York State Legislature finally approved construction of the Erie Canal. The Legislature authorised $7 million for construction of the 363-mile long waterway, which was to be 40 feet wide and eighteen feet deep. Construction began on July 4th 1817 and <span id="ev-12" class="ev-box">took eight years</span>.</p>
+
+            <p class="paragraph">Like most canals, the Erie Canal depended on a lock system in order to compensate for changes in water levels over distance. A lock is a section of canal or river that is closed off to control the water level, so that boats can be raised or lowered as they pass through it. Locks have two sets of <span id="ev-7" class="ev-box">sluice gates</span> (top and bottom), which seal off and then open the entrances to the <span id="ev-8" class="ev-box">chamber</span>, which is where a boat waits while the movement up or down takes place. In addition, locks also have <span id="ev-9" class="ev-box">valves</span> at the bottom of the sluice gates and it is by opening these valves that water is allowed into and out of the chamber to raise or lower the water level, and hence the boat.</p>
+
+            <p class="paragraph">The effect of the Erie Canal was both immediate and dramatic, and settlers poured west. The explosion of trade prophesied by Governor Clinton began, spurred by <span id="ev-1-h" class="ev-box">freight rates from Buffalo to New York of $10 per ton by canal, compared with $100 per ton by road</span>. In 1829, there were 3,640 bushels of wheat transported down the canal from Buffalo. By 1837, this figure had increased to 500,000 bushels and, four years later, it reached one million. In nine years, <span id="ev-13" class="ev-box">canal tolls</span> more than recouped the entire cost of construction. Within 15 years of the canal's opening, New York was the busiest port in America, moving tonnages greater than Boston, Baltimore and New Orleans combined. Today, it can still be seen that every major city in New York State falls along the trade route established by the Erie Canal and <span id="ev-1-i" class="ev-box">nearly 80 per cent of upstate New York's inhabitants live within 25 miles of the Erie Canal</span>.</p>
+
+            <p class="paragraph">The completion of the Erie Canal spurred the first great westward movement of American settlers, gave access to the resources west of the Appalachians and made New York the preeminent commercial city in the United States. At one time, more than 50,000 people depended on the Erie Canal for their livelihood. From its inception, the Erie Canal helped form a whole new culture revolving around canal life. For those who travelled along the canal in packet boats or passenger vessels, the canal was an exciting place. Gambling and entertainment were frequent pastimes, and often families would meet each year at the same locations to share stories and adventures. Today, the canal has returned to its former glory and is <span id="ev-1-k" class="ev-box">filled with pleasure boats, fishermen, holidaymakers and cyclists</span> riding the former towpaths where mules once trod. The excitement of the past is alive and well.</p>
+        </div>
+
+        <div id="text-p2" class="passage-content">
+            <h2 class="passage-title">The Story of Opium</h2>
+            
+            <p class="paragraph"><span class="paragraph-label">Paragraph A</span>
+            Opium is a substance that is derived by collecting and later drying the milky juice that comes from the seed pods of the poppy plant. The substance can vary in colour and may be yellow or could range all the way to a very dark brown colour. Opium has a very bitter taste that is comparable to other plants from similar families and a <span id="ev-21" class="ev-box">distinct odour that is clearly identifiable</span>. The primary component of opium is twelve per cent morphine, which is an alkaloid that is often processed chemically to produce illegal drugs, such as heroin. Codeine and other nonnarcotic alkaloids are also found in the latex that is derived from the opium poppy plant.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph B</span>
+            The history of opium dates back as far as the Neolithic and ancient times, when the drug was widely used in anaesthesia, as well as for ritualistic purposes. In ancient Egypt, opium was used as an <span id="ev-22" class="ev-box">analgesic</span> and the Indians as well as the Romans both used opium during surgical procedures. Throughout the American Civil War, opium and various derivatives of opium were used. Morphine, opiods and synthetic opiates are all derived or come directly from the opium poppy, even in today's medical use. While the medical world has evolved greatly and has manipulated opium to meet the needs of patients, the most raw form of opium, morphine, continues to be one of the most widely used analgesic drugs, even today.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph C</span>
+            Opium use has many long- and short-term consequences that can be harmful to the body. Initially, the euphoric state that is caused by the drug can be relaxing and comforting, but long-term use of opium can lead to addiction and physical dependence. Many of the harmful consequences of using opium are related to the damage caused to the lungs from smoking the drug or to the consequences that are caused by derivatives of the drug. For many, the harmful consequences of opium will not present themselves until many years of use. However, for some, <span id="ev-23" class="ev-box">the effects of opium use are dangerous almost immediately</span> and an overdose can lead to a risk of death.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph D</span>
+            Today, heroin's long journey to final use begins with the planting of opium poppy seeds. Opium is grown mainly by impoverished farmers on small plots in remote regions of the world. It flourishes in dry, warm climates and the vast majority of opium poppies are grown in a narrow, 4,500-mile stretch of mountains extending across central Asia from Turkey through Pakistan and Burma. Recently, opium has been grown in Latin America, notably Colombia and Mexico. The farmer takes his crop of opium to the nearest village, where he will sell it to the dealer who offers him the best price.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph E</span>
+            Legal growing of opium for medicinal use currently takes place in India, Turkey, and Australia. Two thousand tons of opium are produced annually and this supplies the world with the raw material needed to make medicinal products. Traditionally, opium was obtained from the latex of the poppy plant by scoring the seed pods by hand and allowing the latex to leak out and dry up. The sticky yellowish/brown residue is then scraped off and harvested for use. Today, modern methods of opium harvest include processing the mature poppy plant by machine in order to get the latex out of the flowering plant. Overall, opium production has changed very little over the years, however, <span id="ev-24" class="ev-box">selective breeding</span> of the plant has led to an increase in the content of the phenanthrene alkaloids morphine, codeine and thebaine. Currently, there are three main sources for illegal opium: Burma, Afghanistan, and Colombia. Opium and heroin are ideal trade products: they are in great demand, are very profitable to produce, and the products take up little space. With modern transportation, opium and heroin can be moved from one country to another within days or a few weeks. Both drugs have a long and stable shelf life, allowing the products to be stored for long periods of time.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph F</span>
+            Opium was used for recreational purposes in China during the fifteenth century and on through the seventeenth century. It was nearly 300 years before the <span id="ev-25" class="ev-box">Chinese</span> first realised that smoking opium was actually dangerous and could lead to physical dependence. In 1909, the International Opium Commission was formed to help regulate the shipping, sale and use of opium due to the dangers that were now widely known pertaining to the regular use of the drug. At this time, opium was first being purified into morphine and heroin, which are both highly potent drugs that have proved to be very much more dangerous than the raw opium itself. Recreational use of these drugs is now illegal in most countries around the world.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph G</span>
+            In the early days, people did not worry too much about the physical dependence that opium and its derivatives created. Today, the dangers are well recognised and there are a variety of ways to help people who have fallen victim to it. Most of the time, inpatient or residential treatment will be the basis for recovery. These programs will utilise <span id="ev-26" class="ev-box">counselling</span> in both individual and group sessions to provide a foundation for success in recovery. Following the counselling in an inpatient treatment facility, those in recovery will continue treatment in an outpatient facility that provides similar counselling and therapy in a less supervised environment.</p>
+        </div>
+
+        <div id="text-p3" class="passage-content">
+            <h2 class="passage-title">Video Games and Violence</h2>
+            
+            <p class="paragraph">For quite some time now, video games that involve significant amounts of violence have been blamed for growing numbers of violence by young people, the demographic <span id="ev-27" class="ev-box">most likely</span> to play these games. Debate about this has even reached the courts, with both sides of the argument claiming that the scientific literature supports their opinions. Some experts involved have proclaimed that the debate is scientifically settled and that only people holding personal concerns and biases oppose these established truths. Scientifically, two competing social theories have been formulated about the potential effects of video game violence. The first is that video games increase violence because they teach players how to be violent and reinforce violent tendencies. The second theory is that video games have a possibly beneficial effect, because they provide a socially acceptable outlet for the release of aggression and thereby promote better mental health.</p>
+
+            <p class="paragraph">Articles reviewing the effects of video games on general populations have found links between playing violent video games and changes in behaviour, and/or thought process, with some finding that people who played realistic violent games for 45 minutes had a greater increase in violent and aggressive feelings than persons who played unrealistic violent video games or non-violent video games for the same period. What seems clear though is that certain populations are more at risk and/or are more likely to play violent video games than others. Studies suggest that at-risk individuals are <span id="ev-29" class="ev-box">usually male</span>, have pre-existing personality disorders or traits, for example a conduct disorder, have pre-existing mental health conditions, have had difficult or traumatic upbringings, and are insecure with poor self-esteem. Children with attention deficit disorder were also seen to be at a higher risk of showing addictive behaviour to violent video games and that violent video games might be a significant risk variable for aggressive behaviour in persons who already have aggressive personality traits. There are, of course, plenty of other groups of people (probably the majority of users) who play and enjoy video games, with or without violence, that have no character disorders at all. Another recent key report which relied on parents' self-report of their children's video gameplaying behaviours suggests that spending a large amount of time playing violent video games was <span id="ev-30" class="ev-box">correlated with troublesome behaviour and poor academic achievement</span>. The same study also indicated that children who played more educational games had more positive outcomes.</p>
+
+            <p class="paragraph">What is interesting is that the comic book debate of the 1950's is eerily similar when compared to the current debate about the effects of video games on children. In 1954, the US Senate Subcommittee on Juvenile Delinquency held hearings on the effects of comic books on America's youth. The primary focus of the Senate hearings was 'crime and horror' comic books, some of which <span id="ev-32" class="ev-box">graphically showed horrific images, such as dismembered bodies</span>. Concerns were voiced that these comics would lead to a decline in public morals, an increase in violence and aggression, an increase in general lawlessness, and societal disrespect and deterioration. Medical and social science experts became involved in the debate, writing articles in reputable journals. Many of the concerns that dominate the current video game debate were also expressed and it could show the frequently experienced perception that <span id="ev-33" class="ev-box">violent behaviour is always more prevalent in the present than in the past and that people just search for a scapegoat on which to blame it</span>.</p>
+
+            <p class="paragraph">Although many articles have suggested a connection between violent video games and aggression, several studies have found no such relationship. One study in fact showed that non-gamers and excessive gamers both had lower self-reported <span id="ev-34" class="ev-box">mental wellness scores</span> than low to moderate gamers. This finding suggests that excessive playing may be detrimental, but that there are some protective and non-harmful consequences to playing in moderation. This finding is in line with social theory, which suggests that video games, like sports, may provide an outlet for individuals to work through <span id="ev-35" class="ev-box">aggression</span> and, therefore, have better mental functioning and overall lower levels of aggression. The same study pointed to the positive attributes of violent video game playing, such as improved visual-spatial coordination, increased peripheral attention, and increased <span id="ev-36" class="ev-box">decision-making capabilities</span>. People who play a lot of video games also generally have better overall computer skills than people who do not.</p>
+
+            <p class="paragraph">Another study examining the multivariate risk issues for youth violence showed that the most common positive predictors of youth violence were delinquent peer influences, antisocial personality traits, depression, and parents or guardians who use psychological abuse in family relationships. The factors that were <span id="ev-37" class="ev-box">not found to be predictive</span> of youth violence included <span id="ev-37b" class="ev-box">neighbourhood quality</span>, parental use of domestic physical violence in intimate relationships, and exposure to violent television or video games.</p>
+
+            <p class="paragraph">A recent neurological study provided further evidence that video games do not increase violent behaviour by users. The study examined whether there was a change in <span id="ev-38" class="ev-box">brain imaging</span> that suggested a loss of distinction between virtual and actual violence in players of violent video games compared with controls. What was found was that the ability to differentiate automatically between real and virtual violence was not diminished by a long-term history of violent video game play, and nor were gamers' neural responses to real violence subject to <span id="ev-39" class="ev-box">desensitisation processes</span>. This would indicate that video games do not cause people to lose their grip on what is real in comparison with what is fantasy. Many questions are raised by the split nature of the scientific literature regarding violence and video games and it should also be remembered that a correlation does not prove a causation. Stakeholders need to <span id="ev-40" class="ev-box">examine the current video game debate in order to decide how to sensibly influence social policy</span>.</p>
+        </div>
+    </div>
+
+    <div class="pane pane-right" id="questionPane">
+        
+        <div id="q-group-1" class="question-group active">
+            <div class="question-section">
+                <div class="instruction">Questions 1-6: What SIX of the following were effects of the Lake Erie Canal?<br>
+                <span style="font-weight: normal; font-size: 14px; color: #64748b;">(Choose SIX letters, A-K. In any order.)</span></div>
+                
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed #cbd5e1; line-height: 1.8;">
+                    <strong>A.</strong> It brought building materials to expand the city of Chicago.<br>
+                    <strong>B.</strong> It established the financial dominance of New York City.<br>
+                    <strong>C.</strong> It generated taxes that stimulated the whole region.<br>
+                    <strong>D.</strong> It helped the north win the US Civil War.<br>
+                    <strong>E.</strong> It was used for training troops in World War One.<br>
+                    <strong>F.</strong> It helped boost a politician's career.<br>
+                    <strong>G.</strong> It stimulated the shipbuilding industry.<br>
+                    <strong>H.</strong> It led to cheaper distribution for goods.<br>
+                    <strong>I.</strong> It influenced New York State's population distribution.<br>
+                    <strong>J.</strong> It allowed damaging species of fish to travel to different ecosystems.<br>
+                    <strong>K.</strong> It became a boost for tourism.<br>
+                </div>
+
+                <div style="display:flex; flex-wrap:wrap; gap: 15px; justify-content: space-around;">
+                    <script>
+                        for(let i=1; i<=6; i++) {
+                            document.write(`
+                            <div id="q-row-${i}"><b>${i}.</b> 
+                                <select class="input-select" id="ans-${i}" onchange="updateNav(${i})">
+                                    <option value="">-</option>
+                                    <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+                                    <option value="D">D</option><option value="E">E</option><option value="F">F</option>
+                                    <option value="G">G</option><option value="H">H</option><option value="I">I</option>
+                                    <option value="J">J</option><option value="K">K</option>
+                                </select><span id="fb-${i}" class="feedback"></span>
+                            </div>
+                            `);
+                        }
+                    </script>
+                </div>
+                <div id="exp-1"></div><div id="exp-2"></div><div id="exp-3"></div><div id="exp-4"></div><div id="exp-5"></div><div id="exp-6"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 7-9: Label the diagram below. Write <strong>NO MORE THAN TWO WORDS</strong> from the text for each answer.</div>
+                
+                <div style="max-width: 600px; margin: 30px auto; padding: 20px; background: #fff; border: 2px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); font-family: sans-serif; position: relative;">
+                    <h3 style="text-align: center; color: var(--primary-dark); margin-top: 0;">A Canal Lock</h3>
+                    <svg viewBox="0 0 600 350" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#1e293b" />
+                            </marker>
+                        </defs>
+                        <rect x="0" y="100" width="130" height="200" fill="#bfdbfe" />
+                        <rect x="140" y="150" width="320" height="150" fill="#bfdbfe" />
+                        <rect x="470" y="220" width="130" height="80" fill="#bfdbfe" />
+                        
+                        <text x="10" y="90" font-size="14" fill="#64748b" font-weight="bold">Water level</text>
+                        <line x1="10" y1="100" x2="80" y2="100" stroke="#64748b" stroke-dasharray="4" />
+                        
+                        <text x="510" y="210" font-size="14" fill="#64748b" font-weight="bold">Water level</text>
+                        <line x1="510" y1="220" x2="580" y2="220" stroke="#64748b" stroke-dasharray="4" />
+
+                        <path d="M 0 100 L 130 100 L 130 300 L 470 300 L 470 220 L 600 220" fill="none" stroke="#1e3a8a" stroke-width="4"/>
+                        <path d="M 0 310 L 600 310" stroke="#cbd5e1" stroke-width="20" /> <rect x="130" y="30" width="10" height="270" fill="#475569" />
+                        <rect x="460" y="120" width="10" height="180" fill="#475569" />
+
+                        <g transform="translate(180, 100)">
+                            <path d="M 0 50 L 220 50 L 200 90 L 20 90 Z" fill="#334155" />
+                            <rect x="40" y="20" width="60" height="30" fill="#94a3b8" />
+                            <rect x="60" y="0" width="20" height="20" fill="#94a3b8" />
+                        </g>
+
+                        <line x1="440" y1="180" x2="440" y2="100" stroke="#1e293b" stroke-width="3" marker-end="url(#arrowhead2)" />
+
+                        <line x1="300" y1="40" x2="140" y2="40" stroke="#1e293b" stroke-width="1.5" marker-end="url(#arrowhead2)" />
+                        <line x1="300" y1="40" x2="465" y2="120" stroke="#1e293b" stroke-width="1.5" marker-end="url(#arrowhead2)" />
+                        <foreignObject x="250" y="5" width="160" height="40">
+                            <div xmlns="http://www.w3.org/1999/xhtml" style="text-align: center;">
+                                <b>(7)</b> <input type="text" class="input-gap" id="ans-7" oninput="updateNav(7)" autocomplete="off" style="width: 100px; height: 25px; margin:0;" />
+                            </div>
+                        </foreignObject>
+
+                        <line x1="280" y1="280" x2="160" y2="250" stroke="#1e293b" stroke-width="1.5" marker-end="url(#arrowhead2)" />
+                        <foreignObject x="220" y="270" width="180" height="40">
+                            <div xmlns="http://www.w3.org/1999/xhtml" style="text-align: center; color: #1e293b; font-size: 14px;">
+                                <b>(8)</b> <input type="text" class="input-gap" id="ans-8" oninput="updateNav(8)" autocomplete="off" style="width: 90px; height: 25px; margin:0;" /> of the lock
+                            </div>
+                        </foreignObject>
+
+                        <circle cx="135" cy="285" r="8" fill="#e2e8f0" stroke="#1e293b" stroke-width="2" />
+                        <circle cx="465" cy="285" r="8" fill="#e2e8f0" stroke="#1e293b" stroke-width="2" />
+                        
+                        <line x1="300" y1="330" x2="140" y2="295" stroke="#1e293b" stroke-width="1.5" marker-end="url(#arrowhead2)" />
+                        <line x1="300" y1="330" x2="460" y2="295" stroke="#1e293b" stroke-width="1.5" marker-end="url(#arrowhead2)" />
+                        <foreignObject x="250" y="315" width="120" height="40">
+                            <div xmlns="http://www.w3.org/1999/xhtml" style="text-align: center;">
+                                <b>(9)</b> <input type="text" class="input-gap" id="ans-9" oninput="updateNav(9)" autocomplete="off" style="width: 80px; height: 25px; margin:0;" />
+                            </div>
+                        </foreignObject>
+                    </svg>
+                    <div id="fb-7" class="feedback" style="position:absolute; top:25px; left:50%; transform:translateX(-50%);"></div>
+                    <div id="fb-8" class="feedback" style="position:absolute; top:290px; left:40%;"></div>
+                    <div id="fb-9" class="feedback" style="position:absolute; bottom:5px; left:48%;"></div>
+                </div>
+                <div id="exp-7"></div><div id="exp-8"></div><div id="exp-9"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 10-13: Answer the questions below. Write <strong>NO MORE THAN TWO WORDS AND/OR A NUMBER</strong> from the text for each answer.</div>
+                
+                <div class="q-row" id="q-row-10">
+                    <span class="q-num">10.</span>
+                    <span class="q-content">What was the beneficial factor for productive agriculture in the Northwest Territories at the beginning of the nineteenth century?<br>
+                    <input type="text" class="input-gap" id="ans-10" oninput="updateNav(10)" autocomplete="off"> <span id="fb-10" class="feedback"></span></span>
+                </div><div id="exp-10"></div>
+
+                <div class="q-row" id="q-row-11">
+                    <span class="q-num">11.</span>
+                    <span class="q-content">In what commodity did the person who first came up with the idea of the Erie Canal trade?<br>
+                    <input type="text" class="input-gap" id="ans-11" oninput="updateNav(11)" autocomplete="off"> <span id="fb-11" class="feedback"></span></span>
+                </div><div id="exp-11"></div>
+
+                <div class="q-row" id="q-row-12">
+                    <span class="q-num">12.</span>
+                    <span class="q-content">How long did it take to build the Erie Canal?<br>
+                    <input type="text" class="input-gap" id="ans-12" oninput="updateNav(12)" autocomplete="off"> <span id="fb-12" class="feedback"></span></span>
+                </div><div id="exp-12"></div>
+
+                <div class="q-row" id="q-row-13">
+                    <span class="q-num">13.</span>
+                    <span class="q-content">How were the Erie Canal's building costs recovered?<br>
+                    <input type="text" class="input-gap" id="ans-13" oninput="updateNav(13)" autocomplete="off"> <span id="fb-13" class="feedback"></span></span>
+                </div><div id="exp-13"></div>
+            </div>
+        </div>
+
+        <div id="q-group-2" class="question-group">
+            
+            <div class="question-section">
+                <div class="instruction">Questions 14-20: The text has 7 paragraphs (A-G). Choose the correct heading for each paragraph from the list of headings below.</div>
+                
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed #cbd5e1;">
+                    <strong>List of Headings</strong><br>
+                    <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
+                        <div style="flex: 1 1 40%;"><strong>i.</strong> From Seed to Sale</div>
+                        <div style="flex: 1 1 40%;"><strong>ii.</strong> Government Agencies Chase Criminals</div>
+                        <div style="flex: 1 1 40%;"><strong>iii.</strong> Illegal Use</div>
+                        <div style="flex: 1 1 40%;"><strong>iv.</strong> Origins</div>
+                        <div style="flex: 1 1 40%;"><strong>v.</strong> Modern Production</div>
+                        <div style="flex: 1 1 40%;"><strong>vi.</strong> Effects</div>
+                        <div style="flex: 1 1 40%;"><strong>vii.</strong> High Profits Cause Conflicts</div>
+                        <div style="flex: 1 1 40%;"><strong>viii.</strong> Treating Addiction</div>
+                        <div style="flex: 1 1 40%;"><strong>ix.</strong> What is it?</div>
+                        <div style="flex: 1 1 40%;"><strong>x.</strong> Famous Users</div>
+                    </div>
+                </div>
+
+                <table class="q-table">
+                    <tr>
+                        <th style="width: 40%;">Paragraph</th>
+                        <th style="width: 60%; text-align: center;">Your Answer</th>
+                    </tr>
+                    <script>
+                        for(let i=14; i<=20; i++) {
+                            document.write(`
+                            <tr id="q-row-${i}">
+                                <td><span class="q-num">${i}.</span> Paragraph ${String.fromCharCode(65+(i-14))}</td>
+                                <td class="center">
+                                    <select class="input-select" id="ans-${i}" onchange="updateNav(${i})" style="margin:0; width: 140px;">
+                                        <option value="">Select...</option>
+                                        <option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option>
+                                        <option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option>
+                                        <option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option>
+                                        <option value="x">x</option>
+                                    </select>
+                                    <span id="fb-${i}" class="feedback" style="display:block; margin-top:5px; margin-left:0;"></span>
+                                </td>
+                            </tr>
+                            `);
+                        }
+                    </script>
+                </table>
+                <div id="exp-14"></div><div id="exp-15"></div><div id="exp-16"></div><div id="exp-17"></div><div id="exp-18"></div><div id="exp-19"></div><div id="exp-20"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 21-23: Choose the correct letter A, B, C or D.</div>
+                
+                <div class="mcq-item" id="q-row-21">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">21.</span> Opium can be easily recognised by</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-21" value="A" onchange="updateNav(21)"> A. its smell.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-21" value="B" onchange="updateNav(21)"> B. its colour.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-21" value="C" onchange="updateNav(21)"> C. its taste.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-21" value="D" onchange="updateNav(21)"> D. its packaging.</label>
+                    <span id="fb-21" class="feedback"></span>
+                    <div id="exp-21"></div>
+                </div>
+
+                <div class="mcq-item" id="q-row-22">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">22.</span> Opium has been used throughout history as</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-22" value="A" onchange="updateNav(22)"> A. a drug to induce childbirth.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-22" value="B" onchange="updateNav(22)"> B. a poison.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-22" value="C" onchange="updateNav(22)"> C. a pain reliever.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-22" value="D" onchange="updateNav(22)"> D. a currency.</label>
+                    <span id="fb-22" class="feedback"></span>
+                    <div id="exp-22"></div>
+                </div>
+
+                <div class="mcq-item" id="q-row-23">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">23.</span> The dangerous properties of opium are</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-23" value="A" onchange="updateNav(23)"> A. always apparent quite a long time after the first use.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-23" value="B" onchange="updateNav(23)"> B. not often experienced by users.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-23" value="C" onchange="updateNav(23)"> C. never experienced if opium is used in moderation.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-23" value="D" onchange="updateNav(23)"> D. sometimes experienced straight away in some users.</label>
+                    <span id="fb-23" class="feedback"></span>
+                    <div id="exp-23"></div>
+                </div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 24-26: Complete the sentences below. Write <strong>NO MORE THAN TWO WORDS</strong> from the text for each answer.</div>
+                
+                <div class="q-row" id="q-row-24">
+                    <span class="q-num">24.</span>
+                    <span class="q-content">The medicinal content of opium has been increased by the <input type="text" class="input-gap" id="ans-24" oninput="updateNav(24)" autocomplete="off"> <span id="fb-24" class="feedback"></span> of the opium poppy.</span>
+                </div><div id="exp-24"></div>
+
+                <div class="q-row" id="q-row-25">
+                    <span class="q-num">25.</span>
+                    <span class="q-content">It was the <input type="text" class="input-gap" id="ans-25" oninput="updateNav(25)" autocomplete="off"> <span id="fb-25" class="feedback"></span> who first found that using opium was harmful.</span>
+                </div><div id="exp-25"></div>
+
+                <div class="q-row" id="q-row-26">
+                    <span class="q-num">26.</span>
+                    <span class="q-content"><input type="text" class="input-gap" id="ans-26" oninput="updateNav(26)" autocomplete="off"> <span id="fb-26" class="feedback"></span> for groups and individuals is often used to treat people addicted to opium.</span>
+                </div><div id="exp-26"></div>
+            </div>
+        </div>
+
+        <div id="q-group-3" class="question-group">
+            
+            <div class="question-section">
+                <div class="instruction">Questions 27-33: Do the following statements agree with the information given in the text?</div>
+                
+                <table class="q-table" style="background: transparent; border: none;">
+                    <script>
+                        const statements3 = [
+                            "Violent video games are most likely to be played by people in their youth and middle age.",
+                            "It has been claimed that people who still feel the effects of violent video games are not decided and clear have vested interests in the debate.",
+                            "It is claimed that men and women are more or less equally threatened by the effects of violent video games.",
+                            "One study has found a link between usage of violent video games and poor school performance.",
+                            "Various violent video games are based on stories previously published in comic books.",
+                            "Some of the comic books of the 1950's had shocking images of mutilated people.",
+                            "It has been claimed that violence has always been present in society and video games are just the latest thing to blame it on."
+                        ];
+                        for(let i=27; i<=33; i++) {
+                            document.write(`
+                            <tr id="q-row-${i}" style="border:none;">
+                                <td style="border:none; padding-bottom: 5px;"><span class="q-num">${i}.</span> ${statements3[i-27]}</td>
+                            </tr>
+                            <tr style="border-bottom: 1px dashed #cbd5e1;">
+                                <td style="border:none; padding-top: 0;">
+                                    <select class="input-select" id="ans-${i}" onchange="updateNav(${i})" style="width: 140px; margin-left: 20px;">
+                                        <option value="">Select...</option>
+                                        <option value="TRUE">TRUE</option>
+                                        <option value="FALSE">FALSE</option>
+                                        <option value="NOT GIVEN">NOT GIVEN</option>
+                                    </select>
+                                    <span id="fb-${i}" class="feedback"></span>
+                                    <div id="exp-${i}"></div>
+                                </td>
+                            </tr>
+                            `);
+                        }
+                    </script>
+                </table>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 34-39: Complete the table below using <strong>NO MORE THAN THREE WORDS</strong> from the text.<br><span style="color: #64748b; font-weight:normal; font-size: 14px;">(Kéo thả từ bên dưới vào ô trống, hoặc nhấp vào từ rồi nhấp vào ô cần điền)</span></div>
+                
+                <div class="word-pool-container" id="word-pool">
+                    <span class="draggable-word" draggable="true" data-word="wellness scores">wellness scores</span>
+                    <span class="draggable-word" draggable="true" data-word="aggression">aggression</span>
+                    <span class="draggable-word" draggable="true" data-word="decision-making">decision-making</span>
+                    <span class="draggable-word" draggable="true" data-word="neighbourhood quality">neighbourhood quality</span>
+                    <span class="draggable-word" draggable="true" data-word="brain imaging">brain imaging</span>
+                    <span class="draggable-word" draggable="true" data-word="desensitisation">desensitisation</span>
+                    <span class="draggable-word" draggable="true" data-word="processes">processes</span>
+                </div>
+
+                <table class="q-table" style="border: 2px solid var(--border-color);">
+                    <tr style="background: #f8fafc;">
+                        <th style="width: 20%; border-right: 1px solid var(--border-color);">Study</th>
+                        <th>Findings</th>
+                    </tr>
+                    <tr>
+                        <td style="border-right: 1px solid var(--border-color); font-weight: bold; text-align: center;">Study 1</td>
+                        <td>
+                            • Non-gamers and excessive gamers had similar grading in terms of <b>34.</b> <span class="drop-zone" id="ans-34" data-id="34"></span><span id="fb-34" class="feedback"></span>.<br>
+                            • It shows excessive gaming can have protective effects.<br>
+                            • Similar ideas in social theory - users can rid themselves of <b>35.</b> <span class="drop-zone" id="ans-35" data-id="35"></span><span id="fb-35" class="feedback"></span> and therefore have a better mental condition.<br>
+                            • Gaming can improve visual-spatial coordination, peripheral attention, <b>36.</b> <span class="drop-zone" id="ans-36" data-id="36"></span><span id="fb-36" class="feedback"></span> and computer skills.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border-right: 1px solid var(--border-color); font-weight: bold; text-align: center;">Study 2</td>
+                        <td>
+                            • It examined the various risk factors for youth violence - peers, personality, depression and psychological abuse.<br>
+                            • Non-factors were <b>37.</b> <span class="drop-zone" id="ans-37" data-id="37"></span><span id="fb-37" class="feedback"></span>, violence at home and violent TV and video games.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="border-right: 1px solid var(--border-color); font-weight: bold; text-align: center;">Study 3</td>
+                        <td>
+                            • A neurological study examining variations in <b>38.</b> <span class="drop-zone" id="ans-38" data-id="38"></span><span id="fb-38" class="feedback"></span> when users interacted with virtual or real violence.<br>
+                            • Results showed that users' differentiation between virtual or real violence was not affected by the use of violent video games.<br>
+                            • The <b>39.</b> <span class="drop-zone" id="ans-39" data-id="39"></span><span id="fb-39" class="feedback"></span> with regards to real violence in users' neural reactions were also not affected.<br>
+                            • It shows video games do not affect people's perceptions of what is real or what is fantasy.
+                        </td>
+                    </tr>
+                </table>
+                <div id="fb-container-34-39" style="display:flex; flex-direction:column; gap:10px; margin-top: 15px;"></div>
+                <div id="exp-34"></div><div id="exp-35"></div><div id="exp-36"></div><div id="exp-37"></div><div id="exp-38"></div><div id="exp-39"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Question 40: Choose the correct letter, A, B, C or D.</div>
+                
+                <div class="mcq-item" id="q-row-40">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">40.</span> What is the writer's purpose in Reading Passage 3?</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-40" value="A" onchange="updateNav(40)"> A. To defend the use of violent video game usage.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-40" value="B" onchange="updateNav(40)"> B. To discourage people from using violent video games.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-40" value="C" onchange="updateNav(40)"> C. To examine examples of violence by users of violent video games.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-40" value="D" onchange="updateNav(40)"> D. To review what has been discovered about the effects of violent video games.</label>
+                    <span id="fb-40" class="feedback"></span>
+                    <div id="exp-40"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="confirmOverlay" class="custom-overlay" style="display:none;">
+    <div class="custom-modal">
+        <h2>Xác nhận nộp bài</h2>
+        <p style="font-size: 15px; color: #475569; margin-bottom: 20px;">Bạn có chắc chắn muốn nộp bài để xem đáp án và giải thích chi tiết không?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmModal()">Quay lại</button>
+            <button class="btn-confirm" onclick="executeSubmit()">Nộp bài</button>
+        </div>
+    </div>
+</div>
+
+<div id="resultOverlay" class="custom-overlay" style="display:none;">
+    <div class="custom-modal">
+        <h2 id="resultTitle">🎉 Kết Quả Bài Thi</h2>
+        <div style="font-size: 64px; font-weight: 800; color: var(--primary); margin: 20px 0; letter-spacing: -2px;" id="scoreDisplay">0/40</div>
+        <div style="font-size: 24px; font-weight: 800; color: var(--correct); margin-bottom: 10px; background: #ecfdf5; display: inline-block; padding: 12px 30px; border-radius: 20px; border: 2px solid #bbf7d0;" id="bandDisplay">Band: 0.0</div>
+        <div id="subScoresDisplay" style="font-size: 15px; color: #64748b; margin-bottom: 20px;"></div>
+        <button class="btn-confirm" style="width: 100%;" onclick="closeResultModal()">Xem giải thích chi tiết</button>
+    </div>
+</div>
+
+<footer>
+    <div style="font-size:13px; font-weight:bold; color:#64748b; text-transform:uppercase;">Điều hướng:</div>
+    <div class="palette-scroller" id="navPalette"></div>
+</footer>
+
+<script>
+    // --- STATE & DATA ---
+    let currentMode = '';
+    let testDuration = 0; 
+    let initialTime = 0;
+    let timerInterval = null;
+    let isSubmitted = false;
+    let selectedPassages = [1, 2, 3]; // Mặc định là full 3 passage
+
+    // --- SETUP MODAL LOGIC ---
+    function selectMode(mode) {
+        currentMode = mode;
+        document.querySelector('.mode-practice').classList.toggle('selected', mode === 'practice');
+        document.querySelector('.mode-mock').classList.toggle('selected', mode === 'mock');
+        
+        document.getElementById('timeInputBox').style.display = (mode === 'practice') ? 'block' : 'none';
+        document.getElementById('practiceOptions').style.display = (mode === 'practice') ? 'block' : 'none';
+        document.getElementById('startBtn').style.display = 'inline-block';
+        updatePracticeTime();
+    }
+
+    function updatePracticeTime() {
+        if(currentMode !== 'practice') return;
+        let cbs = document.querySelectorAll('.passage-cb:checked');
+        document.getElementById('timeInput').value = cbs.length * 20; // Gợi ý 20p/passage
+    }
+
+    function openHistoryTab() {
+        document.getElementById('setupContent').style.display = 'none';
+        document.getElementById('historyContent').style.display = 'block';
+        if(window.taiLichSuIELTS) window.taiLichSuIELTS();
+    }
+
+    function backToMenu() {
+        document.getElementById('historyContent').style.display = 'none';
+        document.getElementById('setupContent').style.display = 'block';
+    }
+
+    function askReady() {
+        if (currentMode === 'practice') {
+            let cbs = document.querySelectorAll('.passage-cb:checked');
+            if (cbs.length === 0) { alert("Vui lòng chọn ít nhất 1 Passage để luyện tập!"); return; }
+        }
+        
+        let confirmMsg = currentMode === 'mock' 
+            ? "Bạn chọn Thi Thử Full Test (60 phút).\nThầy dặn nhớ tập trung tuyệt đối như đi thi thật nhé!" 
+            : `Bạn chọn Luyện Tập (${document.getElementById('timeInput').value} phút).\nLàm cẩn thận, chú ý bẫy paraphrase nghen!`;
+            
+        document.getElementById('startConfirmMsg').innerText = confirmMsg;
+        document.getElementById('startConfirmOverlay').style.display = 'flex';
+    }
+
+    function closeStartConfirmModal() { document.getElementById('startConfirmOverlay').style.display = 'none'; }
+
+    function startTestActual() {
+        document.getElementById('startConfirmOverlay').style.display = 'none';
+        
+        if (currentMode === 'practice') {
+            selectedPassages = Array.from(document.querySelectorAll('.passage-cb:checked')).map(cb => parseInt(cb.value));
+            initialTime = parseInt(document.getElementById('timeInput').value) * 60;
+        } else {
+            selectedPassages = [1, 2, 3];
+            initialTime = 60 * 60;
+        }
+
+        if(isNaN(initialTime) || initialTime < 60) initialTime = 60 * 60;
+        testDuration = initialTime;
+        
+        // Ẩn/Hiện Tabs và Navigator dựa trên selectedPassages
+        [1, 2, 3].forEach(p => {
+            let tab = document.getElementById(`tab-btn-${p}`);
+            if(tab) tab.style.display = selectedPassages.includes(p) ? 'inline-block' : 'none';
+        });
+
+        // Chỉ hiển thị các nút điều hướng (nav-dot) của những Passage được chọn
+        for (let i = 1; i <= 40; i++) {
+            let group = i <= 13 ? 1 : i <= 26 ? 2 : 3;
+            let dot = document.getElementById(`nav-${i}`);
+            if (dot) dot.style.display = selectedPassages.includes(group) ? 'flex' : 'none';
+        }
+
+        document.getElementById('setupOverlay').style.display = 'none';
+        switchTab(selectedPassages[0]); // Mở tab đầu tiên được chọn
+        startTimer();
+    }
+
+    const correctAnswers = {
+        // Passage 1
+        1: ["B", "D", "F", "H", "I", "K"], 2: ["B", "D", "F", "H", "I", "K"], 3: ["B", "D", "F", "H", "I", "K"], 
+        4: ["B", "D", "F", "H", "I", "K"], 5: ["B", "D", "F", "H", "I", "K"], 6: ["B", "D", "F", "H", "I", "K"],
+        7: ["GATES", "SLUICE GATES"], 8: ["CHAMBER", "THE CHAMBER"], 9: ["VALVES"],
+        10: ["FERTILE LAND"], 11: ["FLOUR"], 12: ["8 YEARS", "EIGHT YEARS"], 13: ["TOLLS", "CANAL TOLLS"],
+        
+        // Passage 2
+        14: "IX", 15: "IV", 16: "VI", 17: "I", 18: "V", 19: "III", 20: "VIII",
+        21: "A", 22: "C", 23: "D",
+        24: ["SELECTIVE BREEDING"], 25: ["CHINESE"], 26: ["COUNSELLING", "COUNSELING"],
+        
+        // Passage 3
+        27: "FALSE", 28: "TRUE", 29: "FALSE", 30: "TRUE", 31: "NOT GIVEN", 32: "TRUE", 33: "TRUE",
+        34: ["WELLNESS SCORES", "MENTAL WELLNESS SCORES"], 35: ["AGGRESSION"], 36: ["DECISION-MAKING CAPABILITIES", "DECISION-MAKING", "DECISION MAKING"], 
+        37: ["NEIGHBOURHOOD QUALITY", "NEIGHBORHOOD QUALITY"], 38: ["BRAIN IMAGING"], 39: ["DESENSITISATION PROCESSES", "DESENSITISATION", "DESENSITIZATION PROCESSES", "PROCESSES"],
+        40: "D"
+    };
+
+    const explanations = {
+        // Passage 1
+        1: { exp: "Thầy nhắc học viên chú ý Paragraph 1 & 6. Các hiệu ứng của con kênh: 'made NY the financial capital' -> (B) dominance of NY. Chọn ngay B nhé." },
+        2: { exp: "'helped the North win the Civil War' khớp y chang (D) It helped the north win the US Civil War." },
+        3: { exp: "Par 3: 'tie his very political fate to its success' tức là nó giúp thúc đẩy sự nghiệp chính trị của ông Clinton. Khớp với (F)." },
+        4: { exp: "Par 6: 'freight rates from Buffalo to NY of $10... compared with $100... by road'. Tức là chi phí phân phối rẻ hơn. Chọn (H)." },
+        5: { exp: "Par 6: 'nearly 80 per cent of upstate New York's inhabitants live within 25 miles'. Ảnh hưởng đến phân bổ dân số. Chọn (I)." },
+        6: { exp: "Par 7: 'filled with pleasure boats, fishermen, holidaymakers...'. Thúc đẩy du lịch rõ rệt. Chọn (K)." },
+        
+        7: { translation: "Cổng cống (sluice gates) chặn và mở lối vào khoang.", keywords: "seal off and then open", exp: "Trên sơ đồ, mũi tên chỉ vào cánh cửa mở/đóng ở hai bên. Text chỉ rõ 'Locks have two sets of sluice gates (top and bottom)...'. Đáp án là Sluice gates.", colorClass: "ev-7" },
+        8: { translation: "Khoang (chamber) là nơi tàu đợi.", keywords: "where a boat waits", exp: "Mũi tên chỉ vào phần trống ở giữa (của the lock). Text: 'entrances to the chamber, which is where a boat waits...'.", colorClass: "ev-8" },
+        9: { translation: "Van (valves) ở dưới cùng cổng.", keywords: "bottom of the sluice gates", exp: "Mũi tên chỉ vào chi tiết nhỏ dưới đáy cổng. Text ghi rõ: 'locks also have valves at the bottom...'.", colorClass: "ev-9" },
+        10: { translation: "Đất đai màu mỡ cho nông nghiệp.", keywords: "productive agriculture = farming", exp: "Câu hỏi: Yếu tố có lợi cho nông nghiệp hiệu quả là gì? Par 2 có: 'rich in timber, minerals, and fertile land for farming'. Đáp án: fertile land.", colorClass: "ev-10" },
+        11: { translation: "Thương gia bột mì Jesse Hawley.", keywords: "commodity, idea = envisioned", exp: "Câu hỏi: Người nghĩ ra ý tưởng này kinh doanh hàng hóa gì? Par 3: 'An imprisoned flour merchant named Jesse Hawley envisioned a better way...'. Hàng hóa đó là flour.", colorClass: "ev-11" },
+        12: { translation: "Mất 8 năm.", keywords: "How long = took", exp: "Par 4: 'Construction began on July 4th 1817 and took eight years'. Quá dễ, ăn điểm ngay!", colorClass: "ev-12" },
+        13: { translation: "Thu phí kênh đào đã bù đắp chi phí.", keywords: "recovered = recouped", exp: "Par 6: 'canal tolls more than recouped the entire cost'. Lỗi phổ biến là các em không biết từ 'recoup' (thu hồi). Ghi nhớ nhé!", colorClass: "ev-13" },
+
+        // Passage 2
+        14: { exp: "Đoạn A định nghĩa Opium là gì, chiết xuất từ đâu, màu sắc, mùi vị ra sao. Rất rõ ràng đây là mô tả về bản chất (What is it? - ix)." },
+        15: { exp: "Đoạn B nói về 'The history of opium dates back...' (Nguồn gốc - Origins - iv). Thầy lưu ý kỹ năng scan 'history', 'ancient times' nhé." },
+        16: { exp: "Đoạn C nói về 'long- and short-term consequences that can be harmful...' (Hậu quả/Tác động - Effects - vi)." },
+        17: { exp: "Đoạn D mô tả hành trình từ lúc trồng hạt (planting) đến tay người nông dân bán (sell it to the dealer). Khớp với (From Seed to Sale - i)." },
+        18: { exp: "Đoạn E mô tả quy trình hợp pháp ngày nay (Legal growing), dùng máy móc (modern methods). Khớp với (Modern Production - v)." },
+        19: { exp: "Đoạn F nhắc đến việc dùng để giải trí (recreational purposes) ở TQ và nay là 'illegal in most countries' (Sử dụng bất hợp pháp - Illegal Use - iii)." },
+        20: { exp: "Đoạn G nói về cách giúp người bị nghiện (help people who have fallen victim) thông qua điều trị (treatment). (Treating Addiction - viii)." },
+        21: { translation: "Mùi đặc trưng có thể nhận dạng rõ ràng.", keywords: "recognised = identifiable", exp: "Đoạn A: 'distinct odour that is clearly identifiable'. Odour = smell. Chọn A.", colorClass: "ev-21" },
+        22: { translation: "Dùng làm thuốc giảm đau.", keywords: "analgesic = pain reliever", exp: "Đoạn B: 'used as an analgesic'. Nếu không biết analgesic là thuốc giảm đau thì câu này hơi khoai, nhưng đây là từ vựng y học cần nhớ.", colorClass: "ev-22" },
+        23: { translation: "Đôi khi nguy hiểm ngay lập tức với một số người.", keywords: "dangerous almost immediately", exp: "Đoạn C: 'However, for some, the effects of opium use are dangerous almost immediately'. Khớp với ý D.", colorClass: "ev-23" },
+        24: { translation: "Lai tạo chọn lọc (selective breeding) làm tăng hàm lượng.", keywords: "increased by = led to an increase", exp: "Đoạn E: 'selective breeding of the plant has led to an increase in the content...'.", colorClass: "ev-24" },
+        25: { translation: "Người Trung Quốc đầu tiên nhận ra nó độc hại.", keywords: "first found = first realised", exp: "Đoạn F: 'Chinese first realised that smoking opium was actually dangerous...'.", colorClass: "ev-25" },
+        26: { translation: "Các chương trình sử dụng tư vấn (counselling).", keywords: "treat = success in recovery", exp: "Đoạn G: 'These programs will utilise counselling in both individual and group sessions...'.", colorClass: "ev-26" },
+
+        // Passage 3
+        27: { exp: "Câu hỏi bảo 'most likely... in their youth and middle age'. Nhìn vào đoạn 1: 'most likely to play these games' là 'young people', không có nói middle age. Dùng thông tin sai -> FALSE.", colorClass: "ev-27" },
+        28: { exp: "Đoạn 1: 'only people holding personal concerns and biases oppose these established truths'. Câu này bảo những người phản đối có 'vested interests' (biases/concerns). Ý nghĩa trùng khớp -> TRUE." },
+        29: { exp: "Đoạn 2: 'Studies suggest that at-risk individuals are usually male...'. Nam giới có nguy cơ cao hơn nhiều, không phải 'equally threatened' -> FALSE.", colorClass: "ev-29" },
+        30: { exp: "Đoạn 2: 'correlated with troublesome behaviour and poor academic achievement'. Poor school performance = poor academic achievement -> TRUE.", colorClass: "ev-30" },
+        31: { exp: "Đoạn 3 so sánh cuộc tranh luận về game hiện tại với truyện tranh (comic books) thời xưa, chứ không hề nói game được *làm dựa trên* truyện tranh -> NOT GIVEN." },
+        32: { exp: "Đoạn 3: 'comic books, some of which graphically showed horrific images, such as dismembered bodies'. Dismembered (chặt xác) = mutilated. -> TRUE.", colorClass: "ev-32" },
+        33: { exp: "Đoạn 3 cuối: 'violent behaviour is always more prevalent in the present than in the past and that people just search for a scapegoat on which to blame it'. (Mọi người luôn nghĩ thời nay bạo lực hơn và tìm một vật tế thần để đổ lỗi). Rất đúng ý -> TRUE.", colorClass: "ev-33" },
+        34: { exp: "Đoạn 4: 'non-gamers and excessive gamers both had lower self-reported mental wellness scores'. Điền: (mental) wellness scores.", colorClass: "ev-34" },
+        35: { exp: "Đoạn 4: 'provide an outlet for individuals to work through aggression'. Rid themselves of = work through. Điền: aggression.", colorClass: "ev-35" },
+        36: { exp: "Đoạn 4: 'increased peripheral attention, and increased decision-making capabilities'. Điền: decision-making (capabilities).", colorClass: "ev-36" },
+        37: { exp: "Đoạn 5 liệt kê các yếu tố KHÔNG (not found to be predictive) là nguyên nhân: 'neighbourhood quality, parental use of domestic physical violence...'. Điền: neighbourhood quality.", colorClass: "ev-37" },
+        38: { exp: "Đoạn 6: Neurological study 'examined whether there was a change in brain imaging...'. Điền: brain imaging.", colorClass: "ev-38" },
+        39: { exp: "Đoạn 6: 'nor were gamers' neural responses to real violence subject to desensitisation processes'. Điền: desensitisation processes.", colorClass: "ev-39" },
+        40: { exp: "Mục đích toàn bài là xem xét các nghiên cứu/tranh luận trái chiều về ảnh hưởng của game bạo lực (Đoạn cuối: 'split nature of the scientific literature... Stakeholders need to examine the current video game debate'). Khớp với D: 'review what has been discovered...'. Lỗi sai thường gặp là các em chọn A hoặc B vì suy diễn cảm tính.", colorClass: "ev-40" }
+    };
+
+    window.onload = function() {
+        renderPalette();
+        document.getElementById('setupOverlay').style.display = 'flex';
+        initDragAndDrop();
+    }
+
+    function renderPalette() {
+        const nav = document.getElementById("navPalette");
+        for (let i = 1; i <= 40; i++) {
+            let dot = document.createElement("div");
+            dot.className = "nav-dot"; dot.id = `nav-${i}`; dot.innerText = i;
+            dot.onclick = () => scrollToQuestion(i);
+            nav.appendChild(dot);
+        }
+    }
+
+    function switchTab(n) {
+        if(!selectedPassages.includes(n)) return; // Không cho click vào tab đã bị loại
+        
+        document.querySelectorAll('.tab-btn').forEach((b, i) => {
+            if(selectedPassages.includes(i + 1)) b.classList.toggle('active', i + 1 === n);
+        });
+        document.querySelectorAll('.passage-content').forEach((p, i) => p.classList.toggle('active', i + 1 === n));
+        document.querySelectorAll('.question-group').forEach((q, i) => q.classList.toggle('active', i + 1 === n));
+        document.querySelector('.pane-left').scrollTop = 0;
+        document.querySelector('.pane-right').scrollTop = 0;
+    }
+
+    function scrollToQuestion(id) {
+        let group = id <= 13 ? 1 : id <= 26 ? 2 : 3;
+        if(!selectedPassages.includes(group)) return;
+        
+        switchTab(group);
+        setTimeout(() => {
+            let targetId = `q-row-${id}`;
+            let el = document.getElementById(targetId);
+            
+            if(el) {
+                el.scrollIntoView({behavior:"smooth", block:"center"});
+                el.style.backgroundColor = "var(--highlight-color)";
+                setTimeout(() => el.style.backgroundColor = "", 1000);
+            }
+        }, 100);
+    }
+
+    function updateNav(id) {
+        let nav = document.getElementById(`nav-${id}`);
+        if (!nav) return;
+        
+        let val = "";
+        if ((id >= 21 && id <= 23) || id === 40) { // MCQs
+            let checked = document.querySelector(`input[name="mcq-${id}"]:checked`);
+            if (checked) val = checked.value;
+        } else if (id >= 34 && id <= 39) { // Drag & Drop
+            let zone = document.getElementById(`ans-${id}`);
+            if (zone && zone.children.length > 0) val = zone.children[0].innerText;
+        } else {
+            let el = document.getElementById(`ans-${id}`);
+            if (el) val = el.value;
+        }
+        
+        if (val && val.trim() !== "") nav.classList.add("done");
+        else nav.classList.remove("done");
+    }
+
+    // --- DRAG AND DROP LOGIC ---
+    let selectedWordEl = null;
+    function initDragAndDrop() {
+        const words = document.querySelectorAll('.draggable-word');
+        const dropZones = document.querySelectorAll('.drop-zone');
+        const wordPool = document.getElementById('word-pool');
+
+        words.forEach(word => {
+            word.addEventListener('dragstart', (e) => {
+                if (isSubmitted) { e.preventDefault(); return; }
+                selectedWordEl = e.target;
+                e.target.classList.add('dragging');
+            });
+            word.addEventListener('dragend', (e) => {
+                e.target.classList.remove('dragging');
+                selectedWordEl = null;
+            });
+            word.addEventListener('click', (e) => {
+                if (isSubmitted) return;
+                if (e.target.parentNode.id === 'word-pool') {
+                    document.querySelectorAll('.draggable-word').forEach(w => w.classList.remove('selected-word'));
+                    e.target.classList.add('selected-word');
+                    selectedWordEl = e.target;
+                } else {
+                    wordPool.appendChild(e.target);
+                    e.target.classList.remove('selected-word');
+                    selectedWordEl = null;
+                    let id = e.target.parentNode.dataset.id;
+                    if(id) updateNav(id);
+                }
+            });
+        });
+
+        dropZones.forEach(zone => {
+            zone.addEventListener('dragover', e => { if (isSubmitted) return; e.preventDefault(); zone.classList.add('drag-over'); });
+            zone.addEventListener('dragleave', e => { zone.classList.remove('drag-over'); });
+            zone.addEventListener('drop', e => {
+                e.preventDefault(); zone.classList.remove('drag-over');
+                if (selectedWordEl && !isSubmitted) {
+                    if (zone.children.length > 0) wordPool.appendChild(zone.children[0]);
+                    zone.appendChild(selectedWordEl);
+                    selectedWordEl.classList.remove('selected-word');
+                    updateNav(zone.dataset.id);
+                }
+            });
+            zone.addEventListener('click', e => {
+                if (isSubmitted) return;
+                if (selectedWordEl && selectedWordEl.parentNode.id === 'word-pool') {
+                    if (zone.children.length > 0) wordPool.appendChild(zone.children[0]);
+                    zone.appendChild(selectedWordEl);
+                    selectedWordEl.classList.remove('selected-word');
+                    updateNav(zone.dataset.id);
+                    selectedWordEl = null;
+                }
+            });
+        });
+        
+        wordPool.addEventListener('dragover', e => { if(!isSubmitted) e.preventDefault(); wordPool.classList.add('drag-over');});
+        wordPool.addEventListener('dragleave', e => { wordPool.classList.remove('drag-over'); });
+        wordPool.addEventListener('drop', e => {
+            if (selectedWordEl && !isSubmitted) {
+                wordPool.classList.remove('drag-over');
+                wordPool.appendChild(selectedWordEl);
+                selectedWordEl.classList.remove('selected-word');
+                for(let i=34; i<=39; i++) updateNav(i);
+            }
+        });
+    }
+
+    function startTimer() {
+        let display = document.getElementById("timer");
+        timerInterval = setInterval(function () {
+            let m = Math.floor(testDuration / 60);
+            let s = testDuration % 60;
+            display.textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            if (--testDuration < 0) { clearInterval(timerInterval); executeSubmit(); }
+        }, 1000);
+    }
+
+    function submitTest(manual) {
+        if (isSubmitted) return;
+        if (manual) document.getElementById('confirmOverlay').style.display = 'flex';
+        else executeSubmit();
+    }
+
+    function closeConfirmModal() { document.getElementById('confirmOverlay').style.display = 'none'; }
+    function closeResultModal() { document.getElementById('resultOverlay').style.display = 'none'; }
+
+   window.calculateIeltsBand = function(correct, total) {
+        let normalizedCorrect = (correct / total) * 40;
+        if (normalizedCorrect >= 39) return 9.0;
+        if (normalizedCorrect >= 37) return 8.5;
+        if (normalizedCorrect >= 35) return 8.0;
+        if (normalizedCorrect >= 33) return 7.5;
+        if (normalizedCorrect >= 30) return 7.0;
+        if (normalizedCorrect >= 27) return 6.5;
+        if (normalizedCorrect >= 23) return 6.0;
+        if (normalizedCorrect >= 19) return 5.5;
+        if (normalizedCorrect >= 15) return 5.0;
+        if (normalizedCorrect >= 13) return 4.5;
+        if (normalizedCorrect >= 10) return 4.0;
+        if (normalizedCorrect >= 8) return 3.5;
+        if (normalizedCorrect >= 6) return 3.0;
+        return 2.5;
+    }
+
+    function executeSubmit(isReviewMode = false) {
+        document.getElementById('confirmOverlay').style.display = 'none';
+        isSubmitted = true;
+        clearInterval(timerInterval);
+        document.querySelectorAll('input, select').forEach(el => el.disabled = true);
+        document.querySelectorAll('.draggable-word').forEach(el => el.setAttribute('draggable', 'false'));
+        let pool = document.getElementById('word-pool');
+        if(pool) pool.style.opacity = '0.5';
+        
+        let p1Score = 0, p2Score = 0, p3Score = 0;
+        let userAnswersDict = {}; 
+        
+        // Cần lấy mảng Q1-6 user đã chọn để check 
+        let userQ1_6 = [];
+        for(let i=1; i<=6; i++) {
+            let el = document.getElementById(`ans-${i}`);
+            if(el && el.value) userQ1_6.push(el.value.toUpperCase());
+        }
+        // Xóa trùng lặp trong mảng user chọn
+        userQ1_6 = [...new Set(userQ1_6)];
+
+        for (let i = 1; i <= 40; i++) {
+            let group = i <= 13 ? 1 : i <= 26 ? 2 : 3;
+            // Nếu người dùng không làm passage này, bỏ qua không chấm
+            if (!selectedPassages.includes(group)) continue;
+
+            let userAns = "";
+            
+           if ((i >= 21 && i <= 23) || i === 40) { 
+                let checked = document.querySelector(`input[name="mcq-${i}"]:checked`);
+                if (checked) userAns = checked.value;
+            } else if (i >= 34 && i <= 39) {
+                let zone = document.getElementById(`ans-${i}`);
+                if (zone && zone.children.length > 0) userAns = zone.children[0].innerText.trim().toUpperCase();
+            } else {
+                let el = document.getElementById(`ans-${i}`);
+                if (el) userAns = el.value.trim().toUpperCase();
+            }
+
+            userAnswersDict['ans-'+i] = userAns; 
+
+            let correctAnswer = correctAnswers[i];
+            let isCorrect = false;
+
+            if (i >= 1 && i <= 6) {
+                // Nhóm Multiple Select Q1-6
+                if(correctAnswer.includes(userAns) && userQ1_6.includes(userAns)) {
+                    isCorrect = true;
+                    // Xóa để không được điểm 2 lần nếu trick chọn 2 ô cùng 1 chữ (mặc dù đã fix set ở trên, để cho chắc)
+                    let index = userQ1_6.indexOf(userAns);
+                    if (index > -1) userQ1_6.splice(index, 1);
+                }
+            } else if (Array.isArray(correctAnswer)) {
+                isCorrect = correctAnswer.includes(userAns);
+            } else {
+                isCorrect = (userAns === correctAnswer);
+            }
+
+            if (isCorrect) {
+                if (group === 1) p1Score++;
+                else if (group === 2) p2Score++;
+                else if (group === 3) p3Score++;
+            }
+
+            let fb = document.getElementById(`fb-${i}`);
+            let correctStr = Array.isArray(correctAnswer) ? correctAnswer.join(" / ") : correctAnswer;
+            if (i >= 1 && i <= 6) correctStr = "B/D/F/H/I/K";
+
+            if (fb) {
+                fb.innerText = isCorrect ? "✓" : `✗ (${correctStr})`;
+                fb.className = isCorrect ? "feedback correct" : "feedback wrong";
+            }
+
+            if(explanations[i]) {
+                let expData = explanations[i];
+                let htmlContent = `
+                    <div class="exp-box show">
+                        <div class="exp-title">
+                            💡 Giáo viên phân tích Câu ${i}
+                            ${expData.colorClass ? `<button class="locate-btn" onclick="scrollToEvidence('${expData.colorClass}')">📍 Định vị Dẫn chứng</button>` : ''}
+                        </div>
+                        ${expData.translation ? `
+                        <div class="exp-section">
+                            <span class="exp-label">👉 Dịch nghĩa / Ý chính:</span> 
+                            <div class="exp-translate">${expData.translation}</div>
+                        </div>` : ''}
+                        ${expData.keywords ? `
+                        <div class="exp-section">
+                            <span class="exp-label">🔑 Phân tích Paraphrase:</span> 
+                            <div class="exp-keywords">${expData.keywords}</div>
+                        </div>` : ''}
+                        <div class="exp-section">
+                            <span class="exp-label">🧠 Lời khuyên của Thầy:</span> 
+                            <div class="exp-detail">${expData.exp}</div>
+                        </div>
+                    </div>`;
+
+               if (i >= 34 && i <= 39) {
+                    let container = document.getElementById('fb-container-34-39');
+                    if(container) container.innerHTML += htmlContent;
+               } else {
+                    let expContainer = document.getElementById(`exp-${i}`);
+                    if(expContainer) expContainer.innerHTML = htmlContent;
+                }
+            }
+        } 
+
+        let totalScore = p1Score + p2Score + p3Score;
+        let totalQ = selectedPassages.reduce((sum, p) => sum + (p === 3 ? 14 : 13), 0);
+        let bandScore = window.calculateIeltsBand(totalScore, totalQ);
+        
+        document.getElementById('scoreDisplay').innerText = totalScore + "/" + totalQ;
+        document.getElementById('bandDisplay').innerText = "Band: " + (Number.isInteger(bandScore) ? bandScore + ".0" : bandScore);
+        
+        let subTxt = "";
+        if(selectedPassages.includes(1)) subTxt += `Passage 1: <b>${p1Score}/13</b> &nbsp;&nbsp;&nbsp; `;
+        if(selectedPassages.includes(2)) subTxt += `Passage 2: <b>${p2Score}/13</b> &nbsp;&nbsp;&nbsp; `;
+        if(selectedPassages.includes(3)) subTxt += `Passage 3: <b>${p3Score}/14</b>`;
+        document.getElementById('subScoresDisplay').innerHTML = subTxt;
+        
+        document.getElementById('resultOverlay').style.display = 'flex'; 
+
+        // TRUYỀN DỮ LIỆU LÊN TRACKER
+        if (!isReviewMode && window.luuDiemLenFirebase) {
+            let timeTakenMinutes = Math.round((initialTime - testDuration) / 60) || 1;
+            
+            if (currentMode === 'mock' || selectedPassages.length === 3) {
+                // Làm full bài
+                window.luuDiemLenFirebase(totalScore, timeTakenMinutes, userAnswersDict, "Full Test", 40);
+            } else {
+                // Chia điểm từng passage để biểu đồ Tracker hiện chính xác
+                let timePerPassage = Math.round(timeTakenMinutes / selectedPassages.length) || 1;
+                
+                // Vì Firebase cần thời gian để set các doc riêng rẽ mà không đè nhau, 
+                // Thêm timestamp delay nhẹ
+                let delay = 0;
+                if(selectedPassages.includes(1)) {
+                    setTimeout(() => window.luuDiemLenFirebase(p1Score, timePerPassage, userAnswersDict, "Passage 1", 13), delay);
+                    delay += 500;
+                }
+                if(selectedPassages.includes(2)) {
+                    setTimeout(() => window.luuDiemLenFirebase(p2Score, timePerPassage, userAnswersDict, "Passage 2", 13), delay);
+                    delay += 500;
+                }
+                if(selectedPassages.includes(3)) {
+                    setTimeout(() => window.luuDiemLenFirebase(p3Score, timePerPassage, userAnswersDict, "Passage 3", 14), delay);
+                }
+            }
+        }
+    }
+
+    function scrollToEvidence(id) {
+        const evElement = document.getElementById(id);
+        if(evElement) {
+            let passagePane = evElement.closest('.passage-content');
+            if (passagePane) {
+                let tabNum = passagePane.id === 'text-p1' ? 1 : passagePane.id === 'text-p2' ? 2 : 3;
+                if (!passagePane.classList.contains('active')) {
+                    switchTab(tabNum);
+                }
+            }
+
+            setTimeout(() => {
+                evElement.scrollIntoView({behavior: "smooth", block: "center"});
+                evElement.classList.remove("focus-blink");
+                void evElement.offsetWidth;
+                evElement.classList.add("focus-blink");
+                setTimeout(() => evElement.classList.remove("focus-blink"), 1500);
+            }, 100);
+        }
+    }
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+        }
+    });
+
+   window.luuDiemLenFirebase = async function(diemSo, timeTakenMinutes, userAnswersDict, partName = "Full Test", totalQ = 40) {
+        if (!window.currentUserUid) return;
+        
+        let bandScore = window.calculateIeltsBand ? window.calculateIeltsBand(diemSo, totalQ) : 0;
+        let timestamp = Date.now();
+        let idLuotThi = window.currentUserUid + "_ielts_R_T9_" + timestamp;
+
+        try {
+            await setDoc(doc(db, "user_ielts_scores", idLuotThi), {
+                email: window.currentUserEmail,
+                skill: "Reading",
+                testName: "Test 9",
+                partName: partName,
+                timeTaken: timeTakenMinutes.toString(),
+                correctQ: diemSo,
+                totalQ: totalQ,
+                bandScore: bandScore,
+                userAnswers: userAnswersDict,
+                date: new Date().toLocaleDateString("vi-VN"),
+                timestamp: timestamp
+            });
+        } catch(e) {
+            console.error("Lỗi khi lưu điểm: ", e);
+        }
+    }
+</script>
+</body>
+</html>
