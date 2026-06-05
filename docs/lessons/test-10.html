@@ -1372,6 +1372,109 @@
             console.error("Lỗi khi lưu điểm: ", e);
         }
     }
+    window.taiLichSuIELTS = async function() {
+        const tbody = document.getElementById("historyBody");
+        const loading = document.getElementById("historyLoading");
+
+        if (!window.currentUserUid) {
+            tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Vui lòng đăng nhập hệ thống để xem lịch sử.</td></tr>";
+            loading.style.display = "none";
+            return;
+        }
+
+        loading.style.display = "block";
+        tbody.innerHTML = "";
+
+        try {
+            const q = query(
+                collection(db, "user_ielts_scores"),
+                where("email", "==", window.currentUserEmail),
+                where("skill", "==", "Reading"),
+                where("testName", "==", "Test 8")
+            );
+
+            const querySnapshot = await getDocs(q);
+            let html = "";
+            
+            if (querySnapshot.empty) {
+                html = "<tr><td colspan='4' style='text-align:center;'>Bạn chưa làm bài test này.</td></tr>";
+            } else {
+                window.historyDataList = [];
+                querySnapshot.forEach((doc) => { 
+                    let data = doc.data();
+                    data.id = doc.id; 
+                    window.historyDataList.push(data); 
+                });
+                
+                window.historyDataList.sort((a, b) => b.timestamp - a.timestamp);
+
+                window.historyDataList.forEach((data) => {
+                    let dateObj = new Date(data.timestamp);
+                    let dateString = dateObj.toLocaleDateString("vi-VN") + " " + dateObj.getHours() + ":" + (dateObj.getMinutes() < 10 ? '0':'') + dateObj.getMinutes();
+
+                   html += `
+                        <tr>
+                            <td>${dateString}</td>
+                            <td><strong>${data.correctQ} / 40</strong></td>
+                            <td><strong style="color: var(--primary-dark); font-size: 1.1em;">${data.bandScore}</strong></td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="xemLaiLichSu('${data.id}')" class="btn-confirm" style="padding: 6px 12px; background: var(--bg-body); color: var(--primary); box-shadow: none;">Xem lại</button>
+                                    <button onclick="xoaLichSu('${data.id}', this)" class="btn-cancel" style="padding: 6px 12px; border-color: #fca5a5; color: #dc2626;">Xóa</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            tbody.innerHTML = html;
+        } catch (error) {
+            console.error("Lỗi fetch lịch sử: ", error);
+            tbody.innerHTML = "<tr><td colspan='4' style='text-align:center; color: var(--wrong);'>Đã xảy ra lỗi tải dữ liệu.</td></tr>";
+        } finally {
+            loading.style.display = "none";
+        }
+    }
+
+    let itemToDeleteId = null;
+    let itemToDeleteBtn = null;
+
+    window.xoaLichSu = function(docId, btnElement) {
+        itemToDeleteId = docId;
+        itemToDeleteBtn = btnElement;
+        document.getElementById('deleteConfirmOverlay').style.display = 'flex';
+    }
+
+    window.closeDeleteModal = function() {
+        document.getElementById('deleteConfirmOverlay').style.display = 'none';
+        itemToDeleteId = null;
+        itemToDeleteBtn = null;
+    }
+
+    window.executeDelete = async function() {
+        if (!itemToDeleteId || !itemToDeleteBtn) return;
+        
+        let docId = itemToDeleteId;
+        let btnElement = itemToDeleteBtn;
+        
+        closeDeleteModal();
+
+        let originalText = btnElement.innerText;
+        btnElement.innerText = "...";
+        btnElement.disabled = true;
+
+        try {
+            await deleteDoc(doc(db, "user_ielts_scores", docId));
+            window.taiLichSuIELTS(); 
+        } catch (error) {
+            console.error("Lỗi khi xóa lịch sử: ", error);
+            btnElement.innerText = "Lỗi!";
+            setTimeout(() => {
+                btnElement.innerText = originalText;
+                btnElement.disabled = false;
+            }, 2000);
+        }
+    }
 </script>
 </body>
 </html>
