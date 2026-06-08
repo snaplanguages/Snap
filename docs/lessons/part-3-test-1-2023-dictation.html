@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOEIC 2023 - Part 3 | SnapEnglish</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* TÔNG MÀU MÀU MÈ, RỰC RỠ, NEON VÀ GRADIENT */
+        :root {
+            --grad-bg: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 40%, #A1C4FD 100%);
+            --grad-btn: linear-gradient(45deg, #FA709A 0%, #FEE140 100%);
+            --grad-btn-hover: linear-gradient(45deg, #FEE140 0%, #FA709A 100%);
+            --grad-btn-alt: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            
+            --text-dark: #2D3748;
+            --text-primary: #D53F8C;
+            --text-secondary: #4A5568;
+            
+            --error: #FC8181;
+            --success: #68D391;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Nunito', sans-serif; }
+
+        body {
+            background: var(--grad-bg);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            box-shadow: var(--glass-shadow);
+            padding: 35px;
+        }
+
+        /* --- CÁC MÀN HÌNH --- */
+        .screen { display: none; animation: fadeIn 0.4s ease; }
+        .screen.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* MÀN HÌNH HOME */
+        .home-screen { text-align: center; padding: 50px 20px; }
+        .home-screen h1 { font-size: 3rem; color: var(--text-primary); margin-bottom: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px;}
+        .home-screen p { font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 40px; font-weight: 600;}
+        
+        .mode-cards { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .mode-card {
+            flex: 1; min-width: 280px; max-width: 400px;
+            padding: 30px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 2px dashed #CBD5E0;
+            background: white;
+        }
+        .mode-card:hover { transform: translateY(-10px); border-color: var(--text-primary); box-shadow: 0 10px 20px rgba(213, 63, 140, 0.2); }
+        .mode-card h2 { font-size: 1.5rem; color: #764BA2; margin-bottom: 15px; }
+        .mode-icon { font-size: 3rem; margin-bottom: 15px; }
+
+        /* MÀN HÌNH HỌC (DICTATION / CLOZE) */
+        .learning-layout { display: flex; gap: 25px; flex-wrap: wrap; }
+        .sidebar { flex: 1; min-width: 250px; text-align: center; }
+        .main-content { flex: 3; min-width: 300px; display: flex; flex-direction: column; }
+
+        .btn {
+            background: var(--grad-btn);
+            color: white; border: none; padding: 12px 25px; border-radius: 50px;
+            font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(250, 112, 154, 0.4);
+        }
+        .btn:hover { background: var(--grad-btn-hover); transform: scale(1.05); }
+        .btn-alt { background: var(--grad-btn-alt); box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
+        
+        .progress-circle { width: 120px; height: 120px; border-radius: 50%; background: conic-gradient(#D53F8C 0%, #E2E8F0 0); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; position: relative; }
+        .progress-circle::after { content: ""; position: absolute; width: 90px; height: 90px; background: var(--glass-bg); border-radius: 50%; }
+        .progress-text { position: relative; z-index: 1; font-size: 22px; font-weight: 900; color: #D53F8C; }
+
+        .speaker-badge { display: inline-block; padding: 8px 20px; border-radius: 20px; font-weight: bold; font-size: 1rem; margin-bottom: 20px; background: #EBF4FF; color: #3182CE; border: 2px solid #90CDF4;}
+        .speaker-female { background: #FEFCBF; color: #B7791F; border-color: #F6E05E; }
+
+        .input-area { margin-top: 20px; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;}
+        
+        /* Chế độ 2: Textarea */
+        textarea { width: 100%; height: 120px; padding: 20px; border: 3px solid #E2E8F0; border-radius: 15px; font-size: 1.2rem; outline: none; transition: 0.3s; resize: none; font-weight: 600; color: #2D3748;}
+        textarea:focus { border-color: #D53F8C; box-shadow: 0 0 15px rgba(213, 63, 140, 0.2); }
+
+        /* Chế độ 1: Cloze Input */
+        .cloze-container { font-size: 1.4rem; font-weight: 700; line-height: 1.8; color: #4A5568; text-align: center; }
+        .cloze-input { border: none; border-bottom: 4px dashed #D53F8C; background: transparent; font-size: 1.4rem; font-weight: 800; color: #D53F8C; text-align: center; outline: none; padding: 0 10px; width: 300px; transition: 0.3s; }
+        .cloze-input:focus { border-bottom-color: #764BA2; color: #764BA2; }
+
+        .message { min-height: 40px; margin: 15px 0; font-weight: 800; color: var(--error); text-align: center; font-size: 1.1rem; }
+        .glow-error { color: white; background: var(--error); padding: 2px 8px; border-radius: 8px; box-shadow: 0 0 10px var(--error); }
+
+        .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+
+        /* MÀN HÌNH REVIEW END PASSAGE */
+        .review-screen { position: relative; }
+        .audio-player-box { background: white; padding: 15px; border-radius: 50px; text-align: center; margin-bottom: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border: 2px solid #E2E8F0;}
+        audio { width: 100%; height: 40px; outline: none;}
+
+        .transcript-wrapper { position: relative; background: rgba(255,255,255,0.6); padding: 30px; border-radius: 20px; overflow: hidden; border: 1px solid white;}
+        .transcript-line { margin-bottom: 15px; font-size: 1.15rem; line-height: 1.6; position: relative; z-index: 2; font-weight: 600;}
+        .transcript-line strong { font-weight: 800; color: #764BA2; }
+        .transcript-line .vi-text { display: block; font-size: 0.95rem; color: #718096; font-style: italic; margin-top: 4px; font-weight: 400;}
+
+        /* WATERMARK XÉO CHÌM */
+        .watermark-bg {
+            position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            pointer-events: none; z-index: 1;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transform: rotate(-30deg);
+            opacity: 0.04; /* Chìm nhẹ */
+        }
+        .watermark-text {
+            font-size: 100px; font-weight: 900; color: #000;
+            white-space: nowrap; margin: 20px 0;
+            text-transform: uppercase;
+        }
+
+        /* MODAL POPUP */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            display: none; justify-content: center; align-items: center; z-index: 1000;
+        }
+        .modal-content {
+            background: white; width: 90%; max-width: 500px; padding: 40px;
+            border-radius: 30px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        kbd { background: #EDF2F7; border: 1px solid #CBD5E0; padding: 2px 6px; border-radius: 6px; font-family: monospace; font-size: 0.9rem; box-shadow: 0 2px 0 #CBD5E0; color: #4A5568;}
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div id="screen-home" class="screen active glass-panel home-screen">
+        <h1>Bứt Phá TOEIC 2023</h1>
+        <p>Chọn phương thức rèn luyện đôi tai của bạn!</p>
+        <div class="mode-cards">
+            <div class="mode-card" onclick="startTest(1)">
+                <div class="mode-icon">🎯</div>
+                <h2>Chế độ 1: Đục lỗ</h2>
+                <p style="color: #4A5568; font-size:0.95rem;">Nghe và điền từ/cụm từ khóa quan trọng (chứa đáp án). Phù hợp để luyện bắt Key words.</p>
+            </div>
+            <div class="mode-card" onclick="startTest(2)">
+                <div class="mode-icon">🔥</div>
+                <h2>Chế độ 2: Full Chính tả</h2>
+                <p style="color: #4A5568; font-size:0.95rem;">Nghe và gõ lại toàn bộ câu hội thoại. Thử thách cao độ, như phiên bản 2019 truyền thống.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-learn" class="screen glass-panel">
+        <div class="learning-layout">
+            <div class="sidebar">
+                <h3 style="color: #764BA2; margin-bottom: 20px;">Tiến độ Đoạn <span id="current-passage-num">1</span></h3>
+                <div class="progress-circle" id="progress-ring"><div class="progress-text"><span id="progress-percent">0</span>%</div></div>
+                <p style="color: #4A5568; font-weight: 700;">Câu: <span id="current-sentence-num">1</span> / <span id="total-sentences">0</span></p>
+                <div style="margin-top: 30px; background: rgba(255,255,255,0.5); padding: 15px; border-radius: 15px; text-align: left; font-size: 0.9rem; color: #4A5568; line-height: 1.6;">
+                    <strong>Phím tắt:</strong><br>
+                    <kbd>Ctrl</kbd> Nghe lại<br>
+                    <kbd>Tab</kbd> Gợi ý từ<br>
+                    <kbd>Enter</kbd> Kiểm tra
+                </div>
+            </div>
+
+            <div class="main-content">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div id="speaker-label" class="speaker-badge speaker-male">👨 Man</div>
+                    <select id="speed-setting" style="padding: 5px 10px; border-radius: 10px; border: 2px solid #CBD5E0; outline: none; font-weight: 700; color: #4A5568;">
+                        <option value="0.8">Tốc độ: 0.8x</option>
+                        <option value="1.0" selected>Tốc độ: 1.0x</option>
+                        <option value="1.2">Tốc độ: 1.2x</option>
+                    </select>
+                </div>
+
+                <div class="input-area">
+                    <div id="input-container"></div>
+                    <div id="system-message" class="message"></div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-alt" onclick="playAudio()">🔊 Nghe (Ctrl)</button>
+                    <button class="btn" style="background: white; color: #D53F8C; border: 2px solid #D53F8C;" onclick="giveHint()">💡 Gợi ý (Tab)</button>
+                    <button class="btn" onclick="handleEnterAction()">Kiểm tra (Enter)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="screen-review" class="screen glass-panel review-screen">
+        <h2 style="text-align: center; color: #D53F8C; font-size: 2rem; margin-bottom: 20px; font-weight: 900;">🎉 Hoàn Thành Đoạn!</h2>
+        
+        <div class="audio-player-box">
+            <audio id="full-mp3" controls controlsList="nodownload"></audio>
+        </div>
+
+        <div class="transcript-wrapper">
+            <div class="watermark-bg">
+                <div class="watermark-text">SnapEnglish</div>
+                <div class="watermark-text">SnapEnglish</div>
+                <div class="watermark-text">SnapEnglish</div>
+                <div class="watermark-text">SnapEnglish</div>
+                <div class="watermark-text">SnapEnglish</div>
+            </div>
+            
+            <div id="full-script-content" style="max-height: 400px; overflow-y: auto; padding-right: 15px;">
+                </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button class="btn" onclick="nextPassage()">Chuyển sang đoạn tiếp theo ➔</button>
+        </div>
+    </div>
+
+</div>
+
+<div class="modal-overlay" id="feedback-modal">
+    <div class="modal-content">
+        <h2 style="color: #68D391; font-size: 2rem; margin-bottom: 15px;">✨ Chính Xác!</h2>
+        <p id="trans-en" style="font-size: 1.2rem; color: #2D3748; font-weight: 800; margin-bottom: 10px;"></p>
+        <p id="trans-vi" style="font-size: 1rem; color: #718096; font-style: italic; margin-bottom: 25px;"></p>
+        <button class="btn" style="width: 100%;" onclick="nextSentence()">Câu tiếp theo (Enter)</button>
+    </div>
+</div>
+
+<script>
+    // --- DỮ LIỆU BÀI TẬP (Trích 3 đoạn đầu đại diện của TOEIC 2023) ---
+    // Cấu trúc bổ sung thêm phần pre/target/post để phục vụ Chế độ 1 (Cloze)
+    const passagesData = [
+        {
+            id: "32-34",
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-01-part-3-32-34.mp3",
+            sentences: [
+                { en: "Hello, I’m calling about my tickets for tonight’s baseball game.", vi: "Xin chào. Tôi gọi để hỏi về vé xem trận bóng chày tối nay.", speaker: "Woman", gender: "female", pre: "Hello, ", target: "I’m calling about my tickets", post: " for tonight’s baseball game." },
+                { en: "I’m hoping to upgrade my seats so we can sit closer to the field.", vi: "Tôi muốn nâng cấp chỗ ngồi của mình để chúng tôi có thể ngồi gần sân hơn.", speaker: "Woman", gender: "female", pre: "I’m hoping to ", target: "upgrade my seats", post: " so we can sit closer to the field." },
+                { en: "The reservation is under my name: Joanna Reynolds.", vi: "Vé được đặt dưới tên của tôi - Joanna Reynolds.", speaker: "Woman", gender: "female", pre: "The reservation is ", target: "under my name", post: ": Joanna Reynolds." },
+                { en: "Let me take a look.", vi: "Để tôi xem ạ.", speaker: "Man", gender: "male", pre: "Let me ", target: "take a look", post: "." },
+                { en: "Hmm, I’m sorry, Ms. Reynolds, but our system seems to be down at the moment.", vi: "Hừm. Tôi xin lỗi cô Reynolds, nhưng hệ thống của chúng tôi có vẻ như đang gặp trục trặc vào lúc này.", speaker: "Man", gender: "male", pre: "Hmm, I’m sorry, Ms. Reynolds, but our ", target: "system seems to be down", post: " at the moment." },
+                { en: "I can do the exchange manually, but it’ll take a little longer.", vi: "Tôi có thể thực hiện việc đổi ghế một cách thủ công, nhưng sẽ mất nhiều thời gian hơn một chút.", speaker: "Man", gender: "male", pre: "I can do the exchange manually, but ", target: "it’ll take a little longer", post: "." },
+                { en: "No problem. I have time.", vi: "Không vấn đề gì ạ. Tôi có thời gian.", speaker: "Woman", gender: "female", pre: "No problem. ", target: "I have time", post: "." },
+                { en: "Thanks. Oh, and just a reminder that better seats will cost more.", vi: "Cảm ơn cô. Ồ, xin nhắc lại rằng ghế tốt hơn sẽ có giá cao hơn.", speaker: "Man", gender: "male", pre: "Thanks. Oh, and just a reminder that ", target: "better seats will cost more", post: "." },
+                { en: "You will need to pay about $15 more per seat.", vi: "Cô sẽ phải trả thêm khoảng 15 đô la cho mỗi ghế đó ạ.", speaker: "Man", gender: "male", pre: "You will need to pay about ", target: "$15 more", post: " per seat." }
+            ]
+        },
+        {
+            id: "35-37",
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-01-part-3-35-37.mp3",
+            sentences: [
+                { en: "Thilo, are you going to the company lunch later this morning at Sullivan Bistro?", vi: "Thilo, sáng nay bạn có đi ăn trưa cùng công ty ở Sullivan Bistro không?", speaker: "Woman", gender: "female", pre: "Thilo, are you going to the ", target: "company lunch", post: " later this morning at Sullivan Bistro?" },
+                { en: "I’m not sure how to get there.", vi: "Tôi đang không rõ là làm thế nào để đến được đó.", speaker: "Woman", gender: "female", pre: "I’m ", target: "not sure how to get there", post: "." },
+                { en: "Well, the train stops right near it on Hanover street, but you’d have to transfer a few times.", vi: "Chà, tàu dừng ngay gần đó trên Phố Hanover, nhưng bạn phải chuyển tuyến vài lần đấy.", speaker: "Man", gender: "male", pre: "Well, the train stops right near it on Hanover street, but you’d have to ", target: "transfer a few times", post: "." },
+                { en: "You know, I’m getting a ride with Farida. And she has a van.", vi: "Bạn biết đấy, tôi sẽ đi nhờ xe Farida, và cô ấy có hẳn một chiếc xe van.", speaker: "Man", gender: "male", pre: "You know, ", target: "I’m getting a ride", post: " with Farida. And she has a van." },
+                { en: "Oh, that would be convenient. Do you know where her desk is?", vi: "Ồ, tiện ghê! Bạn có biết bàn làm việc của cô ấy ở đâu không?", speaker: "Woman", gender: "female", pre: "Oh, that would be convenient. Do you know ", target: "where her desk is", post: "?" },
+                { en: "Yes, she has the cubicle closest to the stairs.", vi: "Cô ấy ngồi làm ở cái ô gần cầu thang nhất ấy.", speaker: "Man", gender: "male", pre: "Yes, she has the ", target: "cubicle closest to the stairs", post: "." }
+            ]
+        },
+        {
+            id: "38-40",
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2023/07/zenlish-test-01-part-3-38-40.mp3",
+            sentences: [
+                { en: "Hi, Sarika. We need a new assistant manager here at Jeera Groceries.", vi: "Chào, Sarika. Chúng tôi cần một trợ lý quản lý mới tại Jeera Groceries.", speaker: "Man", gender: "male", pre: "Hi, Sarika. We need a new ", target: "assistant manager", post: " here at Jeera Groceries." },
+                { en: "You’ve been one of our best cashiers for two years now. Are you interested in the position?", vi: "Bạn đã là một trong những nhân viên thu ngân giỏi nhất của chúng tôi trong vòng hai năm nay. Bạn có hứng thú với vị trí này không?", speaker: "Man", gender: "male", pre: "You’ve been one of our best cashiers for two years now. Are you ", target: "interested in the position", post: "?" },
+                { en: "Wow, I definitely am. My one concern is the working hours.", vi: "Chà. Chắc chắn là có rồi ạ. Tôi lo về giờ làm việc.", speaker: "Woman", gender: "female", pre: "Wow, I definitely am. My one concern is the ", target: "working hours", post: "." },
+                { en: "Would my schedule change significantly?", vi: "Lịch trình của tôi sẽ thay đổi đáng kể phải không ạ?", speaker: "Woman", gender: "female", pre: "Would my ", target: "schedule change significantly", post: "?" },
+                { en: "You might have to work overtime once in a while, like when food deliveries arrive late.", vi: "Thỉnh thoảng bạn có thể phải làm thêm giờ, chẳng hạn như khi người giao đồ ăn đến trễ.", speaker: "Man", gender: "male", pre: "You might have to ", target: "work overtime once in a while", post: ", like when food deliveries arrive late." },
+                { en: "But that doesn’t happen often. Why don’t you think about it for a few days?", vi: "Nhưng điều đó không xảy ra thường xuyên. Hãy suy nghĩ trong vài ngày", speaker: "Man", gender: "male", pre: "But that doesn’t happen often. Why don’t you ", target: "think about it for a few days", post: "?" },
+                { en: "Let me know what you decide.", vi: "rồi cho chúng tôi biết về quyết định của bạn nhé.", speaker: "Man", gender: "male", pre: "Let me know ", target: "what you decide", post: "." }
+            ]
+        }
+    ];
+
+    let currentMode = 2; // 1 = Cloze, 2 = Dictation
+    let pIndex = 0;      // Index đoạn văn (passage)
+    let sIndex = 0;      // Index câu trong đoạn
+    
+    const synth = window.speechSynthesis;
+    let maleVoice = null, femaleVoice = null;
+
+    // Load Voices
+    function loadVoices() {
+        let voices = synth.getVoices();
+        maleVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Male') || v.name.includes('David'))) || voices.find(v => v.lang.startsWith('en'));
+        femaleVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Female') || v.name.includes('Samantha') || v.name.includes('Zira'))) || voices.find(v => v.lang.startsWith('en'));
+    }
+    if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = loadVoices;
+
+    // === HỆ THỐNG NORMALIZER ĐẶC BIỆT ===
+    // Châm chước các lỗi viết tắt: im, shes, theyre, were...
+    function normalizeForCheck(text) {
+        if (!text) return "";
+        let t = text.toLowerCase().replace(/[.,?!–\-:"]/g, '').trim();
+        const map = {
+            "im": "i am", "i'm": "i am",
+            "hes": "he is", "he's": "he is",
+            "shes": "she is", "she's": "she is",
+            "its": "it is", "it's": "it is",
+            "theyre": "they are", "they're": "they are",
+            "were": "we are", "we're": "we are", // Nhận diện were thành we are
+            "youre": "you are", "you're": "you are",
+            "isnt": "is not", "isn't": "is not",
+            "arent": "are not", "aren't": "are not",
+            "dont": "do not", "don't": "do not",
+            "doesnt": "does not", "doesn't": "does not",
+            "didnt": "did not", "didn't": "did not",
+            "wont": "will not", "won't": "will not",
+            "cant": "can not", "can't": "can not", "cannot": "can not",
+            "ill": "i will", "i'll": "i will",
+            "thats": "that is", "that's": "that is",
+            "whats": "what is", "what's": "what is",
+            "theres": "there is", "there's": "there is"
+        };
+        // Tách từ và chuẩn hóa
+        return t.split(/\s+/).map(word => map[word] || word).join(' ').replace(/\s+/g, ' ').trim();
+    }
+
+    function switchScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    function startTest(mode) {
+        currentMode = mode;
+        pIndex = 0;
+        sIndex = 0;
+        loadVoices();
+        switchScreen('screen-learn');
+        setupPassage();
+    }
+
+    function setupPassage() {
+        sIndex = 0;
+        document.getElementById('current-passage-num').innerText = pIndex + 1;
+        document.getElementById('total-sentences').innerText = passagesData[pIndex].sentences.length;
+        setupSentence();
+    }
+
+    function setupSentence() {
+        const sentence = passagesData[pIndex].sentences[sIndex];
+        document.getElementById('current-sentence-num').innerText = sIndex + 1;
+        document.getElementById('system-message').innerHTML = "";
+        
+        // Cập nhật UI Progress & Loa
+        const percent = Math.round((sIndex / passagesData[pIndex].sentences.length) * 100);
+        document.getElementById('progress-percent').innerText = percent;
+        document.getElementById('progress-ring').style.background = `conic-gradient(#D53F8C ${percent}%, #E2E8F0 0)`;
+
+        const lbl = document.getElementById('speaker-label');
+        if (sentence.gender === 'male') {
+            lbl.innerText = "👨 " + sentence.speaker;
+            lbl.className = "speaker-badge speaker-male";
+        } else {
+            lbl.innerText = "👩 " + sentence.speaker;
+            lbl.className = "speaker-badge speaker-female";
+        }
+
+        // Render Input tuỳ theo Chế độ
+        const container = document.getElementById('input-container');
+        if (currentMode === 1) {
+            // Chế độ đục lỗ
+            container.innerHTML = `
+                <div class="cloze-container">
+                    <span>${sentence.pre}</span>
+                    <input type="text" id="user-input" class="cloze-input" autocomplete="off" autofocus />
+                    <span>${sentence.post}</span>
+                </div>
+            `;
+            // Chỉnh độ dài input động theo độ dài đáp án (gấp đôi xíu cho dễ gõ)
+            document.getElementById('user-input').style.width = Math.max(150, sentence.target.length * 15) + 'px';
+        } else {
+            // Chế độ Full Textarea
+            container.innerHTML = `<textarea id="user-input" placeholder="Lắng nghe hội thoại và gõ đầy đủ câu vào đây..." autofocus></textarea>`;
+        }
+
+        setTimeout(() => document.getElementById('user-input').focus(), 100);
+        playAudio();
+    }
+
+    function playAudio() {
+        if (synth.speaking) synth.cancel();
+        const sentence = passagesData[pIndex].sentences[sIndex];
+        const utterThis = new SpeechSynthesisUtterance(sentence.en);
+        utterThis.lang = 'en-US';
+        utterThis.rate = parseFloat(document.getElementById('speed-setting').value);
+        
+        if (sentence.gender === 'female' && femaleVoice) utterThis.voice = femaleVoice;
+        else if (sentence.gender === 'male' && maleVoice) utterThis.voice = maleVoice;
+        
+        synth.speak(utterThis);
+        document.getElementById('user-input').focus();
+    }
+
+    // Gắn phím tắt toàn cục
+    document.addEventListener('keydown', (e) => {
+        if (document.getElementById('screen-learn').classList.contains('active')) {
+            if (e.key === 'Control') { e.preventDefault(); playAudio(); }
+            if (e.key === 'Tab') { e.preventDefault(); giveHint(); }
+            if (e.key === 'Enter') { 
+                e.preventDefault(); 
+                if(document.getElementById('feedback-modal').style.display === 'flex') {
+                    nextSentence();
+                } else {
+                    handleEnterAction(); 
+                }
+            }
+        }
+    });
+
+    function handleEnterAction() {
+        const inputField = document.getElementById('user-input');
+        const rawUserInput = inputField.value;
+        const msgBox = document.getElementById('system-message');
+        const sentence = passagesData[pIndex].sentences[sIndex];
+        
+        // Lấy chuỗi mục tiêu cần so sánh tuỳ theo chế độ
+        const rawTargetText = currentMode === 1 ? sentence.target : sentence.en;
+        
+        const userInputNorm = normalizeForCheck(rawUserInput);
+        const targetTextNorm = normalizeForCheck(rawTargetText);
+
+        if (userInputNorm === targetTextNorm) {
+            msgBox.innerHTML = "";
+            showModalFeedback(sentence);
+        } else {
+            // Logic so sánh từ hiển thị lỗi
+            const userWordsNorm = userInputNorm.split(' ').filter(w => w !== "");
+            const targetWordsNorm = targetTextNorm.split(' ');
+            const rawWords = rawUserInput.trim().split(/\s+/);
+
+            if (userWordsNorm.length === 0) {
+                msgBox.innerText = "Chưa gõ gì kìa, bấm Ctrl nghe lại nhé!";
+                return;
+            }
+
+            let wrongIndex = -1;
+            for (let i = 0; i < userWordsNorm.length; i++) {
+                if (userWordsNorm[i] !== targetWordsNorm[i]) {
+                    wrongIndex = i; break;
+                }
+            }
+
+            if (wrongIndex !== -1) {
+                // Highlight chữ sai
+                let displayHTML = rawWords.map((w, idx) => {
+                    return idx === wrongIndex ? `<span class="glow-error">${w}</span>` : w;
+                }).join(' ');
+                msgBox.innerHTML = `Lỗi ở đây nè:<br><div style="margin-top:8px;">${displayHTML}</div>`;
+                
+                // Focus lại vị trí lỗi (dành cho textarea)
+                if(currentMode === 2) {
+                    let startPos = 0;
+                    for (let k = 0; k < wrongIndex; k++) startPos += rawWords[k].length + 1;
+                    startPos += inputField.value.length - inputField.value.trimStart().length;
+                    inputField.focus();
+                    inputField.setSelectionRange(startPos, startPos + rawWords[wrongIndex].length);
+                }
+            } else if (userWordsNorm.length < targetWordsNorm.length) {
+                msgBox.innerText = "Vẫn còn thiếu chữ, ráng nghe thêm nha!";
+            } else {
+                msgBox.innerText = "Có lỗi chính tả nhỏ xíu, soi kỹ lại xem.";
+            }
+        }
+    }
+
+    function giveHint() {
+        const inputField = document.getElementById('user-input');
+        const sentence = passagesData[pIndex].sentences[sIndex];
+        const rawTargetText = currentMode === 1 ? sentence.target : sentence.en;
+        
+        const userInputNorm = normalizeForCheck(inputField.value);
+        const targetTextNorm = normalizeForCheck(rawTargetText);
+        
+        const targetWordsRaw = rawTargetText.split(' ');
+        const targetWordsNorm = targetTextNorm.split(' ');
+        const userWords = userInputNorm.split(' ').filter(w => w !== "");
+
+        let hintWord = targetWordsRaw[userWords.length];
+        for (let i = 0; i < userWords.length; i++) {
+            if (userWords[i] !== targetWordsNorm[i]) {
+                hintWord = targetWordsRaw[i];
+                // Xoá đi phần sai để gợi ý chữ đúng
+                inputField.value = targetWordsRaw.slice(0, i).join(' ') + (i > 0 ? " " : "");
+                break;
+            }
+        }
+
+        if (hintWord) {
+            inputField.value += (inputField.value.length > 0 && !inputField.value.endsWith(' ') ? ' ' : '') + hintWord + ' ';
+            document.getElementById('system-message').innerText = "Đã điền giúp 1 từ!";
+        }
+    }
+
+    function showModalFeedback(sentence) {
+        document.getElementById('user-input').blur();
+        document.getElementById('trans-en').innerText = sentence.en;
+        document.getElementById('trans-vi').innerText = sentence.vi;
+        document.getElementById('feedback-modal').style.display = 'flex';
+    }
+
+    function nextSentence() {
+        document.getElementById('feedback-modal').style.display = 'none';
+        sIndex++;
+        if (sIndex < passagesData[pIndex].sentences.length) {
+            setupSentence();
+        } else {
+            finishPassage();
+        }
+    }
+
+    function finishPassage() {
+        switchScreen('screen-review');
+        const passage = passagesData[pIndex];
+        
+        // Gán MP3 gốc
+        document.getElementById('full-mp3').src = passage.audio;
+        
+        // Đổ Script có định dạng
+        let scriptHTML = "";
+        passage.sentences.forEach(s => {
+            const color = s.gender === 'male' ? '#3182CE' : '#D69E2E';
+            scriptHTML += `
+                <div class="transcript-line">
+                    <strong style="color: ${color}">${s.speaker}:</strong> ${s.en}
+                    <span class="vi-text">${s.vi}</span>
+                </div>
+            `;
+        });
+        document.getElementById('full-script-content').innerHTML = scriptHTML;
+        
+        // Cập nhật vòng tròn 100%
+        document.getElementById('progress-percent').innerText = 100;
+        document.getElementById('progress-ring').style.background = `conic-gradient(#D53F8C 100%, #E2E8F0 0)`;
+    }
+
+    function nextPassage() {
+        document.getElementById('full-mp3').pause();
+        pIndex++;
+        if (pIndex < passagesData.length) {
+            switchScreen('screen-learn');
+            setupPassage();
+        } else {
+            alert("Chúc mừng! Bạn đã hoàn thành toàn bộ bài tập của Test 1!");
+            location.reload();
+        }
+    }
+
+</script>
+
+</body>
+</html>
