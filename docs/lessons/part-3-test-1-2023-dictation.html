@@ -118,7 +118,21 @@
 
         /* Chế độ 1: Cloze Input */
         .cloze-container { font-size: 1.4rem; font-weight: 700; line-height: 1.8; color: #4A5568; text-align: center; }
-        .cloze-input { border: none; border-bottom: 4px dashed #D53F8C; background: transparent; font-size: 1.4rem; font-weight: 800; color: #D53F8C; text-align: center; outline: none; padding: 0 10px; width: 300px; transition: 0.3s; }
+        /* Tìm dòng này ở phần <style> và thay thế */
+.cloze-input { 
+    border: none; 
+    border-bottom: 4px dashed #D53F8C; 
+    background: transparent; 
+    font-size: 1.4rem; 
+    font-weight: 800; 
+    color: #D53F8C; 
+    text-align: center; 
+    outline: none; 
+    padding: 0 2px; /* Đã ép padding nhỏ lại để dấu câu ôm sát ô input */
+    margin: 0 4px;  /* Tạo khoảng nghỉ nhẹ nhàng với chữ xung quanh */
+    width: 300px; 
+    transition: 0.3s; 
+}
         .cloze-input:focus { border-bottom-color: #764BA2; color: #764BA2; }
 
         .message { min-height: 40px; margin: 15px 0; font-weight: 800; color: var(--error); text-align: center; font-size: 1.1rem; }
@@ -459,34 +473,45 @@
     }
     if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = loadVoices;
 
-    // === HỆ THỐNG NORMALIZER ĐẶC BIỆT ===
-    // Châm chước các lỗi viết tắt: im, shes, theyre, were...
-    function normalizeForCheck(text) {
-        if (!text) return "";
-        let t = text.toLowerCase().replace(/[.,?!–\-:"]/g, '').trim();
-        const map = {
-            "im": "i am", "i'm": "i am",
-            "hes": "he is", "he's": "he is",
-            "shes": "she is", "she's": "she is",
-            "its": "it is", "it's": "it is",
-            "theyre": "they are", "they're": "they are",
-            "were": "we are", "we're": "we are", // Nhận diện were thành we are
-            "youre": "you are", "you're": "you are",
-            "isnt": "is not", "isn't": "is not",
-            "arent": "are not", "aren't": "are not",
-            "dont": "do not", "don't": "do not",
-            "doesnt": "does not", "doesn't": "does not",
-            "didnt": "did not", "didn't": "did not",
-            "wont": "will not", "won't": "will not",
-            "cant": "can not", "can't": "can not", "cannot": "can not",
-            "ill": "i will", "i'll": "i will",
-            "thats": "that is", "that's": "that is",
-            "whats": "what is", "what's": "what is",
-            "theres": "there is", "there's": "there is"
-        };
-        // Tách từ và chuẩn hóa
-        return t.split(/\s+/).map(word => map[word] || word).join(' ').replace(/\s+/g, ' ').trim();
-    }
+    // === HỆ THỐNG NORMALIZER ĐÃ ĐƯỢC FIX "DẤU PHẨY" ===
+function normalizeForCheck(text) {
+    if (!text) return "";
+    
+    // Cú fix thần thánh: Xóa sạch mọi dấu câu, kể cả nháy cong (’) và nháy thẳng (')
+    let t = text.toLowerCase().replace(/[.,?!–\-:"'’`]/g, '').trim();
+    
+    // Vì đã bay sạch dấu, "I'm" hay "I’m" hay "im" đều sẽ về chung một nhà là chữ "im" trần trụi
+    const map = {
+        "im": "i am",
+        "hes": "he is",
+        "shes": "she is",
+        "its": "it is",
+        "theyre": "they are",
+        "were": "we are",   // Nhận luôn were thành we are (cho ai lười gõ we're)
+        "youre": "you are",
+        "isnt": "is not",
+        "arent": "are not",
+        "dont": "do not",
+        "doesnt": "does not",
+        "didnt": "did not",
+        "wont": "will not",
+        "cant": "can not",
+        "cannot": "can not",
+        "ill": "i will",
+        "itll": "it will",
+        "thats": "that is",
+        "whats": "what is",
+        "theres": "there is",
+        "ive": "i have",
+        "youve": "you have",
+        "weve": "we have",
+        "theyve": "they have",
+        "id": "i would"
+    };
+    
+    // So khớp và bung chữ ra để chấm điểm chuẩn xác 100%
+    return t.split(/\s+/).map(word => map[word] || word).join(' ').replace(/\s+/g, ' ').trim();
+}
 
     function switchScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
