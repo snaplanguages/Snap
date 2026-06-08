@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HSK 3 - Bài 2: 他什么时候回来？ | SnapChinese</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Theme: Weekend Picnic (Xanh Ngọc & Vàng Hổ Phách) */
+            --primary: #10B981; /* Emerald 500 */
+            --primary-dark: #047857; /* Emerald 700 */
+            --secondary: #F59E0B; /* Amber 500 */
+            --bg-color: #ECFDF5; /* Emerald 50 */
+            --text-main: #064E3B; /* Emerald 900 */
+            --font-cn: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif; 
+        }
+        
+        /* Font dành riêng cho Pinyin để không bị lỗi trên Laptop */
+        .pinyin-text {
+            font-family: 'Nunito', sans-serif !important;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: linear-gradient(135deg, #ECFDF5 0%, #FEF3C7 50%, #F0F9FF 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none; user-select: none;
+        }
+
+        /* Bong bóng màu sắc trôi nổi phía sau */
+        body::before, body::after {
+            content: ''; position: fixed; border-radius: 50%; filter: blur(70px); z-index: -1; opacity: 0.45;
+        }
+        body::before { width: 350px; height: 350px; background: #6EE7B7; top: -50px; left: -100px; }
+        body::after { width: 400px; height: 400px; background: #FDE68A; bottom: -100px; right: -50px; }
+
+        .chinese-text { font-family: var(--font-cn); font-weight: 700; }
+        .chinese-sub { font-family: var(--font-cn); }
+
+        .snap-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px;
+            box-shadow: 0 15px 35px rgba(16, 185, 129, 0.1);
+        }
+
+        .btn-snap {
+            background: linear-gradient(135deg, var(--primary), #059669);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            transition: all 0.2s;
+            font-weight: 800;
+            padding: 14px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+            text-align: center;
+        }
+
+        .btn-snap:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-snap:active:not(:disabled) { transform: scale(0.96); }
+
+        .btn-snap:disabled {
+            background: #E2E8F0; color: #94A3B8; box-shadow: none; cursor: not-allowed; border: 2px dashed #CBD5E1;
+        }
+
+        .flashcard-inner {
+            position: relative;
+            width: 100%; height: 380px;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform-style: preserve-3d;
+            cursor: pointer;
+        }
+        .flashcard-inner.is-flipped { transform: rotateY(180deg); }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%; height: 100%;
+            backface-visibility: hidden; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; border-radius: 24px;
+            padding: 24px;
+            border: 2px solid rgba(255,255,255,0.9);
+        }
+        .flashcard-front { background: linear-gradient(135deg, #ffffff, #ECFDF5); border-bottom: 6px solid var(--primary); }
+        .flashcard-back { background: #fff; transform: rotateY(180deg); border-bottom: 6px solid var(--secondary); justify-content: flex-start; padding-top: 35px;}
+        
+        /* TTS Buttons */
+        .audio-icon-btn {
+            position: absolute; top: 15px; right: 15px;
+            background: #D1FAE5; color: var(--primary-dark); border: none;
+            width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 1.25rem; cursor: pointer; transition: all 0.2s ease; z-index: 10; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15);
+        }
+        .audio-icon-btn:hover { background: var(--primary); color: white; transform: scale(1.1); }
+        .ex-audio-inline {
+            display: inline-block; cursor: pointer; margin-left: 8px; font-size: 1rem; color: white;
+            transition: transform 0.2s; background: var(--secondary); border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px;
+            box-shadow: 0 2px 5px rgba(245, 158, 11, 0.3);
+        }
+        .ex-audio-inline:hover { transform: scale(1.2); background: #D97706; }
+
+        input[type="text"] { user-select: auto; }
+
+        select.ex-select {
+            appearance: none; -webkit-appearance: none;
+            padding: 0 8px; cursor: pointer; font-weight: 800;
+        }
+        
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+        .hidden { display: none !important; }
+
+        /* Styles cho biểu đồ kết quả */
+        .circle-stat {
+            position: relative;
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            border: 6px solid #E2E8F0; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        .stat-green { border-color: #6EE7B7; color: #059669; }
+        .stat-red { border-color: #FDA4AF; color: #E11D48; }
+
+        /* TOAST SYSTEM */
+        .toast-box { position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 10000; pointer-events: none; }
+        .toast { background: white; color: var(--text-main); padding: 16px 24px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-left: 6px solid var(--primary); font-size: 1rem; font-weight: 800; display: flex; align-items: center; gap: 12px; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .toast.show { transform: translateX(0); }
+        .toast.success { border-left-color: #10B981; }
+        .toast.error { border-left-color: #EF4444; }
+
+        .branding {
+            width: 100%; text-align: center; padding: 20px 0 10px 0;
+            font-size: 0.85rem; font-weight: 900; color: var(--primary-dark);
+            letter-spacing: 2px; text-transform: uppercase; opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toastBox" class="toast-box"></div>
+
+    <div class="branding">© Bản Quyền Thuộc Về SnapChinese</div>
+
+    <div id="game-container" class="w-full max-w-xl px-4 mt-2 mb-10">
+        <div id="start-screen" class="snap-card p-8 text-center">
+            <h1 class="text-3xl font-black text-amber-600 mb-2">HSK 3 - Bài 2</h1>
+            <h2 class="text-xl text-emerald-700 font-bold mb-4 chinese-text">他什么时候回来？</h2>
+            <div class="mx-auto mb-6 text-6xl drop-shadow-md">🏡</div>
+            
+            <div class="grid grid-cols-1 gap-4">
+                <button onclick="startFlashcards(vocabulary)" class="btn-snap text-lg flex items-center justify-center gap-2">🎴 Phần 1: Ôn Flashcards</button>
+                
+                <button onclick="startVocabularyGame()" class="btn-snap text-lg relative flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
+                    🎮 Phần 2: Game Từ Vựng <span id="check-vocab" class="absolute right-4 hidden text-xl">✅</span>
+                </button>
+                
+                <button onclick="startQuiz('p3')" class="btn-snap text-lg relative flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #3B82F6, #2563EB);">
+                    ✨ Phần 3: Bổ ngữ phương hướng <span id="check-p3" class="absolute right-4 hidden text-xl">✅</span>
+                </button>
+                
+                <button onclick="startQuiz('p4')" class="btn-snap text-lg relative flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #EC4899, #BE185D);">
+                    ❄️ Phần 4: Cấu trúc 了...就... <span id="check-p4" class="absolute right-4 hidden text-xl">✅</span>
+                </button>
+                
+                <button onclick="startQuiz('p5')" class="btn-snap text-lg relative flex items-center justify-center gap-2" style="background: linear-gradient(135deg, #8B5CF6, #6D28D9);">
+                    🔗 Phần 5: Câu hỏi phản vấn <span id="check-p5" class="absolute right-4 hidden text-xl">✅</span>
+                </button>
+
+                <button id="btn-comprehensive" onclick="showExercise()" class="btn-snap text-lg mt-2 transition-all duration-500 flex items-center justify-center gap-2" disabled>
+                    🔒 Bài Tập Tổng Hợp (Cần qua Game)
+                </button>
+
+                <button onclick="window.location.href='index.html'" class="bg-white text-emerald-700 border-2 border-emerald-200 font-black text-sm mt-4 p-4 rounded-2xl hover:bg-emerald-50 transition-all shadow-sm">🏠 Trở về Khu Vườn SnapChinese</button>
+            </div>
+        </div>
+
+        <div id="flashcard-screen" class="snap-card p-6 hidden">
+            <div class="flex justify-between items-center mb-6 bg-white p-3 rounded-2xl shadow-sm border border-emerald-100">
+                <div class="flex gap-4">
+                    <button onclick="returnToStart()" class="text-emerald-700 text-sm font-black hover:text-emerald-500 transition-colors flex items-center gap-1">❮ Quay lại</button>
+                </div>
+                <div class="text-amber-700 font-black px-4 py-1 bg-amber-100 rounded-full text-sm border border-amber-200">
+                    Thẻ: <span id="card-index">1</span> / <span id="card-total">18</span>
+                </div>
+            </div>
+
+            <div class="mb-6 perspective-1000">
+                <div id="flashcard-inner" class="flashcard-inner" onclick="flipCard()">
+                    <div class="flashcard-front shadow-lg">
+                        <button class="audio-icon-btn" onclick="event.stopPropagation(); speakChinese(document.getElementById('card-hanzi').innerText, true)">🔊</button>
+                        <h2 id="card-hanzi" class="chinese-text text-8xl text-emerald-800 leading-tight drop-shadow-sm"></h2>
+                        <p class="absolute bottom-5 text-sm text-gray-400 font-bold tracking-wide">👆 CHẠM ĐỂ LẬT THẺ</p>
+                    </div>
+                    <div class="flashcard-back shadow-lg overflow-y-auto custom-scroll">
+                        <button class="audio-icon-btn" onclick="event.stopPropagation(); speakChinese(document.getElementById('card-hanzi').innerText, true)">🔊</button>
+                        <h3 id="card-pinyin" class="pinyin-text text-3xl font-black text-amber-500 mb-1 tracking-wider"></h3>
+                        <p id="card-mean" class="text-xl text-emerald-900 mb-5 font-black border-b-2 border-dashed border-emerald-200 pb-3 w-full text-center"></p>
+                        
+                        <div class="text-left w-full space-y-2 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                            <div><p id="card-example-cn" class="chinese-sub text-xl text-slate-800 font-semibold"></p> <span class="ex-audio-inline" onclick="event.stopPropagation(); speakChinese(document.getElementById('card-example-cn').innerText, false)">🗣️</span></div>
+                            <p id="card-example-py" class="pinyin-text text-sm text-slate-500 font-bold"></p>
+                            <p id="card-example-vi" class="text-sm text-emerald-700 font-bold italic"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="markCard(false)" class="bg-white border-2 border-rose-200 text-rose-600 p-4 rounded-2xl font-black hover:bg-rose-50 hover:border-rose-300 shadow-sm transition-all active:scale-95">❌ Chưa thuộc</button>
+                <button onclick="markCard(true)" class="bg-white border-2 border-emerald-200 text-emerald-600 p-4 rounded-2xl font-black hover:bg-emerald-50 hover:border-emerald-300 shadow-sm transition-all active:scale-95">✅ Đã thuộc</button>
+            </div>
+        </div>
+
+        <div id="vocab-game-screen" class="snap-card p-6 hidden">
+            <div class="flex justify-between items-center mb-6">
+                <button onclick="returnToStart()" class="text-emerald-700 text-sm font-black hover:text-emerald-500 transition-colors flex items-center gap-1">❮ Quay lại</button>
+                <div class="text-emerald-800 font-black text-sm bg-emerald-100 px-4 py-2 rounded-full border border-emerald-200">Game: <span id="vg-step">1</span>/<span id="vg-total">18</span></div>
+            </div>
+
+            <div id="vg-content" class="min-h-[250px] flex flex-col justify-center items-center"></div>
+            
+            <div id="vg-feedback" class="mt-6 p-4 rounded-2xl hidden text-center font-black text-lg"></div>
+            
+            <div id="vg-controls" class="mt-6 flex gap-3">
+                <button id="vg-check-btn" onclick="checkVocabGame()" class="btn-snap flex-1 bg-amber-500 text-white shadow-md">Kiểm tra</button>
+                <button id="vg-next-btn" onclick="nextVocabStep()" class="btn-snap flex-1 hidden">Tiếp theo ❯</button>
+            </div>
+        </div>
+
+        <div id="play-screen" class="snap-card p-6 hidden">
+            <div class="flex justify-between items-start mb-6">
+                <div class="flex flex-col gap-2">
+                    <button onclick="returnToStart()" class="text-emerald-700 text-sm font-black hover:text-emerald-500 transition-colors flex items-center gap-1 w-max">❮ Quay lại</button>
+                    <div id="quiz-part-name" class="text-amber-600 font-black text-xs uppercase tracking-wider bg-amber-50 px-3 py-1 rounded-lg border border-amber-200 w-max"></div>
+                </div>
+                <div class="font-black text-emerald-700 text-sm bg-emerald-50 px-4 py-2 rounded-full border border-emerald-200 mt-1">Câu: <span id="quiz-idx-display">1</span>/10</div>
+            </div>
+
+            <div id="question-box" class="min-h-[140px] flex flex-col justify-center items-center text-center p-6 bg-white rounded-3xl border-2 border-dashed border-emerald-300 mb-6 shadow-sm">
+                <p id="question-text" class="chinese-sub text-2xl text-emerald-950 font-bold whitespace-pre-line leading-relaxed"></p>
+            </div>
+
+            <div id="options-container" class="grid grid-cols-1 gap-3"></div>
+            
+            <div id="explanation-container" class="bg-emerald-50 border-2 border-emerald-200 p-5 mt-6 hidden rounded-2xl overflow-y-auto custom-scroll shadow-inner">
+                <p id="feedback-title" class="font-black text-xl mb-3 text-center"></p>
+                <div id="explanation-detail" class="space-y-3 mb-5 bg-white p-4 rounded-xl border border-emerald-100 text-center">
+                    <p id="exp-full-sentence" class="chinese-sub text-xl text-emerald-900 font-bold"></p>
+                    <p id="exp-pinyin" class="pinyin-text text-amber-600 font-black tracking-wide"></p>
+                    <p id="exp-translation" class="text-emerald-700 text-sm font-semibold italic"></p>
+                </div>
+                <p id="explanation-text" class="text-sm text-slate-600 font-bold text-center mb-5"></p>
+                <button onclick="showNextQuestion()" class="btn-snap w-full">Tiếp theo ❯</button>
+            </div>
+        </div>
+
+        <div id="flashcard-stat-screen" class="snap-card p-8 text-center hidden">
+             <h2 class="text-2xl font-black text-emerald-800 mb-8">Kết quả ghi nhớ</h2>
+             
+             <div class="flex justify-around items-center mb-8">
+                <div class="circle-stat stat-green">
+                    <span id="stat-learned-percent" class="text-2xl font-black">0%</span>
+                    <span class="text-[11px] uppercase font-black tracking-wider mt-1 text-emerald-600">Đã Thuộc</span>
+                </div>
+                <div class="circle-stat stat-red">
+                    <span id="stat-unlearned-percent" class="text-2xl font-black">0%</span>
+                    <span class="text-[11px] uppercase font-black tracking-wider mt-1 text-rose-500">Cần Ôn Lại</span>
+                </div>
+             </div>
+
+             <div class="text-left mb-8">
+                <p class="font-black text-slate-700 mb-3 ml-2">📚 Danh sách từ chưa thuộc:</p>
+                <div id="unlearned-list" class="max-h-52 overflow-y-auto custom-scroll bg-slate-50 rounded-2xl border border-slate-200 p-4 space-y-3 shadow-inner">
+                    </div>
+             </div>
+
+             <div class="grid grid-cols-1 gap-3">
+                 <button id="btn-relearn" onclick="relearnUnlearned()" class="btn-snap w-full bg-amber-500 text-white hidden">🔄 Học lại từ chưa thuộc</button>
+                 <button onclick="returnToStart()" class="bg-white text-emerald-700 border-2 border-emerald-200 font-black text-base p-4 rounded-2xl hover:bg-emerald-50 transition-all shadow-sm">🔙 Về Trang Menu</button>
+             </div>
+        </div>
+
+        <div id="end-screen" class="snap-card p-8 text-center hidden">
+            <h2 class="text-3xl font-black text-emerald-600 mb-4">Hoàn thành xuất sắc!</h2>
+            <div class="text-7xl mb-6 drop-shadow-md">🏆</div>
+            <p id="result-text" class="text-slate-700 mb-8 font-black text-xl bg-slate-50 py-3 rounded-xl border border-slate-200"></p>
+            <div class="flex gap-3 w-full">
+                <button onclick="returnToStart()" class="btn-snap flex-1 py-4 text-lg">🔙 Về Trang Menu</button>
+            </div>
+        </div>
+
+        <div id="exercise-screen" class="snap-card p-6 hidden">
+            <div class="flex justify-between items-center mb-6 pb-4 border-b-2 border-dashed border-emerald-100">
+                <h2 class="text-xl font-black text-emerald-800">📝 Bài Tập Tổng Hợp</h2>
+                <button onclick="returnToStart()" class="text-rose-500 bg-rose-50 px-3 py-1 rounded-lg text-sm font-black hover:bg-rose-100 transition-colors">✖ Đóng</button>
+            </div>
+            
+            <div class="overflow-y-auto max-h-[60vh] custom-scroll pr-3 text-slate-800">
+                <div class="mb-10">
+                    <h3 class="font-black text-amber-700 mb-4 flex items-center gap-2"><span class="bg-amber-100 text-amber-600 px-2 py-1 rounded-md text-sm">Phần 1</span> Chọn từ điền vào chỗ trống</h3>
+                    
+                    <div class="bg-emerald-50 p-4 rounded-2xl mb-5 border border-emerald-200 text-sm font-black flex flex-wrap justify-center gap-3 shadow-inner">
+                        <span class="text-emerald-700 bg-white px-3 py-1 rounded-lg border border-emerald-100">楼</span>
+                        <span class="text-emerald-700 bg-white px-3 py-1 rounded-lg border border-emerald-100">办公室</span>
+                        <span class="text-emerald-700 bg-white px-3 py-1 rounded-lg border border-emerald-100">树</span>
+                        <span class="text-emerald-700 bg-white px-3 py-1 rounded-lg border border-emerald-100">胖</span>
+                        <span class="text-emerald-700 bg-white px-3 py-1 rounded-lg border border-emerald-100">难</span>
+                    </div>
+                    <div class="space-y-5 mb-10 chinese-text text-lg bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                        <p class="leading-loose border-b border-dashed border-slate-100 pb-2">1. 这是你的 <select class="ex-select border-b-2 border-amber-500 bg-amber-50 outline-none text-center text-amber-700 rounded"><option value="____"></option><option>楼</option><option>办公室</option><option>树</option><option>胖</option><option>难</option></select> 吗？真大！</p>
+                        <p class="leading-loose border-b border-dashed border-slate-100 pb-2">2. 今天的考试一点儿也不 <select class="ex-select border-b-2 border-amber-500 bg-amber-50 outline-none text-center text-amber-700 rounded"><option value="____"></option><option>楼</option><option>办公室</option><option>树</option><option>胖</option><option>难</option></select> 。</p>
+                        <p class="leading-loose border-b border-dashed border-slate-100 pb-2">3. 我在505教室上课，我现在要上 <select class="ex-select border-b-2 border-amber-500 bg-amber-50 outline-none text-center text-amber-700 rounded"><option value="____"></option><option>楼</option><option>办公室</option><option>树</option><option>胖</option><option>难</option></select> 去。</p>
+                        <p class="leading-loose border-b border-dashed border-slate-100 pb-2">4. 你看，小狗在 <select class="ex-select border-b-2 border-amber-500 bg-amber-50 outline-none text-center text-amber-700 rounded"><option value="____"></option><option>楼</option><option>办公室</option><option>树</option><option>胖</option><option>难</option></select> 下做什么呢？</p>
+                        <p class="leading-loose">5. 我太 <select class="ex-select border-b-2 border-amber-500 bg-amber-50 outline-none text-center text-amber-700 rounded"><option value="____"></option><option>楼</option><option>办公室</option><option>树</option><option>胖</option><option>难</option></select> 了，不能吃那么多饭。</p>
+                    </div>
+
+                    <div class="bg-emerald-50 p-4 rounded-2xl mb-5 border border-emerald-200 text-sm font-black flex flex-wrap justify-center gap-3 shadow-inner mt-8">
+                        <span class="text-emerald-700 bg-white px-3 py-1 rounded-lg border border-emerald-100">辆</span>
+                        <span class="text-emerald-700 bg-white px-3 py-1 rounded-lg border border-emerald-100">腿</span>
+                        <span class="text-emerald-700 bg-white px-3 py-1 rounded-lg border border-emerald-100">把</span>
+                        <span class="text-emerald-700 bg-white px-3 py-1 rounded-lg border border-emerald-100">经理</span>
+                        <span class="text-emerald-700 bg-white px-3 py-1 rounded-lg border border-emerald-100">其实</span>
+                    </div>
+                    <div class="space-y-5 chinese-text text-lg bg-white p-5 rounded-2xl border border-slate-100 shadow-sm">
+                        <p class="leading-loose border-b border-dashed border-slate-100 pb-3">6. B: <select class="ex-select border-b-2 border-amber-500 bg-amber-50 outline-none text-center text-amber-700 rounded"><option value="____"></option><option>辆</option><option>腿</option><option>把</option><option>经理</option><option>其实</option></select> 我一点儿也不喜欢看书。</p>
+                        <p class="leading-loose border-b border-dashed border-slate-100 pb-3">7. A: 我想买这 <select class="ex-select border-b-2 border-amber-500 bg-amber-50 outline-none text-center text-amber-700 rounded"><option value="____"></option><option>辆</option><option>腿</option><option>把</option><option>经理</option><option>其实</option></select> 车。</p>
+                        <p class="leading-loose border-b border-dashed border-slate-100 pb-3">8. B: 去商店买一 <select class="ex-select border-b-2 border-amber-500 bg-amber-50 outline-none text-center text-amber-700 rounded"><option value="____"></option><option>辆</option><option>腿</option><option>把</option><option>经理</option><option>其实</option></select> 吧。</p>
+                        <p class="leading-loose border-b border-dashed border-slate-100 pb-3">9. A: 左边这条 <select class="ex-select border-b-2 border-amber-500 bg-amber-50 outline-none text-center text-amber-700 rounded"><option value="____"></option><option>辆</option><option>腿</option><option>把</option><option>经理</option><option>其实</option></select> 有点儿疼。</p>
+                        <p class="leading-loose">10. A: <select class="ex-select border-b-2 border-amber-500 bg-amber-50 outline-none text-center text-amber-700 rounded"><option value="____"></option><option>辆</option><option>腿</option><option>把</option><option>经理</option><option>其实</option></select> ，我今天想早一点儿回家。</p>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <h3 class="font-black text-amber-700 mb-4 flex items-center gap-2"><span class="bg-amber-100 text-amber-600 px-2 py-1 rounded-md text-sm">Phần 2</span> Điền từ mô tả hội thoại</h3>
+                    <div class="space-y-4 chinese-text text-lg">
+                        <div class="bg-white p-5 border-2 border-dashed border-emerald-200 rounded-2xl shadow-sm">
+                            <p class="text-sm font-black text-slate-400 mb-3 bg-slate-100 w-max px-2 py-1 rounded">Hình 1</p>
+                            <p class="leading-loose">A: 他到了办公室就 <input type="text" class="border-b-2 border-amber-500 bg-amber-50 w-24 text-center outline-none text-amber-700 font-bold rounded"></p>
+                            <p class="mt-2 text-emerald-700 leading-loose">B: 他能 <input type="text" class="border-b-2 border-amber-500 bg-amber-50 w-20 text-center outline-none text-amber-700 font-bold rounded"> 吗？不，他 <input type="text" class="border-b-2 border-amber-500 bg-amber-50 w-16 text-center outline-none text-amber-700 font-bold rounded"> 就 <input type="text" class="border-b-2 border-amber-500 bg-amber-50 w-16 text-center outline-none text-amber-700 font-bold rounded"></p>
+                        </div>
+                        <div class="bg-white p-5 border-2 border-dashed border-emerald-200 rounded-2xl shadow-sm">
+                            <p class="text-sm font-black text-slate-400 mb-3 bg-slate-100 w-max px-2 py-1 rounded">Hình 2</p>
+                            <p class="leading-loose">B: 他 <input type="text" class="border-b-2 border-amber-500 bg-amber-50 w-24 text-center outline-none text-amber-700 font-bold rounded"> 买水果了。</p>
+                            <p class="mt-2 text-emerald-700 leading-loose">B: 他 <input type="text" class="border-b-2 border-amber-500 bg-amber-50 w-24 text-center outline-none text-amber-700 font-bold rounded"> 就回来。</p>
+                        </div>
+                        <div class="bg-white p-5 border-2 border-dashed border-emerald-200 rounded-2xl shadow-sm">
+                            <p class="text-sm font-black text-slate-400 mb-3 bg-slate-100 w-max px-2 py-1 rounded">Hình 3</p>
+                            <p class="leading-loose">A: 你怎么还不 <input type="text" class="border-b-2 border-amber-500 bg-amber-50 w-20 text-center outline-none text-amber-700 font-bold rounded">？</p>
+                            <p class="mt-2 text-emerald-700 leading-loose">B: 他来了 <input type="text" class="border-b-2 border-amber-500 bg-amber-50 w-24 text-center outline-none text-amber-700 font-bold rounded"></p>
+                        </div>
+                        <div class="bg-white p-5 border-2 border-dashed border-emerald-200 rounded-2xl shadow-sm">
+                            <p class="text-sm font-black text-slate-400 mb-3 bg-slate-100 w-max px-2 py-1 rounded">Hình 4</p>
+                            <p class="leading-loose">A: 你 <input type="text" class="border-b-2 border-amber-500 bg-amber-50 w-20 text-center outline-none text-amber-700 font-bold rounded"> 做什么？</p>
+                            <p class="mt-2 text-emerald-700 leading-loose">B: 能 <input type="text" class="border-b-2 border-amber-500 bg-amber-50 w-24 text-center outline-none text-amber-700 font-bold rounded">？</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="submitExercise()" class="btn-snap w-full py-4 text-xl mt-6 uppercase tracking-wider shadow-lg bg-gradient-to-r from-blue-500 to-indigo-600 text-white">📤 Nộp bài cho cô giáo</button>
+        </div>
+    </div>
+
+    <audio id="audio-correct" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
+    <audio id="audio-wrong" src="https://assets.mixkit.co/active_storage/sfx/2018/2018-preview.mp3"></audio>
+
+    <script>
+        // HSK 3 - Bài 2 Data
+        const vocabulary = [
+            { h: "腿", p: "tuǐ", m: "Chân", ex: "我的腿疼。", exp: "Wǒ de tuǐ téng.", exv: "Chân tôi bị đau." },
+            { h: "疼", p: "téng", m: "Đau", ex: "昨天走路太多了，现在腿很疼。", exp: "Zuótiān zǒulù tài duō le, xiànzài tuǐ hěn téng.", exv: "Hôm qua đi bộ nhiều quá, giờ chân rất đau." },
+            { h: "脚", p: "jiǎo", m: "Bàn chân", ex: "我现在腿也疼，脚也疼。", exp: "Wǒ xiànzài tuǐ yě téng, jiǎo yě téng.", exv: "Chân và bàn chân tôi giờ đau nhức." },
+            { h: "树", p: "shù", m: "Cây", ex: "树下有一只小猫。", exp: "Shù xià yǒu yì zhī xiǎo māo.", exv: "Dưới gốc cây có một con mèo nhỏ." },
+            { h: "容易", p: "róngyì", m: "Dễ dàng", ex: "写汉字不容易。", exp: "Xiě Hànzì bù róngyì.", exv: "Viết chữ Hán không dễ dàng." },
+            { h: "难", p: "nán", m: "Khó", ex: "考试很难。", exp: "Kǎoshì hěn nán.", exv: "Kỳ thi này rất khó." },
+            { h: "太太", p: "tàitai", m: "Vợ, bà chủ", ex: "周太太在办公室吗？", exp: "Zhōu tàitai zài bàngōngshì ma?", exv: "Bà Chu có ở văn phòng không?" },
+            { h: "秘书", p: "mìshū", m: "Thư ký", ex: "她是周经理的秘书。", exp: "Tā shì Zhōu jīnglǐ de mìshū.", exv: "Cô ấy là thư ký của giám đốc Chu." },
+            { h: "经理", p: "jīnglǐ", m: "Giám đốc", ex: "经理不在，他出去了。", exp: "Jīnglǐ bú zài, tā chūqù le.", exv: "Giám đốc không có ở đây, ông ấy ra ngoài rồi." },
+            { h: "办公室", p: "bàngōngshì", m: "Văn phòng", ex: "我在办公室等你。", exp: "Wǒ zài bàngōngshì děng nǐ.", exv: "Tôi đợi bạn ở văn phòng." },
+            { h: "辆", p: "liàng", m: "Chiếc (xe)", ex: "我买了一辆新自行车。", exp: "Wǒ mǎi le yí liàng xīn zìxíngchē.", exv: "Tôi mua một chiếc xe đạp mới." },
+            { h: "楼", p: "lóu", m: "Tòa nhà, tầng", ex: "我就在楼下等你。", exp: "Wǒ jiù zài lóuxià děng nǐ.", exv: "Tôi đợi bạn ngay dưới lầu." },
+            { h: "拿", p: "ná", m: "Cầm, lấy", ex: "帮我拿一下雨伞。", exp: "Bāng wǒ ná yí xià yǔsǎn.", exv: "Giúp tôi cầm cây dù một chút." },
+            { h: "把", p: "bǎ", m: "Cái (ô, ghế)", ex: "那边有一把椅子。", exp: "Nàbiān yǒu yì bǎ yǐzi.", exv: "Đằng kia có một cái ghế." },
+            { h: "伞", p: "sǎn", m: "Cái ô, dù", ex: "下雨了，带把伞吧。", exp: "Xiàyǔ le, dài bǎ sǎn ba.", exv: "Mưa rồi, mang theo cây dù đi." },
+            { h: "胖", p: "pàng", m: "Béo", ex: "我不胖，我很瘦。", exp: "Wǒ bú pàng, wǒ hěn shòu.", exv: "Tôi không béo, tôi rất gầy." },
+            { h: "其实", p: "qíshí", m: "Thực ra", ex: "其实我一点儿也不累。", exp: "Qíshí wǒ yìdiǎnr yě bú lèi.", exv: "Thực ra tôi chẳng mệt chút nào." },
+            { h: "瘦", p: "shòu", m: "Gầy", ex: "你太瘦了，多吃点儿饭。", exp: "Nǐ tài shòu le, duō chī diǎnr fàn.", exv: "Bạn gầy quá, ăn nhiều cơm vào." }
+        ];
+
+        const quizData = {
+            p3: { 
+                name: "Bổ ngữ phương hướng", 
+                questions: [
+                    { q: "1. 你怎么还没________？我都在楼上等你半小时了。", options: ["回去", "上来", "进去", "下来"], correct: 1, res: "你怎么还没上来？我都在楼上等你半小时了。", py: "Nǐ zěnme hái méi shànglái? Wǒ dōu zài lóushàng děng nǐ bàn xiǎoshí le.", vi: "Sao bạn vẫn chưa lên đây? Tôi đã đợi bạn nửa tiếng rồi.", exp: "Người nói đang ở 'trên lầu', hướng hành động của người nghe là tiến về phía người nói nên dùng '上来'." },
+                    { q: "2. 已经10点半了，快点儿________，别睡了。", options: ["过去", "上来", "起来", "回来"], correct: 2, res: "已经10点半了，快点儿起来，别睡了。", py: "Yǐjīng shí diǎn bàn le, kuài diǎnr qǐlái, bié shuì le.", vi: "Đã 10 rưỡi rồi, mau dậy đi, đừng ngủ nữa.", exp: "'起来' dùng để chỉ hành động thức dậy hoặc rời khỏi giường." },
+                    { q: "3. 谁在外边？你________看看吧。", options: ["出去", "进去", "上来", "回去"], correct: 0, res: "谁在外边？你出去看看吧。", py: "Shéi zài wàibiān? Nǐ chūqù kànkan ba.", vi: "Ai ở bên ngoài thế? Bạn ra ngoài xem thử đi.", exp: "Người nói đang ở trong phòng, hướng ra ngoài (xa người nói) nên dùng '出去'." },
+                    { q: "4. 我们在楼上等你，你快________吧。", options: ["下来", "进去", "上来", "回去"], correct: 2, res: "我们在楼上等你，你快上来吧。", py: "Wǒmen zài lóushàng děng nǐ, nǐ kuài shànglái ba.", vi: "Chúng tôi đang đợi bạn trên lầu, bạn mau lên đây đi.", exp: "Người nói ở trên lầu, người nghe đi từ dưới lên phía người nói dùng '上来'." },
+                    { q: "5. 那边树多，我们________坐一下吧。", options: ["上去", "回来", "过去", "下来"], correct: 2, res: "那边树多，我们过去坐一下吧。", py: "Nàbiān shù duō, wǒmen guòqù zuò yíxià ba.", vi: "Chỗ kia nhiều cây, chúng mình qua đó ngồi một lát đi.", exp: "Di chuyển đến một địa điểm khác xa vị trí hiện tại của người nói dùng '过去'." },
+                    { q: "6. 老师________了，同学们都站起来。", options: ["回教室去", "出教室来", "进教室来", "上教室去"], correct: 2, res: "老师进教室来了，同学们都站起来。", py: "Lǎoshī jìn jiàoshì lái le, tóngxuémen dōu zhàn qǐlái.", vi: "Thầy giáo vào lớp rồi, các học sinh đều đứng dậy.", exp: "Học sinh đang ngồi trong lớp, thầy giáo đi từ ngoài vào phía học sinh dùng '进 + địa điểm + 来'." },
+                    { q: "7. 小狗________了，在门口等主人。", options: ["下楼来", "上楼来", "回家去", "进去"], correct: 0, res: "小狗下楼来了，在门口等主人。", py: "Xiǎogǒu xiàlóu lái le, zài ménkǒu děng zhǔrén.", vi: "Chú chó nhỏ xuống lầu rồi, đang đợi chủ ở cửa.", exp: "Xuống lầu và hướng về phía người đang quan sát ở cửa dùng '下楼来'." },
+                    { q: "8. 明天去朋友家，我想________一些水果。", options: ["带来", "买来", "带去", "拿去"], correct: 2, res: "明天去朋友家，我想带去一些水果。", py: "Míngtiān qù péngyǒu jiā, wǒ xiǎng dài qù yìxiē shuǐguǒ.", vi: "Ngày mai đi đến nhà bạn, tôi muốn mang theo ít hoa quả.", exp: "Mang vật rời xa vị trí hiện tại để đến nhà bạn dùng '带去'." },
+                    { q: "9. 帮我________点儿面包吧，我现在很饿。", options: ["带来", "买来", "买去", "拿去"], correct: 1, res: "帮我买来点儿面包吧，我现在很饿。", py: "Bāng wǒ mǎi lái diǎnr miànbāo ba, wǒ xiànzài hěn è.", vi: "Mua hộ tôi ít bánh mì mang về đây nhé, giờ tôi đói quá.", exp: "Mua và mang về phía người nói (hướng về phía mình) dùng '买来'." },
+                    { q: "10. 这个箱子太重了，你帮我________吧。", options: ["搬回来", "搬过去", "搬出来", "搬进去"], correct: 3, res: "这个箱子太重了，你帮我搬进去吧。", py: "Zhège xiāngzi tài zhòng le, nǐ bāng wǒ bān jìnqù ba.", vi: "Cái thùng này nặng quá, bạn giúp tôi bê nó vào trong nhé.", exp: "Bê vật vào bên trong một không gian nào đó (xa người nói) dùng '搬进去'." }
+                ] 
+            },
+            p4: { 
+                name: "Cấu trúc 了...就...", 
+                questions: [ 
+                    { q: "1. A: 你什么时候给妈妈打电话？\nB: 我打算 ______。", options: ["吃晚饭了就给她打电话", "吃晚饭就给她打电话", "吃了晚饭就给她打电话", "吃晚饭给她打电话"], correct: 2, res: "我打算吃了晚饭就给她打电话。", py: "Wǒ dǎsuàn chīle wǎnfàn jiù gěi tā dǎ diànhuà.", vi: "Tôi định ăn cơm tối xong là gọi điện cho bà ấy.", exp: "Cấu trúc: V1 + 了 + 就 + V2. Hành động 1 xong mới đến hành động 2." },
+                    { q: "2. A: 你怎么每天这么早睡觉？\nB: 我 ______。", options: ["到家就睡觉了", "到了家就睡觉", "到家了睡觉就", "到家睡觉就"], correct: 1, res: "我到了家就睡觉。", py: "Wǒ dàole jiā jiù shuìjiào.", vi: "Tôi cứ về đến nhà là đi ngủ.", exp: "V1 (đến nhà) hoàn thành thì thực hiện ngay V2 (ngủ)." },
+                    { q: "3. A: 你什么时候走？\nB: 他来了 ______。", options: ["我就走", "就我走", "我走就", "我走了就"], correct: 0, res: "他来了我就走。", py: "Tā láile wǒ jiù zǒu.", vi: "Anh ấy đến cái là tôi đi ngay.", exp: "Khi có 2 chủ ngữ khác nhau, '就' đứng trước động từ của chủ ngữ thứ 2." },
+                    { q: "4. A: 你每天晚上做什么？\nB: 我 ______。", options: ["吃了饭就看书", "吃饭了看书就", "吃饭看书就", "吃了饭看书"], correct: 0, res: "我吃了饭就看书。", py: "Wǒ chīle fàn jiù kànshū.", vi: "Tôi cứ ăn cơm xong là đọc sách.", exp: "Hành động ăn cơm (V1) kết thúc là thực hiện việc đọc sách (V2)." },
+                    { q: "5. A: 老师进教室以后你们做什么？\nB: 老师进了教室 ______。", options: ["我们就开始上课", "我们开始就上课", "就我们开始上课", "我们开始上课"], correct: 0, res: "老师进了教室我们就开始上课。", py: "Lǎoshī jìnle jiàoshì wǒmen jiù kāishǐ shàngkè.", vi: "Thầy giáo vào lớp xong là chúng tôi bắt đầu học.", exp: "Diễn tả hai sự việc xảy ra liên tiếp." },
+                    { q: "6. A: 你回家以后做什么？\nB: 我 ______。", options: ["回家就吃饭了", "回了家就吃饭", "回家了吃饭就", "回家吃饭就"], correct: 1, res: "我回了家就吃饭。", py: "Wǒ huíle jiā jiù chīfàn.", vi: "Tôi về nhà xong là ăn cơm ngay.", exp: "Thêm '了' sau động từ thứ nhất để chỉ sự hoàn thành trước khi sang việc tiếp theo." },
+                    { q: "7. A: 小王什么时候给你打电话？\nB: 他 ______。", options: ["下班了就给我打电话", "下班就给我打电话了", "下了班就给我打电话", "下班给我打电话就"], correct: 2, res: "他下了班就给我打电话。", py: "Tā xiàle bān jiù gěi wǒ dǎ diànhuà.", vi: "Anh ấy tan làm xong là sẽ gọi điện cho tôi.", exp: "V1 (tan làm) + 了 + 就 + V2 (gọi điện)." },
+                    { q: "8. A: 你到学校以后做什么？\nB: 我 ______。", options: ["到学校了就进教室", "到了学校就进教室", "到学校进教室就", "到了学校进教室"], correct: 1, res: "我到了学校就进教室。", py: "Wǒ dàole xuéxiào jiù jìn jiàoshì.", vi: "Tôi đến trường xong là vào lớp luôn.", exp: "Nhấn mạnh trình tự thời gian của hai hành động." },
+                    { q: "9. A: 爸爸回来了以后我们做什么？\nB: 爸爸回来了 ______。", options: ["我们就吃饭", "我们吃饭就", "就我们吃饭", "我们就吃饭了"], correct: 0, res: "爸爸回来了我们就吃饭。", py: "Bàba huíláile wǒmen jiù chīfàn.", vi: "Bố về một cái là chúng ta ăn cơm.", exp: "Sử dụng '就' để kết nối hai vế câu có chủ ngữ khác nhau." },
+                    { q: "10. A: 你每天早上做什么？\nB: 我 ______。", options: ["起床了就刷牙", "起了床就刷牙", "起床刷牙就", "起床了刷牙"], correct: 1, res: "我起了床就刷牙。", py: "Wǒ qǐle chuáng jiù shuāyá.", vi: "Tôi ngủ dậy xong là đánh răng ngay.", exp: "Thói quen thực hiện hành động này ngay sau hành động kia." }
+                ]
+            },
+            p5: { 
+                name: "Câu hỏi phản vấn", 
+                questions: [
+                    { q: "1. A: 我怎么这么累啊？\nB: 你今天爬山爬得那么快，______？", options: ["能累吗", "能不累吗", "能累了", "能累吧"], correct: 1, res: "你今天爬山爬得那么快，能不累吗？", py: "Nǐ jīntiān páshān pá de nàme kuài, néng bú lèi ma?", vi: "Hôm nay bạn leo núi nhanh như thế, có thể không mệt sao?", exp: "Ý nghĩa: Chắc chắn là rất mệt." },
+                    { q: "2. A: 我病了，头疼。\nB: 天气这么冷，你穿得这么少，______？", options: ["能不生病吗", "能生病吗", "能生病了", "能病吗"], correct: 0, res: "天气这么冷，你穿得这么少，能不生病吗？", py: "Tiānqì zhème lěng, nǐ chuān de zhème shǎo, néng bù shēngbìng ma?", vi: "Trời lạnh thế này, bạn mặc ít thế, có thể không ốm sao?", exp: "Ý nghĩa: Chắc chắn sẽ bị ốm." },
+                    { q: "3. A: 你怎么打篮球打得这么好？\nB: 我每天都练习，______？", options: ["能好了吗", "能不好吗", "能好吧", "能不好了"], correct: 1, res: "我每天都练习，能不好吗？", py: "Wǒ měitiān dōu liànxí, néng bù hǎo ma?", vi: "Tôi luyện tập mỗi ngày, có thể không tốt sao?", exp: "Ý nghĩa: Chắc chắn là chơi rất tốt." },
+                    { q: "4. A: 为什么他考试成绩这么好？\nB: 他每天学习到很晚，______？", options: ["能不好吗", "能不好了", "能好吧", "能好了吗"], correct: 0, res: "他每天学习到很晚，能不好吗？", py: "Tā měitiān xuéxí dào hěn wǎn, néng bù hǎo ma?", vi: "Anh ấy học đến khuya mỗi ngày, có thể (kết quả) không tốt sao?", exp: "Dùng để nhấn mạnh kết quả tốt là điều hiển nhiên." },
+                    { q: "5. A: 你怎么这么困？\nB: 你昨天晚上两点才睡觉，______？", options: ["能困吗", "能不困吗", "能困了", "能困吧"], correct: 1, res: "你昨天晚上两点才睡觉，能不困吗？", py: "Nǐ zuótiān wǎnshàng liǎng diǎn cái shuìjiào, néng bú kùn ma?", vi: "Tối qua 2 giờ bạn mới ngủ, có thể không buồn ngủ sao?", exp: "Ý nghĩa: Chắc chắn là rất buồn ngủ." },
+                    { q: "6. A: 为什么你这么了解中国文化？\nB: 我在中国住了五年，______？", options: ["能了解吗", "能了解吧", "能不了解吗", "能了解了"], correct: 2, res: "我在中国住了五年，能不了解吗？", py: "Wǒ zài Zhōngguó zhùle wǔ nián, néng bù liǎojiě ma?", vi: "Tôi sống ở Trung Quốc 5 năm rồi, có thể không hiểu rõ sao?", exp: "Ý nghĩa: Đương nhiên là rất am hiểu rồi." },
+                    { q: "7. A: 为什么你汉语说得这么好？\nB: 我每天都和中国朋友说话, ______？", options: ["能说不好吗", "能说好吗", "能说好吧", "能说好了吗"], correct: 0, res: "我每天都和中国朋友说话, 能说不好吗？", py: "Wǒ měitiān dōu hé Zhōngguó péngyǒu shuōhuà, néng shuō bù hǎo ma?", vi: "Ngày nào tôi cũng tán gẫu với bạn Trung Quốc, có thể nói không tốt sao?", exp: "Ý nghĩa: Chắc chắn là nói rất giỏi." },
+                    { q: "8. A: 为什么小王跑得这么快？\nB: 他每天都跑步, ______？", options: ["能快吗", "能快吧", "能不快吗", "能快了"], correct: 2, res: "他每天都跑步, 能不快吗？", py: "Tā měitiān dōu pǎobù, néng bú kuài ma?", vi: "Anh ấy tập chạy mỗi ngày, có thể không nhanh sao?", exp: "Ý nghĩa: Đương nhiên là chạy rất nhanh." },
+                    { q: "9. A: 为什么你这么累？\nB: 我今天一天没吃饭，______？", options: ["能累吗", "能不累吗", "能累吧", "能累了"], correct: 1, res: "我今天一天没吃饭，能不累吗？", py: "Wǒ jīntiān yì tiān méi chīfàn, néng bú lèi ma?", vi: "Cả ngày hôm nay tôi chưa ăn gì, có thể không mệt sao?", exp: "Ý nghĩa: Chắc chắn là rất mệt." },
+                    { q: "10. A: 为什么他这么累？\nB: 他工作了一整天，______？", options: ["能累吗", "能累吧", "能不累吗", "能累了"], correct: 2, res: "他工作了一整天，能不累吗？", py: "Tā gōngzuòle yì zhěng tiān, néng bú lèi ma?", vi: "Anh ấy làm việc cả ngày trời, có thể không mệt sao?", exp: "Ý nghĩa: Chắc chắn là mệt lả rồi." }
+                ]
+            }
+        };
+
+        let completedParts = { vocab: false, p3: false, p4: false, p5: false };
+        let currentQuizKey = '', quizIdx = 0, quizScore = 0, quizAnswered = false;
+        let currentFlashList = [], flashcardIdx = 0, learnedCount = 0, unlearnedItems = [];
+        let vgStep = 0, vgScore = 0;
+        let totalVocab = vocabulary.length;
+
+        function playAudio(id) { 
+            if (id === 'audio-click' || id === 'audio-flip') return;
+            const a = document.getElementById(id); 
+            if(a) { 
+                a.currentTime = 0; 
+                a.play().catch(()=>{}); 
+            } 
+        }
+
+        function speakChinese(text, isSlow = false) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                var utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'zh-CN'; 
+                utterance.rate = isSlow ? 0.75 : 0.9; 
+                window.speechSynthesis.speak(utterance);
+            } else {
+                showToast("Trình duyệt không hỗ trợ phát âm!", "error");
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toastBox = document.getElementById('toastBox');
+            const toast = document.createElement('div');
+            toast.classList.add('toast', type);
+            let icon = '💡';
+            if (type === 'success') icon = '✅';
+            if (type === 'error') icon = '❌';
+            toast.innerHTML = `<span style="font-size: 1.2rem;">${icon}</span> <span>${message}</span>`;
+            toastBox.appendChild(toast);
+            setTimeout(() => { toast.classList.add('show'); }, 10);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => { toast.remove(); }, 400);
+            }, 3000);
+        }
+
+        function returnToStart() {
+            window.speechSynthesis.cancel(); 
+            document.querySelectorAll('.snap-card').forEach(el => el.classList.add('hidden'));
+            document.getElementById('start-screen').classList.remove('hidden');
+        }
+
+        function checkUnlockExercise() {
+            if (completedParts.vocab && completedParts.p3 && completedParts.p4 && completedParts.p5) {
+                const btn = document.getElementById('btn-comprehensive');
+                btn.disabled = false;
+                btn.style.background = 'linear-gradient(135deg, #F59E0B, #D97706)';
+                btn.style.color = 'white';
+                btn.style.border = 'none';
+                btn.innerHTML = '📝 Bài Tập Tổng Hợp (Đã mở khóa)';
+            }
+        }
+
+        function startFlashcards(list) {
+            currentFlashList = [...list];
+            flashcardIdx = 0; learnedCount = 0; unlearnedItems = [];
+            document.querySelectorAll('.snap-card').forEach(el => el.classList.add('hidden'));
+            document.getElementById('flashcard-screen').classList.remove('hidden');
+            document.getElementById('card-total').innerText = currentFlashList.length;
+            updateFlashcard();
+        }
+
+        function updateFlashcard() {
+            const card = currentFlashList[flashcardIdx];
+            document.getElementById('card-index').innerText = flashcardIdx + 1;
+            document.getElementById('card-hanzi').innerText = card.h;
+            document.getElementById('card-pinyin').innerText = card.p;
+            document.getElementById('card-mean').innerText = card.m;
+            document.getElementById('card-example-cn').innerText = card.ex;
+            document.getElementById('card-example-py').innerText = card.exp;
+            document.getElementById('card-example-vi').innerText = card.exv;
+            document.getElementById('flashcard-inner').classList.remove('is-flipped');
+        }
+
+        function flipCard() { document.getElementById('flashcard-inner').classList.toggle('is-flipped'); }
+
+        function markCard(learned) {
+            if (learned) {
+                learnedCount++;
+            } else {
+                unlearnedItems.push(currentFlashList[flashcardIdx]);
+            }
+            flashcardIdx++;
+            if (flashcardIdx < currentFlashList.length) {
+                updateFlashcard();
+            } else {
+                showFlashcardStats();
+            }
+        }
+
+        function showFlashcardStats() {
+            document.getElementById('flashcard-screen').classList.add('hidden');
+            document.getElementById('flashcard-stat-screen').classList.remove('hidden');
+            
+            const total = currentFlashList.length;
+            const learnedPercent = Math.round((learnedCount / total) * 100);
+            const unlearnedPercent = 100 - learnedPercent;
+
+            document.getElementById('stat-learned-percent').innerText = learnedPercent + "%";
+            document.getElementById('stat-unlearned-percent').innerText = unlearnedPercent + "%";
+
+            const listContainer = document.getElementById('unlearned-list');
+            listContainer.innerHTML = '';
+            
+            if (unlearnedItems.length > 0) {
+                unlearnedItems.forEach(item => {
+                    listContainer.innerHTML += `
+                        <div class="flex justify-between items-center border-b border-slate-200 pb-2 text-sm">
+                            <span class="font-black text-emerald-900 text-lg">${item.h} <span class="pinyin-text font-bold text-amber-500 text-sm">(${item.p})</span></span>
+                            <span class="text-slate-600 font-bold">${item.m}</span>
+                        </div>
+                    `;
+                });
+                document.getElementById('btn-relearn').classList.remove('hidden');
+            } else {
+                listContainer.innerHTML = '<p class="text-center text-emerald-600 font-black py-4">Tuyệt vời! Bạn đã thuộc hết từ vựng.</p>';
+                document.getElementById('btn-relearn').classList.add('hidden');
+            }
+        }
+
+        function relearnUnlearned() {
+            startFlashcards(unlearnedItems);
+        }
+
+        function startVocabularyGame() {
+            vgStep = 0; vgScore = 0;
+            document.querySelectorAll('.snap-card').forEach(el => el.classList.add('hidden'));
+            document.getElementById('vocab-game-screen').classList.remove('hidden');
+            document.getElementById('vg-total').innerText = totalVocab;
+            nextVocabStep();
+        }
+
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex != 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
+
+        function nextVocabStep() {
+            if (vgStep >= vocabulary.length) {
+                completedParts.vocab = true;
+                document.getElementById('check-vocab').classList.remove('hidden');
+                checkUnlockExercise();
+                document.getElementById('vocab-game-screen').classList.add('hidden');
+                document.getElementById('end-screen').classList.remove('hidden');
+                document.getElementById('result-text').innerText = `Ghi nhớ đúng: ${vgScore}/${vocabulary.length} từ`;
+                return;
+            }
+            document.getElementById('vg-step').innerText = vgStep + 1;
+            document.getElementById('vg-feedback').classList.add('hidden');
+            document.getElementById('vg-next-btn').classList.add('hidden');
+            document.getElementById('vg-check-btn').classList.remove('hidden');
+            const card = vocabulary[vgStep];
+            const options = shuffle([...vocabulary]).filter(v => v.h !== card.h).slice(0, 3);
+            options.push(card);
+            const content = document.getElementById('vg-content');
+            content.innerHTML = `<div class="text-6xl font-black text-emerald-800 mb-8 chinese-text drop-shadow-sm">${card.h}</div><div class="grid grid-cols-2 gap-4 w-full">${shuffle(options).map(item => `<button class="bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl py-4 text-sm hover:border-emerald-400 hover:bg-emerald-50 transition-all shadow-sm" onclick="selectVocabOption(this, '${item.m}')">${item.m}</button>`).join('')}</div>`;
+            vgStep++;
+        }
+
+        let selectedOption = null;
+        function selectVocabOption(btn, mean) {
+            document.querySelectorAll('#vg-content button').forEach(b => {
+                b.style.borderColor = '#E2E8F0';
+                b.style.backgroundColor = 'white';
+                b.style.color = '#334155';
+            });
+            btn.style.borderColor = '#10B981';
+            btn.style.backgroundColor = '#ECFDF5';
+            btn.style.color = '#047857';
+            selectedOption = mean;
+        }
+
+        function checkVocabGame() {
+            if (!selectedOption) {
+                showToast("Vui lòng chọn một đáp án!", "warning");
+                return;
+            }
+            const card = vocabulary[vgStep - 1];
+            const feedback = document.getElementById('vg-feedback');
+            feedback.classList.remove('hidden');
+            if (selectedOption === card.m) {
+                playAudio('audio-correct');
+                vgScore++;
+                feedback.innerText = "Chính xác! 🌟";
+                feedback.className = "mt-6 p-4 rounded-2xl text-center font-black bg-emerald-100 text-emerald-700 border-2 border-emerald-200";
+            } else {
+                playAudio('audio-wrong');
+                feedback.innerText = "Sai rồi! Đáp án là: " + card.m;
+                feedback.className = "mt-6 p-4 rounded-2xl text-center font-black bg-rose-100 text-rose-700 border-2 border-rose-200";
+            }
+            document.getElementById('vg-check-btn').classList.add('hidden');
+            document.getElementById('vg-next-btn').classList.remove('hidden');
+            selectedOption = null;
+        }
+
+        function startQuiz(key) {
+            currentQuizKey = key; quizIdx = 0; quizScore = 0;
+            document.querySelectorAll('.snap-card').forEach(el => el.classList.add('hidden'));
+            document.getElementById('play-screen').classList.remove('hidden');
+            document.getElementById('quiz-part-name').innerText = quizData[key].name;
+            showQuizQuestion();
+        }
+
+        function showQuizQuestion() {
+            quizAnswered = false;
+            const q = quizData[currentQuizKey].questions[quizIdx];
+            document.getElementById('quiz-idx-display').innerText = quizIdx + 1;
+            document.getElementById('question-text').innerText = q.q;
+            document.getElementById('explanation-container').classList.add('hidden');
+            const container = document.getElementById('options-container'); container.innerHTML = '';
+            q.options.forEach((opt, i) => {
+                const btn = document.createElement('button');
+                btn.className = "bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl py-4 px-5 text-left hover:border-emerald-400 hover:bg-emerald-50 transition-all shadow-sm"; 
+                btn.innerText = String.fromCharCode(65 + i) + ". " + opt;
+                btn.onclick = () => checkQuiz(i, btn); container.appendChild(btn);
+            });
+        }
+
+        function checkQuiz(idx, btn) {
+            if (quizAnswered) return;
+            quizAnswered = true;
+            const q = quizData[currentQuizKey].questions[quizIdx];
+            document.getElementById('explanation-container').classList.remove('hidden');
+            if (idx === q.correct) {
+                playAudio('audio-correct');
+                quizScore++;
+                document.getElementById('feedback-title').innerText = "Chính xác! ✨";
+                document.getElementById('feedback-title').className = "font-black text-xl mb-3 text-center text-emerald-600";
+                btn.classList.add('bg-emerald-500', 'text-white', 'border-emerald-600');
+                btn.classList.remove('bg-white', 'text-slate-700');
+            } else {
+                playAudio('audio-wrong');
+                document.getElementById('feedback-title').innerText = "Chưa đúng! ❌";
+                document.getElementById('feedback-title').className = "font-black text-xl mb-3 text-center text-rose-600";
+                btn.classList.add('bg-rose-500', 'text-white', 'border-rose-600');
+                btn.classList.remove('bg-white', 'text-slate-700');
+                
+                const correctBtn = document.getElementById('options-container').children[q.correct];
+                correctBtn.classList.add('border-emerald-500', 'bg-emerald-50', 'text-emerald-800');
+            }
+            document.getElementById('exp-full-sentence').innerText = q.res;
+            document.getElementById('exp-pinyin').innerText = q.py;
+            document.getElementById('exp-translation').innerText = "Dịch: " + q.vi;
+            document.getElementById('explanation-text').innerText = "💡 " + q.exp;
+        }
+
+        function showNextQuestion() {
+            quizIdx++;
+            if (quizIdx < quizData[currentQuizKey].questions.length) {
+                showQuizQuestion();
+            } else {
+                completedParts[currentQuizKey] = true;
+                document.getElementById('check-' + currentQuizKey).classList.remove('hidden');
+                checkUnlockExercise();
+                document.getElementById('play-screen').classList.add('hidden');
+                document.getElementById('end-screen').classList.remove('hidden');
+                document.getElementById('result-text').innerText = `Đúng: ${quizScore}/${quizData[currentQuizKey].questions.length} câu`;
+            }
+        }
+
+        function showExercise() {
+            if(document.getElementById('btn-comprehensive').disabled) return;
+            document.querySelectorAll('.snap-card').forEach(el => el.classList.add('hidden'));
+            document.getElementById('exercise-screen').classList.remove('hidden');
+        }
+
+        function submitExercise() {
+            const selects = document.querySelectorAll('.ex-select');
+            const inputs = document.querySelectorAll('#exercise-screen input[type="text"]');
+            
+            const formatAns = (el) => {
+                const val = (el.value && el.value !== '____') ? el.value : '...';
+                return `[  ${val}  ]`;
+            };
+            
+            let resultText = "🌸 BÀI TẬP TỔNG HỢP - HSK3 BÀI 2 🌸\n";
+            resultText += "--------------------------------\n\n";
+            
+            resultText += "Phần 1: Điền từ\n";
+            resultText += `1. 这是你的 ${formatAns(selects[0])} 吗？真大！\n`;
+            resultText += `2. 今天的考试一点儿也不 ${formatAns(selects[1])} 。\n`;
+            resultText += `3. 我在505教室上课，我现在要上 ${formatAns(selects[2])} 去。\n`;
+            resultText += `4. 你看，小狗在 ${formatAns(selects[3])} 下做什么呢？\n`;
+            resultText += `5. 我太 ${formatAns(selects[4])} 了，不能吃那么多饭。\n`;
+            resultText += `6. B: ${formatAns(selects[5])} 我一点儿也不喜欢看书。\n`;
+            resultText += `7. A: 我想买这 ${formatAns(selects[6])} 车。\n`;
+            resultText += `8. B: 去商店买一 ${formatAns(selects[7])} 吧。\n`;
+            resultText += `9. A: 左边这条 ${formatAns(selects[8])} 有点儿疼。\n`;
+            resultText += `10. A: ${formatAns(selects[9])} ，我今天想早一点儿回家。\n\n`;
+            
+            resultText += "Phần 2: Mô tả hội thoại\n";
+            resultText += `Hình 1:\n A: 他到了办公室就 ${formatAns(inputs[0])}\n B: 他能 ${formatAns(inputs[1])} 吗？不，他 ${formatAns(inputs[2])} 就 ${formatAns(inputs[3])}\n\n`;
+            resultText += `Hình 2:\n B: 他 ${formatAns(inputs[4])} 买水果了。\n B: 他 ${formatAns(inputs[5])} 就回来。\n\n`;
+            resultText += `Hình 3:\n A: 你怎么还不 ${formatAns(inputs[6])}？\n B: 他来了 ${formatAns(inputs[7])}\n\n`;
+            resultText += `Hình 4:\n A: 你 ${formatAns(inputs[8])} 做什么？\n B: 能 ${formatAns(inputs[9])}？\n`;
+            resultText += "\n📱 SnapChinese Hệ Sinh Thái Học Tập";
+
+            navigator.clipboard.writeText(resultText).then(() => {
+                showToast("Đã copy bài làm! Hãy mở Zalo/FB cô giáo và ấn Dán nhé.", "success");
+            }).catch(err => {
+                showToast("Hệ thống không thể tự copy. Hãy chụp ảnh màn hình bài làm gửi cô giáo.", "error");
+            });
+        }
+    </script>
+</body>
+</html>
