@@ -473,21 +473,36 @@
     }
     if (speechSynthesis.onvoiceschanged !== undefined) speechSynthesis.onvoiceschanged = loadVoices;
 
-    // === HỆ THỐNG NORMALIZER ĐÃ ĐƯỢC FIX "DẤU PHẨY" ===
+ // === HỆ THỐNG NORMALIZER ĐÃ FIX DẤU PHẨY, TIỀN TỆ & GIỜ GIẤC ===
 function normalizeForCheck(text) {
     if (!text) return "";
     
-    // Cú fix thần thánh: Xóa sạch mọi dấu câu, kể cả nháy cong (’) và nháy thẳng (')
-    let t = text.toLowerCase().replace(/[.,?!–\-:"'’`]/g, '').trim();
+    let t = text.toLowerCase();
     
-    // Vì đã bay sạch dấu, "I'm" hay "I’m" hay "im" đều sẽ về chung một nhà là chữ "im" trần trụi
+    // 1. ĐỒNG NHẤT TIỀN TỆ: 
+    // Quét $15 hay 15 dollars hay 15 dollar đều ép về chung số "15"
+    t = t.replace(/\$(\d+)/g, '$1'); 
+    t = t.replace(/(\d+)\s*dollars?/g, '$1');
+
+    // 2. ĐỒNG NHẤT GIỜ GIẤC: 
+    // Quét 6h30, 6:30 đều ép về thành "630" (để lỡ user gõ 6 30 cũng dính)
+    t = t.replace(/(\d+)[h:](\d+)/g, '$1$2');
+
+    // 3. ĐỒNG NHẤT AM/PM: 
+    // Quét 4 pm, 4pm, 4 p.m đều ép về "4pm"
+    t = t.replace(/(\d+)\s*(am|pm)/g, '$1$2');
+
+    // 4. DIỆT CỎ TẬN GỐC DẤU CÂU (Bổ sung thêm $ và %)
+    t = t.replace(/[.,?!–\-:"'’`$%]/g, '').trim();
+    
+    // 5. NHẬN DIỆN VIẾT TẮT QUỐC DÂN
     const map = {
         "im": "i am",
         "hes": "he is",
         "shes": "she is",
         "its": "it is",
         "theyre": "they are",
-        "were": "we are",   // Nhận luôn were thành we are (cho ai lười gõ we're)
+        "were": "we are",
         "youre": "you are",
         "isnt": "is not",
         "arent": "are not",
@@ -509,7 +524,6 @@ function normalizeForCheck(text) {
         "id": "i would"
     };
     
-    // So khớp và bung chữ ra để chấm điểm chuẩn xác 100%
     return t.split(/\s+/).map(word => map[word] || word).join(' ').replace(/\s+/g, ' ').trim();
 }
 
