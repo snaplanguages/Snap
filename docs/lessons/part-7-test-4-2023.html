@@ -2013,9 +2013,9 @@
             cloudHistory.sort((a, b) => b.timestamp - a.timestamp);
             currentHistoryList = cloudHistory;
 
-            if (hasNewSync && typeof showInGameToast === "function") {
-                showInGameToast("☁️ Đã đồng bộ các lịch sử làm bài cũ lên Máy chủ!");
-            }
+            if (hasNewSync && typeof window.showInGameToast === "function") {
+    window.showInGameToast("☁️ Đã đồng bộ các lịch sử làm bài cũ lên Máy chủ!");
+}
         } else {
             currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
         }
@@ -2068,8 +2068,15 @@
             }
 
             let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-            history = history.filter(h => String(h.id) !== String(pendingDeleteId) && String(h.docId) !== String(pendingDeleteId));
-            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+history = history.filter(h => {
+    // pendingDeleteId có thể chứa uid, testId và id (ví dụ: uid_test4_123456)
+    // Cần kiểm tra xem đuôi của pendingDeleteId có khớp với h.id không
+    let isMatch = String(h.id) === String(pendingDeleteId) || 
+                  String(h.docId) === String(pendingDeleteId) || 
+                  String(pendingDeleteId).endsWith(String(h.id));
+    return !isMatch; // Chỉ giữ lại những bài không khớp
+});
+localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
 
             pendingDeleteId = null;
             openHistoryModal(); 
