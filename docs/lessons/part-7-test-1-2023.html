@@ -2040,19 +2040,25 @@ window.syncHistoryToFirebase = async function(attempt, testId) {
     }
 </script>
     <script>
-    // 1. Tạo giao diện Nút bật/tắt chế độ Admin
+    // 1. Tạo giao diện Nút bật/tắt chế độ Admin (Đã thêm nút chèn)
     const adminPanel = document.createElement('div');
     adminPanel.innerHTML = `
-        <div style="position: fixed; bottom: 20px; right: 90px; background: #1e293b; padding: 10px 15px; border-radius: 10px; z-index: 999999; display: flex; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 2px solid #4f46e5;">
+        <div style="position: fixed; bottom: 20px; right: 90px; background: #1e293b; padding: 10px 15px; border-radius: 10px; z-index: 999999; display: flex; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 2px solid #4f46e5; align-items: center;">
             <label style="color: white; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer;">
                 <input type="checkbox" id="adminToggle" style="transform: scale(1.2);"> Bật Edit
             </label>
-            <button id="adminSaveBtn" style="background: #22c55e; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-weight: bold; cursor: pointer; display: none;">💾 Lưu & Copy Code</button>
+            
+            <div id="adminTools" style="display: none; gap: 8px; border-left: 2px solid #475569; padding-left: 10px;">
+                <button onmousedown="event.preventDefault(); insertAdminTable()" style="background: #0ea5e9; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-weight: bold; cursor: pointer;" title="Chèn Bảng">+ Bảng</button>
+                <button onmousedown="event.preventDefault(); insertAdminBox()" style="background: #a855f7; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-weight: bold; cursor: pointer;" title="Chèn Khung chú ý">+ Khung</button>
+                <button onmousedown="event.preventDefault(); insertAdminLine()" style="background: #64748b; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-weight: bold; cursor: pointer;" title="Chèn đường kẻ ngang">-- Dòng</button>
+                <button id="adminSaveBtn" style="background: #22c55e; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-weight: bold; cursor: pointer;">💾 Lưu & Copy Code</button>
+            </div>
         </div>
     `;
     document.body.appendChild(adminPanel);
 
-    // 2. Tạo Toolbar nổi để đổi màu Highlight (ĐÃ THÊM MÀU HỒNG VÀ XANH NGỌC)
+    // 2. Tạo Toolbar nổi để đổi màu Highlight
     const formatToolbar = document.createElement('div');
     formatToolbar.id = 'adminFormatToolbar';
     formatToolbar.style.cssText = 'position: absolute; display: none; background: #fff; border: 2px solid #cbd5e1; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-radius: 8px; padding: 6px; z-index: 1000000; gap: 5px; transition: opacity 0.2s; flex-wrap: wrap; max-width: 400px;';
@@ -2062,10 +2068,8 @@ window.syncHistoryToFirebase = async function(attempt, testId) {
         <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-3')" style="background: #bfdbfe; color: #1e3a8a; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:13px;">3. Xanh dương</button>
         <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-4')" style="background: #fed7aa; color: #9a3412; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:13px;">4. Cam</button>
         <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-5')" style="background: #e9d5ff; color: #581c87; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:13px;">5. Tím</button>
-        
         <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-6')" style="background: #fbcfe8; color: #831843; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:13px;">6. Hồng</button>
         <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-7')" style="background: #ccfbf1; color: #0f766e; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:13px;">7. Xanh ngọc</button>
-
         <div style="width:1px; background:#cbd5e1; margin: 0 2px;"></div>
         <button onmousedown="event.preventDefault(); removeAdminHighlight()" style="background: #f1f5f9; color: #475569; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:13px;">🗑 Xóa màu</button>
     `;
@@ -2083,25 +2087,64 @@ window.syncHistoryToFirebase = async function(attempt, testId) {
     // Xử lý bật/tắt
     document.getElementById('adminToggle').addEventListener('change', function(e) {
         isAdminMode = e.target.checked;
-        const saveBtn = document.getElementById('adminSaveBtn');
+        const adminTools = document.getElementById('adminTools');
         if (isAdminMode) {
-            saveBtn.style.display = 'block';
+            adminTools.style.display = 'flex';
             document.getElementById('mainLayout').classList.add('submitted-layout');
             enableEditingForCurrentPassage();
-            showCustomAlert("🛠 Chế độ Edit V2 đã BẬT.\n\n- Bôi đen chữ bất kỳ để hiện menu đổi màu Highlight.\n- Dùng Ctrl+B, Ctrl+I để in đậm/in nghiêng.\n- Sửa xong nhớ bấm 'Lưu & Copy Code'.");
+            showCustomAlert("🛠 Chế độ Edit V3 đã BẬT.\n\n- Đặt con trỏ chuột vào vị trí cần chèn và bấm '+ Bảng' hoặc '+ Khung' ở góc dưới.\n- Bôi đen chữ để hiện menu đổi màu.\n- Sửa xong nhớ bấm 'Lưu & Copy Code'.");
         } else {
-            saveBtn.style.display = 'none';
+            adminTools.style.display = 'none';
             document.getElementById('mainLayout').classList.remove('submitted-layout');
             formatToolbar.style.display = 'none';
             renderPassage();
         }
     });
 
+    // ----------------------------------------------------
+    // CÁC HÀM CHÈN HTML (BẢNG, KHUNG, KẺ NGANG)
+    // ----------------------------------------------------
+    window.insertAdminTable = function() {
+        const tableHTML = `
+            <br>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem; background: rgba(255,255,255,0.7);" border="1" cellpadding="8">
+                <tbody>
+                    <tr>
+                        <td style="font-weight: bold; background: #e2e8f0;">Tiêu đề cột 1</td>
+                        <td style="font-weight: bold; background: #e2e8f0;">Tiêu đề cột 2</td>
+                    </tr>
+                    <tr>
+                        <td>Nội dung 1</td>
+                        <td>Nội dung 2</td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+        `;
+        document.execCommand('insertHTML', false, tableHTML);
+    };
+
+    window.insertAdminBox = function() {
+        const boxHTML = `
+            <br>
+            <div style="border: 2px dashed #4f46e5; padding: 15px; border-radius: 8px; background: rgba(224, 231, 255, 0.5); margin: 10px 0; color: #1e1b4b;">
+                <b>Tiêu đề khung:</b><br>
+                Gõ nội dung của bạn vào đây...
+            </div>
+            <br>
+        `;
+        document.execCommand('insertHTML', false, boxHTML);
+    };
+
+    window.insertAdminLine = function() {
+        document.execCommand('insertHTML', false, '<hr style="border: none; border-top: 2px solid #cbd5e1; margin: 1.5rem 0;">');
+    };
+    // ----------------------------------------------------
+
     // Hiện menu khi bôi đen chữ
     document.addEventListener('selectionchange', () => {
         if (!isAdminMode) return;
         const selection = window.getSelection();
-        // Kiểm tra xem có bôi đen chữ không và chỗ bôi đen có nằm trong vùng cho phép sửa không
         if (selection.toString().trim().length > 0 && selection.anchorNode && selection.anchorNode.parentElement && selection.anchorNode.parentElement.closest('[contenteditable="true"]')) {
             const range = selection.getRangeAt(0);
             const rect = range.getBoundingClientRect();
@@ -2117,25 +2160,21 @@ window.syncHistoryToFirebase = async function(attempt, testId) {
     window.applyAdminHighlight = function(className) {
         const selection = window.getSelection();
         if (!selection.rangeCount) return;
-        
-        // Tạo thẻ span chứa màu
         const span = document.createElement('span');
         span.className = className;
         span.textContent = selection.toString();
-        
         const range = selection.getRangeAt(0);
-        range.deleteContents(); // Xóa chữ cũ
-        range.insertNode(span); // Chèn chữ đã bọc màu vào
-        
+        range.deleteContents();
+        range.insertNode(span);
         formatToolbar.style.display = 'none';
-        selection.removeAllRanges(); // Bỏ bôi đen
+        selection.removeAllRanges();
     };
 
-    // Hàm xóa màu (đưa về text thường)
+    // Hàm xóa màu
     window.removeAdminHighlight = function() {
         const selection = window.getSelection();
         if (!selection.rangeCount) return;
-        document.execCommand('insertHTML', false, selection.toString()); // Ép thành text thuần
+        document.execCommand('insertHTML', false, selection.toString());
         formatToolbar.style.display = 'none';
     };
 
