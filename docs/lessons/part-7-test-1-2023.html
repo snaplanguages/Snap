@@ -2031,5 +2031,132 @@ window.syncHistoryToFirebase = async function(attempt, testId) {
         }
     }
 </script>
+    <script>
+    // 1. Tạo giao diện Nút bật/tắt chế độ Admin
+    const adminPanel = document.createElement('div');
+    adminPanel.innerHTML = `
+        <div style="position: fixed; bottom: 20px; right: 90px; background: #1e293b; padding: 10px 15px; border-radius: 10px; z-index: 999999; display: flex; gap: 10px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 2px solid #4f46e5;">
+            <label style="color: white; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer;">
+                <input type="checkbox" id="adminToggle" style="transform: scale(1.2);"> Bật Edit
+            </label>
+            <button id="adminSaveBtn" style="background: #22c55e; color: white; border: none; padding: 5px 10px; border-radius: 5px; font-weight: bold; cursor: pointer; display: none;">💾 Lưu & Copy Code</button>
+        </div>
+    `;
+    document.body.appendChild(adminPanel);
+
+    let isAdminMode = false;
+
+    // 2. Ghi đè hàm renderPassage cũ để thêm chức năng Edit mỗi khi chuyển trang
+    const originalRenderPassage = renderPassage;
+    renderPassage = function() {
+        originalRenderPassage(); // Chạy hàm gốc để render HTML
+        if (isAdminMode) {
+            enableEditingForCurrentPassage();
+        }
+    };
+
+    // 3. Xử lý sự kiện bật/tắt
+    document.getElementById('adminToggle').addEventListener('change', function(e) {
+        isAdminMode = e.target.checked;
+        const saveBtn = document.getElementById('adminSaveBtn');
+        
+        if (isAdminMode) {
+            saveBtn.style.display = 'block';
+            document.getElementById('mainLayout').classList.add('submitted-layout'); // Ép hiện 3 cột
+            enableEditingForCurrentPassage();
+            showCustomAlert("🛠 Chế độ Edit đã BẬT. \n- Bạn có thể click thẳng vào chữ trên màn hình để sửa.\n- Phần Dịch và Giải thích đã được hiện lên để sửa.\n- Sửa xong bấm 'Lưu & Copy Code' nhé!");
+        } else {
+            saveBtn.style.display = 'none';
+            document.getElementById('mainLayout').classList.remove('submitted-layout');
+            renderPassage(); // Render lại để xóa các khung edit
+        }
+    });
+
+    // 4. Hàm biến các phần tử thành khung có thể nhập chữ (contenteditable)
+    function enableEditingForCurrentPassage() {
+        const currentData = quizData[currentPassageIndex];
+
+        function makeEditable(element, dataObject, propertyName, outlineColor) {
+            if(!element) return;
+            element.setAttribute('contenteditable', 'true');
+            element.style.outline = `2px dashed ${outlineColor}`;
+            element.style.padding = '5px';
+            element.style.borderRadius = '4px';
+            
+            // Ép hiện nếu đang bị ẩn (dành cho giải thích)
+            if(window.getComputedStyle(element).display === 'none') {
+                element.style.display = 'block';
+            }
+
+            // Khi người dùng bấm ra ngoài (blur), lưu nội dung html lại vào mảng gốc
+            element.addEventListener('blur', function() {
+                dataObject[propertyName] = element.innerHTML.trim();
+            });
+        }
+
+        // Bật edit cho Passage và Translation
+        makeEditable(document.getElementById('passage-container'), currentData, 'passage', '#4f46e5');
+        makeEditable(document.getElementById('translation-container'), currentData, 'translation', '#f43f5e');
+
+        // Bật edit cho Câu hỏi và Lựa chọn
+        const qBlocks = document.querySelectorAll('.question-block');
+        qBlocks.forEach((block, idx) => {
+            const qData = currentData.questions[idx];
+
+            makeEditable(block.querySelector('.question-title'), qData, 'text', '#eab308');
+
+            const options = block.querySelectorAll('.option-text-en');
+            options.forEach((optEl, optIdx) => {
+                // Đoạn này ta lưu trực tiếp vào thuộc tính text của options
+                makeEditable(optEl, qData.options[optIdx], 'text', '#22c55e');
+                
+                // Nếu có phần tiếng Việt (đã nộp bài mới hiện), ẩn nó đi trong lúc edit để tránh lưu đè sai cấu trúc
+                const viText = block.querySelectorAll('.option-text-vi')[optIdx];
+                if(viText) viText.style.display = 'none'; 
+            });
+
+            makeEditable(block.querySelector('.explanation-box'), qData, 'explanation', '#a855f7');
+        });
+    }
+
+    // 5. Hàm xuất dữ liệu và copy
+    function exportAndCopyData() {
+        // Cập nhật lại DOM lần cuối trước khi xuất (đề phòng user đang trỏ chuột ở input chưa blur)
+        if(document.activeElement && document.activeElement.getAttribute('contenteditable') === 'true') {
+            document.activeElement.blur(); 
+        }
+
+        // Format lại JSON array
+        const jsonString = JSON.stringify(quizData, null, 4);
+        
+        // Vì trong chuỗi có thể có thẻ <script> hoặc các ký tự đặc biệt, export thuần túy
+        const finalCode = `const quizData = ${jsonString};`;
+
+        // Copy vào Clipboard
+        navigator.clipboard.writeText(finalCode).then(() => {
+            console.log("=== MẢNG QUIZDATA MỚI ===");
+            console.log(finalCode);
+            showCustomAlert("✅ Đã lưu và Copy code thành công!\n\nHãy mở file HTML của bạn, bôi đen từ `const quizData = [` cho đến hết dấu `];` của mảng cũ, sau đó bấm Ctrl + V để dán đè dữ liệu mới vào.");
+        }).catch(err => {
+            console.error(err);
+            console.log("=== MẢNG QUIZDATA MỚI ===");
+            console.log(finalCode);
+            showCustomAlert("❌ Trình duyệt chặn tự động Copy. Hãy nhấn F12, mở tab Console, copy toàn bộ đoạn text ở dưới dòng '=== MẢNG QUIZDATA MỚI ==='.");
+        });
+    }
+
+    // Gắn sự kiện cho nút Save
+    document.getElementById('adminSaveBtn').addEventListener('click', exportAndCopyData);
+
+    // Thêm phím tắt Ctrl + Shift + S để lưu
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 's') {
+            if(isAdminMode) {
+                e.preventDefault();
+                exportAndCopyData();
+            }
+        }
+    });
+</script>
 </body>
 </html>
