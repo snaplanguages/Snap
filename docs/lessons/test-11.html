@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reading Full Test 11 | SnapEnglish Pro</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -193,6 +194,7 @@
         
         <button class="mode-btn mode-practice" onclick="selectMode('practice')">🎯 Luyện Tập (Tùy chọn Passage)</button>
         <button class="mode-btn mode-mock" onclick="selectMode('mock')">🏆 Thi Thử (Full Test 60 phút)</button>
+        <button class="mode-btn mode-history" onclick="openHistoryTab()">🕒 Xem Lịch Sử</button>
         
         <div id="practiceOptions">
             <label style="font-weight: bold; margin-bottom: 12px; display: block; color: var(--primary-dark);">📚 Chọn phần muốn làm:</label>
@@ -207,6 +209,28 @@
         </div>
         
         <button class="start-btn" id="startBtn" onclick="askReady()">Bắt đầu (OK)</button>
+    </div>
+    <div class="setup-modal" id="historyContent" style="display: none;">
+        <h2>Lịch Sử Làm Bài</h2>
+        <div id="historyLoading" style="text-align: center; color: var(--text-light); margin: 15px 0;">Đang tải dữ liệu...</div>
+        
+        <div class="table-wrapper">
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Ngày làm</th>
+                        <th>Phần thi</th>
+                        <th>Kết quả</th>
+                        <th>Band</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn-cancel" style="width: auto;" onclick="backToMenu()">Quay lại Menu</button>
+        </div>
     </div>
 </div>
 
@@ -689,7 +713,16 @@
         document.getElementById('startConfirmMsg').innerText = confirmMsg;
         document.getElementById('startConfirmOverlay').style.display = 'flex';
     }
+function openHistoryTab() {
+        document.getElementById('setupContent').style.display = 'none';
+        document.getElementById('historyContent').style.display = 'block';
+        if(window.taiLichSuIELTS) window.taiLichSuIELTS();
+    }
 
+    function backToMenu() {
+        document.getElementById('historyContent').style.display = 'none';
+        document.getElementById('setupContent').style.display = 'block';
+    }
     function closeStartConfirmModal() { document.getElementById('startConfirmOverlay').style.display = 'none'; }
 
     function startTestActual() {
@@ -1004,6 +1037,142 @@
                 evElement.classList.add("focus-blink");
                 setTimeout(() => evElement.classList.remove("focus-blink"), 1500);
             }, 100);
+        }
+    }
+</script>
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+
+            if (typeof window.taiLichSuIELTS === "function") {
+                window.taiLichSuIELTS();
+            }
+        }
+    });
+
+   window.luuDiemLenFirebase = async function(diemSo, timeTakenMinutes, userAnswersDict, partName = "Full Test", totalQ = 40) {
+        if (!window.currentUserUid) return;
+        
+        let bandScore = window.calculateIeltsBand ? window.calculateIeltsBand(diemSo, totalQ) : 0;
+        let timestamp = Date.now();
+        let idLuotThi = window.currentUserUid + "_ielts_R_T11_" + timestamp;
+
+        try {
+            await setDoc(doc(db, "user_ielts_scores", idLuotThi), {
+                email: window.currentUserEmail,
+                skill: "Reading",
+                testName: "Test 11",
+                partName: partName,
+                timeTaken: timeTakenMinutes.toString(),
+                correctQ: diemSo,
+                totalQ: totalQ,
+                bandScore: bandScore,
+                userAnswers: userAnswersDict,
+                date: new Date().toLocaleDateString("vi-VN"),
+                timestamp: timestamp
+            });
+        } catch(e) {
+            console.error("Lỗi khi lưu điểm: ", e);
+        }
+    }
+
+    window.taiLichSuIELTS = async function() {
+        const tbody = document.getElementById("historyBody");
+        const loading = document.getElementById("historyLoading");
+
+        if (!window.currentUserUid) {
+            tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Vui lòng đăng nhập hệ thống để xem lịch sử.</td></tr>";
+            loading.style.display = "none";
+            return;
+        }
+
+        loading.style.display = "block";
+        tbody.innerHTML = "";
+
+        try {
+            const q = query(
+                collection(db, "user_ielts_scores"),
+                where("email", "==", window.currentUserEmail),
+                where("skill", "==", "Reading"),
+                where("testName", "==", "Test 11")
+            );
+
+            const querySnapshot = await getDocs(q);
+            let html = "";
+            
+            if (querySnapshot.empty) {
+                html = "<tr><td colspan='4' style='text-align:center;'>Bạn chưa làm bài test này.</td></tr>";
+            } else {
+                window.historyDataList = [];
+                querySnapshot.forEach((doc) => { 
+                    let data = doc.data();
+                    data.id = doc.id; 
+                    window.historyDataList.push(data); 
+                });
+                
+                window.historyDataList.sort((a, b) => b.timestamp - a.timestamp);
+
+                window.historyDataList.forEach((data) => {
+                    let dateObj = new Date(data.timestamp);
+                    let dateString = dateObj.toLocaleDateString("vi-VN") + " " + dateObj.getHours() + ":" + (dateObj.getMinutes() < 10 ? '0':'') + dateObj.getMinutes();
+
+                   html += `
+                        <tr>
+                            <td>${dateString}</td>
+                            <td><strong>${data.correctQ} / 40</strong></td>
+                            <td><strong style="color: var(--primary-dark); font-size: 1.1em;">${data.bandScore}</strong></td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="xoaLichSu('${data.id}', this)" class="btn-cancel" style="padding: 6px 12px; border-color: #fca5a5; color: #dc2626;">Xóa</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            tbody.innerHTML = html;
+        } catch (error) {
+            console.error("Lỗi fetch lịch sử: ", error);
+            tbody.innerHTML = "<tr><td colspan='4' style='text-align:center; color: var(--wrong);'>Đã xảy ra lỗi tải dữ liệu.</td></tr>";
+        } finally {
+            loading.style.display = "none";
+        }
+    }
+
+    window.xoaLichSu = async function(docId, btnElement) {
+        let originalText = btnElement.innerText;
+        btnElement.innerText = "...";
+        btnElement.disabled = true;
+
+        try {
+            await deleteDoc(doc(db, "user_ielts_scores", docId));
+            window.taiLichSuIELTS(); 
+        } catch (error) {
+            console.error("Lỗi khi xóa lịch sử: ", error);
+            btnElement.innerText = "Lỗi!";
+            setTimeout(() => {
+                btnElement.innerText = originalText;
+                btnElement.disabled = false;
+            }, 2000);
         }
     }
 </script>
