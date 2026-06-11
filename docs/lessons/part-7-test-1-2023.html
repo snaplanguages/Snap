@@ -2044,35 +2044,90 @@ window.syncHistoryToFirebase = async function(attempt, testId) {
     `;
     document.body.appendChild(adminPanel);
 
+    // 2. Tạo Toolbar nổi để đổi màu Highlight
+    const formatToolbar = document.createElement('div');
+    formatToolbar.id = 'adminFormatToolbar';
+    formatToolbar.style.cssText = 'position: absolute; display: none; background: #fff; border: 2px solid #cbd5e1; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-radius: 8px; padding: 6px; z-index: 1000000; gap: 5px; transition: opacity 0.2s;';
+    formatToolbar.innerHTML = `
+        <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-1')" style="background: #bbf7d0; color: #166534; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:13px;">1. Xanh lá</button>
+        <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-2')" style="background: #fecaca; color: #991b1b; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:13px;">2. Đỏ</button>
+        <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-3')" style="background: #bfdbfe; color: #1e3a8a; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:13px;">3. Xanh dương</button>
+        <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-4')" style="background: #fed7aa; color: #9a3412; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:13px;">4. Cam</button>
+        <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-5')" style="background: #e9d5ff; color: #581c87; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:13px;">5. Tím</button>
+        <div style="width:1px; background:#cbd5e1; margin: 0 2px;"></div>
+        <button onmousedown="event.preventDefault(); removeAdminHighlight()" style="background: #f1f5f9; color: #475569; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; font-size:13px;">🗑 Xóa màu</button>
+    `;
+    document.body.appendChild(formatToolbar);
+
     let isAdminMode = false;
 
-    // 2. Ghi đè hàm renderPassage cũ để thêm chức năng Edit mỗi khi chuyển trang
+    // Ghi đè hàm renderPassage
     const originalRenderPassage = renderPassage;
     renderPassage = function() {
-        originalRenderPassage(); // Chạy hàm gốc để render HTML
-        if (isAdminMode) {
-            enableEditingForCurrentPassage();
-        }
+        originalRenderPassage();
+        if (isAdminMode) enableEditingForCurrentPassage();
     };
 
-    // 3. Xử lý sự kiện bật/tắt
+    // Xử lý bật/tắt
     document.getElementById('adminToggle').addEventListener('change', function(e) {
         isAdminMode = e.target.checked;
         const saveBtn = document.getElementById('adminSaveBtn');
-        
         if (isAdminMode) {
             saveBtn.style.display = 'block';
-            document.getElementById('mainLayout').classList.add('submitted-layout'); // Ép hiện 3 cột
+            document.getElementById('mainLayout').classList.add('submitted-layout');
             enableEditingForCurrentPassage();
-            showCustomAlert("🛠 Chế độ Edit đã BẬT. \n- Bạn có thể click thẳng vào chữ trên màn hình để sửa.\n- Phần Dịch và Giải thích đã được hiện lên để sửa.\n- Sửa xong bấm 'Lưu & Copy Code' nhé!");
+            showCustomAlert("🛠 Chế độ Edit V2 đã BẬT.\n\n- Bôi đen chữ bất kỳ để hiện menu đổi màu Highlight.\n- Dùng Ctrl+B, Ctrl+I để in đậm/in nghiêng.\n- Sửa xong nhớ bấm 'Lưu & Copy Code'.");
         } else {
             saveBtn.style.display = 'none';
             document.getElementById('mainLayout').classList.remove('submitted-layout');
-            renderPassage(); // Render lại để xóa các khung edit
+            formatToolbar.style.display = 'none';
+            renderPassage();
         }
     });
 
-    // 4. Hàm biến các phần tử thành khung có thể nhập chữ (contenteditable)
+    // Hiện menu khi bôi đen chữ
+    document.addEventListener('selectionchange', () => {
+        if (!isAdminMode) return;
+        const selection = window.getSelection();
+        // Kiểm tra xem có bôi đen chữ không và chỗ bôi đen có nằm trong vùng cho phép sửa không
+        if (selection.toString().trim().length > 0 && selection.anchorNode && selection.anchorNode.parentElement && selection.anchorNode.parentElement.closest('[contenteditable="true"]')) {
+            const range = selection.getRangeAt(0);
+            const rect = range.getBoundingClientRect();
+            formatToolbar.style.top = (rect.top + window.scrollY - 45) + 'px';
+            formatToolbar.style.left = (rect.left + window.scrollX) + 'px';
+            formatToolbar.style.display = 'flex';
+        } else {
+            formatToolbar.style.display = 'none';
+        }
+    });
+
+    // Hàm áp dụng màu Highlight
+    window.applyAdminHighlight = function(className) {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+        
+        // Tạo thẻ span chứa màu
+        const span = document.createElement('span');
+        span.className = className;
+        span.textContent = selection.toString();
+        
+        const range = selection.getRangeAt(0);
+        range.deleteContents(); // Xóa chữ cũ
+        range.insertNode(span); // Chèn chữ đã bọc màu vào
+        
+        formatToolbar.style.display = 'none';
+        selection.removeAllRanges(); // Bỏ bôi đen
+    };
+
+    // Hàm xóa màu (đưa về text thường)
+    window.removeAdminHighlight = function() {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+        document.execCommand('insertHTML', false, selection.toString()); // Ép thành text thuần
+        formatToolbar.style.display = 'none';
+    };
+
+    // Bật thuộc tính edit cho các khối
     function enableEditingForCurrentPassage() {
         const currentData = quizData[currentPassageIndex];
 
@@ -2083,34 +2138,24 @@ window.syncHistoryToFirebase = async function(attempt, testId) {
             element.style.padding = '5px';
             element.style.borderRadius = '4px';
             
-            // Ép hiện nếu đang bị ẩn (dành cho giải thích)
-            if(window.getComputedStyle(element).display === 'none') {
-                element.style.display = 'block';
-            }
+            if(window.getComputedStyle(element).display === 'none') element.style.display = 'block';
 
-            // Khi người dùng bấm ra ngoài (blur), lưu nội dung html lại vào mảng gốc
             element.addEventListener('blur', function() {
                 dataObject[propertyName] = element.innerHTML.trim();
             });
         }
 
-        // Bật edit cho Passage và Translation
         makeEditable(document.getElementById('passage-container'), currentData, 'passage', '#4f46e5');
         makeEditable(document.getElementById('translation-container'), currentData, 'translation', '#f43f5e');
 
-        // Bật edit cho Câu hỏi và Lựa chọn
         const qBlocks = document.querySelectorAll('.question-block');
         qBlocks.forEach((block, idx) => {
             const qData = currentData.questions[idx];
-
             makeEditable(block.querySelector('.question-title'), qData, 'text', '#eab308');
 
             const options = block.querySelectorAll('.option-text-en');
             options.forEach((optEl, optIdx) => {
-                // Đoạn này ta lưu trực tiếp vào thuộc tính text của options
                 makeEditable(optEl, qData.options[optIdx], 'text', '#22c55e');
-                
-                // Nếu có phần tiếng Việt (đã nộp bài mới hiện), ẩn nó đi trong lúc edit để tránh lưu đè sai cấu trúc
                 const viText = block.querySelectorAll('.option-text-vi')[optIdx];
                 if(viText) viText.style.display = 'none'; 
             });
@@ -2119,42 +2164,30 @@ window.syncHistoryToFirebase = async function(attempt, testId) {
         });
     }
 
-    // 5. Hàm xuất dữ liệu và copy
+    // Xuất code
     function exportAndCopyData() {
-        // Cập nhật lại DOM lần cuối trước khi xuất (đề phòng user đang trỏ chuột ở input chưa blur)
         if(document.activeElement && document.activeElement.getAttribute('contenteditable') === 'true') {
             document.activeElement.blur(); 
         }
-
-        // Format lại JSON array
         const jsonString = JSON.stringify(quizData, null, 4);
-        
-        // Vì trong chuỗi có thể có thẻ <script> hoặc các ký tự đặc biệt, export thuần túy
         const finalCode = `const quizData = ${jsonString};`;
 
-        // Copy vào Clipboard
         navigator.clipboard.writeText(finalCode).then(() => {
             console.log("=== MẢNG QUIZDATA MỚI ===");
             console.log(finalCode);
-            showCustomAlert("✅ Đã lưu và Copy code thành công!\n\nHãy mở file HTML của bạn, bôi đen từ `const quizData = [` cho đến hết dấu `];` của mảng cũ, sau đó bấm Ctrl + V để dán đè dữ liệu mới vào.");
+            showCustomAlert("✅ Đã lưu và Copy code thành công!\n\nHãy mở file HTML, bôi đen từ `const quizData = [` đến `];` cũ, rồi Ctrl + V đè lên.");
         }).catch(err => {
             console.error(err);
             console.log("=== MẢNG QUIZDATA MỚI ===");
             console.log(finalCode);
-            showCustomAlert("❌ Trình duyệt chặn tự động Copy. Hãy nhấn F12, mở tab Console, copy toàn bộ đoạn text ở dưới dòng '=== MẢNG QUIZDATA MỚI ==='.");
+            showCustomAlert("❌ Trình duyệt chặn Copy. Nhấn F12, mở tab Console và copy toàn bộ text ở dưới dòng '=== MẢNG QUIZDATA MỚI ==='.");
         });
     }
 
-    // Gắn sự kiện cho nút Save
     document.getElementById('adminSaveBtn').addEventListener('click', exportAndCopyData);
-
-    // Thêm phím tắt Ctrl + Shift + S để lưu
     document.addEventListener('keydown', function(e) {
         if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 's') {
-            if(isAdminMode) {
-                e.preventDefault();
-                exportAndCopyData();
-            }
+            if(isAdminMode) { e.preventDefault(); exportAndCopyData(); }
         }
     });
 </script>
