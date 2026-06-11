@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading Full Test 11 | SnapEnglish Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* THEME MỚI: TÍM INDIGO - TĂNG CƯỜNG TẬP TRUNG */
+        :root {
+            --primary: #6366f1; 
+            --primary-dark: #4338ca; 
+            --accent: #c7d2fe;
+            --bg-body: #f5f3ff;
+            --bg-pane: #ffffff;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --border-color: #e0e7ff;
+            --highlight-color: #fef08a;
+            --correct: #16a34a;
+            --wrong: #dc2626;
+            --exp-bg: #f5f3ff;
+            --header-h: 70px;
+            --footer-h: 80px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            font-size: 16px;
+        }
+
+        /* --- OVERLAY & MODAL --- */
+        #setupOverlay, .custom-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+        }
+        .setup-modal, .custom-modal {
+            background: white; padding: 35px; border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.15);
+            width: 90%; max-width: 500px; text-align: center;
+            border: 2px solid var(--accent);
+            animation: popIn 0.3s ease-out;
+            max-height: 90vh; overflow-y: auto;
+        }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .setup-modal h2, .custom-modal h2 { color: var(--primary-dark); font-size: 24px; margin-top: 0; font-weight: 700; }
+        
+        .mode-btn {
+            display: block; width: 100%; padding: 14px; margin: 12px 0;
+            border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: 0.3s; font-family: inherit;
+        }
+        .mode-practice { background: #fef2f2; color: #b91c1c; border: 2px solid #fecaca; }
+        .mode-practice:hover, .mode-practice.selected { background: #ef4444; color: white; border-color: #ef4444; }
+        .mode-mock { background: var(--bg-body); color: var(--primary-dark); border: 2px solid var(--accent); }
+        .mode-mock:hover, .mode-mock.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        
+        #practiceOptions { display: none; background: #f8fafc; border: 1px dashed #cbd5e1; padding: 15px; border-radius: 10px; text-align: left; margin: 15px 0; }
+        .passage-cb-container { display: flex; align-items: center; margin-bottom: 8px; font-weight: 500; cursor: pointer;}
+        .passage-cb-container input { margin-right: 10px; transform: scale(1.2); cursor: pointer;}
+
+        #timeInputBox { display: none; margin: 20px 0; }
+        #timeInput { width: 90px; padding: 8px; font-size: 16px; text-align: center; border: 2px solid #cbd5e1; border-radius: 8px; font-family: inherit; outline: none; color: var(--primary-dark); font-weight: bold; }
+        #timeInput:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); }
+        
+        .start-btn { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 15px; transition: 0.3s; display: none; box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3); }
+        .start-btn:hover { transform: translateY(-2px); }
+
+        .modal-actions { display: flex; gap: 15px; margin-top: 20px; justify-content: center; }
+        .btn-cancel, .btn-confirm { padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; font-family: inherit; flex: 1; border: none; }
+        .btn-cancel { background: #f1f5f9; color: #475569; border: 2px solid #cbd5e1; }
+        .btn-cancel:hover { background: #e2e8f0; }
+        .btn-confirm { background: var(--primary); color: white; box-shadow: 0 4px 0 var(--primary-dark); }
+        .btn-confirm:active { transform: translateY(4px); box-shadow: none; }
+
+        /* --- HEADER & FOCUS MODE --- */
+        header { height: var(--header-h); background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 100; transition: all 0.3s ease; }
+        body.focus-mode header { height: 0; padding: 0; overflow: hidden; opacity: 0; }
+        body.focus-mode .container { height: calc(100vh - var(--footer-h)); }
+        
+        .brand { font-size: 20px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .brand span { background: var(--primary); color: white; padding: 4px 8px; border-radius: 8px; font-size: 14px; }
+
+        .tab-container { display: flex; background: #f1f5f9; padding: 4px; border-radius: 20px; gap: 4px; overflow-x: auto;}
+        .tab-btn { border: none; background: transparent; padding: 8px 18px; font-size: 15px; font-family: inherit; font-weight: 600; color: var(--text-light); cursor: pointer; border-radius: 15px; transition: all 0.3s; white-space: nowrap; }
+        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        .controls { display: flex; gap: 15px; align-items: center; }
+        .focus-toggle-btn { background: #e0e7ff; color: var(--primary-dark); border: none; padding: 8px 15px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit;}
+        .focus-toggle-btn:hover { background: #c7d2fe; }
+        
+        .timer-box { font-family: monospace; font-weight: 700; color: #b91c1c; background: #fef2f2; padding: 8px 15px; border-radius: 10px; font-size: 18px; border: 1px solid #fecaca; }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 8px 20px; border-radius: 10px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; font-family: inherit; box-shadow: 0 3px 0 var(--primary-dark); white-space: nowrap; }
+        .btn-submit:active { transform: translateY(3px); box-shadow: none; }
+
+        /* --- LAYOUT --- */
+        .container { display: flex; height: calc(100vh - var(--header-h) - var(--footer-h)); width: 100%; transition: all 0.3s ease;}
+        .pane { flex: 1; padding: 30px 40px; overflow-y: auto; position: relative; scroll-behavior: smooth; }
+        .pane-left { background: #fff; border-right: 2px solid var(--border-color); font-size: 16px; line-height: 1.7; text-align: justify; color: #334155; }
+        .pane-right { background: #f8fafc; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- CONTENT STYLES --- */
+        .passage-title { text-align: center; color: var(--primary-dark); margin-bottom: 20px; border-bottom: 2px dashed var(--accent); padding-bottom: 12px; font-size: 24px; font-weight: 700;}
+        .paragraph { margin-bottom: 18px; }
+        .paragraph-label { color: var(--primary); font-weight: 700; font-size: 1.05em; margin-right: 5px; }
+        .passage-content, .question-group { display: none; animation: fadeIn 0.3s; }
+        .passage-content.active, .question-group.active { display: block; }
+        .question-group { padding-bottom: 40px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* EVIDENCE HIGHLIGHTS */
+        .ev-box { padding: 1px 3px; border-radius: 4px; transition: all 0.4s ease; border: 2px solid transparent; background-color: transparent; color: inherit; }
+        .ev-box.focus-blink { border-color: var(--primary-dark) !important; transform: scale(1.02); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2) !important; background-color: var(--highlight-color) !important; z-index: 10; position: relative; }
+
+        /* --- QUESTIONS UI --- */
+        .question-section { padding: 20px; border: 1px solid var(--border-color); background: #fff; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
+        .instruction { color: var(--primary-dark); font-weight: 600; margin-bottom: 15px; font-size: 15px; background: var(--bg-body); padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary);}
+        .q-row { display: flex; align-items: baseline; margin-bottom: 15px; font-size: 15px; }
+        .q-num { font-weight: bold; min-width: 30px; color: var(--primary); }
+        .q-content { flex: 1; line-height: 1.7; }
+        .input-gap { display: inline-block; width: 140px; height: 32px; border: 2px solid #cbd5e1; border-radius: 6px; text-align: center; font-weight: 600; color: var(--primary-dark); font-size: 15px; margin: 0 5px; vertical-align: middle; transition: 0.2s; font-family: inherit; }
+        .input-gap:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
+        select.input-select { padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 15px; cursor: pointer; font-weight: 500; color: var(--text-main); outline: none; margin-top: 6px; margin-right: 8px; font-family: inherit; }
+        select.input-select:focus { border-color: var(--primary); }
+        .mcq-item { margin-bottom: 20px; }
+        .mcq-question { font-weight: 600; margin-bottom: 10px; font-size: 15px; display: flex; align-items: baseline;}
+        .mcq-option { display: block; padding: 10px; cursor: pointer; border-radius: 8px; margin-bottom: 5px; border: 1px solid transparent; transition: 0.2s; font-size: 15px;}
+        .mcq-option:hover { background: #f8fafc; border-color: #cbd5e1; }
+        .mcq-option input { margin-right: 10px; transform: scale(1.1);}
+
+        /* Bảng */
+        .q-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .q-table th { text-align: left; padding: 12px; background: #f1f5f9; color: var(--primary-dark); border-bottom: 2px solid var(--border-color); }
+        .q-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+        .q-table td.center { text-align: center; }
+
+        /* --- EXPLANATION BOX --- */
+        .exp-box { display: none; background: #fff; border: 2px solid var(--border-color); border-left: 5px solid var(--primary); padding: 15px; margin-top: 10px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.08); animation: slideUp 0.3s ease-out; }
+        .exp-box.show { display: block; }
+        .exp-title { font-weight: 700; color: var(--primary-dark); font-size: 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; margin-bottom: 10px; }
+        .locate-btn { background: var(--bg-body); border: 1px solid var(--accent); color: var(--primary-dark); padding: 4px 10px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; font-family: inherit; }
+        .locate-btn:hover { background: var(--primary); color: white; }
+        .exp-section { margin-bottom: 10px; font-size: 15px; line-height: 1.5; color: #334155; }
+        .exp-label { font-weight: 600; color: var(--primary-dark); display: inline-block; white-space: nowrap; margin-bottom: 5px; }
+        .exp-translate { background: #f8fafc; padding: 8px; border-radius: 4px; border-left: 3px solid #cbd5e1; font-style: italic; margin-top: 4px; }
+        .exp-keywords { background: #fffbeb; padding: 8px; border-radius: 4px; border: 1px dashed #fde68a; margin-top: 4px;}
+        .exp-detail { margin-top: 4px; }
+
+        /* --- FOOTER --- */
+        footer { height: var(--footer-h); background: #fff; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; gap: 15px; z-index: 100; }
+        .palette-scroller { flex: 1; display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; align-items: center;}
+        .nav-dot { min-width: 36px; height: 36px; border: 2px solid #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; cursor: pointer; color: #94a3b8; background: white; transition: 0.2s; flex-shrink: 0; display: none; }
+        .nav-dot.done { background: var(--bg-body); color: var(--primary-dark); border-color: var(--accent); }
+        .nav-dot:hover { border-color: var(--primary); color: var(--primary); }
+        
+        .feedback { display: inline-block; font-weight: bold; font-size: 15px; margin-left: 8px; }
+        .correct { color: var(--correct); }
+        .wrong { color: var(--wrong); }
+
+        @media (max-width: 768px) {
+            .container { flex-direction: column; }
+            .pane { height: 50%; padding: 20px; }
+            .pane-left { border-right: none; border-bottom: 2px solid var(--border-color); }
+            header { padding: 10px; height: auto; flex-wrap: wrap; gap: 10px;}
+            .tab-container { width: 100%; order: 3; justify-content: space-between;}
+            .controls { order: 2; }
+            .input-gap { width: 100%; margin: 5px 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="setupOverlay">
+    <div class="setup-modal" id="setupContent">
+        <h2>Chào mừng đến với Reading Library ✨</h2>
+        <p style="font-size: 15px; color: #64748b; margin-bottom: 20px;">Hôm nay bạn muốn rèn luyện theo cách nào?</p>
+        
+        <button class="mode-btn mode-practice" onclick="selectMode('practice')">🎯 Luyện Tập (Tùy chọn Passage)</button>
+        <button class="mode-btn mode-mock" onclick="selectMode('mock')">🏆 Thi Thử (Full Test 60 phút)</button>
+        
+        <div id="practiceOptions">
+            <label style="font-weight: bold; margin-bottom: 12px; display: block; color: var(--primary-dark);">📚 Chọn phần muốn làm:</label>
+            <label class="passage-cb-container"><input type="checkbox" class="passage-cb" value="1" checked onchange="updatePracticeTime()"> Passage 1 (13 câu)</label>
+            <label class="passage-cb-container"><input type="checkbox" class="passage-cb" value="2" checked onchange="updatePracticeTime()"> Passage 2 (13 câu)</label>
+            <label class="passage-cb-container"><input type="checkbox" class="passage-cb" value="3" checked onchange="updatePracticeTime()"> Passage 3 (14 câu)</label>
+        </div>
+
+        <div id="timeInputBox">
+            <label style="font-size: 15px; font-weight: bold; color: #475569;">⏱ Cài đặt thời gian (phút): </label>
+            <input type="number" id="timeInput" value="60" min="5" max="180">
+        </div>
+        
+        <button class="start-btn" id="startBtn" onclick="askReady()">Bắt đầu (OK)</button>
+    </div>
+</div>
+
+<div id="startConfirmOverlay" class="custom-overlay" style="display: none;">
+    <div class="custom-modal">
+        <h2>Xác nhận bắt đầu</h2>
+        <p id="startConfirmMsg" style="font-size: 15px; color: #475569; margin-bottom: 15px; white-space: pre-line;"></p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeStartConfirmModal()">Huỷ</button>
+            <button class="btn-confirm" onclick="startTestActual()">OK</button>
+        </div>
+    </div>
+</div>
+
+<header>
+    <div class="brand">
+        <span>SnapEnglish Pro</span> Test 11
+    </div>
+    
+    <div class="tab-container" id="tab-container">
+        <button class="tab-btn active" id="tab-btn-1" onclick="switchTab(1)">Passage 1</button>
+        <button class="tab-btn" id="tab-btn-2" onclick="switchTab(2)">Passage 2</button>
+        <button class="tab-btn" id="tab-btn-3" onclick="switchTab(3)">Passage 3</button>
+    </div>
+
+    <div class="controls">
+        <button class="focus-toggle-btn" onclick="toggleFocusMode()">🔍 Focus Mode</button>
+        <div class="timer-box">⏱ <span id="timer">00:00</span></div>
+        <button class="btn-submit" onclick="submitTest(true)">NỘP BÀI</button>
+    </div>
+</header>
+
+<div class="container" id="mainContainer">
+    
+    <div class="pane pane-left" id="passagePane">
+        
+        <div id="text-p1" class="passage-content active">
+            <h2 class="passage-title">Lie Detector</h2>
+            
+            <p class="paragraph"><span class="paragraph-label">Paragraph A</span>
+            However much we may abhor it, <span id="ev-1" class="ev-box">deception comes naturally to all living things</span>. Birds do it by feigning injury to lead hungry predators away from nesting young. Spider crabs do it by disguise: adorning themselves with strips of kelp and other debris, they pretend to be something they are not-and so escape their enemies. Nature amply rewards successful deceivers by allowing them to survive long enough to mate and reproduce. So it may come as no surprise to learn that human beings-who, according to psychologist Gerald Jellison of the University of South California, are lied to about 200 times a day, roughly one untruth every five minutes-often deceive for exactly the same reasons: <span id="ev-2" class="ev-box">to save their own skins</span> or to get something they can't get by other means.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph B</span>
+            But <span id="ev-3" class="ev-box">knowing how to catch deceit can be just as important a survival skill as knowing how to tell a lie and get away with it</span>. A person able to spot falsehood quickly is unlikely to be swindled by an unscrupulous business associate or hoodwinked by a devious spouse. Luckily, nature provides more than enough clues to trap dissemblers in their own tangled webs-if you know where to look. By closely observing facial expressions, body language and tone of voice, practically anyone can recognize the telltale signs of lying. Researchers are even programming computers-like those used on Lie Detector-to get at the truth by analyzing the same physical cues available to the naked eye and ear. "With the proper training, many people can learn to reliably detect lies," says Paul Ekman, professor of psychology at the University of California, San Francisco, who has spent the past 15 years studying the secret art of deception.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph C</span>
+            In order to know what kind of lies work best, <span id="ev-5" class="ev-box">successful liars need to accurately assess other people's emotional states</span>. Ekman's research shows that this same emotional intelligence is essential for good lie detectors, too. The emotional state to watch out for is stress, the conflict most liars feel between the truth and what they actually say and do.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph D</span>
+            Even high-tech lie detectors don't detect lies as such; <span id="ev-6" class="ev-box">they merely detect the physical cues of emotions</span>, which may or may not correspond to what the person being tested is saying. Polygraphs, for instance, measure respiration, heart rate and skin conductivity, which tend to increase when people are nervous-as they usually are when lying. Nervous people typically perspire, and the salts contained in perspiration conduct electricity. That's why a sudden leap in skin conductivity indicates nervousness-about getting caught, perhaps?-which might, in turn, suggest that someone is being economical with the truth. On the other hand, it <span id="ev-7" class="ev-box">might also mean that the lights in the television studio are too hot-which is one reason polygraph tests are inadmissible in court</span>. "Good lie detectors don't rely on a single sign," Ekman says, "but interpret clusters of verbal and nonverbal clues that suggest someone might be lying."</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph E</span>
+            Those clues are written all over the face. Because the musculature of the face is directly connected to the areas of the brain that process emotion, the countenance can be a window to the soul. Neurological studies even suggest that genuine emotions travel different pathways through the brain than insincere ones. <span id="ev-8" class="ev-box">If a patient paralyzed by a stroke on one side of the face, for example, is asked to smile deliberately, only the mobile side of the mouth is raised. But tell that same person a funny joke, and the patient breaks into a full and spontaneous smile.</span> Very few people-<span id="ev-9" class="ev-box">most notably, actors and politicians-are able to consciously control all of their facial expressions</span>. Lies can often be caught when the liar's true feelings briefly leak through the mask of deception. "We don't think before we feel," Ekman says. "Expressions tend to show up on the face before we're even conscious of experiencing an emotion."</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph F</span>
+            One of the most difficult facial expressions to fake-or conceal, if it is genuinely felt-is sadness. When someone is truly sad, the <span id="ev-10" class="ev-box">forehead wrinkles</span> with grief and the <span id="ev-13" class="ev-box">inner corners of the eyebrows are pulled up</span>. Fewer than 15% of the people Ekman tested were able to produce this eyebrow movement voluntarily. By contrast, the <span id="ev-12" class="ev-box">lowering of the eyebrows</span> associated with an angry scowl can be replicated at will by almost everybody. "If someone claims they are sad and the inner corners of their eyebrows don't go up," Ekman says, "the sadness is probably false."</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph G</span>
+            The smile, on the other hand, is one of the easiest facial expressions to counterfeit. It takes just two muscles-the zygomaticus major muscles that extend from the cheekbones to the corners of the lips-to produce a grin. But there's a catch. A genuine smile affects not only the corners of the lips but also the <span id="ev-11" class="ev-box">orbicularis oculi, the muscle around the eye</span> that produces the distinctive "crow's-feet" associated with people who laugh a lot. A counterfeit grin can be unmasked if the lip corners go up, the eyes crinkle but the inner corners of the eyebrows are not lowered, a movement controlled by the orbicularis oculi that are difficult to fake. The absence of lowered eyebrows is one reason why false smiles look so strained and stiff.</p>
+        </div>
+
+        <div id="text-p2" class="passage-content">
+            <h2 class="passage-title">Chinese Yellow Citrus Ant for BIOLOGICAL CONTROL</h2>
+            
+            <p class="paragraph"><span class="paragraph-label">Paragraph A</span>
+            In <span id="ev-14" class="ev-box">1476</span>, the farmers of Berne in Switzerland decided, according to this story, there was only one way to rid their fields of the cutworms attacking their crops. They took the pests to court. The worms were tried, found guilty and excommunicated by the archbishop. In China, farmers had a more practical approach to pest control. Rather than rely on divine intervention, they put their faith in frogs, ducks and ants. Frogs and ducks were encouraged to snap up the pests in the paddies and the occasional plague of locusts. But the notion of biological control began with an ant. More specifically, the story says, it started with the predatory yellow citrus ant Oecophylla smaragdina, which has been polishing off pests in the orange groves of southern China for at least 1700 years. The yellow citrus ant is a type of weaver ant, which binds leaves and twigs with silk to form a neat, tent-like nest. In the beginning, farmers made do with the odd ants'nest here and there. But it wasn't long before growing demand led to the development of a thriving trade in nests and a new type of agriculture-ant farming.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph B</span>
+            For an insect that bites, the yellow citrus ant is remarkably popular. Even by ant standards, Oecophylla smaragdina is a fearsome predator. It's big, runs fast and has a powerful nip-painful to humans but lethal to many of the insects that plague the orange groves of Guangdong and Guangxi in southern China. And for at least 17 centuries. Chinese orange growers have harnessed these six-legged killing machines to keep their fruit groves healthy and productive. The story explains that citrus fruits evolved in the Far East and the Chinese discovered the delights of their flesh early on. As the ancestral home of oranges, lemons and pomelos, <span id="ev-19" class="ev-box">China also has the greatest diversity of citrus pests.</span> And the trees that produce the sweetest fruits, the mandarins-or kan-attract a host of plant-eating insects, from black ants and sap-sucking mealy bugs to leaf-devouring caterpillars. With so many enemies, fruit growers clearly had to have some way of protecting their orchards.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph C</span>
+            The West did not discover the Chinese orange growers' secret weapon until the early 20th century. At the time, Florida was suffering an epidemic of citrus canker and in <span id="ev-15" class="ev-box">1915</span> Walter Swingle, a plant physiologist working for the US Department of Agriculture, was, the story says, <span id="ev-20" class="ev-box">sent to China in search of varieties of orange that were resistant to the disease.</span> Swingle spent some time studying the citrus orchards around Guangzhou, and there he came across the story of the cultivated ant. These ants, he was told, were "grown" by the people of a small village nearby who sold them to the orange growers by the nestful.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph D</span>
+            The earliest report of citrus ants at work among the orange trees appears in a book on tropical and subtropical botany written by His Han in <span id="ev-18" class="ev-box">AD 304</span>. "The people of Chiao-Chih sell in their markets ants in bags of rush matting. The nests are like silk. The bags are all attached to twigs and leaves which, with the ants inside the nests, are for sale. The ants are reddish-yellow in colour, bigger than ordinary ants. In the south, if the kan trees do not have this kind of ant, the fruits will all be damaged by many harmful insects, and not a single fruit will be perfect.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph E</span>
+            Initially, farmers relied on nests which they collected from the wild or bought in the market where trade in nests was brisk. 'It is said that in the south orange trees which are free of ants will have wormy fruits. Therefore the people race to buy nests for their orange trees, 'wrote Liu Hsun in Strange Things Noted in the South, written about AD 890. The business quickly became more sophisticate. From the 10th century, country people began to trap ants in artificial nests baited with fat. "Fruit growing families buy these ants from vendors who make a business of collecting and selling such creatures, "wrote Chuang Chi-Yu in <span id="ev-18b" class="ev-box">1130</span>. "They trap them by filling hogs 'or sheep's bladders with fat and placing them with the cavities open next to the ants 'nests. They wait until the ants have migrated into the bladders and take them away. This is known as 'rearing orange ants'. "Farmers attached the bladders to their trees, and in time the ants spread to other trees and built new nests. By the 17th century, growers were building bamboo walkways between their trees to speed the colonization of their orchards. The ants ran along these narrow bridges from one tree to another and established nests "by the hundreds of thousands".</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph F</span>
+            Did it work? The orange growers clearly thought so. One authority, Chi Ta-Chun, writing in 1700, stressed how important it was to keep the fruit trees free of insect pests, especially caterpillars. "It is essential to eliminate them so that the trees are not injured. But hand labour is not nearly as efficient as ant power..." Swingle was just as impressed. Yet despite this report, <span id="ev-21" class="ev-box">many Western biologists were skeptical.</span> In the West, the idea of using one insect to destroy another was new and highly controversial. The first breakthrough had come in <span id="ev-16" class="ev-box">1888</span>, when the infant orange industry in California had been saved from extinction by the Australian vedalia beetle. This beetle was the only thing that had made an inroad into the explosion of cottony cushion scale that was threatening to destroy the state's citrus crops. But, as Swingle now knew, California's "first" was nothing of the sort. The Chinese had been an expert in biocontrol for many centuries.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph G</span>
+            The story goes on to say that the long tradition of ants in the Chinese orchards only began to waver in the <span id="ev-17" class="ev-box">1950s</span> and 1960s with the introduction of powerful organic (I guess the author means chemical insecticides). Although most fruit growers switched to chemicals, a few hung onto their ants. Those who abandoned ants in favour of chemicals quickly became disillusioned. As <span id="ev-22" class="ev-box">costs soared</span> and <span id="ev-23" class="ev-box">pests began to develop resistance to the chemicals</span>, growers began to revive the old ant patrols. They had good reason to have faith in their insect workforce. Research in the early 1960s showed that as long as there were enough ants in the trees, they did an excellent job of dispatching some pests-mainly the larger insects-and had modest success against others. Trees with yellow ants produced almost 20 per cent more healthy leaves than those without. <span id="ev-24" class="ev-box">(Meaning trees without ants had more unhealthy fallen leaves)</span>. More recent trials have shown that these trees <span id="ev-25" class="ev-box">yield just as big a crop</span> as those protected by expensive chemical sprays.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph H</span>
+            One apparent drawback of using ants-and one of the main reasons for the early skepticism by Western scientists-was that citrus ants do nothing to control mealy bugs, waxy-coated scale insects which can do considerable damage to fruit trees. In fact, the ants protect mealy bugs in exchange for the sweet honeydew they secrete. The orange growers always denied this was a problem but Western scientists thought they knew better. Research in the 1980s suggests that the growers were right all along. Where mealy bugs proliferate under the ants 'protection they are usually heavily parasitized and this limits the harm they can do. Orange growers who rely on carnivorous ants rather than poisonous chemicals maintain a better balance of species in their orchards. While the ants deal with the bigger insect pests, other predatory species keep down the numbers of smaller pests such as scale insects and aphids. In the long run, ants do a lot less damage than chemicals-and they're certainly more effective than ex-communication.</p>
+        </div>
+
+        <div id="text-p3" class="passage-content">
+            <h2 class="passage-title">Travel Books</h2>
+            
+            <p class="paragraph">There are many reasons why individuals have travelled beyond their own societies. Some travellers may have simply <span id="ev-27" class="ev-box">desired to satisfy curiosity about the larger world</span>. Until recent times, however, travellers did start their journey for reasons other than mere curiosity. While the travellers' accounts give much valuable information on these foreign lands and provide a window for the understanding of the local cultures and histories, they are also a <span id="ev-28" class="ev-box">mirror to the travellers themselves, for these accounts help them to have a better understanding of themselves.</span></p>
+
+            <p class="paragraph">Records of foreign travel appeared soon after the invention of writing, and fragmentary travel accounts appeared in both Mesopotamia and Egypt in ancient times. After the formation of large, imperial states in the classical world, travel accounts emerged as a prominent literary genre in many lands, and they <span id="ev-37" class="ev-box">held especially strong appeal for rulers desiring useful knowledge about their realms.</span> The Greek historian Herodotus reported on his travels in Egypt and Anatolia in researching the history of the <span id="ev-29" class="ev-box">Persian wars</span>. The Chinese envoy Zhang Qian described much of central Asia as far west as Bactria (modern-day Afghanistan) on the basis of travels undertaken in the First century BCE while searching for <span id="ev-30" class="ev-box">allies</span> for the Han dynasty. Hellenistic and Roman geographers such as Ptolemy, Strabo, and Pliny the Elder relied on their own travels through much of the Mediterranean world as well as reports of other travellers to compile vast compendia of <span id="ev-31" class="ev-box">geographical knowledge</span>.</p>
+
+            <p class="paragraph">During the post-classical era (about 500 to 1500 CE), trade and <span id="ev-32" class="ev-box">pilgrimage</span> emerged as major incentives for travel to foreign lands. Muslim merchants sought trading opportunities throughout much of the eastern hemisphere. They described lands, peoples, and commercial products of the Indian Ocean basin from East Africa to Indonesia, and they supplied the First written accounts of societies in sub-Saharan West Africa. While merchants set out in search of trade and profit, devout Muslims travelled as <span id="ev-38" class="ev-box">pilgrims to Mecca</span> to make their hajj and visit the holy sites of Islam. Since the prophet Muhammad's original pilgrimage to Mecca, untold millions of Muslims have followed his example, and thousands of hajj accounts have related their experiences. East Asian travellers were not quite so prominent as Muslims during the postclassical era, but they too followed many of the highways and sea lanes of the eastern hemisphere. Chinese merchants frequently visited South-East Asia and India, occasionally venturing even to East Africa, and devout East Asian Buddhists undertook distant pilgrimages. Between the 5th and 9th centuries CE, hundreds and possibly even thousands of Chinese Buddhists travelled to <span id="ev-33" class="ev-box">India</span> to study with Buddhist teachers, collect sacred texts, and visit holy sites. Written accounts recorded the experiences of many pilgrims, such as Faxian, Xuanzang, and Yijing. Though not so numerous as the Chinese pilgrims, Buddhists from Japan, Korea, and other lands also ventured abroad in the interests of spiritual enlightenment.</p>
+
+            <p class="paragraph">Medieval Europeans did not hit the roads in such large numbers as their Muslim and East Asian counterparts during the early part of the post-classical era, although gradually increasing crowds of Christian pilgrims flowed to Jerusalem, Rome, Santiago de Compostela (in northern Spain), and other sites. After the 12th century, however, merchants, pilgrims, and missionaries from medieval Europe travelled widely and left numerous travel accounts, of which Marco Polo's description of his travels and sojourn in China is the best known. As they became familiar with the larger world of the eastern hemisphere - and the profitable commercial opportunities that it offered - European peoples worked to find new and more direct routes to Asian and African markets. Their efforts took them not only to all parts of the eastern hemisphere, but eventually to the Americas and Oceania as well.</p>
+
+            <p class="paragraph">If Muslim and Chinese peoples dominated travel and travel writing in postclassical times, European explorers, conquerors, merchants, and missionaries took centre stage during the early modern era (about 1500 to 1800 CE). By no means did Muslim and Chinese travel come to a halt in early modern times. But European peoples ventured to the distant corners of the globe, and European printing presses churned out thousands of travel accounts that described foreign lands and peoples for a <span id="ev-39" class="ev-box">reading public with an apparently insatiable appetite</span> for news about the larger world. The volume of travel literature was so great that several editors, including Giambattista Ramusio, Richard Hakluyt, Theodore de Bry, and Samuel Purchas, assembled numerous travel accounts and made them available in enormous published collections.</p>
+
+            <p class="paragraph">During the 19th century, European travellers made their way to the interior regions of Africa and the Americas, generating a fresh round of travel writing as they did so. Meanwhile, European colonial administrators devoted numerous writings to the societies of their colonial subjects, particularly in Asian and African <span id="ev-34" class="ev-box">colonies</span> they established. By mid-century, attention was flowing also in the other direction. Painfully aware of the military and technological prowess of European and Euro-American societies, Asian travellers in particular visited Europe and the United States in hopes of discovering <span id="ev-35" class="ev-box">principles</span> useful for the organisation of their own societies. Among the most prominent of these travellers who made extensive use of their overseas observations and experiences in their own writings were the Japanese reformer Fukuzawa Yukichi and the Chinese revolutionary Sun Yat-sen.</p>
+
+            <p class="paragraph">With the development of inexpensive and reliable means of mass transport, the 20th century witnessed explosions both in the frequency of long-distance travel and in the volume of travel writing. While a great deal of travel took place for reasons of business, administration, diplomacy, pilgrimage, and missionary work, as in ages past, increasingly effective modes of mass transport made it possible for new kinds of travel to flourish. The most distinctive of them was mass tourism, which emerged as a major form of consumption for individuals living in the world's <span id="ev-36" class="ev-box">wealthy</span> societies. Tourism enabled consumers to get away from home to see the sights in Rome, take a cruise through the Caribbean, walk the Great Wall of China, visit some wineries in Bordeaux, or go on safari in Kenya. A peculiar variant of the travel account arose to meet the needs of these tourists: the guidebook, which offered advice on food, lodging, shopping, local customs, and all the sights that visitors should not miss seeing. Tourism has had a massive economic impact throughout the world, but other new forms of travel have also had considerable influence in contemporary times.</p>
+        </div>
+    </div>
+
+    <div class="pane pane-right" id="questionPane">
+        
+        <div id="q-group-1" class="question-group active">
+            <div class="question-section">
+                <div class="instruction">Questions 1-5: Do the following statements agree with the information given in Reading Passage 1?<br>Write <strong>TRUE</strong>, <strong>FALSE</strong> or <strong>NOT GIVEN</strong>.</div>
+                
+                <table class="q-table" style="background: transparent; border: none;">
+                    <script>
+                        const statements1 = [
+                            "All living animals can lie.",
+                            "Some people tell lies for self-preservation.",
+                            "The fact of lying is more important than detecting one.",
+                            "Researchers are using equipment to study which part of the brain is responsible for telling lies.",
+                            "To be a good liar, one has to understand other people's emotions."
+                        ];
+                        for(let i=1; i<=5; i++) {
+                            document.write(`
+                            <tr id="q-row-${i}" style="border:none;">
+                                <td style="border:none; padding-bottom: 5px;"><span class="q-num">${i}.</span> ${statements1[i-1]}</td>
+                            </tr>
+                            <tr style="border-bottom: 1px dashed #cbd5e1;">
+                                <td style="border:none; padding-top: 0;">
+                                    <select class="input-select" id="ans-${i}" onchange="updateNav(${i})" style="width: 140px; margin-left: 20px;">
+                                        <option value="">Select...</option>
+                                        <option value="TRUE">TRUE</option>
+                                        <option value="FALSE">FALSE</option>
+                                        <option value="NOT GIVEN">NOT GIVEN</option>
+                                    </select>
+                                    <span id="fb-${i}" class="feedback"></span>
+                                    <div id="exp-${i}"></div>
+                                </td>
+                            </tr>
+                            `);
+                        }
+                    </script>
+                </table>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 6-9: Choose the correct letter A, B, C or D.</div>
+                
+                <div class="mcq-item" id="q-row-6">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">6.</span> How does a lie-detector work?</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-6" value="A" onchange="updateNav(6)"> A. It analyzes one's verbal response to a question.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-6" value="B" onchange="updateNav(6)"> B. It records the changes in one's facial expression.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-6" value="C" onchange="updateNav(6)"> C. It illustrates the reasons about the emotional change when one is tested.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-6" value="D" onchange="updateNav(6)"> D. It monitors several physical reactions in the person undergoing the test.</label>
+                    <span id="fb-6" class="feedback"></span><div id="exp-6"></div>
+                </div>
+
+                <div class="mcq-item" id="q-row-7">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">7.</span> Why couldn't lie detectors be used in a court of law?</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-7" value="A" onchange="updateNav(7)"> A. because the nonverbal clues are misleading.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-7" value="B" onchange="updateNav(7)"> B. because there could be other causes of a certain change in the equipment.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-7" value="C" onchange="updateNav(7)"> C. because the lights are too hot.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-7" value="D" onchange="updateNav(7)"> D. because the statistic data on the lie detectors are not accurate.</label>
+                    <span id="fb-7" class="feedback"></span><div id="exp-7"></div>
+                </div>
+
+                <div class="mcq-item" id="q-row-8">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">8.</span> The writer quotes from the paralyzed patients</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-8" value="A" onchange="updateNav(8)"> A. to exemplify people's response to true feelings.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-8" value="B" onchange="updateNav(8)"> B. to show the pathways for patients to recover.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-8" value="C" onchange="updateNav(8)"> C. to demonstrate the paralyzed patient's ability to smile.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-8" value="D" onchange="updateNav(8)"> D. to emphasize that the patient is in a state of stroke.</label>
+                    <span id="fb-8" class="feedback"></span><div id="exp-8"></div>
+                </div>
+
+                <div class="mcq-item" id="q-row-9">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">9.</span> According to the passage, politicians</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-9" value="A" onchange="updateNav(9)"> A. can express themselves clearly.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-9" value="B" onchange="updateNav(9)"> B. are good at masking their emotions.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-9" value="C" onchange="updateNav(9)"> C. are conscious of the surroundings.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-9" value="D" onchange="updateNav(9)"> D. can think before action.</label>
+                    <span id="fb-9" class="feedback"></span><div id="exp-9"></div>
+                </div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 10-13: Classify the following facial traits as referring to <strong>A</strong> (Happiness), <strong>B</strong> (Anger), <strong>C</strong> (Sadness).</div>
+                
+                <table class="q-table">
+                    <tr><th style="width: 60%;">Facial Traits</th><th style="width: 40%; text-align: center;">Classification (A/B/C)</th></tr>
+                    <script>
+                        const traits = [
+                            "Lines formed above eyebrows",
+                            "Movement from muscle that orbits the eye",
+                            "Eyebrows down",
+                            "Inner corner of eyebrows raised"
+                        ];
+                        for(let i=10; i<=13; i++) {
+                            document.write(`
+                            <tr id="q-row-${i}">
+                                <td><span class="q-num">${i}.</span> ${traits[i-10]}</td>
+                                <td class="center">
+                                    <select class="input-select" id="ans-${i}" onchange="updateNav(${i})" style="margin:0; width: 100px;">
+                                        <option value="">...</option>
+                                        <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+                                    </select>
+                                    <span id="fb-${i}" class="feedback" style="display:block; margin-top:5px; margin-left:0;"></span>
+                                </td>
+                            </tr>
+                            `);
+                        }
+                    </script>
+                </table>
+                <div id="exp-10"></div><div id="exp-11"></div><div id="exp-12"></div><div id="exp-13"></div>
+            </div>
+        </div>
+
+        <div id="q-group-2" class="question-group">
+            <div class="question-section">
+                <div class="instruction">Questions 14-18: Use the information in the passage to match the year (listed A-G) with the correct description below.<br><em>NB You may use any letter more than once.</em></div>
+                
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed #cbd5e1; display: flex; flex-wrap: wrap; gap: 15px;">
+                    <div style="flex: 1 1 30%;"><strong>A.</strong> 1888</div>
+                    <div style="flex: 1 1 30%;"><strong>B.</strong> 1476</div>
+                    <div style="flex: 1 1 30%;"><strong>C.</strong> 1915</div>
+                    <div style="flex: 1 1 30%;"><strong>D.</strong> 1700</div>
+                    <div style="flex: 1 1 30%;"><strong>E.</strong> 1130</div>
+                    <div style="flex: 1 1 30%;"><strong>F.</strong> 304 AD</div>
+                    <div style="flex: 1 1 30%;"><strong>G.</strong> 1950</div>
+                </div>
+
+                <table class="q-table">
+                    <script>
+                        const matches2 = [
+                            "First record of ant against pests written.",
+                            "WS studied ant intervention method in China.",
+                            "First case of orange crops rescued by an insect in the western world.",
+                            "Chinese farmers start to choose a chemical method.",
+                            "A book wrote mentioned ways to trap ants."
+                        ];
+                        for(let i=14; i<=18; i++) {
+                            document.write(`
+                            <tr id="q-row-${i}">
+                                <td style="width: 70%;"><span class="q-num">${i}.</span> ${matches2[i-14]}</td>
+                                <td class="center">
+                                    <select class="input-select" id="ans-${i}" onchange="updateNav(${i})" style="margin:0; width: 100px;">
+                                        <option value="">...</option>
+                                        <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+                                        <option value="D">D</option><option value="E">E</option><option value="F">F</option><option value="G">G</option>
+                                    </select>
+                                    <span id="fb-${i}" class="feedback" style="display:block; margin-top:5px; margin-left:0;"></span>
+                                </td>
+                            </tr>
+                            `);
+                        }
+                    </script>
+                </table>
+                <div id="exp-14"></div><div id="exp-15"></div><div id="exp-16"></div><div id="exp-17"></div><div id="exp-18"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 19-26: Do the following statements agree with the information given in Reading Passage 2?<br>Write <strong>TRUE</strong>, <strong>FALSE</strong> or <strong>NOT GIVEN</strong>.<br><small style="color:var(--text-light);">(Note: Question 23 has been logically restored based on context to maintain 40 questions)</small></div>
+                
+                <table class="q-table" style="background: transparent; border: none;">
+                    <script>
+                        const statements2 = [
+                            "China has the most orange pests in the world.",
+                            "Swingle came to China in order to search an insect for the US government.",
+                            "Western people were impressed by Swingle's theory of pest prevention.",
+                            "Chinese farmers realised that price of pesticides became expensive.",
+                            "Pests began to develop resistance to the chemicals.",
+                            "Trees without ants had more unhealthy fallen leaves than those with.",
+                            "Yield of fields using ants is larger a crop than that using chemical pesticides.",
+                            "Chinese orange farmers proposed that ant protection doesn't work out of China."
+                        ];
+                        for(let i=19; i<=26; i++) {
+                            document.write(`
+                            <tr id="q-row-${i}" style="border:none;">
+                                <td style="border:none; padding-bottom: 5px;"><span class="q-num">${i}.</span> ${statements2[i-19]}</td>
+                            </tr>
+                            <tr style="border-bottom: 1px dashed #cbd5e1;">
+                                <td style="border:none; padding-top: 0;">
+                                    <select class="input-select" id="ans-${i}" onchange="updateNav(${i})" style="width: 140px; margin-left: 20px;">
+                                        <option value="">Select...</option>
+                                        <option value="TRUE">TRUE</option>
+                                        <option value="FALSE">FALSE</option>
+                                        <option value="NOT GIVEN">NOT GIVEN</option>
+                                    </select>
+                                    <span id="fb-${i}" class="feedback"></span>
+                                    <div id="exp-${i}"></div>
+                                </td>
+                            </tr>
+                            `);
+                        }
+                    </script>
+                </table>
+            </div>
+        </div>
+
+        <div id="q-group-3" class="question-group">
+            <div class="question-section">
+                <div class="instruction">Questions 27-28: Choose the correct letter A, B, C or D.</div>
+                
+                <div class="mcq-item" id="q-row-27">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">27.</span> What were most people travelling for in the early days?</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-27" value="A" onchange="updateNav(27)"> A. Studying their own cultures</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-27" value="B" onchange="updateNav(27)"> B. Business</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-27" value="C" onchange="updateNav(27)"> C. Knowing other people and places better</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-27" value="D" onchange="updateNav(27)"> D. Writing travel books</label>
+                    <span id="fb-27" class="feedback"></span><div id="exp-27"></div>
+                </div>
+
+                <div class="mcq-item" id="q-row-28">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">28.</span> Why did the author say writing travel books is also "a mirror" for travellers themselves?</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-28" value="A" onchange="updateNav(28)"> A. Because travellers record their own experiences.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-28" value="B" onchange="updateNav(28)"> B. Because travellers reflect upon their own society and life.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-28" value="C" onchange="updateNav(28)"> C. Because it increases knowledge of foreign cultures.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-28" value="D" onchange="updateNav(28)"> D. Because it is related to the development of human society.</label>
+                    <span id="fb-28" class="feedback"></span><div id="exp-28"></div>
+                </div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 29-36: Complete the table. Choose <strong>NO MORE THAN TWO WORDS</strong> from Reading Passage 3 for each answer.</div>
+                
+                <table class="q-table" style="border: 2px solid var(--border-color);">
+                    <tr style="background: #f8fafc;">
+                        <th>TIME</th><th>TRAVELLER</th><th>DESTINATION</th><th>PURPOSE OF TRAVEL</th>
+                    </tr>
+                    <tr>
+                        <td>Classical Greece</td><td>Herodotus</td><td>Egypt and Anatolia</td>
+                        <td>To gather information for the study of <b>29.</b> <input type="text" class="input-gap" id="ans-29" oninput="updateNav(29)"> <span id="fb-29" class="feedback"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Han Dynasty<br><br>Roman Empire</td>
+                        <td>Zhang Qian<br><br>Ptolemy, Strabo, Pliny the Elder</td>
+                        <td>Central Asia<br><br>Mediterranean</td>
+                        <td>To seek <b>30.</b> <input type="text" class="input-gap" id="ans-30" oninput="updateNav(30)"> <span id="fb-30" class="feedback"></span><br><br>To acquire <b>31.</b> <input type="text" class="input-gap" id="ans-31" oninput="updateNav(31)"> <span id="fb-31" class="feedback"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Post-classical Era (about 500 to 1500 CE)</td>
+                        <td>Muslims</td>
+                        <td>From East Africa to Indonesia, Mecca</td>
+                        <td>For trading and <b>32.</b> <input type="text" class="input-gap" id="ans-32" oninput="updateNav(32)"> <span id="fb-32" class="feedback"></span></td>
+                    </tr>
+                    <tr>
+                        <td>5th to 9th centuries CE</td>
+                        <td>Chinese Buddhists</td>
+                        <td><b>33.</b> <input type="text" class="input-gap" id="ans-33" oninput="updateNav(33)"> <span id="fb-33" class="feedback"></span></td>
+                        <td>To collect Buddhist texts and for spiritual enlightenment</td>
+                    </tr>
+                    <tr>
+                        <td>Early modern era (about 1500 to 1800 CE)</td>
+                        <td>European explorers</td>
+                        <td>New World</td>
+                        <td>To satisfy public curiosity for the New World</td>
+                    </tr>
+                    <tr>
+                        <td>During 19th century<br><br>By mid-century of the 1800s</td>
+                        <td>Colonial administrators<br><br>Sun Yat-sen, Fukuzawa Yukichi</td>
+                        <td>Asia, Africa<br><br>Europe and the United States</td>
+                        <td>To provide information for the <b>34.</b> <input type="text" class="input-gap" id="ans-34" oninput="updateNav(34)"> <span id="fb-34" class="feedback"></span> they set up.<br>To study the <b>35.</b> <input type="text" class="input-gap" id="ans-35" oninput="updateNav(35)"> <span id="fb-35" class="feedback"></span> of their societies.</td>
+                    </tr>
+                    <tr>
+                        <td>20th century</td>
+                        <td>People from <b>36.</b> <input type="text" class="input-gap" id="ans-36" oninput="updateNav(36)"> <span id="fb-36" class="feedback"></span> countries</td>
+                        <td>Mass tourism</td>
+                        <td>Entertainment and pleasure</td>
+                    </tr>
+                </table>
+                <div id="exp-29"></div><div id="exp-30"></div><div id="exp-31"></div><div id="exp-32"></div><div id="exp-33"></div><div id="exp-34"></div><div id="exp-35"></div><div id="exp-36"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 37-40: Choose the correct letter, A, B, C or D.</div>
+                
+                <div class="mcq-item" id="q-row-37">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">37.</span> Why were the imperial rulers especially interested in these travel stories?</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-37" value="A" onchange="updateNav(37)"> A. Reading travel stories was a popular pastime.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-37" value="B" onchange="updateNav(37)"> B. The accounts are often truthful rather than fictional.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-37" value="C" onchange="updateNav(37)"> C. Travel books played an important role in literature.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-37" value="D" onchange="updateNav(37)"> D. They desired knowledge of their empire.</label>
+                    <span id="fb-37" class="feedback"></span><div id="exp-37"></div>
+                </div>
+
+                <div class="mcq-item" id="q-row-38">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">38.</span> Who were the largest group to record their spiritual trips during the postclassical era?</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-38" value="A" onchange="updateNav(38)"> A. Muslim traders</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-38" value="B" onchange="updateNav(38)"> B. Muslim pilgrims</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-38" value="C" onchange="updateNav(38)"> C. Chinese Buddhists</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-38" value="D" onchange="updateNav(38)"> D. Indian Buddhist teachers</label>
+                    <span id="fb-38" class="feedback"></span><div id="exp-38"></div>
+                </div>
+
+                <div class="mcq-item" id="q-row-39">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">39.</span> During the early modern era, a large number of travel books were published to</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-39" value="A" onchange="updateNav(39)"> A. meet the public's interest.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-39" value="B" onchange="updateNav(39)"> B. explore new business opportunities.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-39" value="C" onchange="updateNav(39)"> C. encourage trips to the new world.</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-39" value="D" onchange="updateNav(39)"> D. record the larger world.</label>
+                    <span id="fb-39" class="feedback"></span><div id="exp-39"></div>
+                </div>
+
+                <div class="mcq-item" id="q-row-40">
+                    <div class="mcq-question"><span class="q-num" style="margin-top:-2px;">40.</span> What's the main theme of the passage?</div>
+                    <label class="mcq-option"><input type="radio" name="mcq-40" value="A" onchange="updateNav(40)"> A. The production of travel books</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-40" value="B" onchange="updateNav(40)"> B. The literary status of travel books</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-40" value="C" onchange="updateNav(40)"> C. The historical significance of travel books</label>
+                    <label class="mcq-option"><input type="radio" name="mcq-40" value="D" onchange="updateNav(40)"> D. The development of travel books</label>
+                    <span id="fb-40" class="feedback"></span><div id="exp-40"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="confirmOverlay" class="custom-overlay" style="display:none;">
+    <div class="custom-modal">
+        <h2>Xác nhận nộp bài</h2>
+        <p style="font-size: 15px; color: #475569; margin-bottom: 20px;">Bạn có chắc chắn muốn nộp bài để xem đáp án và giải thích chi tiết không?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmModal()">Quay lại</button>
+            <button class="btn-confirm" onclick="executeSubmit()">Nộp bài</button>
+        </div>
+    </div>
+</div>
+
+<div id="resultOverlay" class="custom-overlay" style="display:none;">
+    <div class="custom-modal">
+        <h2 id="resultTitle">🎉 Kết Quả Bài Thi</h2>
+        <div style="font-size: 64px; font-weight: 800; color: var(--primary); margin: 20px 0; letter-spacing: -2px;" id="scoreDisplay">0/40</div>
+        <div style="font-size: 24px; font-weight: 800; color: var(--correct); margin-bottom: 10px; background: #ecfdf5; display: inline-block; padding: 12px 30px; border-radius: 20px; border: 2px solid #bbf7d0;" id="bandDisplay">Band: 0.0</div>
+        <div id="subScoresDisplay" style="font-size: 15px; color: #64748b; margin-bottom: 20px;"></div>
+        <button class="btn-confirm" style="width: 100%;" onclick="closeResultModal()">Xem giải thích chi tiết</button>
+    </div>
+</div>
+
+<footer>
+    <div style="font-size:13px; font-weight:bold; color:#64748b; text-transform:uppercase;">Điều hướng:</div>
+    <div class="palette-scroller" id="navPalette"></div>
+</footer>
+
+<script>
+    // --- STATE & DATA ---
+    let currentMode = '';
+    let testDuration = 0; 
+    let initialTime = 0;
+    let timerInterval = null;
+    let isSubmitted = false;
+    let selectedPassages = [1, 2, 3]; 
+
+    // --- SETUP MODAL LOGIC ---
+    function selectMode(mode) {
+        currentMode = mode;
+        document.querySelector('.mode-practice').classList.toggle('selected', mode === 'practice');
+        document.querySelector('.mode-mock').classList.toggle('selected', mode === 'mock');
+        
+        document.getElementById('timeInputBox').style.display = (mode === 'practice') ? 'block' : 'none';
+        document.getElementById('practiceOptions').style.display = (mode === 'practice') ? 'block' : 'none';
+        document.getElementById('startBtn').style.display = 'inline-block';
+        updatePracticeTime();
+    }
+
+    function updatePracticeTime() {
+        if(currentMode !== 'practice') return;
+        let cbs = document.querySelectorAll('.passage-cb:checked');
+        document.getElementById('timeInput').value = cbs.length * 20; 
+    }
+
+    function askReady() {
+        if (currentMode === 'practice') {
+            let cbs = document.querySelectorAll('.passage-cb:checked');
+            if (cbs.length === 0) { alert("Vui lòng chọn ít nhất 1 Passage để luyện tập!"); return; }
+        }
+        let confirmMsg = currentMode === 'mock' 
+            ? "Bạn chọn Thi Thử Full Test (60 phút).\nThầy dặn nhớ tập trung tuyệt đối như đi thi thật nhé!" 
+            : `Bạn chọn Luyện Tập (${document.getElementById('timeInput').value} phút).\nLàm cẩn thận, chú ý kỹ thuật Skimming/Scanning nghen!`;
+        document.getElementById('startConfirmMsg').innerText = confirmMsg;
+        document.getElementById('startConfirmOverlay').style.display = 'flex';
+    }
+
+    function closeStartConfirmModal() { document.getElementById('startConfirmOverlay').style.display = 'none'; }
+
+    function startTestActual() {
+        document.getElementById('startConfirmOverlay').style.display = 'none';
+        
+        if (currentMode === 'practice') {
+            selectedPassages = Array.from(document.querySelectorAll('.passage-cb:checked')).map(cb => parseInt(cb.value));
+            initialTime = parseInt(document.getElementById('timeInput').value) * 60;
+        } else {
+            selectedPassages = [1, 2, 3];
+            initialTime = 60 * 60;
+        }
+
+        if(isNaN(initialTime) || initialTime < 60) initialTime = 60 * 60;
+        testDuration = initialTime;
+        
+        [1, 2, 3].forEach(p => {
+            let tab = document.getElementById(`tab-btn-${p}`);
+            if(tab) tab.style.display = selectedPassages.includes(p) ? 'inline-block' : 'none';
+        });
+
+        for (let i = 1; i <= 40; i++) {
+            let group = i <= 13 ? 1 : i <= 26 ? 2 : 3;
+            let dot = document.getElementById(`nav-${i}`);
+            if (dot) dot.style.display = selectedPassages.includes(group) ? 'flex' : 'none';
+        }
+
+        document.getElementById('setupOverlay').style.display = 'none';
+        switchTab(selectedPassages[0]); 
+        startTimer();
+    }
+
+    // TÍNH NĂNG MỚI: FOCUS MODE
+    function toggleFocusMode() {
+        document.body.classList.toggle('focus-mode');
+        // Notify the user subtly if needed
+    }
+
+    const correctAnswers = {
+        // Passage 1
+        1: "TRUE", 2: "TRUE", 3: "FALSE", 4: "NOT GIVEN", 5: "TRUE",
+        6: "D", 7: "B", 8: "A", 9: "B",
+        10: "C", 11: "A", 12: "B", 13: "C",
+        
+        // Passage 2
+        14: "F", 15: "C", 16: "A", 17: "G", 18: "E",
+        19: "TRUE", 20: "FALSE", 21: "FALSE", 22: "TRUE", 23: "TRUE", 24: "TRUE", 25: "FALSE", 26: "NOT GIVEN",
+        
+        // Passage 3
+        27: "C", 28: "B", 
+        29: ["PERSIAN WARS", "THE PERSIAN WARS"], 30: ["ALLIES"], 31: ["GEOGRAPHICAL KNOWLEDGE"], 32: ["PILGRIMAGE"], 33: ["INDIA"], 34: ["COLONIES"], 35: ["PRINCIPLES"], 36: ["WEALTHY"],
+        37: "D", 38: "B", 39: "A", 40: "D"
+    };
+
+    const explanations = {
+        // Passage 1
+        1: { translation: "Mọi loài động vật đều có thể nói dối (đánh lừa).", keywords: "all living things = all living animals", exp: "Đoạn A: 'deception comes naturally to all living things.' -> Sự lừa dối đến tự nhiên với mọi sinh vật sống. Câu này TRUE nhé các em.", colorClass: "ev-1" },
+        2: { translation: "Một số người nói dối để bảo vệ bản thân.", keywords: "self-preservation = save their own skins", exp: "Đoạn A cuối có cụm thành ngữ 'to save their own skins' - cứu lấy lớp da của mình, tức là bảo vệ mạng sống/bản thân. Chuẩn TRUE.", colorClass: "ev-2" },
+        3: { translation: "Việc nói dối quan trọng hơn việc phát hiện nói dối.", keywords: "more important than", exp: "Đoạn B mở đầu: 'knowing how to catch deceit can be just as important a survival skill as knowing how to tell a lie'. Ở đây tác giả dùng 'just as important' (quan trọng ngang nhau), chứ không phải cái này hơn cái kia -> FALSE.", colorClass: "ev-3" },
+        4: { translation: "Các nhà nghiên cứu dùng thiết bị để nghiên cứu phần não nào chịu trách nhiệm nói dối.", keywords: "equipment to study which part of the brain", exp: "Thầy dặn kỹ: Đừng để từ 'Neurological studies' (Đoạn E) lừa! Bài đọc KHÔNG hề nhắc đến việc họ dùng 'equipment' để tìm ra TỪNG VÙNG TRONG NÃO. Đừng suy diễn! -> NOT GIVEN." },
+        5: { translation: "Để là người nói dối giỏi, cần hiểu cảm xúc người khác.", keywords: "understand other people's emotions = accurately assess other people's emotional states", exp: "Đoạn C: 'successful liars need to accurately assess other people's emotional states.' -> TRUE.", colorClass: "ev-5" },
+        
+        6: { exp: "Đoạn D: 'Even high-tech lie detectors don't detect lies as such; they merely detect the physical cues of emotions...'. Tức là máy chỉ giám sát phản ứng vật lý (physical reactions/cues) -> Chọn D.", colorClass: "ev-6" },
+        7: { exp: "Đoạn D: Đoạn nói về 'lights in the television studio are too hot' là 1 ví dụ cho việc có những nguyên nhân khác (other causes) gây đổ mồ hôi/căng thẳng chứ không hẳn do nói dối. Suy ra -> Chọn B.", colorClass: "ev-7" },
+        8: { exp: "Đoạn E đưa ra ví dụ về bệnh nhân đột quỵ: nếu bắt cười giả tạo thì chỉ 1 bên nhếch, nhưng nếu nghe truyện cười (cảm xúc thật) thì cười rạng rỡ. Điều này minh họa cho 'people's response to true feelings' (phản ứng với cảm xúc thật) -> Chọn A.", colorClass: "ev-8" },
+        9: { exp: "Đoạn E: 'Very few people-most notably, actors and politicians-are able to consciously control all of their facial expressions.' Tức là chính trị gia rất giỏi kiểm soát/che giấu (masking) cảm xúc của họ -> Chọn B.", colorClass: "ev-9" },
+        
+        10: { exp: "Đoạn F: Khi ai đó thực sự buồn, 'forehead wrinkles' (trán/lông mày nhăn lại tạo nếp). -> (C) Sadness.", colorClass: "ev-10" },
+        11: { exp: "Đoạn G: Nụ cười thật sự tác động tới 'orbicularis oculi, the muscle around the eye'. Xung quanh mắt (Happiness). -> (A).", colorClass: "ev-11" },
+        12: { exp: "Đoạn F: 'lowering of the eyebrows associated with an angry scowl'. Cụp lông mày liên quan tới sự tức giận (Anger). -> (B).", colorClass: "ev-12" },
+        13: { exp: "Đoạn F: Khi buồn, 'inner corners of the eyebrows are pulled up' (nhướn lên ở góc trong). -> (C) Sadness.", colorClass: "ev-13" },
+
+        // Passage 2
+        14: { exp: "Đoạn D: The earliest report... appears in a book... AD 304. Khớp với F (304 AD).", colorClass: "ev-18" },
+        15: { exp: "Đoạn C: in 1915 Walter Swingle... was sent to China. Khớp với C.", colorClass: "ev-15" },
+        16: { exp: "Đoạn F: The first breakthrough had come in 1888... California saved... by Australian vedalia beetle. Khớp với A.", colorClass: "ev-16" },
+        17: { exp: "Đoạn G: waver in the 1950s and 1960s with the introduction of powerful organic (chemical). Khớp với G.", colorClass: "ev-17" },
+        18: { exp: "Đoạn E: 'wrote Chuang Chi-Yu in 1130... They trap them by filling hogs'...' Cách bẫy kiến (trap ants). Khớp với E.", colorClass: "ev-18b" },
+
+        19: { exp: "Đoạn B: 'China also has the greatest diversity of citrus pests.' -> Tức là có sự đa dạng (most) sâu bệnh cam quýt lớn nhất TG -> TRUE.", colorClass: "ev-19" },
+        20: { exp: "Đoạn C: Swingle được cử đến TQ để tìm kiếm 'varieties of orange that were resistant to the disease' (giống cam kháng bệnh), CHỨ KHÔNG PHẢI tìm côn trùng (search an insect). Cực kỳ cẩn thận với cái bẫy nhỏ này nhé các em! -> FALSE.", colorClass: "ev-20" },
+        21: { exp: "Đoạn F: 'Yet despite this report, many Western biologists were skeptical.' Tây phương vẫn hoài nghi (skeptical), chứ không hề ấn tượng (impressed). -> FALSE.", colorClass: "ev-21" },
+        22: { exp: "Đoạn G: 'As costs soared...' (Khi chi phí đội lên/tăng cao) = became expensive. -> TRUE.", colorClass: "ev-22" },
+        23: { exp: "Đoạn G: '...and pests began to develop resistance to the chemicals'. -> Sâu bệnh bắt đầu phát triển khả năng kháng thuốc. Đây là câu 23 thầy khôi phục lại. -> TRUE.", colorClass: "ev-23" },
+        24: { exp: "Đoạn G: 'Trees with yellow ants produced almost 20 per cent more healthy leaves than those without.' Suy ra cây KHÔNG có kiến thì có nhiều lá rụng/không khỏe hơn. Logic suy luận -> TRUE.", colorClass: "ev-24" },
+        25: { exp: "Đoạn G: 'yield just as big a crop as those protected by...'. Sản lượng 'ngang bằng' (just as big), chứ không hề 'lớn hơn' (larger). Sai từ so sánh -> FALSE.", colorClass: "ev-25" },
+        26: { exp: "Bài đọc nói kiến không tiêu diệt mealy bugs, nhưng nông dân cam TQ phản bác điều đó. Không có dòng nào nói nông dân bảo 'không hiệu quả ở ngoài TQ'. -> NOT GIVEN." },
+
+        // Passage 3
+        27: { exp: "Đoạn 1: 'desired to satisfy curiosity about the larger world'. Tức là mong muốn thỏa mãn sự tò mò -> (C) Knowing other people and places better.", colorClass: "ev-27" },
+        28: { exp: "Đoạn 1: 'mirror to the travellers themselves, for these accounts help them to have a better understanding of themselves.' Tức là phản chiếu sự hiểu biết của chính họ về bản thân -> (B) Reflect upon their own society and life.", colorClass: "ev-28" },
+        29: { exp: "Đoạn 2: 'Herodotus reported... researching the history of the Persian wars.' Điền: Persian wars.", colorClass: "ev-29" },
+        30: { exp: "Đoạn 2: 'Zhang Qian... searching for allies for the Han dynasty.' Điền: allies.", colorClass: "ev-30" },
+        31: { exp: "Đoạn 2: 'Ptolemy... to compile vast compendia of geographical knowledge.' Điền: geographical knowledge.", colorClass: "ev-31" },
+        32: { exp: "Đoạn 3: 'trade and pilgrimage emerged as major incentives...'. Có trading rồi, thiếu: pilgrimage.", colorClass: "ev-32" },
+        33: { exp: "Đoạn 3: 'Chinese Buddhists travelled to India to study...'. Destination là India. Điền: India.", colorClass: "ev-33" },
+        34: { exp: "Đoạn 6: 'administrators devoted numerous writings... particularly in Asian and African colonies they established.' Điền: colonies.", colorClass: "ev-34" },
+        35: { exp: "Đoạn 6: 'in hopes of discovering principles useful for the organisation of their own societies.' Điền: principles.", colorClass: "ev-35" },
+        36: { exp: "Đoạn 7: 'mass tourism... major form of consumption for individuals living in the world's wealthy societies.' Điền: wealthy.", colorClass: "ev-36" },
+        
+        37: { exp: "Đoạn 2: 'held especially strong appeal for rulers desiring useful knowledge about their realms.' Realms = Empire. -> Chọn D.", colorClass: "ev-37" },
+        38: { exp: "Đoạn 3: 'devout Muslims travelled as pilgrims to Mecca... untold millions of Muslims have followed his example, and thousands of hajj accounts have related their experiences.' Những người hành hương Hồi giáo chiếm số lượng cực kỳ đông đảo và để lại hàng ngàn ghi chép (spiritual trips). -> Chọn B.", colorClass: "ev-38" },
+        39: { exp: "Đoạn 5: 'churned out thousands of travel accounts... for a reading public with an apparently insatiable appetite for news'. Phục vụ cơn thèm khát tin tức của công chúng (meet the public's interest) -> Chọn A.", colorClass: "ev-39" },
+        40: { exp: "Cả bài văn nói về lịch sử, nguồn gốc và sự tiến hóa của sách du ký qua các thời kỳ: Cổ đại, Trung cổ, Cận đại đến thế kỷ 20. Do đó, 'The development of travel books' (Sự phát triển của sách du lịch) là chủ đề chính. Dễ dàng loại A, B, C. -> Chọn D." }
+    };
+
+    window.onload = function() {
+        renderPalette();
+        document.getElementById('setupOverlay').style.display = 'flex';
+    }
+
+    function renderPalette() {
+        const nav = document.getElementById("navPalette");
+        for (let i = 1; i <= 40; i++) {
+            let dot = document.createElement("div");
+            dot.className = "nav-dot"; dot.id = `nav-${i}`; dot.innerText = i;
+            dot.onclick = () => scrollToQuestion(i);
+            nav.appendChild(dot);
+        }
+    }
+
+    function switchTab(n) {
+        if(!selectedPassages.includes(n)) return; 
+        
+        document.querySelectorAll('.tab-btn').forEach((b, i) => {
+            if(selectedPassages.includes(i + 1)) b.classList.toggle('active', i + 1 === n);
+        });
+        document.querySelectorAll('.passage-content').forEach((p, i) => p.classList.toggle('active', i + 1 === n));
+        document.querySelectorAll('.question-group').forEach((q, i) => q.classList.toggle('active', i + 1 === n));
+        document.querySelector('.pane-left').scrollTop = 0;
+        document.querySelector('.pane-right').scrollTop = 0;
+    }
+
+    function scrollToQuestion(id) {
+        let group = id <= 13 ? 1 : id <= 26 ? 2 : 3;
+        if(!selectedPassages.includes(group)) return;
+        
+        switchTab(group);
+        setTimeout(() => {
+            let targetId = `q-row-${id}`;
+            let el = document.getElementById(targetId);
+            
+            if(el) {
+                el.scrollIntoView({behavior:"smooth", block:"center"});
+                el.style.backgroundColor = "var(--highlight-color)";
+                setTimeout(() => el.style.backgroundColor = "", 1000);
+            }
+        }, 100);
+    }
+
+    function updateNav(id) {
+        let nav = document.getElementById(`nav-${id}`);
+        if (!nav) return;
+        
+        let val = "";
+        let mcqInputs = document.querySelectorAll(`input[name="mcq-${id}"]:checked`);
+        if (mcqInputs.length > 0) {
+            val = mcqInputs[0].value;
+        } else {
+            let el = document.getElementById(`ans-${id}`);
+            if (el) val = el.value;
+        }
+        
+        if (val && val.trim() !== "") nav.classList.add("done");
+        else nav.classList.remove("done");
+    }
+
+    function startTimer() {
+        let display = document.getElementById("timer");
+        timerInterval = setInterval(function () {
+            let m = Math.floor(testDuration / 60);
+            let s = testDuration % 60;
+            display.textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            if (--testDuration < 0) { clearInterval(timerInterval); executeSubmit(); }
+        }, 1000);
+    }
+
+    function submitTest(manual) {
+        if (isSubmitted) return;
+        if (manual) document.getElementById('confirmOverlay').style.display = 'flex';
+        else executeSubmit();
+    }
+
+    function closeConfirmModal() { document.getElementById('confirmOverlay').style.display = 'none'; }
+    function closeResultModal() { document.getElementById('resultOverlay').style.display = 'none'; }
+
+    function calculateIeltsBand(correct, total) {
+        let normalizedCorrect = (correct / total) * 40;
+        if (normalizedCorrect >= 39) return 9.0;
+        if (normalizedCorrect >= 37) return 8.5;
+        if (normalizedCorrect >= 35) return 8.0;
+        if (normalizedCorrect >= 33) return 7.5;
+        if (normalizedCorrect >= 30) return 7.0;
+        if (normalizedCorrect >= 27) return 6.5;
+        if (normalizedCorrect >= 23) return 6.0;
+        if (normalizedCorrect >= 19) return 5.5;
+        if (normalizedCorrect >= 15) return 5.0;
+        if (normalizedCorrect >= 13) return 4.5;
+        if (normalizedCorrect >= 10) return 4.0;
+        if (normalizedCorrect >= 8) return 3.5;
+        if (normalizedCorrect >= 6) return 3.0;
+        return 2.5;
+    }
+
+    function executeSubmit() {
+        document.getElementById('confirmOverlay').style.display = 'none';
+        isSubmitted = true;
+        clearInterval(timerInterval);
+        document.querySelectorAll('input, select').forEach(el => el.disabled = true);
+        
+        // Thoát Focus Mode nếu đang bật
+        document.body.classList.remove('focus-mode');
+        
+        let p1Score = 0, p2Score = 0, p3Score = 0;
+
+        for (let i = 1; i <= 40; i++) {
+            let group = i <= 13 ? 1 : i <= 26 ? 2 : 3;
+            if (!selectedPassages.includes(group)) continue;
+
+            let userAns = "";
+            let mcqInputs = document.querySelectorAll(`input[name="mcq-${i}"]:checked`);
+            if (mcqInputs.length > 0) {
+                userAns = mcqInputs[0].value;
+            } else {
+                let el = document.getElementById(`ans-${i}`);
+                if (el) userAns = el.value.trim().toUpperCase();
+            }
+
+            let correctAnswer = correctAnswers[i];
+            let isCorrect = false;
+
+            if (Array.isArray(correctAnswer)) {
+                isCorrect = correctAnswer.includes(userAns);
+            } else {
+                isCorrect = (userAns === correctAnswer);
+            }
+
+            if (isCorrect) {
+                if (group === 1) p1Score++;
+                else if (group === 2) p2Score++;
+                else if (group === 3) p3Score++;
+            }
+
+            let fb = document.getElementById(`fb-${i}`);
+            let correctStr = Array.isArray(correctAnswer) ? correctAnswer.join(" / ") : correctAnswer;
+
+            if (fb) {
+                fb.innerText = isCorrect ? "✓" : `✗ (${correctStr})`;
+                fb.className = isCorrect ? "feedback correct" : "feedback wrong";
+            }
+
+            if(explanations[i]) {
+                let expData = explanations[i];
+                let htmlContent = `
+                    <div class="exp-box show">
+                        <div class="exp-title">
+                            💡 Gia sư IELTS 9.0 phân tích Câu ${i}
+                            ${expData.colorClass ? `<button class="locate-btn" onclick="scrollToEvidence('${expData.colorClass}')">📍 Định vị Dẫn chứng</button>` : ''}
+                        </div>
+                        ${expData.translation ? `
+                        <div class="exp-section">
+                            <span class="exp-label">👉 Dịch nghĩa / Phân tích:</span> 
+                            <div class="exp-translate">${expData.translation}</div>
+                        </div>` : ''}
+                        ${expData.keywords ? `
+                        <div class="exp-section">
+                            <span class="exp-label">🔑 Paraphrase cần nhớ:</span> 
+                            <div class="exp-keywords">${expData.keywords}</div>
+                        </div>` : ''}
+                        <div class="exp-section">
+                            <span class="exp-label">🧠 Lời khuyên của Thầy:</span> 
+                            <div class="exp-detail">${expData.exp}</div>
+                        </div>
+                    </div>`;
+
+                let expContainer = document.getElementById(`exp-${i}`);
+                if(expContainer) expContainer.innerHTML = htmlContent;
+            }
+        } 
+
+        let totalScore = p1Score + p2Score + p3Score;
+        let totalQ = selectedPassages.reduce((sum, p) => sum + (p === 3 ? 14 : 13), 0);
+        let bandScore = calculateIeltsBand(totalScore, totalQ);
+        
+        document.getElementById('scoreDisplay').innerText = totalScore + "/" + totalQ;
+        document.getElementById('bandDisplay').innerText = "Band: " + (Number.isInteger(bandScore) ? bandScore + ".0" : bandScore);
+        
+        let subTxt = "";
+        if(selectedPassages.includes(1)) subTxt += `Passage 1: <b>${p1Score}/13</b> &nbsp;&nbsp;&nbsp; `;
+        if(selectedPassages.includes(2)) subTxt += `Passage 2: <b>${p2Score}/13</b> &nbsp;&nbsp;&nbsp; `;
+        if(selectedPassages.includes(3)) subTxt += `Passage 3: <b>${p3Score}/14</b>`;
+        document.getElementById('subScoresDisplay').innerHTML = subTxt;
+        
+        document.getElementById('resultOverlay').style.display = 'flex'; 
+    }
+
+    function scrollToEvidence(id) {
+        const evElement = document.getElementById(id);
+        if(evElement) {
+            let passagePane = evElement.closest('.passage-content');
+            if (passagePane) {
+                let tabNum = passagePane.id === 'text-p1' ? 1 : passagePane.id === 'text-p2' ? 2 : 3;
+                if (!passagePane.classList.contains('active')) {
+                    switchTab(tabNum);
+                }
+            }
+
+            setTimeout(() => {
+                evElement.scrollIntoView({behavior: "smooth", block: "center"});
+                evElement.classList.remove("focus-blink");
+                void evElement.offsetWidth;
+                evElement.classList.add("focus-blink");
+                setTimeout(() => evElement.classList.remove("focus-blink"), 1500);
+            }, 100);
+        }
+    }
+</script>
+</body>
+</html>
