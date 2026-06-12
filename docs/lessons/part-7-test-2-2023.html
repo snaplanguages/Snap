@@ -2352,5 +2352,237 @@
         }
     }
 </script>
+    <script>
+    // 1. Khởi tạo thanh Admin (Ban đầu ẩn, chỉ hiện nếu đúng Email)
+    const adminPanel = document.createElement('div');
+    adminPanel.id = 'adminPanelContainer';
+    adminPanel.style.display = 'none'; // Mặc định ẩn
+    adminPanel.innerHTML = `
+        <div style="position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; padding: 10px 20px; z-index: 999999; display: flex; gap: 15px; box-shadow: 0 -5px 25px rgba(0,0,0,0.3); align-items: center; overflow-x: auto; white-space: nowrap; border-top: 3px solid #4f46e5;">
+            <label style="color: white; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; border-right: 2px solid #475569; padding-right: 15px;">
+                <input type="checkbox" id="adminToggle" style="transform: scale(1.3);"> BẬT EDIT
+            </label>
+            
+            <div id="adminTools" style="display: none; gap: 8px; align-items: center; width: 100%;">
+                <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-1')" style="background: #bbf7d0; color: #166534; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">1. Xanh</button>
+                <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-2')" style="background: #fecaca; color: #991b1b; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">2. Đỏ</button>
+                <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-3')" style="background: #bfdbfe; color: #1e3a8a; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">3. Biển</button>
+                <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-4')" style="background: #fed7aa; color: #9a3412; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">4. Cam</button>
+                <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-5')" style="background: #e9d5ff; color: #581c87; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">5. Tím</button>
+                <button onmousedown="event.preventDefault(); removeSpecificHighlight()" style="background: #f1f5f9; color: #475569; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; margin-right: 10px;">🗑 Bỏ màu</button>
+
+                <button onmousedown="event.preventDefault(); insertCustomTable()" style="background: #0ea5e9; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer;">+ Bảng</button>
+                <button onmousedown="event.preventDefault(); insertCustomBox()" style="background: #a855f7; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer;">+ Khung</button>
+                
+                <button onmousedown="event.preventDefault(); wrapVisibility('show-after-submit')" style="background: #f59e0b; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-left: 10px;">👁 Hiện khi Nộp</button>
+                <button onmousedown="event.preventDefault(); wrapVisibility('hide-after-submit')" style="background: #64748b; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer;">🙈 Ẩn khi Nộp</button>
+
+                <div style="margin-left: auto; display: flex; gap: 10px;">
+                    <button id="adminSaveVocabBtn" style="background: #ec4899; color: white; border: none; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer;">💡 Copy Code Từ Vựng</button>
+                    <button id="adminSaveBtn" style="background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer;">💾 Copy Code Đề Bài</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(adminPanel);
+
+    let isAdminMode = false;
+
+    // 2. Kiểm tra Phân quyền (RBAC) liên tục mỗi giây để chờ Firebase tải xong User
+    const authCheckInterval = setInterval(() => {
+        if (window.currentUserEmail === "nguyenthihongphucb@gmail.com") {
+            document.getElementById('adminPanelContainer').style.display = 'block';
+            clearInterval(authCheckInterval); // Đã xác thực xong thì dừng việc check
+        }
+    }, 1000);
+
+    // Ghi đè hàm renderPassage
+    const originalRenderPassage = renderPassage;
+    renderPassage = function() {
+        originalRenderPassage();
+        if (isAdminMode) enableEditingForCurrentPassage();
+    };
+
+    // Xử lý bật/tắt
+    document.getElementById('adminToggle').addEventListener('change', function(e) {
+        isAdminMode = e.target.checked;
+        const adminTools = document.getElementById('adminTools');
+        const vocabOverlay = document.getElementById('vocabOverlay');
+        const vocabList = document.querySelector('.vocab-list');
+
+        if (isAdminMode) {
+            adminTools.style.display = 'flex';
+            document.getElementById('mainLayout').classList.add('submitted-layout');
+            document.getElementById('vocabBtn').style.display = 'flex'; // Ép hiện nút bóng đèn
+            
+            // Bật edit cho Từ vựng
+            if(vocabList) {
+                vocabList.setAttribute('contenteditable', 'true');
+                vocabList.style.outline = '2px dashed #ec4899';
+                vocabList.style.padding = '10px';
+            }
+
+            enableEditingForCurrentPassage();
+            showCustomAlert("🛠 CHẾ ĐỘ ADMIN ĐÃ BẬT\n\n- Quyền lực đã được cấp cho: nguyenthihongphucb@gmail.com\n- Các thanh công cụ đã được ghim xuống dưới cùng.\n- Click vào Bóng đèn 💡 để sửa luôn từ vựng nhé.");
+        } else {
+            adminTools.style.display = 'none';
+            document.getElementById('mainLayout').classList.remove('submitted-layout');
+            if(vocabList) {
+                vocabList.removeAttribute('contenteditable');
+                vocabList.style.outline = 'none';
+            }
+            renderPassage();
+        }
+    });
+
+    // ----------------------------------------------------
+    // CÁC HÀM XỬ LÝ HIGHLIGHT & HIỂN THỊ
+    // ----------------------------------------------------
+    window.applyAdminHighlight = function(className) {
+        const selection = window.getSelection();
+        if (!selection.rangeCount || selection.toString().trim() === "") return;
+        const span = document.createElement('span');
+        span.className = className;
+        span.textContent = selection.toString();
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(span);
+        selection.removeAllRanges();
+    };
+
+    // Hàm xóa đúng màu đã tô (không làm hỏng in đậm/in nghiêng)
+    window.removeSpecificHighlight = function() {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+        let node = selection.anchorNode;
+        // Lội ngược lên tìm thẻ span chứa màu
+        while (node && node.nodeName !== 'SPAN') {
+            node = node.parentNode;
+        }
+        if (node && node.className.includes('clue-highlight')) {
+            const textNode = document.createTextNode(node.textContent);
+            node.parentNode.replaceChild(textNode, node);
+        } else {
+            // Nếu bôi đen không kẹp trong span, dùng cách ép text cơ bản
+            document.execCommand('insertHTML', false, selection.toString());
+        }
+    };
+
+    // Hàm bọc Ẩn/Hiện
+    window.wrapVisibility = function(visibilityClass) {
+        const selection = window.getSelection();
+        if (!selection.rangeCount || selection.toString().trim() === "") return;
+        const span = document.createElement('span');
+        span.className = visibilityClass;
+        span.style.borderBottom = visibilityClass === 'show-after-submit' ? '2px dotted #f59e0b' : '2px dotted #64748b'; // Đánh dấu cho Admin dễ nhìn
+        span.textContent = selection.toString();
+        const range = selection.getRangeAt(0);
+        range.deleteContents();
+        range.insertNode(span);
+        selection.removeAllRanges();
+    };
+
+    // ----------------------------------------------------
+    // CÁC HÀM CHÈN HTML TÙY CHỈNH (HỎI ĐÁP SỐ LƯỢNG, MÀU SẮC)
+    // ----------------------------------------------------
+    window.insertCustomTable = function() {
+        let rows = prompt("Nhập số DÒNG (vd: 3):", "2");
+        if(!rows) return;
+        let cols = prompt("Nhập số CỘT (vd: 2):", "2");
+        if(!cols) return;
+        let bgColor = prompt("Nhập MÀU NỀN dòng Tiêu đề (vd: lightblue, #fecaca...):", "#e2e8f0");
+        
+        let tableHTML = `<br><table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem; background: rgba(255,255,255,0.7);" border="1" cellpadding="8"><tbody>`;
+        
+        // Render Header
+        tableHTML += `<tr>`;
+        for(let i = 0; i < cols; i++) {
+            tableHTML += `<td style="font-weight: bold; background: ${bgColor};">Tiêu đề ${i+1}</td>`;
+        }
+        tableHTML += `</tr>`;
+
+        // Render Body
+        for(let r = 0; r < rows - 1; r++) {
+            tableHTML += `<tr>`;
+            for(let c = 0; c < cols; c++) {
+                tableHTML += `<td>Nội dung...</td>`;
+            }
+            tableHTML += `</tr>`;
+        }
+        tableHTML += `</tbody></table><br>`;
+        document.execCommand('insertHTML', false, tableHTML);
+    };
+
+    window.insertCustomBox = function() {
+        let colorTheme = prompt("Nhập mã màu viền (vd: red, #4f46e5):", "#4f46e5");
+        if(!colorTheme) return;
+        const boxHTML = `<br><div style="border: 2px dashed ${colorTheme}; padding: 15px; border-radius: 8px; background: rgba(255, 255, 255, 0.8); margin: 10px 0; color: #1e1b4b;"><b>Tiêu đề khung:</b><br>Gõ nội dung...</div><br>`;
+        document.execCommand('insertHTML', false, boxHTML);
+    };
+
+    // Bật thuộc tính edit cho các khối
+    function enableEditingForCurrentPassage() {
+        const currentData = quizData[currentPassageIndex];
+
+        function makeEditable(element, dataObject, propertyName, outlineColor) {
+            if(!element) return;
+            element.setAttribute('contenteditable', 'true');
+            element.style.outline = `2px dashed ${outlineColor}`;
+            element.style.padding = '5px';
+            element.style.borderRadius = '4px';
+            if(window.getComputedStyle(element).display === 'none') element.style.display = 'block';
+
+            element.addEventListener('blur', function() {
+                // Xóa các border phụ (nếu có) do lúc edit sinh ra
+                let cleanedHTML = element.innerHTML.replace(/border-bottom: 2px dotted (.*?);/g, '');
+                dataObject[propertyName] = cleanedHTML.trim();
+            });
+        }
+
+        makeEditable(document.getElementById('passage-container'), currentData, 'passage', '#4f46e5');
+        makeEditable(document.getElementById('translation-container'), currentData, 'translation', '#f43f5e');
+
+        const qBlocks = document.querySelectorAll('.question-block');
+        qBlocks.forEach((block, idx) => {
+            const qData = currentData.questions[idx];
+            makeEditable(block.querySelector('.question-title'), qData, 'text', '#eab308');
+            const options = block.querySelectorAll('.option-text-en');
+            options.forEach((optEl, optIdx) => {
+                makeEditable(optEl, qData.options[optIdx], 'text', '#22c55e');
+                const viText = block.querySelectorAll('.option-text-vi')[optIdx];
+                if(viText) viText.style.display = 'none'; 
+            });
+            makeEditable(block.querySelector('.explanation-box'), qData, 'explanation', '#a855f7');
+        });
+    }
+
+    // Xuất code Đề bài
+    document.getElementById('adminSaveBtn').addEventListener('click', () => {
+        if(document.activeElement && document.activeElement.getAttribute('contenteditable') === 'true') document.activeElement.blur(); 
+        const jsonString = JSON.stringify(quizData, null, 4);
+        const finalCode = `const quizData = ${jsonString};`;
+        navigator.clipboard.writeText(finalCode).then(() => {
+            showCustomAlert("✅ Đã copy Code MẢNG ĐỀ BÀI!\n\nMở file HTML, bôi đen mảng `const quizData = [...]` cũ rồi dán đè lên.");
+        }).catch(() => alert("Lỗi copy, hãy xem tab Console (F12)"));
+    });
+
+    // Xuất code Từ vựng
+    document.getElementById('adminSaveVocabBtn').addEventListener('click', () => {
+        const vocabList = document.querySelector('.vocab-list');
+        if(vocabList) {
+            // Xóa rác outline
+            const cloned = vocabList.cloneNode(true);
+            cloned.removeAttribute('contenteditable');
+            cloned.style.outline = '';
+            cloned.style.padding = '0';
+            
+            const htmlString = `<ul class="vocab-list">\n${cloned.innerHTML}\n</ul>`;
+            navigator.clipboard.writeText(htmlString).then(() => {
+                showCustomAlert("✅ Đã copy Code TỪ VỰNG!\n\nMở file HTML, tìm đến đoạn `<ul class=\"vocab-list\">...</ul>` cũ và dán đè lên.");
+            });
+        }
+    });
+
+</script>
 </body>
 </html>
