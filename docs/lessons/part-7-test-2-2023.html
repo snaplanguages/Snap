@@ -2373,13 +2373,12 @@
 
                 <button onmousedown="event.preventDefault(); insertCustomTable()" style="background: #0ea5e9; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer;">+ Bảng</button>
                 <button onmousedown="event.preventDefault(); insertCustomBox()" style="background: #a855f7; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer;">+ Khung</button>
-                
-                <button onmousedown="event.preventDefault(); wrapVisibility('show-after-submit')" style="background: #f59e0b; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-left: 10px;">👁 Hiện khi Nộp</button>
-                <button onmousedown="event.preventDefault(); wrapVisibility('hide-after-submit')" style="background: #64748b; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer;">🙈 Ẩn khi Nộp</button>
 
                 <div style="margin-left: auto; display: flex; gap: 10px;">
-                    <button id="adminSaveVocabBtn" style="background: #ec4899; color: white; border: none; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer;">💡 Copy Code Từ Vựng</button>
-                    <button id="adminSaveBtn" style="background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer;">💾 Copy Code Đề Bài</button>
+                    <button id="adminLoadDraftBtn" style="background: #eab308; color: #1e1b4b; border: none; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer;" title="Khôi phục dữ liệu nháp đang sửa dở">📥 Khôi phục Nháp</button>
+                    <button id="adminSaveVocabBtn" style="background: #ec4899; color: white; border: none; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer;">💡 Copy Từ Vựng</button>
+                    <button id="adminCopyCurrentBtn" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer;" title="Chỉ copy đoạn đang hiển thị trên màn hình">💾 Copy Đoạn Này</button>
+                    <button id="adminSaveBtn" style="background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer;">💾 Copy Toàn Bộ</button>
                 </div>
             </div>
         </div>
@@ -2524,7 +2523,7 @@
     function enableEditingForCurrentPassage() {
         const currentData = quizData[currentPassageIndex];
 
-        function makeEditable(element, dataObject, propertyName, outlineColor) {
+       function makeEditable(element, dataObject, propertyName, outlineColor) {
             if(!element) return;
             element.setAttribute('contenteditable', 'true');
             element.style.outline = `2px dashed ${outlineColor}`;
@@ -2532,11 +2531,14 @@
             element.style.borderRadius = '4px';
             if(window.getComputedStyle(element).display === 'none') element.style.display = 'block';
 
-            element.addEventListener('blur', function() {
-                // Xóa các border phụ (nếu có) do lúc edit sinh ra
+            element.onblur = function() {
                 let cleanedHTML = element.innerHTML.replace(/border-bottom: 2px dotted (.*?);/g, '');
                 dataObject[propertyName] = cleanedHTML.trim();
-            });
+                
+                // THÊM 2 DÒNG NÀY ĐỂ TỰ ĐỘNG LƯU NHÁP VÀ BÁO HIỆU
+                localStorage.setItem('admin_draft_quizData', JSON.stringify(quizData));
+                if (typeof showInGameToast === "function") showInGameToast("💾 Đã lưu nháp tự động!");
+            };
         }
 
         makeEditable(document.getElementById('passage-container'), currentData, 'passage', '#4f46e5');
@@ -2565,7 +2567,34 @@
             showCustomAlert("✅ Đã copy Code MẢNG ĐỀ BÀI!\n\nMở file HTML, bôi đen mảng `const quizData = [...]` cũ rồi dán đè lên.");
         }).catch(() => alert("Lỗi copy, hãy xem tab Console (F12)"));
     });
+// Chức năng: Chỉ copy một đoạn duy nhất đang sửa
+    document.getElementById('adminCopyCurrentBtn').addEventListener('click', () => {
+        if(document.activeElement && document.activeElement.getAttribute('contenteditable') === 'true') document.activeElement.blur(); 
+        const currentData = quizData[currentPassageIndex];
+        const jsonString = JSON.stringify(currentData, null, 4);
+        navigator.clipboard.writeText(jsonString).then(() => {
+            showCustomAlert(`✅ Đã copy Code riêng của ĐOẠN SỐ ${currentPassageIndex + 1}!\n\nCậu có thể tìm đến đúng Object của đoạn này trong file HTML và dán đè lên cho lẹ.`);
+        }).catch(() => alert("Lỗi copy!"));
+    });
 
+    // Chức năng: Khôi phục bản nháp
+    document.getElementById('adminLoadDraftBtn').addEventListener('click', () => {
+        const draft = localStorage.getItem('admin_draft_quizData');
+        if(draft) {
+            if(confirm("Phát hiện bản nháp đã lưu gần đây! Cậu có muốn khôi phục không? (Nó sẽ ghi đè lên dữ liệu hiện đang hiện trên màn hình)")) {
+                const parsedDraft = JSON.parse(draft);
+                // Dùng mẹo này để thay đổi toàn bộ mảng quizData (vì nó được khai báo là const)
+                quizData.length = 0; 
+                parsedDraft.forEach(item => quizData.push(item));
+                
+                renderPassage();
+                renderNavDots();
+                showCustomAlert("🔄 Đã khôi phục bản nháp thành công! Cậu có thể tiếp tục sửa.");
+            }
+        } else {
+            showCustomAlert("📭 Hiện tại không có bản nháp nào được lưu trong máy.");
+        }
+    });
     // Xuất code Từ vựng
     document.getElementById('adminSaveVocabBtn').addEventListener('click', () => {
         const vocabList = document.querySelector('.vocab-list');
