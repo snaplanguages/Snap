@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading Full Test 299 | SnapEnglish</title>
+   <link rel="icon" type="image/png" href="ảnh.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* THEME MỚI: EMERALD GREEN - TƯƠI MÁT, GIẢM CĂNG THẲNG THỊ GIÁC */
+        :root {
+            --primary: #10b981; /* Emerald 500 */
+            --primary-dark: #047857; /* Emerald 700 */
+            --accent: #a7f3d0; /* Emerald 200 */
+            --bg-body: #ecfdf5; /* Emerald 50 */
+            --bg-pane: #ffffff;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --border-color: #d1fae5; /* Emerald 100 */
+            --highlight-color: #fef08a; /* Vàng highlight giữ nguyên để dễ nhìn */
+            --correct: #16a34a;
+            --wrong: #dc2626;
+            --exp-bg: #f0fdf4; /* Green nhạt cho giải thích */
+            --header-h: 70px;
+            --footer-h: 80px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            font-size: 16px;
+        }
+
+        /* --- OVERLAY & MODAL --- */
+        #setupOverlay, .custom-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+        }
+        .setup-modal, .custom-modal {
+            background: white; padding: 35px; border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(16, 185, 129, 0.15);
+            width: 90%; max-width: 500px; text-align: center;
+            border: 2px solid var(--accent);
+            animation: popIn 0.3s ease-out;
+            max-height: 90vh; overflow-y: auto;
+        }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .setup-modal h2, .custom-modal h2 { color: var(--primary-dark); font-size: 24px; margin-top: 0; font-weight: 700; }
+        
+        .mode-btn {
+            display: block; width: 100%; padding: 14px; margin: 12px 0;
+            border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: 0.3s; font-family: inherit;
+        }
+        .mode-practice { background: #fef2f2; color: #b91c1c; border: 2px solid #fecaca; }
+        .mode-practice:hover, .mode-practice.selected { background: #ef4444; color: white; border-color: #ef4444; }
+        .mode-mock { background: var(--bg-body); color: var(--primary-dark); border: 2px solid var(--accent); }
+        .mode-mock:hover, .mode-mock.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .mode-history { background: #f8fafc; color: #475569; border: 2px solid #cbd5e1; }
+        .mode-history:hover { background: #e2e8f0; border-color: #94a3b8; color: #1e293b; }
+        
+        #practiceOptions { display: none; background: #f8fafc; border: 1px dashed #cbd5e1; padding: 15px; border-radius: 10px; text-align: left; margin: 15px 0; }
+        .passage-cb-container { display: flex; align-items: center; margin-bottom: 8px; font-weight: 500; cursor: pointer;}
+        .passage-cb-container input { margin-right: 10px; transform: scale(1.2); cursor: pointer;}
+
+        #timeInputBox { display: none; margin: 20px 0; }
+        #timeInput { width: 90px; padding: 8px; font-size: 16px; text-align: center; border: 2px solid #cbd5e1; border-radius: 8px; font-family: inherit; outline: none; color: var(--primary-dark); font-weight: bold; }
+        #timeInput:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2); }
+        
+        .start-btn { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 15px; transition: 0.3s; display: none; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.3); }
+        .start-btn:hover { transform: translateY(-2px); }
+
+        .modal-actions { display: flex; gap: 15px; margin-top: 20px; justify-content: center; }
+        .btn-cancel, .btn-confirm { padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; font-family: inherit; flex: 1; border: none; }
+        .btn-cancel { background: #f1f5f9; color: #475569; border: 2px solid #cbd5e1; }
+        .btn-cancel:hover { background: #e2e8f0; }
+        .btn-confirm { background: var(--primary); color: white; box-shadow: 0 4px 0 var(--primary-dark); }
+        .btn-confirm:active { transform: translateY(4px); box-shadow: none; }
+
+        /* Lịch sử Table */
+        .table-wrapper { width: 100%; overflow-x: auto; border-radius: 10px; border: 1px solid var(--border-color); margin-top: 15px; }
+        #historyTable { width: 100%; border-collapse: collapse; min-width: 400px; background: white;}
+        #historyTable th { background: #f1f5f9; color: var(--primary-dark); padding: 12px; font-weight: 600; font-size: 14px;}
+        #historyTable td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; vertical-align: middle;}
+        #historyTable tr:hover { background: #f8fafc; }
+
+        /* --- HEADER & FOCUS MODE --- */
+        header { height: var(--header-h); background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 100; transition: all 0.3s ease; }
+        body.focus-mode header { height: 0; padding: 0; overflow: hidden; opacity: 0; }
+        body.focus-mode .container { height: calc(100vh - var(--footer-h)); }
+        
+        .brand { font-size: 20px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .brand span { background: var(--primary); color: white; padding: 4px 8px; border-radius: 8px; font-size: 14px; }
+
+        .tab-container { display: flex; background: #f1f5f9; padding: 4px; border-radius: 20px; gap: 4px; overflow-x: auto;}
+        .tab-btn { border: none; background: transparent; padding: 8px 18px; font-size: 15px; font-family: inherit; font-weight: 600; color: var(--text-light); cursor: pointer; border-radius: 15px; transition: all 0.3s; white-space: nowrap; }
+        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        .controls { display: flex; gap: 15px; align-items: center; }
+        .focus-toggle-btn { background: #d1fae5; color: var(--primary-dark); border: none; padding: 8px 15px; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit;}
+        .focus-toggle-btn:hover { background: #a7f3d0; }
+        
+        .timer-box { font-family: monospace; font-weight: 700; color: #b91c1c; background: #fef2f2; padding: 8px 15px; border-radius: 10px; font-size: 18px; border: 1px solid #fecaca; }
+        .btn-submit { background: var(--primary); color: white; border: none; padding: 8px 20px; border-radius: 10px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; font-family: inherit; box-shadow: 0 3px 0 var(--primary-dark); white-space: nowrap; }
+        .btn-submit:active { transform: translateY(3px); box-shadow: none; }
+
+        /* --- LAYOUT --- */
+        .container { display: flex; height: calc(100vh - var(--header-h) - var(--footer-h)); width: 100%; transition: all 0.3s ease;}
+        .pane { flex: 1; padding: 30px 40px; overflow-y: auto; position: relative; scroll-behavior: smooth; }
+        .pane-left { background: #fff; border-right: 2px solid var(--border-color); font-size: 16px; line-height: 1.7; text-align: justify; color: #334155; }
+        .pane-right { background: #f8fafc; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- CONTENT STYLES --- */
+        .passage-title { text-align: center; color: var(--primary-dark); margin-bottom: 20px; border-bottom: 2px dashed var(--accent); padding-bottom: 12px; font-size: 24px; font-weight: 700;}
+        .paragraph { margin-bottom: 18px; }
+        .paragraph-label { color: var(--primary); font-weight: 700; font-size: 1.05em; margin-right: 5px; }
+        .passage-content, .question-group { display: none; animation: fadeIn 0.3s; }
+        .passage-content.active, .question-group.active { display: block; }
+        .question-group { padding-bottom: 40px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* EVIDENCE HIGHLIGHTS */
+        .ev-box { padding: 1px 3px; border-radius: 4px; transition: all 0.4s ease; border: 2px solid transparent; background-color: transparent; color: inherit; }
+        .ev-box.focus-blink { border-color: var(--primary-dark) !important; transform: scale(1.02); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2) !important; background-color: var(--highlight-color) !important; z-index: 10; position: relative; }
+
+        /* --- QUESTIONS UI --- */
+        .question-section { padding: 20px; border: 1px solid var(--border-color); background: #fff; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
+        .instruction { color: var(--primary-dark); font-weight: 600; margin-bottom: 15px; font-size: 15px; background: var(--bg-body); padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary);}
+        .q-row { display: flex; align-items: baseline; margin-bottom: 15px; font-size: 15px; }
+        .q-num { font-weight: bold; min-width: 30px; color: var(--primary); }
+        .q-content { flex: 1; line-height: 1.7; }
+        .input-gap { display: inline-block; width: 140px; height: 32px; border: 2px solid #cbd5e1; border-radius: 6px; text-align: center; font-weight: 600; color: var(--primary-dark); font-size: 15px; margin: 0 5px; vertical-align: middle; transition: 0.2s; font-family: inherit; }
+        .input-gap:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15); }
+        select.input-select { padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 6px; font-size: 15px; cursor: pointer; font-weight: 500; color: var(--text-main); outline: none; margin-top: 6px; margin-right: 8px; font-family: inherit; }
+        select.input-select:focus { border-color: var(--primary); }
+        
+        /* Bảng */
+        .q-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        .q-table th { text-align: left; padding: 12px; background: #f1f5f9; color: var(--primary-dark); border-bottom: 2px solid var(--border-color); }
+        .q-table td { padding: 12px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+        .q-table td.center { text-align: center; }
+
+        /* --- EXPLANATION BOX --- */
+        .exp-box { display: none; background: #fff; border: 2px solid var(--border-color); border-left: 5px solid var(--primary); padding: 15px; margin-top: 10px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.08); animation: slideUp 0.3s ease-out; }
+        .exp-box.show { display: block; }
+        .exp-title { font-weight: 700; color: var(--primary-dark); font-size: 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; margin-bottom: 10px; }
+        .locate-btn { background: var(--bg-body); border: 1px solid var(--accent); color: var(--primary-dark); padding: 4px 10px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; font-family: inherit; }
+        .locate-btn:hover { background: var(--primary); color: white; }
+        .exp-section { margin-bottom: 10px; font-size: 15px; line-height: 1.5; color: #334155; }
+        .exp-label { font-weight: 600; color: var(--primary-dark); display: inline-block; white-space: nowrap; margin-bottom: 5px; }
+        .exp-translate { background: #f8fafc; padding: 8px; border-radius: 4px; border-left: 3px solid #cbd5e1; font-style: italic; margin-top: 4px; }
+        .exp-keywords { background: #fffbeb; padding: 8px; border-radius: 4px; border: 1px dashed #fde68a; margin-top: 4px;}
+        .exp-detail { margin-top: 4px; }
+
+        /* --- FOOTER --- */
+        footer { height: var(--footer-h); background: #fff; border-top: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; gap: 15px; z-index: 100; }
+        .palette-scroller { flex: 1; display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; align-items: center;}
+        .nav-dot { min-width: 36px; height: 36px; border: 2px solid #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; cursor: pointer; color: #94a3b8; background: white; transition: 0.2s; flex-shrink: 0; display: none; }
+        .nav-dot.done { background: var(--bg-body); color: var(--primary-dark); border-color: var(--accent); }
+        .nav-dot:hover { border-color: var(--primary); color: var(--primary); }
+        
+        .feedback { display: inline-block; font-weight: bold; font-size: 15px; margin-left: 8px; }
+        .correct { color: var(--correct); }
+        .wrong { color: var(--wrong); }
+
+        @media (max-width: 768px) {
+            .container { flex-direction: column; }
+            .pane { height: 50%; padding: 20px; }
+            .pane-left { border-right: none; border-bottom: 2px solid var(--border-color); }
+            header { padding: 10px; height: auto; flex-wrap: wrap; gap: 10px;}
+            .tab-container { width: 100%; order: 3; justify-content: space-between;}
+            .controls { order: 2; }
+            .input-gap { width: 100%; margin: 5px 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="setupOverlay">
+    <div class="setup-modal" id="setupContent">
+        <h2>Chào mừng đến với Reading Library ✨</h2>
+        <p style="font-size: 15px; color: #64748b; margin-bottom: 20px;">Hôm nay bạn muốn rèn luyện theo cách nào?</p>
+        
+        <button class="mode-btn mode-practice" onclick="selectMode('practice')">🎯 Luyện Tập (Tùy chọn Passage)</button>
+        <button class="mode-btn mode-mock" onclick="selectMode('mock')">🏆 Thi Thử (Full Test 60 phút)</button>
+        <button class="mode-btn mode-history" onclick="openHistoryTab()">🕒 Xem Lịch Sử</button>
+        
+        <div id="practiceOptions">
+            <label style="font-weight: bold; margin-bottom: 12px; display: block; color: var(--primary-dark);">📚 Chọn phần muốn làm:</label>
+            <label class="passage-cb-container"><input type="checkbox" class="passage-cb" value="1" checked onchange="updatePracticeTime()"> Passage 1 (13 câu)</label>
+            <label class="passage-cb-container"><input type="checkbox" class="passage-cb" value="2" checked onchange="updatePracticeTime()"> Passage 2 (15 câu)</label>
+            <label class="passage-cb-container"><input type="checkbox" class="passage-cb" value="3" checked onchange="updatePracticeTime()"> Passage 3 (12 câu)</label>
+        </div>
+
+        <div id="timeInputBox">
+            <label style="font-size: 15px; font-weight: bold; color: #475569;">⏱ Cài đặt thời gian (phút): </label>
+            <input type="number" id="timeInput" value="60" min="5" max="180">
+        </div>
+        
+        <button class="start-btn" id="startBtn" onclick="askReady()">Bắt đầu (OK)</button>
+    </div>
+
+    <div class="setup-modal" id="historyContent" style="display: none;">
+        <h2>Lịch Sử Làm Bài</h2>
+        <div id="historyLoading" style="text-align: center; color: var(--text-light); margin: 15px 0;">Đang tải dữ liệu...</div>
+        
+        <div class="table-wrapper">
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Ngày làm</th>
+                        <th>Phần thi</th>
+                        <th>Kết quả</th>
+                        <th>Band</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn-cancel" style="width: auto;" onclick="backToMenu()">Quay lại Menu</button>
+        </div>
+    </div>
+</div>
+
+<div id="startConfirmOverlay" class="custom-overlay" style="display: none;">
+    <div class="custom-modal">
+        <h2>Xác nhận bắt đầu</h2>
+        <p id="startConfirmMsg" style="font-size: 15px; color: #475569; margin-bottom: 15px; white-space: pre-line;"></p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeStartConfirmModal()">Huỷ</button>
+            <button class="btn-confirm" onclick="startTestActual()">OK</button>
+        </div>
+    </div>
+</div>
+
+<header>
+    <div class="brand">
+        <span>SnapEnglish Pro</span> Test 299
+    </div>
+    
+    <div class="tab-container" id="tab-container">
+        <button class="tab-btn active" id="tab-btn-1" onclick="switchTab(1)">Passage 1</button>
+        <button class="tab-btn" id="tab-btn-2" onclick="switchTab(2)">Passage 2</button>
+        <button class="tab-btn" id="tab-btn-3" onclick="switchTab(3)">Passage 3</button>
+    </div>
+
+    <div class="controls">
+        <button class="focus-toggle-btn" onclick="toggleFocusMode()">🔍 Focus Mode</button>
+        <div class="timer-box">⏱ <span id="timer">00:00</span></div>
+        <button class="btn-submit" onclick="submitTest(true)">NỘP BÀI</button>
+    </div>
+</header>
+
+<div class="container" id="mainContainer">
+    
+    <div class="pane pane-left" id="passagePane">
+        
+        <div id="text-p1" class="passage-content active">
+            <h2 class="passage-title">Frogwatch</h2>
+            
+            <p class="paragraph">
+            Frogwatch, a remarkable success story started in Western Australia, is the brainchild of Dr. Ken Aplin. His work, as the curator of reptiles and frogs in the Western Australian Museum, invoked long field trips and he wondered if a community-based frog-monitoring network could help him keep track of frogs. Through such a network, <span id="ev-1" class="ev-box">ordinary untrained members of the community</span> could learn about frog habitats, <span id="ev-13" class="ev-box">observe the numbers and kinds of frogs in their local area, and report this information to the museum.</span></p>
+
+            <p class="paragraph">
+            Launched in 1995, <span id="ev-2" class="ev-box">Frogwatch recently gained its 3221st member</span>, and many people say that this is the best thing the museum has ever done. Each participant receives a 'Frogwatch Kit' a regular newsletter, an audio tape of frog calls and identification sheets.</p>
+
+            <p class="paragraph">
+            Recently, Frogwatch membership increased dramatically when a <span id="ev-2b" class="ev-box">mysterious parasitic fungus disease began attacking frogs nationwide.</span> Although research is not yet complete, <span id="ev-3" class="ev-box">scientists suspect the fungus</span> originated overseas, perhaps in South America, where frogs have died in catastrophic numbers from a fungus disease genetically similar to the Australian organism.</p>
+
+            <p class="paragraph">
+            Researchers in Western Australia needed to know how widespread the infection was in the state's frog populations. So Aplin sent an 'F-file' (frog fungus facts) alert to Frogwatch members, requesting their help. He asked them to deliver him dead or dying frogs. <span id="ev-4" class="ev-box">More than 2,000 frogs have now been examined, half from the museum's existing collection.</span> Aplin once thought the fungus had arrived in Western Australia in only the past year or two, but <span id="ev-5" class="ev-box">tests now suggest it has been there since the late 1980s.</span></p>
+
+            <p class="paragraph">
+            Frogwatch has proved to be Abe perfect link to the public and Aplin has become a total convert to community participation. He's now aiming for a network of 15,000 Frogwatch members as <span id="ev-12a" class="ev-box">the museum can't afford to use professional resources to monitor frog populations.</span> Much of the frog habitat is on private land, and without community support, monitoring the frogs would be impossible.</p>
+
+            <p class="paragraph">
+            Not everyone is convinced by the 'feelgood' popularity of Frogwatch. While Aplin believes even tiny backyard ponds can help to significantly improve frog numbers, Dr. Dale Roberts isn't so sure, A senior zoology lecturer at the University of WA, Roberts agrees the program has tapped into the public's enthusiasm for frogs, but he warns that strong public awareness does not amount to sound science. He argues that getting the public to send in pages of observations is a good thing, but <span id="ev-7" class="ev-box">giving these reports credibility may not be valid scientifically.</span> In addition, he's not convinced that Frogwatch's alarmist message about the danger of fungal infection is valid either. In Western Australia, for example, there was a long summer and very late drenching rains, that year, following two equally dry years. So, he argues, there are <span id="ev-10" class="ev-box">other things that might have precipitated the deaths.</span></p>
+
+            <p class="paragraph">
+            He questions what could be done about it anyway. If it's already widespread, it <span id="ev-10b" class="ev-box">may not be worth the cost and effort of doing anything about it.</span> Even if it's causing high death rates, he says he <span id="ev-11" class="ev-box">can still find every frog species found over the past ten years in the south-west of Australia.</span></p>
+
+            <p class="paragraph">
+            Roberts argues that Western Australia is different. <span id="ev-6" class="ev-box">Unlike most other states, species are still being discovered there</span>; the <span id="ev-11b" class="ev-box">disappearances of frog types in Queensland and New South Wales, are not occurring in Western Australia</span>, although three south-west species are on the endangered list. Roberts believes that no amount of garden ponds in Perth will help those species, which live in isolated habitats targeted for development.</p>
+
+            <p class="paragraph">
+            Aplin's response is that increasing the number of frog-friendly habitats is important for the very reason that many Western Australian frog species are found in small, highly restricted locations. He argues that <span id="ev-8" class="ev-box">pesticide-free gardens and ponds can offer a greater chance of survival</span> to animals battling habitat disturbance, environmental pollutants, climatic variations, and now fungal disease.</p>
+
+            <p class="paragraph">
+            Aplin's opinion is that they should <span id="ev-9" class="ev-box">use the precautionary principle</span> in cases where they don't yet know enough about the situation. Usually diseases sort themselves out naturally and some frog fauna will co-evolve with the fungus. <span id="ev-9b" class="ev-box">Given time some balance may be restored, but in the shorter term, they are seeing negative impacts.</span></p>
+
+            <p class="paragraph">
+            The nationwide spread of the chytrid fungus is being mapped by Dr. Rick Speare, a specialist in amphibian disease at James Cook University. Speare also tests the accuracy of Aplin's fungus diagnoses and says Frogwatch is 'an amazing and under-acknowledged system... the best program in Australia for harnessing public interest in frog biology... There are a lot of eyes out there looking for dead or sick frogs, <span id="ev-12b" class="ev-box">beyond the power of any biologist to collect.</span>'</p>
+
+            <p class="paragraph">
+            Aplin argues that they should never underestimate the importance of having a community base, especially when governments want to cut research funds, 'People can protest in ways that a handful of scientists hiding in a laboratory can't do. For just about every environmental problem, community involvement is fundamental.' Furthermore, Frogwatch is proving to be a social phenomenon as much as anything else. It seems ordinary people know that frogs are a measure of the environment's health.</p>
+        </div>
+
+        <div id="text-p2" class="passage-content">
+            <h2 class="passage-title">Just relax</h2>
+            
+            <p class="paragraph"><span class="paragraph-label">Paragraph A</span>
+            Hypnosis is an intriguing and fascinating process. A trance-like mental state is induced in one person by another, who appears to have the power to command that person to obey instructions without question. Hypnotic experiences were described by the ancient Egyptians and Greeks, whilst references to deep sleep and anaesthesia have been found in the <span id="ev-19" class="ev-box">Bible</span> and in the Jewish Talmud. In the mid-1700s, Franz Mesmer, an Austrian physician, developed his theory of 'animal magnestism', which was the belief that the cause of disease was the 'improper distribution of invisible magnetic fluids'. Mesmer used <span id="ev-20" class="ev-box">water tubs and magnetic wands</span> to direct these supposed fluids to his patients. In 1784, a French commission studied Mesmer's claims, and concluded that these 'cures' were only imagined by the patients. However, people continued to believe in this process of 'mesmerism' and it was soon realised that successful results could be achieved, but without the need for magnets and water.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph B</span>
+            The term hypnotism was first used by James Braid, a British physician who studied suggestion and hypnosis in the mid-1800s. He demonstrated that hypnosis differed from sleep, that it was a <span id="ev-21" class="ev-box">physiological</span> response and not the result of secret powers. During this same period, <span id="ev-14" class="ev-box">James Esdaile, a Scottish doctor working in India, used hypnotism instead of anaesthetic in over 200 major surgical operations</span>, including leg amputations. Later that century, a French neurologist, Jean Charcot, successfully experimented with hypnosis in his clinic for nervous disorders.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph C</span>
+            Since then, scientists have shown that the state of hypnosis is a <span id="ev-15" class="ev-box">natural human behaviour</span>, which can affect psychological, social and/or physical experiences. The effects of hypnotism depend on the ability, willingness and motivation of the person being hypnotised. Although hypnosis has been compared to dreaming and sleepwalking, it is not actually related to sleep. It involves a more active and intense <span id="ev-22" class="ev-box">mental concentration</span> of the person being hypnotised. Hypnotised people can talk, write, and walk about and they are usually <span id="ev-23" class="ev-box">fully aware</span> of what is being said and done.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph D</span>
+            There are various <span id="ev-16" class="ev-box">techniques used to induce hypnosis</span>. The best-known is a series of simple suggestions <span id="ev-24" class="ev-box">repeated continuously in the same tone of voice</span>. The subject is instructed to focus their attention on an object or fixed point, while being told to relax, breathe deeply, and allow the eyelids to grow heavy and close. As the person responds, their state of attention changes, and this altered state often leads to other changes. For example, the person may experience different levels of awareness, consciousness, imagination, memory and reasoning or become more responsive to suggestions. Additional phenomena may be produced or eliminated such as blushing, sweating, paralysis, muscle tension or anaesthesia. Although these changes can occur with hypnosis, none of these experiences is unique to it. People who are very responsive to hypnosis are also more responsive to suggestions when they are not hypnotised. This responsiveness increases during hypnotism. This explains why hypnosis takes only a few seconds for some, whilst other people cannot be easily hypnotised,</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph E</span>
+            It is a common misunderstanding that hypnotists are able to force people to perform criminal or any other acts against their will. In fact, subjects can <span id="ev-17" class="ev-box">resist suggestions, and they retain their ability to distinguish right from wrong</span>. This misunderstanding is often the result of public performances where subjects perform ridiculous or highly embarrassing actions at the command of the hypnotist. These people are usually instructed not to recall their behaviour after re-emerging from the hypnotic state, so it appears that they were powerless while hypnotised. The point to remember, however, is that these individuals <span id="ev-25" class="ev-box">chose to participate</span>, and the success of hypnotism depends on the willingness of a person to be hypnotised.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph F</span>
+            Interestingly, there are different levels of hypnosis achievable. Thus deep hypnosis can be induced to allow anaesthesia for surgery, childbirth or dentistry. This contrasts to a lighter state of hypnosis, which deeply relaxes the patient who will then follow simple directions. This latter state may be <span id="ev-18" class="ev-box">used to treat mental health problems</span>, as it allows patients to feel calm while simultaneously thinking about distressing feelings or painful memories. Thus patients can learn new responses to situations or come up with solutions to problems. This can help <span id="ev-26" class="ev-box">recovery from psychological conditions</span> such as anxiety, depression or phobias. Sometimes, after traumatic incidents, memory of the events may be blocked. For example, some soldiers develop amnesia [loss of memory] as a result of their experiences during wartime. Through hypnosis these repressed memories can be retrieved and treated. A variation of this treatment involves age regression, when the hypnotist takes the patient back to a specific age. In this way patients may remember events and feelings from that time, which may be affecting their current well-being.</p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph G</span>
+            Physicians also have made use of the ability of a hypnotised person to remain in a given position for long periods of time. In one case, doctors had to graft skin onto a patient's badly damaged foot. First, skin from the person's abdomen was grafted onto his arm; then the graft was transferred to his foot. With hypnosis, the patient <span id="ev-27" class="ev-box">held his arm tightly in position over his abdomen for three weeks, then over his foot for four weeks.</span> Even though these positions were unusual, the <span id="ev-27b" class="ev-box">patient at no time felt uncomfortable!</span></p>
+
+            <p class="paragraph"><span class="paragraph-label">Paragraph H</span>
+            Hypnosis occasionally has been used with witnesses and victims of crime to enable people to remember important clues, such as a criminal's physical appearance or other significant details that might help to solve a crime. However, as people can both lie and make mistakes while hypnotised, the use of hypnotism in legal situations can cause serious problems. Also hypnosis cannot make a person divulge secret information if they don't want to. This was confirmed by the Council on Scientific Affairs of the American Medical Association, which, in 1985 reported that <span id="ev-28" class="ev-box">memories refreshed through hypnosis may include inaccurate information, false memories, and confabulation (fact and fantasy combined).</span></p>
+        </div>
+
+        <div id="text-p3" class="passage-content">
+            <h2 class="passage-title">Kids and Sport</h2>
+            
+            <p class="paragraph">
+            Two Italian psychologists, Vincenzo Marte and Giovanni Notarnicola, describe the traditional spontaneous practice of sport by children -climbing trees, riding a bicycle along quiet roads, racing their friends across the fields as an activity of <span id="ev-29" class="ev-box">freedom</span>, a special activity of discovery and learning. In the case of free sporting activity, the child's time is given up entirely to the activity, as can be seen in the endless games of football young children play, which may then be followed by bicycle races and/or a swim in the river, for example.</p>
+
+            <p class="paragraph">
+            Today, however, children's discovery of sport has become very different. It is often parents who take their children, when they are very young, to the swimming pool or to the sports grounds or sports halls. Children's first experience of sport thus takes place as an <span id="ev-30" class="ev-box">organised</span> activity, which they see as organisation of their free time. By organising sport for children, and often deciding for them, we unfortunately create an imbalance <span id="ev-37" class="ev-box">preventing them from managing their own play/sports time</span>, thus denying them an opportunity of autonomy and independence as was possible in the past.</p>
+
+            <p class="paragraph">
+            The first possible reason for the imbalance in the practice of sport by children is therefore linked to the urban society we live in today. We need not regret the past; it is rather a question of knowing how to recreate this freedom in our towns and in the country, where sport is increasingly based on organised leisure activities. Doing one sport is now the rule in clubs. <span id="ev-31" class="ev-box">Sports grounds</span> are often on the outskirts of cities, and are overcrowded and invariably enclosed, while recreational areas such as parks or hard-packed surfaces, are very few and far between. How can we find the balance of a varied and spontaneous relationship to sport under such conditions?</p>
+
+            <p class="paragraph">
+            Some interesting answers have already been suggested, which take into account the need to recreate this freedom. Marte and Notarnicola have shown that children who have experienced such freedom were considered by sports trainers to be more capable when they joined organised sport aged 12-13. Their study concluded that no formal training, no matter how early in life it took place, could replace these first experiences. Measures which would reverse this imbalance include: increasing the number of sports facilities which encourage self-organisation by the children, and also setting up unstructured playing areas with little in the way of equipment. Areas where street sport can be practised need to be established and <span id="ev-38" class="ev-box">sports clubs which offer multidisciplinary sports training</span> should be supported. Children should be offered pre-school activities where they can discover different sports.</p>
+
+            <p class="paragraph">
+            For children, sports remain a special kind of discovery and learning, no matter how much adults limit and control the practice of early intensive training. Here is the second example of imbalance in children's sport. Today, sport is practised with early <span id="ev-32" class="ev-box">intensive training</span> from the youngest possible age. Sometimes this is even before the age of six and is usually <span id="ev-33" class="ev-box">one</span> specific sport within an organised framework. When adult-style competitions are introduced at an early age, the conditions which encourage a balanced development of children through sport are no longer respected.</p>
+
+            <p class="paragraph">
+            Today, early intensive training is much more widely on offer. Many sports organisations claim that they are forced to do this type of training because of what is called 'the golden age' to acquire the physical skills. It is considered unthinkable for a young skater or gymnast to miss this period, because if they did so, they would fall so far behind the best, that they could never hope to catch up. Faced with this demand for early ability, it is important that a safety net is put in place to maximise the benefits and minimise the disadvantages of such intensive training.</p>
+
+            <p class="paragraph">
+            Why do very young children give up sport? The most common reason for leaving a sport is to change to another sport, which in itself is no bad thing. However, children may leave a sport because they believe that they have received too much criticism and too many negative <span id="ev-34" class="ev-box">assessments</span>. We know that young children, up to the age of eleven or twelve, cannot assess their own level of competence. They believe that if they are making an effort, then this in itself is a sign of their competence. We also know that young children are particularly sensitive to criticism from adults or peers. Trainers must therefore pay particular attention to this and avoid excessive criticism. They should also avoid any strategies that discriminate against the child: for example in team sports, naming first choice players and reserves. It should be remembered that primary school children's main desire is to have <span id="ev-35" class="ev-box">fun</span> and <span id="ev-39" class="ev-box">socialise</span>. The desire to improve and become a good competitor will develop later. This brief example shows that knowledge of child development is indispensable for those who take care of children at this age. It is up to trainers, sports doctors and psychologists to implement the measures necessary to limit this excessive early practice of sport by children.</p>
+
+            <p class="paragraph">
+            A third source of imbalance which threatens children and sport is parental attitudes. The American psychologist, Rainer Martens, emphasises that, 'too often children's joy of sports is destroyed by adults who want glory through victory.' Several studies have shown that parental <span id="ev-36" class="ev-box">pressure</span> is high on the list of reasons why children leave sport. The presence of mothers and fathers can prevent children from considering sport as their own, where they can learn to master technical difficulties, manage interpersonal relations, and experience success and failure. As Martens highlights, 'adults are solely to blame if joy and sadness become synonymous, to a child, with victory or defeat.'</p>
+
+            <p class="paragraph">
+            If the children make the decisions, this ensures that they enjoy being a child in sport, and are relaxed with their development as human beings. We need only observe the activity in a school playground, where games are organised on an improvised playing field, to understand that children show genetic traces of the hunter instinct, which naturally leads them to physical activity. Sport is included as something they want, and which they identify both as a means of release and as a form of self-expression. By acting as a route to self-discovery, sport gives children both the opportunity to know their limits, and to acquire tools which will allow them to surpass them. <span id="ev-40" class="ev-box">Playing sport is a source of learning, progress</span> and pleasure; an additional way of enriching life.</p>
+        </div>
+    </div>
+
+    <div class="pane pane-right" id="questionPane">
+        
+        <div id="q-group-1" class="question-group active">
+            <div class="question-section">
+                <div class="instruction">Questions 1-6: Do the following statements reflect the claims of the writer of the passage?</div>
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed #cbd5e1; line-height: 1.8;">
+                    <strong>YES</strong> - if the statement agrees with the views of the writer<br>
+                    <strong>NO</strong> - if the statement contradicts the views of the writer<br>
+                    <strong>NOT GIVEN</strong> - if it is impossible to say what the writer thinks about this
+                </div>
+                <table class="q-table">
+                    <script>
+                        const matches1 = [
+                            "Frogwatch members need a basic level of scientific training.",
+                            "All Frogwatch members live in Western Australia.",
+                            "Frogwatch has proved that frogs are disappearing because of a fungus.",
+                            "Scientists in WA have examined about two thousand frogs collected by Frogwatch.",
+                            "The frog fungus disease has been in Western Australia for more than ten years.",
+                            "New species of frogs have been found in Western Australia recently."
+                        ];
+                        for(let i=1; i<=6; i++) {
+                            document.write(`
+                            <tr id="q-row-${i}">
+                                <td style="width: 70%;"><span class="q-num">${i}.</span> ${matches1[i-1]}</td>
+                                <td class="center">
+                                    <select class="input-select" id="ans-${i}" onchange="updateNav(${i})" style="margin:0; width: 110px;">
+                                        <option value="">...</option>
+                                        <option value="YES">YES</option>
+                                        <option value="NO">NO</option>
+                                        <option value="NOT GIVEN">NOT GIVEN</option>
+                                    </select>
+                                    <span id="fb-${i}" class="feedback" style="display:block; margin-top:5px; margin-left:0;"></span>
+                                </td>
+                            </tr>
+                            `);
+                        }
+                    </script>
+                </table>
+                <div id="exp-1"></div><div id="exp-2"></div><div id="exp-3"></div><div id="exp-4"></div><div id="exp-5"></div><div id="exp-6"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 7-12: The reading passage describes the opinions of Dr, Ken Aplin, Dr. Dale Roberts and Dr. Rick Speare in relation to strategies for frog conservation.<br>Match one of the researchers A-C to each of the statements below. There may be more than one correct answer.</div>
+                
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed #cbd5e1;">
+                    <strong>A</strong> - Dr. Aplin<br>
+                    <strong>B</strong> - Dr. Roberts<br>
+                    <strong>C</strong> - Dr. Speare
+                </div>
+
+                <table class="q-table">
+                    <script>
+                        const matches2 = [
+                            "Although the involvement of large numbers of people is encouraging, this does not guarantee scientifically valid data.",
+                            "The development of frog-friendly backyards will help to conserve frog species.",
+                            "Although it is possible that frogs will adapt to fungal and other problems in the long term, we should take precautions in case this does not occur.",
+                            "As there may be many other explanations for recent frog deaths, it is not worth spending a great deal of time and money studying this fungus.",
+                            "Because of the unique geography of Western Australia, most frog species in this State are not in danger of extinction.",
+                            "Frogwatch has greater potential for frog observation than is possible by the scientific community."
+                        ];
+                        for(let i=7; i<=12; i++) {
+                            document.write(`
+                            <tr id="q-row-${i}">
+                                <td style="width: 70%;"><span class="q-num">${i}.</span> ${matches2[i-7]}</td>
+                                <td class="center">
+                                    <select class="input-select" id="ans-${i}" onchange="updateNav(${i})" style="margin:0; width: 100px;">
+                                        <option value="">...</option>
+                                        <option value="A">A</option><option value="B">B</option><option value="C">C</option>
+                                    </select>
+                                    <span id="fb-${i}" class="feedback" style="display:block; margin-top:5px; margin-left:0;"></span>
+                                </td>
+                            </tr>
+                            `);
+                        }
+                    </script>
+                </table>
+                <div id="exp-7"></div><div id="exp-8"></div><div id="exp-9"></div><div id="exp-10"></div><div id="exp-11"></div><div id="exp-12"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Question 13: Choose the correct letter A-D.</div>
+                <div class="q-row" id="q-row-13" style="flex-direction: column;">
+                    <div><span class="q-num">13.</span> The main purpose of Frogwatch is.</div>
+                    <div style="margin-top: 10px; margin-left: 30px; line-height: 1.8;">
+                        <input type="radio" name="q13" value="A" id="q13A" onchange="document.getElementById('ans-13').value='A'; updateNav(13)"> <label for="q13A">A. for people to collect and deliver dead or dying frogs to scientists.</label><br>
+                        <input type="radio" name="q13" value="B" id="q13B" onchange="document.getElementById('ans-13').value='B'; updateNav(13)"> <label for="q13B">B. for people to observe and collect information about frog populations for scientists.</label><br>
+                        <input type="radio" name="q13" value="C" id="q13C" onchange="document.getElementById('ans-13').value='C'; updateNav(13)"> <label for="q13C">C. for people to allow scientists onto their private land to look at frog habitats.</label><br>
+                        <input type="radio" name="q13" value="D" id="q13D" onchange="document.getElementById('ans-13').value='D'; updateNav(13)"> <label for="q13D">D. for people to set up ponds in their gardens as habitat for frogs.</label>
+                        <input type="hidden" id="ans-13">
+                        <span id="fb-13" class="feedback" style="display:block; margin-top:5px;"></span>
+                    </div>
+                </div>
+                <div id="exp-13"></div>
+            </div>
+        </div>
+
+        <div id="q-group-2" class="question-group">
+            <div class="question-section">
+                <div class="instruction">Questions 14-18: The passage has eight sections A-H. Choose the most suitable heading for sections B-F from the list of headings below.</div>
+                
+                <div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed #cbd5e1;">
+                    <strong>List of Headings</strong><br>
+                    <div style="display: flex; flex-wrap: wrap; gap: 15px; margin-top: 10px;">
+                        <div style="flex: 1 1 40%;"><strong>i.</strong> Use of hypnotism in criminal cases</div>
+                        <div style="flex: 1 1 40%;"><strong>ii.</strong> The normality of hypnotised subjects' behaviour</div>
+                        <div style="flex: 1 1 40%;"><strong>iii.</strong> Early medical experiments with hypnotism</div>
+                        <div style="flex: 1 1 40%;"><strong>iv.</strong> Early association of hypnosis with psychology</div>
+                        <div style="flex: 1 1 40%;"><strong>v.</strong> Dangers of hypnotism</div>
+                        <div style="flex: 1 1 40%;"><strong>vi.</strong> How to hypnotise</div>
+                        <div style="flex: 1 1 40%;"><strong>vii.</strong> Hypnosis and free will</div>
+                        <div style="flex: 1 1 40%;"><strong>viii.</strong> Difference between mesmerism and hypnotism</div>
+                        <div style="flex: 1 1 40%;"><strong>ix.</strong> Therapeutic uses of hypnosis</div>
+                        <div style="flex: 1 1 40%;"><strong>x.</strong> Origins of hypnosis</div>
+                    </div>
+                </div>
+
+                <table class="q-table">
+                    <tr>
+                        <th style="width: 40%;">Paragraph</th>
+                        <th style="width: 60%; text-align: center;">Your Answer</th>
+                    </tr>
+                    <script>
+                        for(let i=14; i<=18; i++) {
+                            document.write(`
+                            <tr id="q-row-${i}">
+                                <td><span class="q-num">${i}.</span> Section ${String.fromCharCode(66+(i-14))}</td>
+                                <td class="center">
+                                    <select class="input-select" id="ans-${i}" onchange="updateNav(${i})" style="margin:0; width: 140px;">
+                                        <option value="">Select...</option>
+                                        <option value="i">i</option><option value="ii">ii</option><option value="iii">iii</option>
+                                        <option value="iv">iv</option><option value="v">v</option><option value="vi">vi</option>
+                                        <option value="vii">vii</option><option value="viii">viii</option><option value="ix">ix</option>
+                                        <option value="x">x</option>
+                                    </select>
+                                    <span id="fb-${i}" class="feedback" style="display:block; margin-top:5px; margin-left:0;"></span>
+                                </td>
+                            </tr>
+                            `);
+                        }
+                    </script>
+                </table>
+                <div id="exp-14"></div><div id="exp-15"></div><div id="exp-16"></div><div id="exp-17"></div><div id="exp-18"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 19-23: Complete the notes on the history of hypnosis using <strong>NO MORE THAN THREE WORDS</strong> from the passage.</div>
+                
+                <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px dashed #cbd5e1; line-height: 2.5; font-size: 15px;">
+                    References to hypnotism can be found in both the Talmud and the <b>19.</b> <input type="text" class="input-gap" id="ans-19" oninput="updateNav(19)"> <span id="fb-19" class="feedback"></span>. Even when Mesmer's <b>20.</b> <input type="text" class="input-gap" id="ans-20" oninput="updateNav(20)"> <span id="fb-20" class="feedback"></span> were not used, successful results occurred without them. Braid identified hypnosis as a natural <b>21.</b> <input type="text" class="input-gap" id="ans-21" oninput="updateNav(21)"> <span id="fb-21" class="feedback"></span> response, rather than magical or mystical. Early psychological studies showed the difference between sleep and hypnosis. Successful hypnosis requires the subject's active <b>22.</b> <input type="text" class="input-gap" id="ans-22" oninput="updateNav(22)"> <span id="fb-22" class="feedback"></span>. Consequently subjects can speak or move around and are <b>23.</b> <input type="text" class="input-gap" id="ans-23" oninput="updateNav(23)"> <span id="fb-23" class="feedback"></span> of their surroundings.
+                </div>
+                <div id="exp-19"></div><div id="exp-20"></div><div id="exp-21"></div><div id="exp-22"></div><div id="exp-23"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 24-28: Choose the correct letter A-D.</div>
+                
+                <div class="q-row" id="q-row-24" style="flex-direction: column;">
+                    <div><span class="q-num">24.</span> In order to induce hypnosis, the hypnotist will</div>
+                    <div style="margin-top: 10px; margin-left: 30px; line-height: 1.8;">
+                        <input type="radio" name="q24" value="A" id="q24A" onchange="document.getElementById('ans-24').value='A'; updateNav(24)"> <label for="q24A">A. encourage the person to relax using a repetitively even tone of voice.</label><br>
+                        <input type="radio" name="q24" value="B" id="q24B" onchange="document.getElementById('ans-24').value='B'; updateNav(24)"> <label for="q24B">B. say a specific set of words in a special tone of voice.</label><br>
+                        <input type="radio" name="q24" value="C" id="q24C" onchange="document.getElementById('ans-24').value='C'; updateNav(24)"> <label for="q24C">C. say any words but in a particular tone of voice.</label><br>
+                        <input type="radio" name="q24" value="D" id="q24D" onchange="document.getElementById('ans-24').value='D'; updateNav(24)"> <label for="q24D">D. encourage the person to relax while focussing on a slowly moving object.</label>
+                        <input type="hidden" id="ans-24">
+                        <span id="fb-24" class="feedback" style="display:block; margin-top:5px;"></span>
+                    </div>
+                </div><div id="exp-24"></div>
+
+                <div class="q-row" id="q-row-25" style="flex-direction: column;">
+                    <div><span class="q-num">25.</span> Hypnotised subjects can be instructed to</div>
+                    <div style="margin-top: 10px; margin-left: 30px; line-height: 1.8;">
+                        <input type="radio" name="q25" value="A" id="q25A" onchange="document.getElementById('ans-25').value='A'; updateNav(25)"> <label for="q25A">A. do something they have previously said is against their wishes.</label><br>
+                        <input type="radio" name="q25" value="B" id="q25B" onchange="document.getElementById('ans-25').value='B'; updateNav(25)"> <label for="q25B">B. demonstrate physical strength they would normally not have.</label><br>
+                        <input type="radio" name="q25" value="C" id="q25C" onchange="document.getElementById('ans-25').value='C'; updateNav(25)"> <label for="q25C">C. reveal confidential information against their will.</label><br>
+                        <input type="radio" name="q25" value="D" id="q25D" onchange="document.getElementById('ans-25').value='D'; updateNav(25)"> <label for="q25D">D. do something that they would normally be opposed to doing.</label>
+                        <input type="hidden" id="ans-25">
+                        <span id="fb-25" class="feedback" style="display:block; margin-top:5px;"></span>
+                    </div>
+                </div><div id="exp-25"></div>
+
+                <div class="q-row" id="q-row-26" style="flex-direction: column;">
+                    <div><span class="q-num">26.</span> Past events are recalled under hypnosis</div>
+                    <div style="margin-top: 10px; margin-left: 30px; line-height: 1.8;">
+                        <input type="radio" name="q26" value="A" id="q26A" onchange="document.getElementById('ans-26').value='A'; updateNav(26)"> <label for="q26A">A. to entertain the hypnotist.</label><br>
+                        <input type="radio" name="q26" value="B" id="q26B" onchange="document.getElementById('ans-26').value='B'; updateNav(26)"> <label for="q26B">B. to allow subjects to reassess them without distress.</label><br>
+                        <input type="radio" name="q26" value="C" id="q26C" onchange="document.getElementById('ans-26').value='C'; updateNav(26)"> <label for="q26C">C. to help the subjects improve their memories.</label><br>
+                        <input type="radio" name="q26" value="D" id="q26D" onchange="document.getElementById('ans-26').value='D'; updateNav(26)"> <label for="q26D">D. to make the subject feel younger.</label>
+                        <input type="hidden" id="ans-26">
+                        <span id="fb-26" class="feedback" style="display:block; margin-top:5px;"></span>
+                    </div>
+                </div><div id="exp-26"></div>
+
+                <div class="q-row" id="q-row-27" style="flex-direction: column;">
+                    <div><span class="q-num">27.</span> After surgery, hypnosis may be used</div>
+                    <div style="margin-top: 10px; margin-left: 30px; line-height: 1.8;">
+                        <input type="radio" name="q27" value="A" id="q27A" onchange="document.getElementById('ans-27').value='A'; updateNav(27)"> <label for="q27A">A. to make drugs unnecessary.</label><br>
+                        <input type="radio" name="q27" value="B" id="q27B" onchange="document.getElementById('ans-27').value='B'; updateNav(27)"> <label for="q27B">B. to keep the patient mobile.</label><br>
+                        <input type="radio" name="q27" value="C" id="q27C" onchange="document.getElementById('ans-27').value='C'; updateNav(27)"> <label for="q27C">C. to make the patient forget to move.</label><br>
+                        <input type="radio" name="q27" value="D" id="q27D" onchange="document.getElementById('ans-27').value='D'; updateNav(27)"> <label for="q27D">D. to minimise patient's discomfort while immobile.</label>
+                        <input type="hidden" id="ans-27">
+                        <span id="fb-27" class="feedback" style="display:block; margin-top:5px;"></span>
+                    </div>
+                </div><div id="exp-27"></div>
+
+                <div class="q-row" id="q-row-28" style="flex-direction: column;">
+                    <div><span class="q-num">28.</span> The American Medical Association reported that</div>
+                    <div style="margin-top: 10px; margin-left: 30px; line-height: 1.8;">
+                        <input type="radio" name="q28" value="A" id="q28A" onchange="document.getElementById('ans-28').value='A'; updateNav(28)"> <label for="q28A">A. people lie when giving evidence under hypnosis.</label><br>
+                        <input type="radio" name="q28" value="B" id="q28B" onchange="document.getElementById('ans-28').value='B'; updateNav(28)"> <label for="q28B">B. people should be hypnotised before giving evidence.</label><br>
+                        <input type="radio" name="q28" value="C" id="q28C" onchange="document.getElementById('ans-28').value='C'; updateNav(28)"> <label for="q28C">C. evidence given when hypnotised may be unreliable.</label><br>
+                        <input type="radio" name="q28" value="D" id="q28D" onchange="document.getElementById('ans-28').value='D'; updateNav(28)"> <label for="q28D">D. secret evidence can be obtained through hypnosis.</label>
+                        <input type="hidden" id="ans-28">
+                        <span id="fb-28" class="feedback" style="display:block; margin-top:5px;"></span>
+                    </div>
+                </div><div id="exp-28"></div>
+            </div>
+        </div>
+
+        <div id="q-group-3" class="question-group">
+            <div class="question-section">
+                <div class="instruction">Questions 29-36: Complete the summary below using <strong>NO MORE THAN TWO WORDS</strong> from the passage.</div>
+                
+                <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px dashed #cbd5e1; line-height: 2.5; font-size: 15px;">
+                    Marte & Notarnicola define the spontaneous sporting games of children as activities of <b>29.</b> <input type="text" class="input-gap" id="ans-29" oninput="updateNav(29)"> <span id="fb-29" class="feedback"></span>. Because today sport is often decided and <b>30.</b> <input type="text" class="input-gap" id="ans-30" oninput="updateNav(30)"> <span id="fb-30" class="feedback"></span> by parents, children lose their autonomy. A first imbalance occurs because <b>31.</b> <input type="text" class="input-gap" id="ans-31" oninput="updateNav(31)"> <span id="fb-31" class="feedback"></span> are out of the city and often crowded, whilst there are a limited number of open recreational areas where children can play spontaneously.<br><br>
+                    Children should discover and learn about sports themselves. The second imbalance occurs because they start early <b>32.</b> <input type="text" class="input-gap" id="ans-32" oninput="updateNav(32)"> <span id="fb-32" class="feedback"></span> training very young and participate in only <b>33.</b> <input type="text" class="input-gap" id="ans-33" oninput="updateNav(33)"> <span id="fb-33" class="feedback"></span> specific activity. Children often give up a sport because of negative <b>34.</b> <input type="text" class="input-gap" id="ans-34" oninput="updateNav(34)"> <span id="fb-34" class="feedback"></span>. It is important that trainers avoid excessive criticism of young children, who should have <b>35.</b> <input type="text" class="input-gap" id="ans-35" oninput="updateNav(35)"> <span id="fb-35" class="feedback"></span> at sporting activities.<br><br>
+                    Another reason that children may give up sport is the attitudes of their parents. This third imbalance occurs as parents exert <b>36.</b> <input type="text" class="input-gap" id="ans-36" oninput="updateNav(36)"> <span id="fb-36" class="feedback"></span> on children to win rather than to enjoy sport.
+                </div>
+                <div id="exp-29"></div><div id="exp-30"></div><div id="exp-31"></div><div id="exp-32"></div><div id="exp-33"></div><div id="exp-34"></div><div id="exp-35"></div><div id="exp-36"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 37-40: Choose the correct letter A-D.</div>
+                
+                <div class="q-row" id="q-row-37" style="flex-direction: column;">
+                    <div><span class="q-num">37.</span> Children's expression of this 'freedom' is important because</div>
+                    <div style="margin-top: 10px; margin-left: 30px; line-height: 1.8;">
+                        <input type="radio" name="q37" value="A" id="q37A" onchange="document.getElementById('ans-37').value='A'; updateNav(37)"> <label for="q37A">A. it allows them to be lazy.</label><br>
+                        <input type="radio" name="q37" value="B" id="q37B" onchange="document.getElementById('ans-37').value='B'; updateNav(37)"> <label for="q37B">B. it means they can learn to swim and ride a bike.</label><br>
+                        <input type="radio" name="q37" value="C" id="q37C" onchange="document.getElementById('ans-37').value='C'; updateNav(37)"> <label for="q37C">C. it puts them in charge of what they do and when they do it.</label><br>
+                        <input type="radio" name="q37" value="D" id="q37D" onchange="document.getElementById('ans-37').value='D'; updateNav(37)"> <label for="q37D">D. it relieves the parents from transporting their children to sports.</label>
+                        <input type="hidden" id="ans-37">
+                        <span id="fb-37" class="feedback" style="display:block; margin-top:5px;"></span>
+                    </div>
+                </div><div id="exp-37"></div>
+
+                <div class="q-row" id="q-row-38" style="flex-direction: column;">
+                    <div><span class="q-num">38.</span> Ways of allowing children to develop this 'freedom' include</div>
+                    <div style="margin-top: 10px; margin-left: 30px; line-height: 1.8;">
+                        <input type="radio" name="q38" value="A" id="q38A" onchange="document.getElementById('ans-38').value='A'; updateNav(38)"> <label for="q38A">A. making transport to sports clubs free.</label><br>
+                        <input type="radio" name="q38" value="B" id="q38B" onchange="document.getElementById('ans-38').value='B'; updateNav(38)"> <label for="q38B">B. offering a range of different sports in each sports club.</label><br>
+                        <input type="radio" name="q38" value="C" id="q38C" onchange="document.getElementById('ans-38').value='C'; updateNav(38)"> <label for="q38C">C. offering sporting tuition to pre-school children.</label><br>
+                        <input type="radio" name="q38" value="D" id="q38D" onchange="document.getElementById('ans-38').value='D'; updateNav(38)"> <label for="q38D">D. making children play outside regularly.</label>
+                        <input type="hidden" id="ans-38">
+                        <span id="fb-38" class="feedback" style="display:block; margin-top:5px;"></span>
+                    </div>
+                </div><div id="exp-38"></div>
+
+                <div class="q-row" id="q-row-39" style="flex-direction: column;">
+                    <div><span class="q-num">39.</span> To encourage young children to continue with sport, we should give them</div>
+                    <div style="margin-top: 10px; margin-left: 30px; line-height: 1.8;">
+                        <input type="radio" name="q39" value="A" id="q39A" onchange="document.getElementById('ans-39').value='A'; updateNav(39)"> <label for="q39A">A. accurate feedback about their ability at sport.</label><br>
+                        <input type="radio" name="q39" value="B" id="q39B" onchange="document.getElementById('ans-39').value='B'; updateNav(39)"> <label for="q39B">B. experience of failure as well as success.</label><br>
+                        <input type="radio" name="q39" value="C" id="q39C" onchange="document.getElementById('ans-39').value='C'; updateNav(39)"> <label for="q39C">C. experience of being reserves as well as first choice team members.</label><br>
+                        <input type="radio" name="q39" value="D" id="q39D" onchange="document.getElementById('ans-39').value='D'; updateNav(39)"> <label for="q39D">D. the opportunity to mix socially with their peers at sport.</label>
+                        <input type="hidden" id="ans-39">
+                        <span id="fb-39" class="feedback" style="display:block; margin-top:5px;"></span>
+                    </div>
+                </div><div id="exp-39"></div>
+
+                <div class="q-row" id="q-row-40" style="flex-direction: column;">
+                    <div><span class="q-num">40.</span> The author believes that</div>
+                    <div style="margin-top: 10px; margin-left: 30px; line-height: 1.8;">
+                        <input type="radio" name="q40" value="A" id="q40A" onchange="document.getElementById('ans-40').value='A'; updateNav(40)"> <label for="q40A">A. children's sport should be organised by experts, not parents.</label><br>
+                        <input type="radio" name="q40" value="B" id="q40B" onchange="document.getElementById('ans-40').value='B'; updateNav(40)"> <label for="q40B">B. playing sport is an important part of children's development.</label><br>
+                        <input type="radio" name="q40" value="C" id="q40C" onchange="document.getElementById('ans-40').value='C'; updateNav(40)"> <label for="q40C">C. children need to learn that sport is about losing as well as winning.</label><br>
+                        <input type="radio" name="q40" value="D" id="q40D" onchange="document.getElementById('ans-40').value='D'; updateNav(40)"> <label for="q40D">D. children can be psychologically and physiologically damaged by sport.</label>
+                        <input type="hidden" id="ans-40">
+                        <span id="fb-40" class="feedback" style="display:block; margin-top:5px;"></span>
+                    </div>
+                </div><div id="exp-40"></div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="confirmOverlay" class="custom-overlay" style="display:none;">
+    <div class="custom-modal">
+        <h2>Xác nhận nộp bài</h2>
+        <p style="font-size: 15px; color: #475569; margin-bottom: 20px;">Bạn có chắc chắn muốn nộp bài để xem đáp án và giải thích chi tiết không?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmModal()">Quay lại</button>
+            <button class="btn-confirm" onclick="executeSubmit()">Nộp bài</button>
+        </div>
+    </div>
+</div>
+
+<div id="resultOverlay" class="custom-overlay" style="display:none;">
+    <div class="custom-modal">
+        <h2 id="resultTitle">🎉 Kết Quả Bài Thi</h2>
+        <div style="font-size: 64px; font-weight: 800; color: var(--primary); margin: 20px 0; letter-spacing: -2px;" id="scoreDisplay">0/40</div>
+        <div style="font-size: 24px; font-weight: 800; color: var(--correct); margin-bottom: 10px; background: #ecfdf5; display: inline-block; padding: 12px 30px; border-radius: 20px; border: 2px solid #bbf7d0;" id="bandDisplay">Band: 0.0</div>
+        <div id="subScoresDisplay" style="font-size: 15px; color: #64748b; margin-bottom: 20px;"></div>
+        <button class="btn-confirm" style="width: 100%;" onclick="closeResultModal()">Xem giải thích chi tiết</button>
+    </div>
+</div>
+
+<footer>
+    <div style="font-size:13px; font-weight:bold; color:#64748b; text-transform:uppercase;">Điều hướng:</div>
+    <div class="palette-scroller" id="navPalette"></div>
+</footer>
+
+<script>
+    // --- STATE & DATA ---
+    let currentMode = '';
+    let testDuration = 0; 
+    let initialTime = 0;
+    let timerInterval = null;
+    let isSubmitted = false;
+    let selectedPassages = [1, 2, 3]; 
+
+    function selectMode(mode) {
+        currentMode = mode;
+        document.querySelector('.mode-practice').classList.toggle('selected', mode === 'practice');
+        document.querySelector('.mode-mock').classList.toggle('selected', mode === 'mock');
+        
+        document.getElementById('timeInputBox').style.display = (mode === 'practice') ? 'block' : 'none';
+        document.getElementById('practiceOptions').style.display = (mode === 'practice') ? 'block' : 'none';
+        document.getElementById('startBtn').style.display = 'inline-block';
+        updatePracticeTime();
+    }
+
+    function updatePracticeTime() {
+        if(currentMode !== 'practice') return;
+        let cbs = document.querySelectorAll('.passage-cb:checked');
+        document.getElementById('timeInput').value = cbs.length * 20; 
+    }
+
+    function openHistoryTab() {
+        document.getElementById('setupContent').style.display = 'none';
+        document.getElementById('historyContent').style.display = 'block';
+        if(window.taiLichSuIELTS) window.taiLichSuIELTS();
+    }
+
+    function backToMenu() {
+        document.getElementById('historyContent').style.display = 'none';
+        document.getElementById('setupContent').style.display = 'block';
+    }
+
+    function askReady() {
+        if (currentMode === 'practice') {
+            let cbs = document.querySelectorAll('.passage-cb:checked');
+            if (cbs.length === 0) { alert("Vui lòng chọn ít nhất 1 Passage để luyện tập!"); return; }
+        }
+        let confirmMsg = currentMode === 'mock' 
+            ? "Bạn chọn Thi Thử Full Test (60 phút).\nThầy dặn nhớ tập trung tuyệt đối như đi thi thật nhé!" 
+            : `Bạn chọn Luyện Tập (${document.getElementById('timeInput').value} phút).\nLàm cẩn thận, chú ý kỹ thuật Skimming/Scanning nghen!`;
+        document.getElementById('startConfirmMsg').innerText = confirmMsg;
+        document.getElementById('startConfirmOverlay').style.display = 'flex';
+    }
+
+    function closeStartConfirmModal() { document.getElementById('startConfirmOverlay').style.display = 'none'; }
+
+    function startTestActual() {
+        document.getElementById('startConfirmOverlay').style.display = 'none';
+        
+        if (currentMode === 'practice') {
+            selectedPassages = Array.from(document.querySelectorAll('.passage-cb:checked')).map(cb => parseInt(cb.value));
+            initialTime = parseInt(document.getElementById('timeInput').value) * 60;
+        } else {
+            selectedPassages = [1, 2, 3];
+            initialTime = 60 * 60;
+        }
+
+        if(isNaN(initialTime) || initialTime < 60) initialTime = 60 * 60;
+        testDuration = initialTime;
+        
+        [1, 2, 3].forEach(p => {
+            let tab = document.getElementById(`tab-btn-${p}`);
+            if(tab) tab.style.display = selectedPassages.includes(p) ? 'inline-block' : 'none';
+        });
+
+        for (let i = 1; i <= 40; i++) {
+            let group = i <= 13 ? 1 : i <= 28 ? 2 : 3;
+            let dot = document.getElementById(`nav-${i}`);
+            if (dot) dot.style.display = selectedPassages.includes(group) ? 'flex' : 'none';
+        }
+
+        document.getElementById('setupOverlay').style.display = 'none';
+        switchTab(selectedPassages[0]); 
+        startTimer();
+    }
+
+    function toggleFocusMode() {
+        document.body.classList.toggle('focus-mode');
+    }
+
+    const correctAnswers = {
+        // Passage 1
+        1: "NO", 2: "NOT GIVEN", 3: "NO", 4: "NO", 5: "YES", 6: "YES",
+        7: "B", 8: "A", 9: "A", 10: "B", 11: "B", 12: ["A", "C"], 13: "B",
+        
+        // Passage 2
+        14: "iii", 15: "ii", 16: "vi", 17: "vii", 18: "ix",
+        19: ["BIBLE"], 20: ["MAGNETS AND WATER", "MAGNETS", "WATER", "WATER TUBS", "MAGNETIC WANDS"], 
+        21: ["PHYSIOLOGICAL", "HUMAN"], 22: ["CONCENTRATION", "MENTAL CONCENTRATION"], 23: ["AWARE", "FULLY AWARE"],
+        24: "A", 25: "D", 26: "B", 27: "D", 28: "C",
+        
+        // Passage 3
+        29: ["FREEDOM"], 30: ["ORGANISED", "ORGANIZED"], 31: ["SPORTS GROUNDS", "SPORTS HALLS", "SPORTS FACILITIES"], 32: ["INTENSIVE", "SPORTS"], 
+        33: ["ONE"], 34: ["ASSESSMENTS", "CRITICISM"], 35: ["FUN"], 36: ["PRESSURE"],
+        37: "C", 38: "B", 39: "D", 40: "B"
+    };
+
+    const explanations = {
+        // Passage 1
+        1: { exp: "Đoạn 1: '...ordinary untrained members of the community...'. Keyword 'untrained' (không được đào tạo) trái ngược hoàn toàn với 'need a basic level of scientific training' (cần có trình độ khoa học cơ bản). Câu trả lời là NO.", colorClass: "ev-1" },
+        2: { exp: "Đoạn 2 & 3: Tác giả có nhắc Frogwatch bắt đầu ở Western Australia và có 3221 thành viên, đồng thời dịch bệnh lan toàn quốc (nationwide). Tuy nhiên KHÔNG CÓ thông tin khẳng định TẤT CẢ (All) thành viên đều sống ở WA. Câu trả lời là NOT GIVEN.", colorClass: "ev-2" },
+        3: { exp: "Đoạn 3: 'Although research is not yet complete, scientists suspect the fungus originated overseas...'. Từ khóa 'suspect' (nghi ngờ) chứ không phải là 'proved' (đã chứng minh). Việc ếch biến mất do nấm chỉ là nghi ngờ. Câu trả lời là NO.", colorClass: "ev-3" },
+        4: { exp: "Đoạn 4: 'More than 2,000 frogs have now been examined, half from the museum's existing collection.' (Hơn 2000 con đã được kiểm tra, nhưng MỘT NỬA là từ bộ sưu tập sẵn có của bảo tàng). Suy ra số lượng do Frogwatch thu thập chỉ khoảng 1000 con, không phải 'about two thousand'. Câu trả lời là NO.", colorClass: "ev-4" },
+        5: { exp: "Đoạn 4: '...tests now suggest it has been there since the late 1980s.' Bài viết vào khoảng đầu những năm 2000 (do nói về sự phát triển của công nghệ/năm 1995), nên 'since the late 1980s' là hơn 10 năm. Câu trả lời là YES.", colorClass: "ev-5" },
+        6: { exp: "Đoạn 8: 'Unlike most other states, species are still being discovered there'. Từ 'discovered' khớp với 'found recently'. Câu trả lời là YES.", colorClass: "ev-6" },
+        7: { exp: "Đoạn 6: Roberts lập luận 'giving these reports credibility may not be valid scientifically'. Nhận định này khớp với việc 'involvement of large numbers of people... does not guarantee scientifically valid data'. Chọn B (Dr. Roberts).", colorClass: "ev-7" },
+        8: { exp: "Đoạn 9: Aplin lập luận 'pesticide-free gardens and ponds can offer a greater chance of survival...'. Đây chính là lợi ích của 'frog-friendly backyards'. Chọn A (Dr. Aplin).", colorClass: "ev-8" },
+        9: { exp: "Đoạn 10: Aplin nói 'they should use the precautionary principle... Given time some balance may be restored, but in the shorter term, they are seeing negative impacts'. 'Precautionary principle' khớp với 'take precautions'. Chọn A (Dr. Aplin).", colorClass: "ev-9" },
+        10: { exp: "Đoạn 6 & 7: Roberts nghi ngờ có những nguyên nhân khác ('other things that might have precipitated the deaths') và cho rằng 'may not be worth the cost and effort of doing anything about it'. Chọn B (Dr. Roberts).", colorClass: "ev-10" },
+        11: { exp: "Đoạn 7 & 8: Roberts nói ông vẫn có thể tìm thấy mọi loài ếch trong 10 năm qua ở Tây Úc, và sự biến mất của các loài ếch 'are not occurring in Western Australia'. Chọn B (Dr. Roberts).", colorClass: "ev-11" },
+        12: { exp: "Câu này có thể là Aplin hoặc Speare. Đoạn 5: Aplin nói 'the museum can't afford to use professional resources to monitor...'. Đoạn 11: Speare khen ngợi Frogwatch là hệ thống tuyệt vời vì có nhiều người tìm ếch chết 'beyond the power of any biologist to collect' (vượt quá khả năng của bất kỳ nhà sinh học nào). Bạn có thể chọn A hoặc C đều đúng theo key.", colorClass: "ev-12a" },
+        13: { exp: "Đoạn 1: Mục đích của mạng lưới là để 'ordinary untrained members... observe the numbers and kinds of frogs in their local area, and report this information to the museum.' Đáp án đúng là B.", colorClass: "ev-13" },
+
+        // Passage 2
+        14: { exp: "Đoạn B mô tả các bác sĩ như James Braid nghiên cứu thuật thôi miên từ giữa những năm 1800, và James Esdaile sử dụng thôi miên thay cho thuốc mê trong phẫu thuật. Đây là những thử nghiệm y tế ban đầu (Early medical experiments). Chọn iii.", colorClass: "ev-14" },
+        15: { exp: "Đoạn C khẳng định thôi miên là 'natural human behaviour' (hành vi con người tự nhiên) và người bị thôi miên 'usually fully aware' (hoàn toàn nhận thức được). Điều này thể hiện sự bình thường của hành vi (The normality of behaviour). Chọn ii.", colorClass: "ev-15" },
+        16: { exp: "Đoạn D giải thích rõ ràng 'techniques used to induce hypnosis' (các kỹ thuật để gây thôi miên) như lặp lại gợi ý, tập trung, hít thở sâu. Đây là hướng dẫn cách thôi miên (How to hypnotise). Chọn vi.", colorClass: "ev-16" },
+        17: { exp: "Đoạn E giải quyết sự hiểu lầm về việc ép buộc con người. 'subjects can resist suggestions, and they retain their ability to distinguish right from wrong' (họ có thể chống lại và giữ khả năng phân biệt đúng sai) và họ 'chose to participate' (chọn tham gia). Liên quan đến ý chí tự do (free will). Chọn vii.", colorClass: "ev-17" },
+        18: { exp: "Đoạn F mô tả việc sử dụng thôi miên để 'treat mental health problems', 'recovery from psychological conditions', và tìm lại ký ức bị dồn nén. Đây chính là các công dụng trị liệu (Therapeutic uses). Chọn ix.", colorClass: "ev-18" },
+        19: { exp: "Đoạn A: 'references to deep sleep and anaesthesia have been found in the Bible and in the Jewish Talmud.' Điền: Bible.", colorClass: "ev-19" },
+        20: { exp: "Đoạn A: 'Mesmer used water tubs and magnetic wands to direct these supposed fluids... successful results could be achieved, but without the need for magnets and water'. Điền: Magnets and water (hoặc magnets/water).", colorClass: "ev-20" },
+        21: { exp: "Đoạn B: 'it was a physiological response and not the result of secret powers'. Hoặc Đoạn C: 'natural human behaviour'. Có thể điền: physiological hoặc human.", colorClass: "ev-21" },
+        22: { exp: "Đoạn C: 'It involves a more active and intense mental concentration of the person being hypnotised.' Điền: (mental) concentration.", colorClass: "ev-22" },
+        23: { exp: "Đoạn C: 'they are usually fully aware of what is being said and done.' Điền: (fully) aware.", colorClass: "ev-23" },
+        24: { exp: "Đoạn D: 'The best-known is a series of simple suggestions repeated continuously in the same tone of voice.' Đáp án A diễn đạt chính xác ý này.", colorClass: "ev-24" },
+        25: { exp: "Đoạn E: Mặc dù họ giữ khả năng phân biệt đúng sai, đoạn văn nói sự hiểu lầm sinh ra từ các màn biểu diễn nơi 'subjects perform ridiculous or highly embarrassing actions'. Tức là làm những việc mà bình thường họ sẽ phản đối (opposed to doing), nhưng lúc đó họ 'chose to participate'. Đáp án D.", colorClass: "ev-25" },
+        26: { exp: "Đoạn F: 'This latter state may be used to treat mental health problems, as it allows patients to feel calm while simultaneously thinking about distressing feelings or painful memories.' (Cảm thấy bình tĩnh khi nghĩ về ký ức đau buồn -> reassess them without distress). Đáp án B.", colorClass: "ev-26" },
+        27: { exp: "Đoạn G kể về ca phẫu thuật ghép da, bệnh nhân phải giữ cánh tay chặt vào bụng rồi vào chân trong nhiều tuần (bất động - immobile). Thôi miên giúp 'the patient at no time felt uncomfortable!' (không hề cảm thấy khó chịu). Mục đích là để giảm thiểu sự khó chịu. Đáp án D.", colorClass: "ev-27" },
+        28: { exp: "Đoạn H: Báo cáo của Hiệp hội Y khoa Mỹ năm 1985 xác nhận 'memories refreshed through hypnosis may include inaccurate information, false memories...' (Ký ức có thể bao gồm thông tin không chính xác). Tức là bằng chứng thu được có thể không đáng tin cậy (unreliable). Đáp án C.", colorClass: "ev-28" },
+
+        // Passage 3
+        29: { exp: "Đoạn 1: 'describe the traditional spontaneous practice of sport... as an activity of freedom'. Điền: freedom.", colorClass: "ev-29" },
+        30: { exp: "Đoạn 2: 'Children's first experience of sport thus takes place as an organised activity... By organising sport for children, and often deciding for them'. Điền: organised.", colorClass: "ev-30" },
+        31: { exp: "Đoạn 3: 'Sports grounds are often on the outskirts of cities, and are overcrowded...'. Điền: sports grounds (hoặc sports halls).", colorClass: "ev-31" },
+        32: { exp: "Đoạn 5: 'Today, sport is practised with early intensive training from the youngest possible age.' Điền: intensive (hoặc sports).", colorClass: "ev-32" },
+        33: { exp: "Đoạn 5: 'Sometimes this is even before the age of six and is usually one specific sport...'. Điền: one.", colorClass: "ev-33" },
+        34: { exp: "Đoạn 7: 'children may leave a sport because they believe that they have received too much criticism and too many negative assessments.' Điền: assessments (hoặc criticism).", colorClass: "ev-34" },
+        35: { exp: "Đoạn 7: 'It should be remembered that primary school children's main desire is to have fun and socialise.' Cần điền danh từ sau 'have', đó là 'fun'.", colorClass: "ev-35" },
+        36: { exp: "Đoạn 8: 'Several studies have shown that parental pressure is high on the list of reasons why children leave sport.' Điền: pressure.", colorClass: "ev-36" },
+        37: { exp: "Đoạn 2: Việc tước đi sự tự do đã 'preventing them from managing their own play/sports time' (ngăn cản trẻ tự quản lý thời gian chơi/thể thao). Ngược lại, sự tự do giúp trẻ tự chủ ('puts them in charge of what they do'). Đáp án C.", colorClass: "ev-37" },
+        38: { exp: "Đoạn 4 nêu các giải pháp: 'increasing the number of sports facilities... setting up unstructured playing areas... sports clubs which offer multidisciplinary sports training should be supported.' (Cung cấp huấn luyện đa môn thể thao). Khớp với đáp án B (offering a range of different sports).", colorClass: "ev-38" },
+        39: { exp: "Đoạn 7 nhấn mạnh: 'primary school children's main desire is to have fun and socialise.' Để khuyến khích trẻ, chúng ta nên cho trẻ cơ hội giao tiếp xã hội với bạn bè (mix socially with their peers). Đáp án D.", colorClass: "ev-39" },
+        40: { exp: "Xuyên suốt đoạn văn và kết luận ở Đoạn cuối: 'Playing sport is a source of learning, progress and pleasure; an additional way of enriching life.' (Chơi thể thao là nguồn học hỏi, tiến bộ...). Nó là một phần quan trọng của sự phát triển. Đáp án B.", colorClass: "ev-40" }
+    };
+
+    window.onload = function() {
+        renderPalette();
+        document.getElementById('setupOverlay').style.display = 'flex';
+    }
+
+    function renderPalette() {
+        const nav = document.getElementById("navPalette");
+        for (let i = 1; i <= 40; i++) {
+            let dot = document.createElement("div");
+            dot.className = "nav-dot"; dot.id = `nav-${i}`; dot.innerText = i;
+            dot.onclick = () => scrollToQuestion(i);
+            nav.appendChild(dot);
+        }
+    }
+
+    function switchTab(n) {
+        if(!selectedPassages.includes(n)) return; 
+        
+        document.querySelectorAll('.tab-btn').forEach((b, i) => {
+            if(selectedPassages.includes(i + 1)) b.classList.toggle('active', i + 1 === n);
+        });
+        document.querySelectorAll('.passage-content').forEach((p, i) => p.classList.toggle('active', i + 1 === n));
+        document.querySelectorAll('.question-group').forEach((q, i) => q.classList.toggle('active', i + 1 === n));
+        document.querySelector('.pane-left').scrollTop = 0;
+        document.querySelector('.pane-right').scrollTop = 0;
+    }
+
+    function scrollToQuestion(id) {
+        let group = id <= 13 ? 1 : id <= 28 ? 2 : 3;
+        if(!selectedPassages.includes(group)) return;
+        
+        switchTab(group);
+        setTimeout(() => {
+            let targetId = `q-row-${id}`;
+            let el = document.getElementById(targetId);
+            if(el) {
+                el.scrollIntoView({behavior:"smooth", block:"center"});
+                el.style.backgroundColor = "var(--highlight-color)";
+                setTimeout(() => el.style.backgroundColor = "", 1000);
+            }
+        }, 100);
+    }
+
+    function updateNav(id) {
+        let nav = document.getElementById(`nav-${id}`);
+        if (!nav) return;
+        
+        let val = "";
+        let el = document.getElementById(`ans-${id}`);
+        if (el) val = el.value;
+        
+        if (val && val.trim() !== "") nav.classList.add("done");
+        else nav.classList.remove("done");
+    }
+
+    function startTimer() {
+        let display = document.getElementById("timer");
+        timerInterval = setInterval(function () {
+            let m = Math.floor(testDuration / 60);
+            let s = testDuration % 60;
+            display.textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            if (--testDuration < 0) { clearInterval(timerInterval); executeSubmit(); }
+        }, 1000);
+    }
+
+    function submitTest(manual) {
+        if (isSubmitted) return;
+        if (manual) document.getElementById('confirmOverlay').style.display = 'flex';
+        else executeSubmit();
+    }
+
+    function closeConfirmModal() { document.getElementById('confirmOverlay').style.display = 'none'; }
+    function closeResultModal() { document.getElementById('resultOverlay').style.display = 'none'; }
+
+    function calculateIeltsBand(correct, total) {
+        let normalizedCorrect = (correct / total) * 40;
+        if (normalizedCorrect >= 39) return 9.0;
+        if (normalizedCorrect >= 37) return 8.5;
+        if (normalizedCorrect >= 35) return 8.0;
+        if (normalizedCorrect >= 33) return 7.5;
+        if (normalizedCorrect >= 30) return 7.0;
+        if (normalizedCorrect >= 27) return 6.5;
+        if (normalizedCorrect >= 23) return 6.0;
+        if (normalizedCorrect >= 19) return 5.5;
+        if (normalizedCorrect >= 15) return 5.0;
+        if (normalizedCorrect >= 13) return 4.5;
+        if (normalizedCorrect >= 10) return 4.0;
+        if (normalizedCorrect >= 8) return 3.5;
+        if (normalizedCorrect >= 6) return 3.0;
+        return 2.5;
+    }
+
+    function executeSubmit() {
+        document.getElementById('confirmOverlay').style.display = 'none';
+        isSubmitted = true;
+        clearInterval(timerInterval);
+        document.querySelectorAll('input, select').forEach(el => el.disabled = true);
+        document.body.classList.remove('focus-mode');
+        
+        let p1Score = 0, p2Score = 0, p3Score = 0;
+        let userAnswersDict = {}; 
+
+        for (let i = 1; i <= 40; i++) {
+            let group = i <= 13 ? 1 : i <= 28 ? 2 : 3;
+            if (!selectedPassages.includes(group)) continue;
+
+            let userAns = "";
+            let el = document.getElementById(`ans-${i}`);
+            if (el) userAns = el.value.trim().toUpperCase();
+
+            userAnswersDict['ans-'+i] = userAns; 
+
+            let isCorrect = false;
+            let correctAnswerStr = "";
+            let correctAnswer = correctAnswers[i];
+            
+            correctAnswerStr = Array.isArray(correctAnswer) ? correctAnswer.join(" / ") : correctAnswer;
+            if (Array.isArray(correctAnswer)) {
+                isCorrect = correctAnswer.includes(userAns);
+            } else {
+                isCorrect = (userAns === correctAnswer);
+            }
+
+            if (isCorrect) {
+                if (group === 1) p1Score++;
+                else if (group === 2) p2Score++;
+                else if (group === 3) p3Score++;
+            }
+
+            let fb = document.getElementById(`fb-${i}`);
+            if (fb) {
+                fb.innerText = isCorrect ? "✓" : `✗ (${correctAnswerStr})`;
+                fb.className = isCorrect ? "feedback correct" : "feedback wrong";
+            }
+
+            let expData = explanations[i];
+            
+            if(expData) {
+                let htmlContent = `
+                    <div class="exp-box show">
+                        <div class="exp-title">
+                            💡 Gia sư IELTS 9.0 phân tích
+                            ${expData.colorClass ? `<button class="locate-btn" onclick="scrollToEvidence('${expData.colorClass}')">📍 Định vị Dẫn chứng</button>` : ''}
+                        </div>
+                        ${expData.translation ? `
+                        <div class="exp-section">
+                            <span class="exp-label">👉 Dịch nghĩa / Phân tích:</span> 
+                            <div class="exp-translate">${expData.translation}</div>
+                        </div>` : ''}
+                        ${expData.keywords ? `
+                        <div class="exp-section">
+                            <span class="exp-label">🔑 Paraphrase cần nhớ:</span> 
+                            <div class="exp-keywords">${expData.keywords}</div>
+                        </div>` : ''}
+                        <div class="exp-section">
+                            <span class="exp-label">🧠 Lời khuyên của Thầy:</span> 
+                            <div class="exp-detail">${expData.exp}</div>
+                        </div>
+                    </div>`;
+
+                let expContainer = document.getElementById(`exp-${i}`);
+                if(expContainer) expContainer.innerHTML = htmlContent;
+            }
+        } 
+
+        let totalScore = p1Score + p2Score + p3Score;
+        let totalQ = selectedPassages.reduce((sum, p) => sum + (p === 1 ? 13 : p === 2 ? 15 : 12), 0);
+        let bandScore = calculateIeltsBand(totalScore, totalQ);
+        
+        document.getElementById('scoreDisplay').innerText = totalScore + "/" + totalQ;
+        document.getElementById('bandDisplay').innerText = "Band: " + (Number.isInteger(bandScore) ? bandScore + ".0" : bandScore);
+        
+        let subTxt = "";
+        if(selectedPassages.includes(1)) subTxt += `Passage 1: <b>${p1Score}/13</b> &nbsp;&nbsp;&nbsp; `;
+        if(selectedPassages.includes(2)) subTxt += `Passage 2: <b>${p2Score}/15</b> &nbsp;&nbsp;&nbsp; `;
+        if(selectedPassages.includes(3)) subTxt += `Passage 3: <b>${p3Score}/12</b>`;
+        document.getElementById('subScoresDisplay').innerHTML = subTxt;
+        
+        document.getElementById('resultOverlay').style.display = 'flex'; 
+
+        // TRUYỀN DỮ LIỆU LÊN FIREBASE
+        if (window.luuDiemLenFirebase) {
+            let timeTakenMinutes = Math.round((initialTime - testDuration) / 60) || 1;
+            
+            if (currentMode === 'mock' || selectedPassages.length === 3) {
+                window.luuDiemLenFirebase(totalScore, timeTakenMinutes, userAnswersDict, "Full Test 299", 40);
+            } else {
+                let timePerPassage = Math.round(timeTakenMinutes / selectedPassages.length) || 1;
+                let delay = 0;
+                if(selectedPassages.includes(1)) {
+                    setTimeout(() => window.luuDiemLenFirebase(p1Score, timePerPassage, userAnswersDict, "Passage 1", 13), delay);
+                    delay += 500;
+                }
+                if(selectedPassages.includes(2)) {
+                    setTimeout(() => window.luuDiemLenFirebase(p2Score, timePerPassage, userAnswersDict, "Passage 2", 15), delay);
+                    delay += 500;
+                }
+                if(selectedPassages.includes(3)) {
+                    setTimeout(() => window.luuDiemLenFirebase(p3Score, timePerPassage, userAnswersDict, "Passage 3", 12), delay);
+                }
+            }
+        }
+    }
+
+    function scrollToEvidence(id) {
+        const evElement = document.getElementById(id);
+        if(evElement) {
+            let passagePane = evElement.closest('.passage-content');
+            if (passagePane) {
+                let tabNum = passagePane.id === 'text-p1' ? 1 : passagePane.id === 'text-p2' ? 2 : 3;
+                if (!passagePane.classList.contains('active')) {
+                    switchTab(tabNum);
+                }
+            }
+            setTimeout(() => {
+                evElement.scrollIntoView({behavior: "smooth", block: "center"});
+                evElement.classList.remove("focus-blink");
+                void evElement.offsetWidth;
+                evElement.classList.add("focus-blink");
+                setTimeout(() => evElement.classList.remove("focus-blink"), 1500);
+            }, 100);
+        }
+    }
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+            if (typeof window.taiLichSuIELTS === "function") window.taiLichSuIELTS();
+        }
+    });
+
+   window.luuDiemLenFirebase = async function(diemSo, timeTakenMinutes, userAnswersDict, partName = "Full Test", totalQ = 40) {
+        if (!window.currentUserUid) return;
+        
+        let bandScore = window.calculateIeltsBand ? window.calculateIeltsBand(diemSo, totalQ) : 0;
+        let timestamp = Date.now();
+        let idLuotThi = window.currentUserUid + "_ielts_R_T299_" + timestamp;
+
+        try {
+            await setDoc(doc(db, "user_ielts_scores", idLuotThi), {
+                email: window.currentUserEmail,
+                skill: "Reading",
+                testName: "Test 299",
+                partName: partName,
+                timeTaken: timeTakenMinutes.toString(),
+                correctQ: diemSo,
+                totalQ: totalQ,
+                bandScore: bandScore,
+                userAnswers: userAnswersDict,
+                date: new Date().toLocaleDateString("vi-VN"),
+                timestamp: timestamp
+            });
+        } catch(e) {
+            console.error("Lỗi khi lưu điểm: ", e);
+        }
+    }
+
+    window.taiLichSuIELTS = async function() {
+        const tbody = document.getElementById("historyBody");
+        const loading = document.getElementById("historyLoading");
+
+        if (!window.currentUserUid) {
+            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>Vui lòng đăng nhập hệ thống để xem lịch sử.</td></tr>";
+            loading.style.display = "none";
+            return;
+        }
+
+        loading.style.display = "block";
+        tbody.innerHTML = "";
+
+        try {
+            const q = query(
+                collection(db, "user_ielts_scores"),
+                where("email", "==", window.currentUserEmail),
+                where("skill", "==", "Reading"),
+                where("testName", "==", "Test 299")
+            );
+
+            const querySnapshot = await getDocs(q);
+            let html = "";
+            
+            if (querySnapshot.empty) {
+                html = "<tr><td colspan='5' style='text-align:center;'>Bạn chưa làm bài test này.</td></tr>";
+            } else {
+                window.historyDataList = [];
+                querySnapshot.forEach((doc) => { 
+                    let data = doc.data();
+                    data.id = doc.id; 
+                    window.historyDataList.push(data); 
+                });
+                
+                window.historyDataList.sort((a, b) => b.timestamp - a.timestamp);
+
+                window.historyDataList.forEach((data) => {
+                    let dateObj = new Date(data.timestamp);
+                    let dateString = dateObj.toLocaleDateString("vi-VN") + " " + dateObj.getHours() + ":" + (dateObj.getMinutes() < 10 ? '0':'') + dateObj.getMinutes();
+
+                   html += `
+                        <tr>
+                            <td>${dateString}</td>
+                            <td>${data.partName}</td>
+                            <td><strong>${data.correctQ} / ${data.totalQ}</strong></td>
+                            <td><strong style="color: var(--primary-dark); font-size: 1.1em;">${data.bandScore}</strong></td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="xoaLichSu('${data.id}', this)" class="btn-cancel" style="padding: 6px 12px; border-color: #fca5a5; color: #dc2626;">Xóa</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            tbody.innerHTML = html;
+        } catch (error) {
+            console.error("Lỗi fetch lịch sử: ", error);
+            tbody.innerHTML = "<tr><td colspan='5' style='text-align:center; color: var(--wrong);'>Đã xảy ra lỗi tải dữ liệu.</td></tr>";
+        } finally {
+            loading.style.display = "none";
+        }
+    }
+
+    window.xoaLichSu = async function(docId, btnElement) {
+        let originalText = btnElement.innerText;
+        btnElement.innerText = "...";
+        btnElement.disabled = true;
+
+        try {
+            await deleteDoc(doc(db, "user_ielts_scores", docId));
+            window.taiLichSuIELTS(); 
+        } catch (error) {
+            console.error("Lỗi khi xóa lịch sử: ", error);
+            btnElement.innerText = "Lỗi!";
+            setTimeout(() => {
+                btnElement.innerText = originalText;
+                btnElement.disabled = false;
+            }, 2000);
+        }
+    }
+</script>
+</body>
+</html>
