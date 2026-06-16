@@ -1,0 +1,854 @@
+<!DOCTYPE html> 
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part 1 - Test 9 - ETS 2026 | SnapEnglish</title>
+  <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Bảng màu học thuật: Midnight Blue & Electric Cyan */
+            --primary: #0F172A;       /* Midnight Blue */
+            --primary-hover: #1E293B; 
+            --primary-light: #F8FAFC;
+            
+            --secondary: #06B6D4;     /* Electric Cyan */
+            --success: #10B981;       /* Xanh Emerald */
+            --success-light: #D1FAE5;
+            --danger: #EF4444;        /* Đỏ báo lỗi */
+            --danger-light: #FEE2E2;
+            
+            --text-main: #1E293B;      
+            --text-muted: #64748B;
+            --bg-body: #F1F5F9;        
+            --bg-card: #FFFFFF;
+            
+            --shadow-soft: 0 10px 40px rgba(15, 23, 42, 0.08);
+            --shadow-btn: 0 4px 15px rgba(6, 182, 212, 0.25);
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'Be Vietnam Pro', sans-serif; 
+        }
+        
+        body { 
+            background-color: var(--bg-body); 
+            color: var(--text-main); 
+            padding: 20px; 
+            min-height: 100vh; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+        }
+
+        .container { 
+            background: var(--bg-card); 
+            max-width: 950px; 
+            width: 100%; 
+            border-radius: 24px; 
+            box-shadow: var(--shadow-soft); 
+            position: relative; 
+            border: 1px solid #E2E8F0;
+            overflow: hidden;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: #E2E8F0;
+            display: none;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* Screens */
+        .screen { display: none; padding: 40px; animation: fadeIn 0.4s ease-out; }
+        .screen.active { display: block; }
+        
+        @keyframes fadeIn { 
+            0% { opacity: 0; transform: translateY(15px); } 
+            100% { opacity: 1; transform: translateY(0); } 
+        }
+
+        h1, h2, h3 { text-align: center; color: var(--primary); margin-bottom: 20px; font-weight: 800; letter-spacing: -0.3px; }
+        .desc { text-align: center; color: var(--text-muted); margin-bottom: 30px; font-size: 1.15rem; font-weight: 500;}
+
+        /* Buttons */
+        .btn { 
+            background: var(--primary); color: white; border: none; padding: 14px 30px; 
+            font-size: 1.05rem; font-weight: 700; border-radius: 12px; cursor: pointer; 
+            transition: all 0.3s ease; 
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px; 
+            box-shadow: 0 4px 15px rgba(15, 23, 42, 0.25); font-family: inherit;
+        }
+        .btn:hover { background: var(--primary-hover); transform: translateY(-3px); box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35); }
+        .btn-outline { background: transparent; color: var(--primary); border: 2px solid var(--primary); box-shadow: none; }
+        .btn-outline:hover { background: var(--primary-light); color: var(--primary); transform: translateY(-2px); }
+        .btn-success { background: var(--success); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.25); }
+        .btn-success:hover { background: #059669; }
+
+        /* Test Layout */
+        .test-layout { display: flex; gap: 30px; margin-bottom: 30px; }
+        .image-col { flex: 1; background: #F8FAFC; border-radius: 16px; padding: 20px; display: flex; flex-direction: column; align-items: center; border: 2px dashed #CBD5E1; transition: 0.3s; }
+        .image-col:hover { border-color: var(--secondary); background: #ECFEFF; }
+        .image-col img { max-width: 100%; max-height: 400px; object-fit: contain; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        
+        .question-col { flex: 0.8; display: flex; flex-direction: column; justify-content: center; }
+        
+        .options { display: flex; flex-direction: column; gap: 15px; margin-top: 15px; width: 100%; }
+        
+        .option-label { 
+            display: flex; align-items: center; cursor: pointer; padding: 16px 20px; 
+            border-radius: 14px; border: 2px solid #E2E8F0; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+            font-weight: 600; font-size: 1.1rem; background: white;
+        }
+        .option-label:hover { background: #ECFEFF; border-color: var(--secondary); transform: translateX(5px); }
+        .option-label input { display: none; }
+        
+        .custom-radio { 
+            width: 24px; height: 24px; border: 2px solid #CBD5E1; border-radius: 50%; 
+            margin-right: 18px; position: relative; transition: 0.2s; flex-shrink: 0;
+        }
+        .option-label input:checked + .custom-radio { border-color: var(--secondary); }
+        .option-label input:checked + .custom-radio::after { 
+            content: ""; width: 12px; height: 12px; background: var(--secondary); 
+            border-radius: 50%; position: absolute; top: 4px; left: 4px; 
+        }
+        .option-label.selected { background: #ECFEFF; border-color: var(--secondary); color: var(--primary); box-shadow: 0 4px 10px rgba(6, 182, 212, 0.1); }
+
+        /* Audio & Navigation */
+        audio { width: 100%; border-radius: 50px; outline: none; margin-top: 20px; height: 45px;}
+        audio::-webkit-media-controls-panel { background-color: white; }
+        .nav-footer { display: flex; justify-content: space-between; border-top: 2px solid #F1F5F9; padding-top: 25px; margin-top: 20px; }
+
+        /* Results */
+        .score-box { text-align: center; padding: 40px; background: linear-gradient(135deg, #ECFEFF, #FFFFFF); border-radius: 20px; margin-bottom: 30px; border: 1px solid #CFFAFE; box-shadow: 0 10px 20px rgba(6, 182, 212, 0.05);}
+        .score-number { font-size: 4.5rem; font-weight: 800; color: var(--secondary); text-shadow: 2px 2px 0px white; margin: 10px 0;}
+        
+        .result-item { display: flex; align-items: center; justify-content: space-between; padding: 20px; border-bottom: 1px solid #F1F5F9; background: white; border-radius: 16px; margin-bottom: 15px; flex-wrap: wrap; gap: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.03); transition: 0.3s;}
+        .result-item:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.06); transform: translateY(-2px);}
+        .status-tag { padding: 6px 15px; border-radius: 8px; font-weight: 700; font-size: 0.95rem; display: inline-flex; align-items: center; gap: 5px;}
+        .tag-correct { background: var(--success-light); color: #059669; border: 1px solid #A7F3D0; }
+        .tag-wrong { background: var(--danger-light); color: var(--danger); border: 1px solid #FECACA; }
+
+        /* Modals & Overlays */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(5px); justify-content: center; align-items: center; padding: 20px;}
+        .modal-content { background: white; width: 100%; max-width: 850px; max-height: 90vh; border-radius: 24px; padding: 35px; overflow-y: auto; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.3); }
+        .close-modal { position: absolute; right: 25px; top: 20px; font-size: 30px; cursor: pointer; color: #94A3B8; transition: 0.2s; background: #F1F5F9; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border-radius: 50%;}
+        .close-modal:hover { color: var(--danger); background: var(--danger-light); transform: rotate(90deg); }
+
+        .custom-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 99999; }
+        .custom-modal { background: white; padding: 35px; border-radius: 24px; box-shadow: 0 25px 50px rgba(0,0,0,0.2); width: 90%; max-width: 500px; text-align: center; border: 2px solid var(--secondary); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* Lịch sử List */
+        #historyList { max-height: 350px; overflow-y: auto; text-align: left; margin-bottom: 20px; padding-right: 10px; }
+        #historyList::-webkit-scrollbar { width: 6px; }
+        #historyList::-webkit-scrollbar-track { background: #F1F5F9; border-radius: 10px; }
+        #historyList::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+        #historyList::-webkit-scrollbar-thumb:hover { background: var(--secondary); }
+        
+        .history-item { background: white; border: 1px solid #E2E8F0; padding: 18px; border-radius: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; transition: 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.02);}
+        .history-item:hover { border-color: var(--secondary); box-shadow: 0 5px 15px rgba(6, 182, 212, 0.15); transform: translateY(-2px);}
+        .history-info { display: flex; flex-direction: column; gap: 6px; }
+        .history-date { font-weight: 700; color: var(--text-main); font-size: 1rem; }
+        .history-score { color: var(--secondary); font-size: 0.95rem; font-weight: 700; }
+        
+        .btn-review { background: #ECFEFF; color: var(--secondary); border: none; padding: 8px 16px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; font-family: inherit;}
+        .btn-review:hover { background: var(--secondary); color: white; }
+        .btn-delete-history { background: var(--danger-light); color: var(--danger); border: none; padding: 8px 14px; border-radius: 10px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 1.1rem; }
+        .btn-delete-history:hover { background: var(--danger); color: white; }
+        
+        .modal-actions { display: flex; gap: 15px; margin-top: 25px; justify-content: center;}
+
+        /* Script & Highlight Styles */
+        .script-box { background: #F8FAFC; padding: 25px; border-radius: 16px; margin: 20px 0; border: 1px solid #E2E8F0; }
+        .script-row { margin-bottom: 15px; padding: 15px 20px; background: white; border-radius: 12px; border-left: 5px solid var(--secondary); box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: 0.3s; }
+        .script-row:hover { transform: translateX(5px); border-left-color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.08);}
+        .script-en { font-weight: 700; color: #1E293B; margin-bottom: 6px; font-size: 1.1rem; }
+        .script-vi { color: var(--text-muted); font-size: 0.95rem; font-weight: 500;}
+
+        .explain-item { margin-bottom: 15px; padding: 18px; border-radius: 14px; font-size: 1.05rem; line-height: 1.6; font-weight: 500;}
+        .explain-correct { background: var(--success-light); border-left: 5px solid var(--success); }
+        .explain-wrong { background: var(--danger-light); border-left: 5px solid var(--danger); }
+        
+        .hl-right { background-color: #D1FAE5; color: #059669; font-weight: 800; padding: 3px 8px; border-radius: 6px; box-shadow: 0 2px 4px rgba(5, 150, 105, 0.2);}
+        .hl-wrong { background-color: #FEE2E2; color: #EF4444; font-weight: 700; padding: 3px 8px; border-radius: 6px; text-decoration: line-through decoration-red; }
+        .hl-vocab { color: var(--secondary); font-weight: 800; background: #ECFEFF; padding: 3px 8px; border-radius: 6px; border: 1px solid #CFFAFE;}
+        
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 25px; }
+        .info-card { background: white; padding: 25px; border-radius: 16px; border: 1px solid #E2E8F0; line-height: 1.7; font-size: 1.05rem; box-shadow: 0 4px 15px rgba(0,0,0,0.03); position: relative;}
+        .info-card h4 { color: #1E293B; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; font-weight: 800; border-bottom: 2px solid #F1F5F9; padding-bottom: 10px; font-size: 1.2rem;}
+        
+        .snap-badge { position: absolute; top: -12px; right: 20px; background: var(--primary); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; box-shadow: 0 4px 10px rgba(15, 23, 42, 0.3); text-transform: uppercase; letter-spacing: 0.5px;}
+
+        /* Tips Section */
+        .tips-section { margin-top: 40px; background: linear-gradient(135deg, #F8FAFC, #FFFFFF); padding: 35px; border-radius: 20px; border: 1px solid #E2E8F0; box-shadow: 0 10px 25px rgba(15, 23, 42, 0.1);}
+        .tips-section h3 { color: var(--primary); text-align: left; display: flex; align-items: center; gap: 10px;}
+        .tips-list { list-style: none; margin-top: 20px; }
+        .tips-list li { margin-bottom: 15px; padding-left: 30px; position: relative; line-height: 1.6; font-size: 1.05rem; font-weight: 500; color: #334155;}
+        .tips-list li::before { content: "💡"; position: absolute; left: 0; top: 2px;}
+
+        /* --- RESPONSIVE MEDIA QUERIES --- */
+        @media (max-width: 1024px) {
+            .test-layout { gap: 20px; }
+            .screen { padding: 30px; }
+        }
+
+        @media (max-width: 768px) { 
+            .test-layout, .info-grid { flex-direction: column; grid-template-columns: 1fr; } 
+            
+            .image-col {
+                position: sticky;         
+                top: 10px;                
+                z-index: 100;             
+                background: #F8FAFC;      
+                box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.15); 
+                padding: 15px;
+            }
+            .image-col img { max-height: 220px; } 
+            
+            .nav-footer { flex-direction: column; gap: 15px; align-items: stretch; }
+            .nav-footer .btn { width: 100%; margin: 0; }
+            .result-item { flex-direction: column; align-items: flex-start; }
+            .result-item .btn { width: 100%; margin-top: 10px; }
+            h1 { font-size: 1.8rem; }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .container { border-radius: 16px; }
+            .screen { padding: 20px; }
+            .option-label { padding: 12px 15px; font-size: 1rem; }
+            .btn { font-size: 1rem; padding: 12px 20px; }
+            .score-number { font-size: 3.5rem; }
+            .custom-modal { padding: 25px 20px; width: 95%; }
+            .info-card { padding: 15px;}
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="progress-container" id="progress-container">
+        <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    
+    <div id="screen-welcome" class="screen active">
+        <div style="font-size: 4.5rem; text-align: center; margin-bottom: 10px; animation: popIn 0.6s ease;">🎧</div>
+        <h1>Part 1 - ETS 2026 Test 9</h1>
+        <p class="desc">Chinh phục cấu trúc đề thi TOEIC mới nhất cùng <b>SnapEnglish</b>. <br>Lắng nghe kỹ, loại trừ bẫy và bứt phá điểm số ngay hôm nay!</p>
+        <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <button class="btn btn-outline" onclick="openHistoryModal()">🕒 Lịch sử</button>
+            <button class="btn btn-outline" onclick="startApp('practice')">📘 Luyện Tập Kỹ Năng</button>
+            <button class="btn" onclick="startApp('mock')">⏱ Thi Thử Tính Điểm</button>
+        </div>
+    </div>
+
+    <div id="screen-test" class="screen">
+        <div class="test-layout">
+            <div class="image-col">
+                <img id="q-image" src="" alt="TOEIC Image">
+                <audio id="q-audio" controls></audio>
+                <div id="mock-msg" style="display:none; color: var(--danger); font-weight:700; margin-top:15px; background: var(--danger-light); padding: 12px 25px; border-radius: 12px; text-align: center; width: 100%; border: 1px solid #FECACA;">
+                    Audio đang phát... Hãy tập trung cao độ nhé!
+                </div>
+            </div>
+            <div class="question-col">
+                <h3 id="q-number" style="border-bottom: 2px dashed #E2E8F0; padding-bottom: 15px; text-align: left;">Câu Hỏi 1</h3>
+                <div class="options" id="options-container">
+                    <label class="option-label"><input type="radio" name="ans" value="A"><div class="custom-radio"></div><span>A</span></label>
+                    <label class="option-label"><input type="radio" name="ans" value="B"><div class="custom-radio"></div><span>B</span></label>
+                    <label class="option-label"><input type="radio" name="ans" value="C"><div class="custom-radio"></div><span>C</span></label>
+                    <label class="option-label"><input type="radio" name="ans" value="D"><div class="custom-radio"></div><span>D</span></label>
+                </div>
+            </div>
+        </div>
+        <div class="nav-footer">
+            <button id="btn-prev" class="btn btn-outline" style="display:none;" onclick="changeQuestion(-1)">⬅ Câu trước</button>
+            <div style="flex-grow: 1;"></div> 
+            <button id="btn-next" class="btn" style="display:none;" onclick="changeQuestion(1)">Câu tiếp theo ➡</button>
+            <button id="btn-submit" class="btn btn-success" style="display:none;" onclick="finishTest(false)">Nộp Bài 📝</button>
+        </div>
+    </div>
+
+    <div id="screen-result" class="screen">
+        <div class="score-box">
+            <h2>Kết Quả Bài Làm 📊</h2>
+            <div class="score-number" id="final-score">0/6</div>
+            <p id="score-comment" style="font-size: 1.2rem; margin-top: 10px; font-weight: 600;">Đang tính toán kết quả...</p>
+        </div>
+        <div id="result-list"></div>
+        <div style="text-align: center; margin-top: 40px; display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+            <button class="btn btn-outline" onclick="location.reload()">🏠 Về trang chủ</button>
+            <button class="btn" onclick="startApp('practice')">🔄 Làm Lại Từ Đầu</button>
+        </div>
+
+        <div class="tips-section">
+            <h3>Chiến thuật 990+ từ SnapEnglish</h3>
+            <ul class="tips-list">
+                <li><strong>Cẩn thận với từ đồng âm / gần âm:</strong> ETS rất hay sử dụng những từ có âm thanh tương tự nhưng sai hoàn toàn về ngữ cảnh (VD: <em>baking</em> vs <em>making</em>, <em>copy</em> vs <em>coffee</em>). Hãy nghe trọn vẹn cả câu.</li>
+                <li><strong>Mô tả chi tiết nhỏ của bức tranh tĩnh:</strong> Đôi khi đáp án đúng không miêu tả toàn cảnh mà lại tập trung vào một đặc điểm cấu trúc rất nhỏ, ví dụ như <em>round frame</em> (khung tròn) hay <em>covered by a roof</em> (được che bởi mái nhà). Cần quét mắt toàn bộ tranh trước khi nghe.</li>
+                <li><strong>Động tác của tay và tư thế cơ thể:</strong> Các từ khóa như <em>bending over</em> (cúi người), <em>distributing</em> (phân phát) mô tả rất chính xác tư thế hoặc động tác tay mà bạn không thể bỏ lỡ.</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div id="modal-detail" class="modal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+        <h2 id="modal-title" style="text-align:left; color: var(--primary); margin-bottom: 15px;">Giải thích Câu 1 ✨</h2>
+        
+        <div style="text-align: center; margin-bottom: 20px; background: #F8FAFC; border-radius: 16px; padding: 15px; border: 2px dashed #CBD5E1;">
+            <img id="modal-image" src="" alt="TOEIC Image" style="max-width: 100%; max-height: 280px; object-fit: contain; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+        </div>
+
+        <audio id="modal-audio" controls style="margin-bottom: 20px;"></audio>
+        
+        <div class="script-box">
+            <h4 style="color: #1E293B; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">📜 Kịch bản Song ngữ</h4>
+            <div id="modal-script-combined"></div>
+        </div>
+
+        <h3 style="margin-top: 30px; text-align: left; font-size: 1.4rem;">🕵️ Phân tích đáp án</h3>
+        <div id="modal-explains" style="margin-bottom: 25px;"></div>
+
+        <div class="info-grid">
+            <div class="info-card grammar-card">
+                <div class="snap-badge">Snap Tip</div>
+                <h4>📝 Điểm Ngữ Pháp</h4>
+                <div id="modal-grammar"></div>
+            </div>
+            <div class="info-card vocab-card">
+                <div class="snap-badge">Snap Vocab</div>
+                <h4>📚 Từ Vựng Cốt Lõi</h4>
+                <div id="modal-vocab"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="historyOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2 style="margin-bottom: 20px; color: var(--primary);">🕒 Lịch sử làm bài</h2>
+        <div id="historyList">
+            <div style="text-align:center; color: var(--text-muted); padding: 20px;">Đang tải dữ liệu... ⏳</div>
+        </div>
+        <button class="btn btn-outline" style="width: 100%; margin-top: 15px;" onclick="closeHistoryModal()">Quay lại</button>
+    </div>
+</div>
+
+<div id="customConfirmDeleteOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2 style="color: var(--danger);">Xác nhận xóa ⚠️</h2>
+        <p style="font-size: 1.1rem; color: var(--text-muted); margin-top: 15px; line-height: 1.5;">Bạn có chắc chắn muốn xóa vĩnh viễn bài làm này khỏi lịch sử không?</p>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeConfirmDelete()">Hủy</button>
+            <button class="btn btn-success" style="background: var(--danger); box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);" onclick="executeDelete()">Xóa ngay 🗑️</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Dữ liệu bộ đề: ETS 2026 - TEST 9 - PART 1
+    const questions = [
+        {
+            id: 1, 
+            image: "https://zenlishtoeic.vn/wp-content/uploads/2025/12/zenlish-z7365163738920-6ff92dee9b98cc65ce2f231fbdd38066.jpg", 
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2025/12/zenlish-test-09-01.mp3",
+            correct: "D",
+            script_en: "(A) A man is placing books into a shelving unit.<br>(B) A man is hanging up some flyers.<br>(C) A man is picking up tools from the floor.<br>(D) A man is bending over some wires.",
+            script_vi: "(A) Một người đàn ông đang đặt sách vào một kệ sách.<br>(B) Một người đàn ông đang treo một số tờ rơi.<br>(C) Một người đàn ông đang nhặt công cụ từ sàn.<br>(D) Một người đàn ông đang cúi người làm việc với các sợi dây.",
+            explains: [
+                { opt: "A", text: "Sai. Người đàn ông không cầm sách và không có hành động <span class='hl-wrong'>đặt sách vào kệ (placing books)</span>.", type: "wrong" },
+                { opt: "B", text: "Sai. Anh ấy đang tập trung xử lý hệ thống máy móc, không phải đang <span class='hl-wrong'>treo các tờ rơi (hanging up flyers)</span> lên bảng.", type: "wrong" },
+                { opt: "C", text: "Sai. Anh ấy đang thao tác trực tiếp với máy, không có hành động <span class='hl-wrong'>cúi nhặt dụng cụ (picking up tools)</span> từ dưới sàn lên.", type: "wrong" },
+                { opt: "D", text: "Đúng. Tư thế của người đàn ông được miêu tả rất chuẩn xác: Anh ấy đang <span class='hl-right'>cúi gập người xuống (bending over) để kiểm tra/xử lý các sợi dây cáp điện (wires)</span>.", type: "correct" }
+            ],
+            grammar: "Cụm động từ <strong>bend over</strong> (cúi gập người) là một trong những động từ miêu tả tư thế kinh điển nhất của Part 1. Kết hợp với tân ngữ chỉ vật (wires) để làm rõ mục tiêu của hành động.",
+            vocab: "• <span class='hl-vocab'>place</span> (v): đặt, để<br>• <span class='hl-vocab'>shelving unit</span> (n): giá đỡ, kệ sách<br>• <span class='hl-vocab'>hang up</span> (phrasal verb): treo lên<br>• <span class='hl-vocab'>pick up</span> (phrasal verb): nhặt lên, lấy lên<br>• <span class='hl-vocab'>bend over</span> (phrasal verb): cúi người xuống<br>• <span class='hl-vocab'>wire</span> (n): sợi dây, dây cáp"
+        },
+        {
+            id: 2, 
+            image: "https://zenlishtoeic.vn/wp-content/uploads/2025/12/zenlish-z7365163739011-140f1fa35ead0ea3f98f5dcbdd96454c.jpg", 
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2025/12/zenlish-test-09-02.mp3",
+            correct: "A",
+            script_en: "(A) A picnic area is covered by a roof.<br>(B) A bin is filled with flowers.<br>(C) A picnic area is shaded by trees.<br>(D) A road leads to a picnic area.",
+            script_vi: "(A) Khu vực picnic được che phủ bởi một mái nhà.<br>(B) Một thùng rác đầy hoa.<br>(C) Khu vực picnic được che bởi cây cối.<br>(D) Một con đường dẫn đến khu vực picnic.",
+            explains: [
+                { opt: "A", text: "Đúng. Quan sát bao quát cảnh vật: <span class='hl-right'>Toàn bộ khu vực ngồi dã ngoại (picnic area) đang được che phủ bên dưới một hệ thống mái che (covered by a roof)</span>.", type: "correct" },
+                { opt: "B", text: "Sai. Trong khu vực này không có hình ảnh <span class='hl-wrong'>thùng rác nào chứa đầy hoa (bin is filled with flowers)</span>.", type: "wrong" },
+                { opt: "C", text: "Sai. Đây là bẫy về chủ thể gây ra hành động che bóng. Khu vực này được che bởi mái nhà kiến trúc, chứ không phải bóng râm <span class='hl-wrong'>tạo ra bởi cây cối (shaded by trees)</span>.", type: "wrong" },
+                { opt: "D", text: "Sai. Bao quanh khu vực là bãi cỏ, không thấy rõ <span class='hl-wrong'>con đường nào dẫn thẳng vào (road leads to)</span> khu vực dã ngoại.", type: "wrong" }
+            ],
+            grammar: "Sử dụng <strong>Thể bị động hiện tại đơn (is covered by)</strong> để miêu tả trạng thái tĩnh của một khu vực. Lưu ý phân biệt <em>covered by a roof</em> (che bởi mái) và <em>shaded by trees</em> (che bởi bóng cây).",
+            vocab: "• <span class='hl-vocab'>picnic area</span> (n): khu vực dã ngoại<br>• <span class='hl-vocab'>cover</span> (v): bao phủ, che đậy<br>• <span class='hl-vocab'>roof</span> (n): mái nhà, mái che<br>• <span class='hl-vocab'>fill with</span> (v phrase): lấp đầy bằng<br>• <span class='hl-vocab'>shade</span> (v): che bóng râm<br>• <span class='hl-vocab'>lead to</span> (v phrase): dẫn đến"
+        },
+        {
+            id: 3, 
+            image: "https://zenlishtoeic.vn/wp-content/uploads/2025/12/zenlish-z7365163739010-5526231734323598e52c99b33684aec9.jpg", 
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2025/12/zenlish-test-09-03.mp3",
+            correct: "C",
+            script_en: "(A) She’s dusting a counter.<br>(B) She’s loading paper into a copy machine.<br>(C) She’s distributing some envelopes.<br>(D) She’s opening some cabinet doors.",
+            script_vi: "(A) Cô ấy đang lau bụi cái quầy.<br>(B) Cô ấy đang cho giấy vào máy sao chép.<br>(C) Cô ấy đang phân phát một số phong bì.<br>(D) Cô ấy đang mở một số cửa tủ.",
+            explains: [
+                { opt: "A", text: "Sai. Cô ấy đang đứng xử lý các loại giấy tờ bưu phẩm, không hề cầm chổi/giẻ để <span class='hl-wrong'>phủi bụi trên mặt quầy (dusting a counter)</span>.", type: "wrong" },
+                { opt: "B", text: "Sai. Phía dưới mặt bàn không có chiếc máy photocopy nào để cô ấy có thể thực hiện thao tác <span class='hl-wrong'>đưa giấy vào (loading paper)</span>.", type: "wrong" },
+                { opt: "C", text: "Đúng. Hành động đôi tay rất rõ ràng: <span class='hl-right'>Cô ấy đang cầm một xấp phong bì và thực hiện việc phân chia/phân phát chúng (distributing some envelopes)</span>.", type: "correct" },
+                { opt: "D", text: "Sai. Cửa tủ phía sau đang đóng kín, cô ấy không có động tác <span class='hl-wrong'>mở cửa tủ ra (opening cabinet doors)</span>.", type: "wrong" }
+            ],
+            grammar: "Động từ <strong>distribute</strong> (phân phát, chia ra) thường được dùng khi một người đang chia giấy tờ, phong bì hoặc tài liệu thành từng phần nhỏ hoặc đưa cho những người khác.",
+            vocab: "• <span class='hl-vocab'>dust</span> (v): phủi bụi, lau bụi<br>• <span class='hl-vocab'>load</span> (v): nạp vào, cho vào (giấy, hàng hóa)<br>• <span class='hl-vocab'>distribute</span> (v): phân phát, phân chia<br>• <span class='hl-vocab'>envelope</span> (n): phong bì, bao thư<br>• <span class='hl-vocab'>cabinet</span> (n): tủ có ngăn kéo"
+        },
+        {
+            id: 4, 
+            image: "https://zenlishtoeic.vn/wp-content/uploads/2025/12/zenlish-z7365163798887-4ef1e5ae8b77864cbefe0a168f87e762.jpg", 
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2025/12/zenlish-test-09-04.mp3",
+            correct: "B",
+            script_en: "(A) Some people are waiting in line to order.<br>(B) A menu board has been hung on a wall.<br>(C) A server is placing some food on a tray.<br>(D) A server is taking an order from a customer.",
+            script_vi: "(A) Một số người đang xếp hàng để gọi món.<br>(B) Một bảng thực đơn đã được treo trên tường.<br>(C) Một người phục vụ đang đặt thức ăn lên khay.<br>(D) Một người phục vụ đang nhận gọi món từ một khách hàng.",
+            explains: [
+                { opt: "A", text: "Sai. Phía trước quầy order hoàn toàn trống vắng, không có hàng khách nào <span class='hl-wrong'>đang chờ xếp hàng để gọi món (waiting in line to order)</span>.", type: "wrong" },
+                { opt: "B", text: "Đúng. Cảnh tĩnh ở bức tường phía sau là điểm nhấn: <span class='hl-right'>Một bảng thực đơn lớn đã được treo sẵn ở trên tường (menu board has been hung on a wall)</span>.", type: "correct" },
+                { opt: "C", text: "Sai. Nhân viên đứng trong quầy nhưng không có hành động <span class='hl-wrong'>xếp đồ ăn lên khay (placing food on a tray)</span>.", type: "wrong" },
+                { opt: "D", text: "Sai. Vì không có khách hàng (customer) nào ở phía trước quầy nên nhân viên không thể đang thực hiện việc <span class='hl-wrong'>nhận order (taking an order)</span>.", type: "wrong" }
+            ],
+            grammar: "Một ví dụ hoàn hảo của cấu trúc <strong>Hiện tại hoàn thành bị động (has been hung)</strong>. Cấu trúc này không quan tâm ai là người treo, mà chỉ tập trung vào việc tấm bảng hiện đang ở trên tường.",
+            vocab: "• <span class='hl-vocab'>wait in line</span> (v phrase): xếp hàng chờ đợi<br>• <span class='hl-vocab'>menu board</span> (n): bảng thực đơn<br>• <span class='hl-vocab'>hang (hung)</span> (v): treo lên<br>• <span class='hl-vocab'>server</span> (n): người phục vụ<br>• <span class='hl-vocab'>tray</span> (n): khay đựng đồ<br>• <span class='hl-vocab'>take an order</span> (v phrase): nhận gọi món"
+        },
+        {
+            id: 5, 
+            image: "https://zenlishtoeic.vn/wp-content/uploads/2025/12/zenlish-z7365163798939-1aa724661b95099eaff286c3be026ece.jpg", 
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2025/12/zenlish-test-09-05.mp3",
+            correct: "C",
+            script_en: "(A) One of the men is stacking vegetables in a basket.<br>(B) One of the men is selling merchandise in front of a tent.<br>(C) One of the men is riding a motorcycle down a street.<br>(D) One of the men is walking into a store.",
+            script_vi: "(A) Một trong những người đàn ông đang xếp rau vào giỏ.<br>(B) Một trong những người đàn ông đang bán hàng hóa trước một chiếc lều.<br>(C) Một trong những người đàn ông đang lái xe máy xuống phố.<br>(D) Một trong những người đàn ông đang bước vào cửa hàng.",
+            explains: [
+                { opt: "A", text: "Sai. Mặc dù có các quầy hàng xung quanh nhưng hai người đàn ông không có ai đang <span class='hl-wrong'>chất các loại rau củ vào giỏ (stacking vegetables)</span>.", type: "wrong" },
+                { opt: "B", text: "Sai. Không có ai đang làm thao tác <span class='hl-wrong'>chào bán hàng hóa (selling merchandise)</span> đứng ở phía trước chiếc lều.", type: "wrong" },
+                { opt: "C", text: "Đúng. Bức ảnh tập trung vào chủ thể di chuyển: <span class='hl-right'>Một trong những người đàn ông đang điều khiển chiếc xe máy chạy trên phố (riding a motorcycle down a street)</span>.", type: "correct" },
+                { opt: "D", text: "Sai. Cả hai đều đang điều khiển xe máy, không ai đang <span class='hl-wrong'>đi bộ bước vào cửa hàng (walking into a store)</span>.", type: "wrong" }
+            ],
+            grammar: "Động từ <strong>ride</strong> (cưỡi, lái) dùng cho các phương tiện 2 bánh như xe máy (motorcycle), xe đạp (bicycle) hoặc động vật. Giới từ <strong>down a street</strong> chỉ việc di chuyển dọc theo con phố.",
+            vocab: "• <span class='hl-vocab'>stack</span> (v): xếp chồng, chất lên<br>• <span class='hl-vocab'>vegetable</span> (n): rau củ<br>• <span class='hl-vocab'>merchandise</span> (n): hàng hóa<br>• <span class='hl-vocab'>ride</span> (v): điều khiển, cưỡi (xe đạp, xe máy)<br>• <span class='hl-vocab'>motorcycle</span> (n): xe máy<br>• <span class='hl-vocab'>walk into</span> (v phrase): đi bộ vào trong"
+        },
+        {
+            id: 6, 
+            image: "https://zenlishtoeic.vn/wp-content/uploads/2025/12/zenlish-z7365163738919-7a9233bf29dfb322c9ff5be55d450854.jpg", 
+            audio: "https://zenlishtoeic.vn/wp-content/uploads/2025/12/zenlish-test-09-06.mp3",
+            correct: "C",
+            script_en: "(A) The woman is standing in front of a painting.<br>(B) The woman is carrying a painting through a doorway.<br>(C) One of the paintings is displayed in a round frame.<br>(D) Some paintings are leaning against a wooden bench.",
+            script_vi: "(A) Người phụ nữ đang đứng trước một bức tranh.<br>(B) Người phụ nữ đang mang một bức tranh đi qua cửa.<br>(C) Một trong những bức tranh được trưng bày trong khung tròn.<br>(D) Một số bức tranh đang tựa vào một chiếc ghế gỗ.",
+            explains: [
+                { opt: "A", text: "Sai. Người phụ nữ đang trong tư thế ngồi (sitting), không phải <span class='hl-wrong'>đang đứng (standing)</span> trước bức tranh.", type: "wrong" },
+                { opt: "B", text: "Sai. Người phụ nữ đang ngồi thư giãn, không hề cầm và <span class='hl-wrong'>khuân vác bức tranh đi qua cửa (carrying a painting)</span>.", type: "wrong" },
+                { opt: "C", text: "Đúng. Đây là câu miêu tả chi tiết cực kỳ tinh tế của ETS: Ở phía góc trên bên trái, ta thấy <span class='hl-right'>một trong số các bức tranh đang được lồng trong một chiếc khung hình tròn (displayed in a round frame)</span>.", type: "correct" },
+                { opt: "D", text: "Sai. Các bức tranh đều được treo cố định trên tường, không có bức nào <span class='hl-wrong'>đang tựa vào/dựa vào chiếc ghế gỗ (leaning against a wooden bench)</span>.", type: "wrong" }
+            ],
+            grammar: "Một ví dụ hoàn hảo về cách ETS kiểm tra khả năng quan sát chi tiết cấu trúc đồ vật của bạn bằng Thể bị động <strong>is displayed in</strong> (được trưng bày trong).",
+            vocab: "• <span class='hl-vocab'>stand in front of</span> (v phrase): đứng phía trước<br>• <span class='hl-vocab'>carry</span> (v): mang, vác, cầm<br>• <span class='hl-vocab'>display</span> (v): trưng bày<br>• <span class='hl-vocab'>round frame</span> (n): khung hình tròn<br>• <span class='hl-vocab'>lean against</span> (phrasal verb): dựa vào, tựa vào<br>• <span class='hl-vocab'>wooden bench</span> (n): ghế băng dài bằng gỗ"
+        }
+    ];
+
+    let currentMode = '';
+    let currentIndex = 0;
+    let userAnswers = new Array(questions.length).fill(null);
+    const audio = document.getElementById('q-audio');
+    
+    // Key LocalStorage cho Test 9 ETS 2026
+    const LOCAL_HISTORY_KEY = "snapenglish_p1_t9_2026_history";
+    let startTime = 0; 
+
+    function updateProgress() {
+        if (currentMode === '') return;
+        const fill = document.getElementById('progress-fill');
+        const percent = ((currentIndex + 1) / questions.length) * 100;
+        fill.style.width = percent + '%';
+    }
+
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        if (!audio.paused) audio.pause();
+        
+        if (id === 'screen-test') {
+            document.getElementById('progress-container').style.display = 'block';
+        } else {
+            document.getElementById('progress-container').style.display = 'none';
+        }
+    }
+
+    function startApp(mode) {
+        currentMode = mode;
+        currentIndex = 0;
+        userAnswers.fill(null);
+        startTime = Date.now(); 
+        showScreen('screen-test');
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        const q = questions[currentIndex];
+        document.getElementById('q-number').innerText = `Câu Hỏi ${q.id}`;
+        document.getElementById('q-image').src = q.image;
+        audio.src = q.audio;
+        
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(lbl => lbl.classList.remove('selected'));
+        
+        const radios = document.getElementsByName('ans');
+        radios.forEach(r => {
+            r.checked = (r.value === userAnswers[currentIndex]);
+            if(r.checked) r.parentElement.classList.add('selected');
+            
+            r.onchange = () => { 
+                userAnswers[currentIndex] = r.value; 
+                labels.forEach(lbl => lbl.classList.remove('selected'));
+                r.parentElement.classList.add('selected');
+            };
+        });
+
+        const isLast = currentIndex === questions.length - 1;
+        updateProgress();
+
+        if (currentMode === 'mock') {
+            document.getElementById('btn-prev').style.display = 'none';
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('btn-submit').style.display = isLast ? 'inline-flex' : 'none';
+            
+            audio.style.display = 'none';
+            document.getElementById('mock-msg').style.display = 'block';
+            
+            audio.play().catch(e => console.log("Trình duyệt chặn Autoplay. Hãy click vào trang để cấp quyền."));
+            
+            audio.onended = () => {
+                if (!isLast) setTimeout(() => changeQuestion(1), 1000);
+                else document.getElementById('mock-msg').style.display = 'none';
+            };
+        } else {
+            document.getElementById('btn-prev').style.display = (currentIndex === 0) ? 'none' : 'inline-flex';
+            document.getElementById('btn-next').style.display = isLast ? 'none' : 'inline-flex';
+            document.getElementById('btn-submit').style.display = isLast ? 'inline-flex' : 'none';
+
+            audio.style.display = 'block';
+            document.getElementById('mock-msg').style.display = 'none';
+            audio.onended = null;
+        }
+    }
+
+    function changeQuestion(step) {
+        currentIndex += step;
+        renderQuestion();
+    }
+
+    function finishTest(isRestoring = false) {
+        showScreen('screen-result');
+        let correctCount = 0;
+        const listDiv = document.getElementById('result-list');
+        listDiv.innerHTML = '';
+
+        let timeTakenStr = "--:--";
+        if (!isRestoring && startTime > 0) {
+            let diffSeconds = Math.floor((Date.now() - startTime) / 1000);
+            let m = Math.floor(diffSeconds / 60);
+            let s = diffSeconds % 60;
+            timeTakenStr = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        questions.forEach((q, idx) => {
+            const isCorrect = userAnswers[idx] === q.correct;
+            if(isCorrect) correctCount++;
+
+            const item = document.createElement('div');
+            item.className = 'result-item';
+            item.innerHTML = `
+                <div>
+                    <strong style="color: var(--primary); font-size:1.15rem;">Câu ${q.id}:</strong> Bạn chọn <b>${userAnswers[idx] || "Trống"}</b> 
+                    <span class="status-tag ${isCorrect ? 'tag-correct' : 'tag-wrong'}" style="margin-left:10px;">${isCorrect ? '✔ Đúng' : '✖ Sai'}</span>
+                </div>
+                <button class="btn btn-outline" style="padding: 10px 20px; font-size:0.95rem; border-radius: 10px;" onclick="openDetail(${idx})">Xem giải thích ✨</button>
+            `;
+            listDiv.appendChild(item);
+        });
+
+        document.getElementById('final-score').innerText = `${correctCount}/${questions.length}`;
+        if(correctCount === questions.length) {
+            document.getElementById('score-comment').innerText = "Thật tuyệt vời! Chào mừng bạn đến với hội 990+ TOEIC! 🏆";
+        } else if(correctCount >= 4) {
+            document.getElementById('score-comment').innerText = "Rất giỏi! Để ý thêm các tiểu tiết nhỏ là bạn sẽ đạt điểm tuyệt đối! 🌟";
+        } else {
+            document.getElementById('score-comment').innerText = "Chưa quen với các bẫy của ETS thôi! Xem ngay giải thích bên dưới nhé! 💪";
+        }
+
+        if(!isRestoring) {
+            saveLocalHistory(correctCount, questions.length, userAnswers, timeTakenStr);
+            if(window.luuDiemTOEICLenFirebase) {
+                window.luuDiemTOEICLenFirebase(questions.length, correctCount, "ETS 2026 - Test 9", "Listening", "Part 1", userAnswers, timeTakenStr);
+            }
+        }
+    }
+
+    function openDetail(idx) {
+        const q = questions[idx];
+        document.getElementById('modal-title').innerText = `Phân tích chi tiết Câu ${q.id} ✨`;
+        document.getElementById('modal-audio').src = q.audio;
+        document.getElementById('modal-image').src = q.image;
+        
+        const enLines = q.script_en.split('<br>');
+        const viLines = q.script_vi.split('<br>');
+        let combinedHTML = '';
+        for(let i = 0; i < enLines.length; i++) {
+            combinedHTML += `
+                <div class="script-row">
+                    <div class="script-en">${enLines[i]}</div>
+                    <div class="script-vi">${viLines[i]}</div>
+                </div>
+            `;
+        }
+        document.getElementById('modal-script-combined').innerHTML = combinedHTML;
+        document.getElementById('modal-vocab').innerHTML = q.vocab;
+        document.getElementById('modal-grammar').innerHTML = q.grammar;
+
+        const explainDiv = document.getElementById('modal-explains');
+        explainDiv.innerHTML = '';
+        q.explains.forEach(ex => {
+            const div = document.createElement('div');
+            div.className = `explain-item ${ex.type === 'correct' ? 'explain-correct' : 'explain-wrong'}`;
+            div.innerHTML = `<strong>(${ex.opt})</strong> ${ex.text}`;
+            explainDiv.appendChild(div);
+        });
+
+        document.getElementById('modal-detail').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('modal-detail').style.display = 'none';
+        document.getElementById('modal-audio').pause();
+    }
+
+    // --- LOGIC LỊCH SỬ ---
+    function saveLocalHistory(score, total, answersArray, timeTakenStr) {
+        let history = JSON.parse(localStorage.getItem(LOCAL_HISTORY_KEY)) || [];
+        let now = new Date();
+        history.unshift({
+            id: Date.now().toString(),
+            date: now.toLocaleDateString('vi-VN'),
+            time: now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+            score: score,
+            total: total,
+            answers: answersArray,
+            timeTaken: timeTakenStr 
+        });
+        localStorage.setItem(LOCAL_HISTORY_KEY, JSON.stringify(history));
+    }
+
+    function openHistoryModal() {
+        document.getElementById('historyOverlay').style.display = 'flex';
+        renderHistoryList();
+    }
+
+    function closeHistoryModal() {
+        document.getElementById('historyOverlay').style.display = 'none';
+    }
+
+    function renderHistoryList() {
+        let listEl = document.getElementById("historyList");
+        
+        if (window.currentUserUid && window.layLichSuTuFirebase) {
+            window.layLichSuTuFirebase().then(firebaseHistory => {
+                hienThiDanhSach(firebaseHistory, listEl, true);
+            });
+        } else {
+            let localHistory = JSON.parse(localStorage.getItem(LOCAL_HISTORY_KEY)) || [];
+            hienThiDanhSach(localHistory, listEl, false);
+        }
+    }
+
+    function hienThiDanhSach(historyArray, listEl, isCloud) {
+        if (!historyArray || historyArray.length === 0) {
+            listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px; font-weight: 500;">Chưa có dữ liệu làm bài. ${isCloud ? '(Cloud ☁️)' : '(Thiết bị này 📱)'}</div>`;
+            return;
+        }
+
+        listEl.innerHTML = historyArray.map((item, index) => {
+            let soCauDung = item.correctQ !== undefined ? item.correctQ : item.score;
+            let tongSoCau = item.totalQ !== undefined ? item.totalQ : item.total;
+            
+            let diemQuyDoi = isCloud && item.score !== undefined && item.score > tongSoCau 
+                ? ` (Điểm: ${item.score})` 
+                : '';
+
+            return `
+            <div class="history-item">
+                <div class="history-info">
+                    <span class="history-date">Lần ${historyArray.length - index}: ${item.time || ''} ${item.date}</span>
+                    <span class="history-score">Chính xác: ${soCauDung}/${tongSoCau} câu${diemQuyDoi} ${isCloud ? '☁️' : '📱'}</span>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500;">⏱ Thời gian làm bài: ${item.timeTaken || '--:--'}</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-review" onclick='restoreAttempt(${JSON.stringify(item.answers || [])})'>Xem lại</button>
+                    <button class="btn-delete-history" onclick="deleteAttempt('${item.id}', ${isCloud})" title="Xóa bài này">&times;</button>
+                </div>
+            </div>
+            `;
+        }).join("");
+    }
+
+    let pendingDelete = { id: null, isCloud: false };
+
+    function deleteAttempt(id, isCloud) {
+        pendingDelete = { id, isCloud };
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'flex';
+    }
+
+    function closeConfirmDelete() {
+        pendingDelete = { id: null, isCloud: false };
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+    }
+
+    function executeDelete() {
+        if (!pendingDelete.id) return;
+        
+        if (pendingDelete.isCloud && window.xoaLichSuFirebase) {
+            window.xoaLichSuFirebase(pendingDelete.id).then(() => {
+                closeConfirmDelete();
+                renderHistoryList();
+            });
+        } else {
+            let history = JSON.parse(localStorage.getItem(LOCAL_HISTORY_KEY)) || [];
+            history = history.filter(h => h.id !== pendingDelete.id);
+            localStorage.setItem(LOCAL_HISTORY_KEY, JSON.stringify(history));
+            closeConfirmDelete();
+            renderHistoryList();
+        }
+    }
+
+    function restoreAttempt(answersArray) {
+        if (!answersArray || answersArray.length === 0) return;
+        userAnswers = answersArray;
+        closeHistoryModal();
+        finishTest(true); 
+    }
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    function showInGameToast(msg) {
+        let toast = document.createElement("div");
+        toast.innerText = msg;
+        toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:var(--secondary); color:var(--primary); padding:15px 25px; border-radius:12px; font-weight:700; font-family:'Be Vietnam Pro',sans-serif; z-index:99999; box-shadow:0 10px 30px rgba(6, 182, 212, 0.3); transform:translateY(100px); opacity:0; transition:all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);";
+        document.body.appendChild(toast);
+        setTimeout(() => { toast.style.transform = "translateY(0)"; toast.style.opacity = "1"; }, 100);
+        setTimeout(() => { toast.style.transform = "translateY(100px)"; toast.style.opacity = "0"; }, 3500);
+        setTimeout(() => { toast.remove(); }, 4000);
+    }
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+        } else {
+            showInGameToast("⚠️ Bạn đang luyện tập dưới dạng Khách, kết quả chỉ lưu trên máy này!");
+        }
+    });
+
+    function calculateToeicScore(skill, correct, total) {
+        let percentage = correct / total;
+        let maxScore = 495;
+        let step = 5;
+        let estimated = Math.round((percentage * maxScore) / step) * step;
+        if (estimated > maxScore) return maxScore;
+        if (estimated < 5) return 5;
+        return estimated;
+    }
+
+    window.luuDiemTOEICLenFirebase = async function(tongSoCau, soCauDung, tenBai, kyNang, tenPart, answersArray, timeTakenStr) {
+        if (!window.currentUserUid) return; 
+
+        let diemQuyDoi = calculateToeicScore(kyNang, soCauDung, tongSoCau);
+        let timestamp = Date.now();
+        let docId = window.currentUserUid + "_toeic_" + timestamp;
+        
+        try {
+            await setDoc(doc(db, "user_toeic_scores", docId), {
+                email: window.currentUserEmail,
+                skill: kyNang,           
+                testName: tenBai,        
+                partName: tenPart,       
+                totalQ: tongSoCau,
+                correctQ: soCauDung,
+                score: diemQuyDoi,       
+                date: new Date().toLocaleDateString('vi-VN'),
+                time: new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+                timestamp: timestamp,
+                answers: answersArray,
+                timeTaken: timeTakenStr || "--" 
+            });
+            showInGameToast("☁️ Đã đồng bộ điểm số lên Đám Mây của SnapEnglish!");
+        } catch (error) {
+            console.error("Lỗi khi lưu điểm:", error);
+        }
+    }
+
+    window.layLichSuTuFirebase = async function() {
+        if (!window.currentUserEmail) return [];
+        try {
+            const q = query(
+                collection(db, "user_toeic_scores"),
+                where("email", "==", window.currentUserEmail),
+                where("testName", "==", "ETS 2026 - Test 9"), 
+                where("partName", "==", "Part 1")
+            );
+            const querySnapshot = await getDocs(q);
+            let history = [];
+            querySnapshot.forEach((doc) => {
+                let data = doc.data();
+                data.id = doc.id; 
+                history.push(data);
+            });
+            history.sort((a, b) => b.timestamp - a.timestamp);
+            return history;
+        } catch (error) {
+            console.error("Lỗi tải lịch sử từ Firebase:", error);
+            showInGameToast("❌ Lỗi đồng bộ dữ liệu. Đang hiển thị lịch sử trên thiết bị.");
+            return [];
+        }
+    }
+
+    window.xoaLichSuFirebase = async function(docId) {
+        try {
+            await deleteDoc(doc(db, "user_toeic_scores", docId));
+            showInGameToast("🗑 Đã xóa bài làm thành công!");
+        } catch (error) {
+            console.error("Lỗi xóa trên Firebase:", error);
+        }
+    }
+</script>
+</body>
+</html>
