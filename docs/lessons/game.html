@@ -1,0 +1,564 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Arrange the Sentence!</title>
+    <style>
+        /* Fun, Kid-Friendly CSS */
+        @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap');
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            font-family: 'Baloo 2', 'Comic Sans MS', cursive, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 10px 20px;
+            background-color: #fff8e1;
+            background-image: radial-gradient(#ffe082 20%, transparent 20%),
+                              radial-gradient(#ffe082 20%, transparent 20%);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        h1 {
+            color: #ff5252;
+            text-shadow: 2px 2px 0px #ffb4a2, 4px 4px 0px #fff;
+            font-size: 2.2rem;
+            margin: 5px 0 10px 0;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+
+        .stats {
+            display: flex;
+            gap: 15px;
+            font-size: 1.3rem;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .score-board, .question-counter {
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+        .score-board { background: #a7ffeb; box-shadow: 0 4px 0 #1de9b6; }
+        .question-counter { background: #ffc4ff; box-shadow: 0 4px 0 #f06292; }
+
+        #btn-fullscreen {
+            background: #ab47bc;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #7b1fa2;
+            transition: transform 0.1s;
+        }
+        #btn-fullscreen:active { transform: translateY(4px); box-shadow: 0 0 0 #7b1fa2; }
+
+        .hint {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 10px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        #word-bank {
+            width: 100%;
+            max-width: 800px;
+            flex-grow: 1;
+            min-height: 0;
+            background-color: #e0f7fa;
+            border: 4px dashed #4dd0e1;
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+            touch-action: none;
+        }
+
+        #sentence-zone {
+            width: 100%;
+            max-width: 800px;
+            min-height: 100px;
+            flex-shrink: 0;
+            background-color: #fce4ec;
+            border: 4px solid #f06292;
+            border-radius: 25px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 10px;
+            gap: 15px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+
+        #sentence-zone.hovered { background-color: #f8bbd0; }
+
+        .word {
+            position: absolute;
+            padding: 8px 18px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #333;
+            background-color: #fff;
+            border-radius: 15px;
+            cursor: grab;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+            touch-action: none;
+            z-index: 10;
+        }
+
+        .word:active { cursor: grabbing; }
+        .word.dropped { box-shadow: 0 3px 0 rgba(0,0,0,0.2); }
+
+        .color-1 { background-color: #ffb3ba; }
+        .color-2 { background-color: #ffdfba; }
+        .color-3 { background-color: #ffffba; }
+        .color-4 { background-color: #baffc9; }
+        .color-5 { background-color: #bae1ff; }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .action-btn {
+            padding: 10px 25px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.2);
+            color: white;
+            transition: transform 0.1s;
+        }
+        .action-btn:active { transform: translateY(5px); box-shadow: 0 0 0 rgba(0,0,0,0.2); }
+
+        #btn-check { background-color: #4caf50; box-shadow: 0 5px 0 #2e7d32; }
+        #btn-reset { background-color: #ff9800; box-shadow: 0 5px 0 #ef6c00; }
+        #btn-next { background-color: #2196f3; box-shadow: 0 5px 0 #1565c0; display: none; }
+
+        #modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(3px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        #modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 90%;
+            width: 400px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+            transform: scale(0.7);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 5px solid #fff;
+        }
+
+        #modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+
+        #modal-title { margin-top: 0; font-size: 2.2rem; }
+        #modal-title.correct { color: #4caf50; }
+        #modal-title.wrong { color: #f44336; }
+
+        #modal-illustration {
+            margin: 15px 0;
+            animation: bounce 2s infinite;
+        }
+        
+        #modal-illustration img {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 15px;
+            object-fit: cover;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        #modal-answer-text {
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 25px;
+            background: #f1f8e9;
+            padding: 10px;
+            border-radius: 15px;
+        }
+
+        #modal-btn-close {
+            background-color: #2196f3;
+            color: white;
+            padding: 12px 30px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #1565c0;
+        }
+        #modal-btn-close:active { transform: translateY(5px); box-shadow: 0 0 0 #1565c0; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @media(max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .top-bar { flex-direction: column; gap: 10px; }
+            .word { font-size: 1.2rem; padding: 8px 15px; }
+            .action-btn { font-size: 1.1rem; padding: 8px 15px; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🎈 Arrange the Sentence! 🎈</h1>
+    
+    <div class="top-bar">
+        <div class="stats">
+            <div class="question-counter">Question: <span id="q-text">1/4</span></div>
+            <div class="score-board">Score: <span id="score-text">0</span> ⭐</div>
+        </div>
+        <button id="btn-fullscreen">🔲 Fullscreen</button>
+    </div>
+
+    <div class="hint">Drag words into the pink box. If the order is wrong, you can drag words left or right directly inside the box!</div>
+
+    <div id="word-bank"></div>
+    <div id="sentence-zone"></div>
+
+    <div class="controls">
+        <button class="action-btn" id="btn-check">✔️ Check</button>
+        <button class="action-btn" id="btn-reset">🔄 Reset</button>
+        <button class="action-btn" id="btn-next">Next ➡️</button>
+    </div>
+
+    <div id="modal-overlay">
+        <div class="modal-content">
+            <h2 id="modal-title"></h2>
+            <div id="modal-illustration"></div>
+            <div id="modal-answer-text"></div>
+            <button id="modal-btn-close">Continue ➡️</button>
+        </div>
+    </div>
+
+    <script>
+        // THIS IS REPLACED WITH A SAMPLE IMAGE LINK SO YOU CAN SEE IT WORKING
+        // IF YOU DOWNLOAD IMAGES TO YOUR DEVICE, CHANGE IT TO: img: "your-image-name.png"
+        const questionsData = [
+            { words: ["The cat", "is", "behind", "the box."], img: "cat.jpg" },
+            { words: ["The ball", "is", "between", "the boxes."], img: "ball.jpg" },
+            { words: ["The chair", "is", "in front of", "the table."], img: "chair.jpg" },
+            { words: ["The dog", "is", "behind", "the door."], img: "dog.jpg" }
+        ];
+
+        const colors = ['color-1', 'color-2', 'color-3', 'color-4', 'color-5'];
+        
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let activeWords = []; 
+        let animationId;
+
+        const bank = document.getElementById('word-bank');
+        const zone = document.getElementById('sentence-zone');
+        const btnCheck = document.getElementById('btn-check');
+        const btnReset = document.getElementById('btn-reset');
+        const btnNext = document.getElementById('btn-next');
+        const scoreText = document.getElementById('score-text');
+        const qText = document.getElementById('q-text');
+        const btnFullscreen = document.getElementById('btn-fullscreen');
+
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalTitle = document.getElementById('modal-title');
+        const modalImg = document.getElementById('modal-illustration');
+        const modalAnswer = document.getElementById('modal-answer-text');
+        const modalBtnClose = document.getElementById('modal-btn-close');
+
+        modalBtnClose.addEventListener('click', () => {
+            modalOverlay.classList.remove('show');
+        });
+
+        btnFullscreen.addEventListener('click', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                document.exitFullscreen();
+            }
+        });
+        document.addEventListener('fullscreenchange', () => {
+            btnFullscreen.textContent = !document.fullscreenElement ? "🔲 Fullscreen" : "🔳 Exit Fullscreen";
+        });
+
+        function loadQuestion() {
+            bank.innerHTML = '';
+            zone.innerHTML = '';
+            btnNext.style.display = 'none';
+            btnCheck.style.display = 'block';
+            btnReset.style.display = 'block';
+            
+            qText.textContent = `${currentQuestionIndex + 1}/${questionsData.length}`;
+            activeWords = [];
+
+            let chunks = [...questionsData[currentQuestionIndex].words];
+            chunks.sort(() => Math.random() - 0.5);
+
+            chunks.forEach((text, i) => {
+                const el = document.createElement('div');
+                el.className = `word ${colors[i % colors.length]}`;
+                el.textContent = text;
+                bank.appendChild(el);
+
+                setTimeout(() => {
+                    const maxW = bank.clientWidth - el.offsetWidth;
+                    const maxH = bank.clientHeight - el.offsetHeight;
+                    
+                    let wordObj = {
+                        text: text,
+                        el: el,
+                        x: Math.random() * (maxW > 0 ? maxW : 100),
+                        y: Math.random() * (maxH > 0 ? maxH : 100),
+                        vx: (Math.random() * 0.5 + 0.2) * (Math.random() < 0.5 ? 1 : -1),
+                        vy: (Math.random() * 0.5 + 0.2) * (Math.random() < 0.5 ? 1 : -1),
+                        isDragging: false,
+                        isDropped: false,
+                        offsetX: 0,
+                        offsetY: 0
+                    };
+
+                    el.style.left = wordObj.x + 'px';
+                    el.style.top = wordObj.y + 'px';
+
+                    setupPointerEvents(wordObj);
+                    activeWords.push(wordObj);
+                }, 50);
+            });
+
+            cancelAnimationFrame(animationId);
+            setTimeout(animate, 60);
+        }
+
+        function setupPointerEvents(w) {
+            w.el.addEventListener('pointerdown', (e) => {
+                w.isDragging = true;
+                w.el.style.transform = 'scale(1.1) rotate(-3deg)';
+                w.el.style.zIndex = 1000;
+                
+                if (w.isDropped) {
+                    w.isDropped = false;
+                    w.el.classList.remove('dropped');
+                    w.el.style.position = 'absolute';
+                    
+                    const bankRect = bank.getBoundingClientRect();
+                    w.x = e.clientX - bankRect.left - (w.el.offsetWidth / 2);
+                    w.y = e.clientY - bankRect.top - (w.el.offsetHeight / 2);
+                    
+                    bank.appendChild(w.el);
+                }
+
+                const rect = w.el.getBoundingClientRect();
+                w.offsetX = e.clientX - rect.left;
+                w.offsetY = e.clientY - rect.top;
+                
+                w.el.setPointerCapture(e.pointerId);
+            });
+
+            w.el.addEventListener('pointermove', (e) => {
+                if (!w.isDragging) return;
+                
+                const bankRect = bank.getBoundingClientRect();
+                w.x = e.clientX - bankRect.left - w.offsetX;
+                w.y = e.clientY - bankRect.top - w.offsetY;
+                
+                w.el.style.left = w.x + 'px';
+                w.el.style.top = w.y + 'px';
+
+                const zoneRect = zone.getBoundingClientRect();
+                if (e.clientX > zoneRect.left && e.clientX < zoneRect.right &&
+                    e.clientY > zoneRect.top && e.clientY < zoneRect.bottom) {
+                    zone.classList.add('hovered');
+                } else {
+                    zone.classList.remove('hovered');
+                }
+            });
+
+            w.el.addEventListener('pointerup', (e) => {
+                if (!w.isDragging) return;
+                w.isDragging = false;
+                w.el.releasePointerCapture(e.pointerId);
+                w.el.style.transform = 'scale(1) rotate(0deg)';
+                w.el.style.zIndex = 10;
+                zone.classList.remove('hovered');
+
+                const zoneRect = zone.getBoundingClientRect();
+                
+                if (e.clientX > zoneRect.left && e.clientX < zoneRect.right &&
+                    e.clientY > zoneRect.top && e.clientY < zoneRect.bottom) {
+                    
+                    w.isDropped = true;
+                    w.el.classList.add('dropped');
+                    w.el.style.position = 'relative'; 
+                    w.el.style.left = '0';
+                    w.el.style.top = '0';
+                    
+                    const siblings = Array.from(zone.children).filter(child => child !== w.el);
+                    let nextSibling = null;
+                    
+                    for (let sibling of siblings) {
+                        const rect = sibling.getBoundingClientRect();
+                        if (e.clientX < rect.left + rect.width / 2) {
+                            nextSibling = sibling;
+                            break;
+                        }
+                    }
+
+                    if (nextSibling) {
+                        zone.insertBefore(w.el, nextSibling);
+                    } else {
+                        zone.appendChild(w.el);
+                    }
+                    
+                } else {
+                    w.vx = (Math.random() * 0.5 + 0.2) * (Math.random() < 0.5 ? 1 : -1);
+                    w.vy = (Math.random() * 0.5 + 0.2) * (Math.random() < 0.5 ? 1 : -1);
+                }
+            });
+        }
+
+        function animate() {
+            const bankRect = bank.getBoundingClientRect();
+            
+            activeWords.forEach(w => {
+                if (!w.isDropped && !w.isDragging) {
+                    w.x += w.vx;
+                    w.y += w.vy;
+
+                    const maxW = bankRect.width - w.el.offsetWidth;
+                    const maxH = bankRect.height - w.el.offsetHeight;
+
+                    if (w.x <= 0) { w.x = 0; w.vx *= -1; }
+                    else if (w.x >= maxW) { w.x = maxW; w.vx *= -1; }
+
+                    if (w.y <= 0) { w.y = 0; w.vy *= -1; }
+                    else if (w.y >= maxH) { w.y = maxH; w.vy *= -1; }
+
+                    w.el.style.left = w.x + 'px';
+                    w.el.style.top = w.y + 'px';
+                }
+            });
+            
+            animationId = requestAnimationFrame(animate);
+        }
+
+        btnCheck.addEventListener('click', () => {
+            const data = questionsData[currentQuestionIndex];
+            const correctAnswer = data.words.join(" ");
+            
+            // Tự động dọn dẹp khung bay nhảy và dừng animation
+            bank.innerHTML = '';
+            activeWords = []; 
+            
+            // Tự động xếp các từ vào khung màu hồng theo đúng thứ tự
+            zone.innerHTML = ''; 
+            data.words.forEach((text, i) => {
+                const el = document.createElement('div');
+                el.className = `word ${colors[i % colors.length]} dropped`;
+                el.style.position = 'relative';
+                el.style.left = '0';
+                el.style.top = '0';
+                el.style.transform = 'none';
+                el.textContent = text;
+                zone.appendChild(el);
+            });
+
+            // Xóa các trạng thái cũ của Modal
+            modalTitle.classList.remove('wrong');
+            
+            // Luôn luôn hiển thị kết quả Đúng (Awesome!)
+            modalTitle.textContent = "Awesome! 🎉";
+            modalTitle.classList.add('correct');
+            modalImg.innerHTML = `<img src="${data.img}" alt="Illustration">`; 
+            modalAnswer.textContent = correctAnswer;
+            
+            score += 10;
+            scoreText.textContent = score;
+            
+            btnCheck.style.display = 'none';
+            btnReset.style.display = 'none';
+            btnNext.style.display = 'block';
+
+            if (currentQuestionIndex === questionsData.length - 1) {
+                btnNext.textContent = "Play Again! 🌟";
+            }
+
+            modalOverlay.classList.add('show'); 
+        });
+
+        btnReset.addEventListener('click', () => loadQuestion());
+
+        btnNext.addEventListener('click', () => {
+            if (currentQuestionIndex === questionsData.length - 1) {
+                currentQuestionIndex = 0;
+                score = 0;
+                scoreText.textContent = score;
+                btnNext.textContent = "Next ➡️";
+            } else {
+                currentQuestionIndex++;
+            }
+            loadQuestion();
+        });
+
+        loadQuestion();
+    </script>
+</body>
+</html>
