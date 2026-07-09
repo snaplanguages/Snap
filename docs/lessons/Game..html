@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Matchmaker Class Game - 2 Teams Edition</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+            color: #1e293b;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        
+        /* Khung thẻ theo chiều ngang */
+        .card-container {
+            perspective: 1000px;
+            width: 780px; 
+            height: 420px;
+        }
+        .tinder-card {
+            transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.5s ease-out;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            background: white;
+            border-radius: 1.5rem;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            overflow: hidden;
+            border: 4px solid white;
+        }
+        .swipe-right { transform: translateX(120%) rotate(15deg); opacity: 0; }
+        .swipe-left { transform: translateX(-120%) rotate(-15deg); opacity: 0; }
+        
+        /* Con dấu Match / Reject */
+        .stamp {
+            position: absolute;
+            top: 40px;
+            font-size: 3rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            border: 6px solid;
+            border-radius: 10px;
+            padding: 5px 20px;
+            opacity: 0;
+            z-index: 20;
+            transition: opacity 0.3s;
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .stamp-match { color: #22c55e; border-color: #22c55e; right: 40px; transform: rotate(-15deg); }
+        .stamp-reject { color: #ef4444; border-color: #ef4444; left: 40px; transform: rotate(15deg); }
+        
+        /* Hiệu ứng đồng hồ */
+        .timer-glow { animation: pulse-red 1s infinite; color: #ef4444; }
+        @keyframes pulse-red {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); text-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
+            100% { transform: scale(1); }
+        }
+
+        .hidden-start { display: none !important; }
+    </style>
+</head>
+<body class="h-screen w-screen flex flex-col relative">
+
+    <!-- START SCREEN -->
+    <div id="start-screen" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-md">
+        <h1 class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-8 drop-shadow-sm">
+            AI MATCHMAKER
+        </h1>
+        <p class="text-xl text-gray-600 mb-8 max-w-2xl text-center font-medium">
+            Luật chơi: 2 Đội. 30s đọc hồ sơ - 45s thuyết phục. <br>Hãy dùng đúng từ vựng AI để ghép đôi thành công!
+        </p>
+        <button onclick="startGame()" class="px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl font-bold text-3xl shadow-xl transition transform hover:scale-105">
+            ▶ BẮT ĐẦU TRÒ CHƠI
+        </button>
+    </div>
+
+    <!-- Nút Fullscreen -->
+    <button onclick="toggleFullScreen()" class="absolute top-4 right-4 z-40 bg-white/50 hover:bg-white text-gray-700 p-3 rounded-full shadow transition backdrop-blur-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+        </svg>
+    </button>
+
+    <!-- BẢNG ĐIỂM (Thu nhỏ, đặt ở góc trái trên cùng) -->
+    <div id="score-container" class="absolute top-6 left-6 z-40 flex gap-4 hidden-start">
+        <div id="team1-box" class="bg-white rounded-2xl p-3 shadow-md border-4 border-blue-400 text-center transform transition duration-300 min-w-[100px]">
+            <h3 class="text-sm font-bold text-blue-600 mb-1">TEAM 1</h3>
+            <div id="score-team1" class="text-4xl font-black text-gray-800 leading-none">0</div>
+        </div>
+        
+        <div id="team2-box" class="bg-white rounded-2xl p-3 shadow-md border-4 border-transparent opacity-60 text-center transform transition duration-300 min-w-[100px]">
+            <h3 class="text-sm font-bold text-purple-600 mb-1">TEAM 2</h3>
+            <div id="score-team2" class="text-4xl font-black text-gray-800 leading-none">0</div>
+        </div>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div id="game-area" class="w-full h-screen flex items-center justify-center gap-12 hidden-start relative px-10">
+        
+        <!-- CỘT GIỮA: ĐỒNG HỒ & KHUNG THẺ -->
+        <div class="flex flex-col items-center justify-center relative">
+            
+            <!-- Đồng hồ -->
+            <div id="timer-display" class="text-7xl font-mono font-black text-gray-800 mb-6 flex items-center justify-center transition-all duration-300">
+                00:00
+            </div>
+
+            <!-- Khung Card Ngang -->
+            <div class="card-container">
+                <div id="main-card" class="tinder-card">
+                    <div id="stamp-match" class="stamp stamp-match">MATCH!</div>
+                    <div id="stamp-reject" class="stamp stamp-reject">REJECT!</div>
+                    
+                    <!-- Nửa Trái: Ảnh -->
+                    <div class="w-2/5 h-full relative border-r border-gray-200 bg-gray-100 flex-shrink-0">
+                        <img id="profile-img" class="w-full h-full object-cover" src="" alt="Profile Photo">
+                    </div>
+                    
+                    <!-- Nửa Phải: Nội dung Bio -->
+                    <div class="w-3/5 h-full flex flex-col bg-white">
+                        <div class="px-8 py-5 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-blue-50 to-purple-50">
+                            <h2 id="profile-name" class="text-3xl font-bold text-gray-800 tracking-tight">Name</h2>
+                            <span id="profile-icon" class="text-5xl drop-shadow-sm">🤓</span>
+                        </div>
+                        
+                        <div class="p-8 flex-1 flex flex-col justify-center">
+                            <h3 class="text-sm font-bold text-blue-500 mb-4 uppercase tracking-widest flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Bio / Vấn đề
+                            </h3>
+                            <p id="profile-bio" class="text-2xl leading-relaxed text-gray-700 italic">
+                                "Bio description goes here..."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CỘT PHẢI: ĐIỀU KHIỂN CỦA GIÁO VIÊN -->
+        <div class="w-[280px] flex flex-col gap-4 bg-white/60 p-5 rounded-3xl shadow-sm border border-white backdrop-blur-sm">
+            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest text-center mb-1">Teacher Controls</h4>
+            
+            <button onclick="startTimer(30)" class="w-full py-4 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-xl font-bold text-xl shadow-sm transition flex justify-center items-center gap-2">
+                ⏱️ 30s Prep
+            </button>
+            <button onclick="startTimer(45)" class="w-full py-4 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 rounded-xl font-bold text-xl shadow-sm transition flex justify-center items-center gap-2 mb-2">
+                🗣️ 45s Speak
+            </button>
+            
+            <button onclick="handleSwipe('right')" class="w-full py-4 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold text-xl shadow-md transition transform hover:-translate-y-1">
+                💚 MATCH (+1đ)
+            </button>
+            <button onclick="handleSwipe('left')" class="w-full py-4 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-xl shadow-md transition transform hover:-translate-y-1 mb-2">
+                ❌ REJECT
+            </button>
+            
+            <button onclick="nextProfile()" class="w-full py-4 bg-gray-800 hover:bg-gray-900 text-white rounded-xl font-bold text-xl shadow-md transition flex justify-center items-center gap-2">
+                Next Profile ⏭️
+            </button>
+        </div>
+        
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="audio-tick" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" loop></audio>
+    <audio id="audio-match" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
+    <audio id="audio-reject" src="https://assets.mixkit.co/active_storage/sfx/2942/2942-preview.mp3"></audio>
+
+    <script>
+        const profiles = [
+            {
+                name: "Mike, 16", 
+                icon: "🧪",
+                gender: "male",
+                img: "https://raw.githubusercontent.com/snaplanguages/Snap/9e419ff4ad2177aa3870deb120419c5a0a5bd0c3/docs/lessons/Profile%201.jpg", 
+                bio: "I love Physics and Chemistry experiments but I'm terrified of getting burned. I also want to explore tropical rainforests but have no travel budget."
+            },
+            {
+                name: "Sarah (Israel)", 
+                icon: "📐",
+                gender: "female",
+                img: "https://raw.githubusercontent.com/snaplanguages/Snap/9e419ff4ad2177aa3870deb120419c5a0a5bd0c3/docs/lessons/Profile%202.jpg", 
+                bio: "Preparing for advanced Physics. Sometimes I learn fast, sometimes I miss basic concepts. I need to learn at my own speed and find my knowledge gaps."
+            },
+            {
+                name: "David, 17", 
+                icon: "🦉",
+                gender: "male",
+                img: "https://raw.githubusercontent.com/snaplanguages/Snap/9e419ff4ad2177aa3870deb120419c5a0a5bd0c3/docs/lessons/Profile%203.jpg", 
+                bio: "I do homework at 2 AM and get stuck. I can't ask my teachers then. I need someone to explain concepts to me 24/7."
+            },
+            {
+                name: "Anna (Singapore)", 
+                icon: "📁",
+                gender: "female",
+                img: "https://raw.githubusercontent.com/snaplanguages/Snap/9e419ff4ad2177aa3870deb120419c5a0a5bd0c3/docs/lessons/Profile%204.jpg", 
+                bio: "Applying to university next year. My qualifications, skills, and work experiences are a mess. I need a place to sort and showcase them."
+            }
+        ];
+
+        let currentIndex = 0;
+        let timerInterval;
+        let ttsTimeout;
+        
+        let currentTeam = 1;
+        let scores = { 1: 0, 2: 0 };
+
+        const card = document.getElementById('main-card');
+        const timerDisplay = document.getElementById('timer-display');
+        const audioTick = document.getElementById('audio-tick');
+        const audioMatch = document.getElementById('audio-match');
+        const audioReject = document.getElementById('audio-reject');
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Lỗi fullscreen: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('score-container').classList.remove('hidden-start');
+            document.getElementById('game-area').classList.remove('hidden-start');
+            
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.getVoices(); 
+            }
+            
+            updateTeamUI();
+            loadProfile(0);
+        }
+
+        function updateTeamUI() {
+            const t1Box = document.getElementById('team1-box');
+            const t2Box = document.getElementById('team2-box');
+
+            if (currentTeam === 1) {
+                t1Box.classList.remove('opacity-60', 'border-transparent');
+                t1Box.classList.add('border-blue-400', 'scale-105');
+                t2Box.classList.add('opacity-60', 'border-transparent');
+                t2Box.classList.remove('border-purple-400', 'scale-105');
+            } else {
+                t2Box.classList.remove('opacity-60', 'border-transparent');
+                t2Box.classList.add('border-purple-400', 'scale-105');
+                t1Box.classList.add('opacity-60', 'border-transparent');
+                t1Box.classList.remove('border-blue-400', 'scale-105');
+            }
+        }
+
+        function speakBioText(text, gender) {
+            if (!('speechSynthesis' in window)) return;
+            
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            
+            if (gender === 'female') {
+                utterance.pitch = 1.4;
+                utterance.rate = 0.95;
+            } else {
+                utterance.pitch = 0.8;
+                utterance.rate = 0.95;
+            }
+            
+            const voices = window.speechSynthesis.getVoices();
+            let selectedVoice = null;
+            
+            if (gender === 'female') {
+                selectedVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha')));
+            } else {
+                selectedVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Alex')));
+            }
+            
+            if (selectedVoice) {
+                utterance.voice = selectedVoice;
+            }
+            
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function loadProfile(index) {
+            clearTimeout(ttsTimeout);
+            window.speechSynthesis.cancel();
+            timerDisplay.innerText = "00:00";
+            timerDisplay.classList.remove('timer-glow');
+
+            if(index >= profiles.length) {
+                document.getElementById('profile-name').innerText = "Game Over!";
+                document.getElementById('profile-bio').innerText = `Kết quả chung cuộc: Team 1 (${scores[1]} điểm) - Team 2 (${scores[2]} điểm)`;
+                document.getElementById('profile-icon').innerText = "🏆";
+                document.getElementById('profile-img').src = "https://placehold.co/600x800/fbbf24/ffffff?text=Winner!";
+                return;
+            }
+            
+            const p = profiles[index];
+            document.getElementById('profile-name').innerText = p.name;
+            document.getElementById('profile-bio').innerText = `"${p.bio}"`;
+            document.getElementById('profile-icon').innerText = p.icon;
+            document.getElementById('profile-img').src = p.img;
+            
+            card.className = "tinder-card";
+            document.getElementById('stamp-match').style.opacity = '0';
+            document.getElementById('stamp-reject').style.opacity = '0';
+
+            ttsTimeout = setTimeout(() => {
+                speakBioText(p.bio, p.gender);
+            }, 2000);
+        }
+
+        function startTimer(seconds) {
+            clearInterval(timerInterval);
+            timerDisplay.classList.remove('timer-glow');
+            
+            let timeLeft = seconds;
+            audioTick.currentTime = 0;
+            audioTick.play().catch(e => console.log("Audio play blocked", e));
+
+            updateTimerDisplay(timeLeft);
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay(timeLeft);
+
+                if (timeLeft <= 10 && timeLeft > 0) {
+                    timerDisplay.classList.add('timer-glow');
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    audioTick.pause();
+                    timerDisplay.innerText = "TIME'S UP!";
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay(seconds) {
+            const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+            const s = (seconds % 60).toString().padStart(2, '0');
+            timerDisplay.innerText = `${m}:${s}`;
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            timerDisplay.classList.remove('timer-glow');
+            audioTick.pause();
+        }
+
+        function handleSwipe(direction) {
+            if(currentIndex >= profiles.length) return;
+            
+            stopTimer();
+            window.speechSynthesis.cancel(); 
+            
+            if (direction === 'right') {
+                scores[currentTeam]++;
+                document.getElementById(`score-team${currentTeam}`).innerText = scores[currentTeam];
+                
+                document.getElementById('stamp-match').style.opacity = '1';
+                card.classList.add('swipe-right');
+                audioMatch.currentTime = 0;
+                audioMatch.play();
+                triggerConfetti();
+            } else {
+                document.getElementById('stamp-reject').style.opacity = '1';
+                card.classList.add('swipe-left');
+                audioReject.currentTime = 0;
+                audioReject.play();
+            }
+        }
+
+        function nextProfile() {
+            if(currentIndex < profiles.length) {
+                currentIndex++;
+                currentTeam = currentTeam === 1 ? 2 : 1;
+                updateTeamUI();
+                loadProfile(currentIndex);
+            }
+        }
+
+        function triggerConfetti() {
+            var duration = 2.5 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5, angle: 60, spread: 55, origin: { x: 0 },
+                    colors: ['#22c55e', '#3b82f6', '#eab308']
+                });
+                confetti({
+                    particleCount: 5, angle: 120, spread: 55, origin: { x: 1 },
+                    colors: ['#22c55e', '#3b82f6', '#eab308']
+                });
+                if (Date.now() < end) requestAnimationFrame(frame);
+            }());
+        }
+    </script>
+</body>
+</html>
