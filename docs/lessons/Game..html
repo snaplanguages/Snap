@@ -35,7 +35,6 @@
 
         .card-container {
             perspective: 1000px;
-            /* TĂNG KÍCH THƯỚC TỔNG THỂ CỦA THẺ */
             width: 880px; 
             height: 480px;
         }
@@ -261,10 +260,9 @@
         
     </div>
 
-    <!-- Audio Elements -->
-    <audio id="audio-tick" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" loop></audio>
-    <audio id="audio-match" src="https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"></audio>
-    <audio id="audio-reject" src="https://assets.mixkit.co/active_storage/sfx/2942/2942-preview.mp3"></audio>
+    <!-- Audio Elements: Đã gỡ bỏ đồng hồ tick, cập nhật link âm thanh Match/Reject đáng tin cậy -->
+    <audio id="audio-match" src="https://res.cloudinary.com/dxfq3iotg/video/upload/v1557233524/success.mp3"></audio>
+    <audio id="audio-reject" src="https://res.cloudinary.com/dxfq3iotg/video/upload/v1557233574/error.mp3"></audio>
 
     <script>
         const profiles = [
@@ -314,10 +312,12 @@
         
         let activeTeam = null;
         let scores = { 1: 400, 2: 400 };
+        
+        // Biến khóa điểm: Tránh cộng/trừ lố nhiều lần trên 1 thẻ
+        let hasSwiped = false;
 
         const card = document.getElementById('main-card');
         const timerDisplay = document.getElementById('timer-display');
-        const audioTick = document.getElementById('audio-tick');
         const audioMatch = document.getElementById('audio-match');
         const audioReject = document.getElementById('audio-reject');
 
@@ -433,10 +433,11 @@
         function loadProfile(index) {
             clearTimeout(ttsTimeout);
             window.speechSynthesis.cancel();
+            stopTimer(); // Đảm bảo đồng hồ dừng khi chuyển thẻ
             timerDisplay.innerText = "00:00";
-            timerDisplay.classList.remove('timer-glow');
             
             deselectTeams();
+            hasSwiped = false; // Mở khóa cho phép cộng/trừ điểm ở thẻ mới
 
             // Nếu đã qua 4 thẻ đầu
             if (index === 4) {
@@ -514,9 +515,6 @@
             timerDisplay.classList.remove('timer-glow');
             
             let timeLeft = seconds;
-            audioTick.currentTime = 0;
-            audioTick.play().catch(e => console.log("Audio play blocked", e));
-
             updateTimerDisplay(timeLeft);
 
             timerInterval = setInterval(() => {
@@ -529,7 +527,6 @@
 
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    audioTick.pause();
                     timerDisplay.innerText = "TIME'S UP!";
                 }
             }, 1000);
@@ -544,7 +541,6 @@
         function stopTimer() {
             clearInterval(timerInterval);
             timerDisplay.classList.remove('timer-glow');
-            audioTick.pause();
         }
 
         function updateScoreAnimation(teamId) {
@@ -560,9 +556,17 @@
                 showCustomAlert("Please select TEAM 1 or TEAM 2 first!");
                 return;
             }
+
+            // Ngăn chặn việc cộng/trừ lố điểm nếu bấm nhiều lần
+            if(hasSwiped) {
+                return; 
+            }
             
             stopTimer();
             window.speechSynthesis.cancel(); 
+            
+            // Đánh dấu là đã thao tác trên thẻ này
+            hasSwiped = true; 
             
             if (direction === 'right') {
                 scores[activeTeam] += 50;
@@ -571,8 +575,11 @@
                 
                 document.getElementById('stamp-match').style.opacity = '1';
                 card.classList.add('swipe-right');
+                
+                // Play Match sound
                 audioMatch.currentTime = 0;
-                audioMatch.play();
+                audioMatch.play().catch(e => console.log("Audio block:", e));
+                
                 triggerConfetti(false);
             } else {
                 scores[activeTeam] -= 20;
@@ -581,8 +588,10 @@
 
                 document.getElementById('stamp-reject').style.opacity = '1';
                 card.classList.add('swipe-left');
+                
+                // Play Reject sound
                 audioReject.currentTime = 0;
-                audioReject.play();
+                audioReject.play().catch(e => console.log("Audio block:", e));
             }
         }
 
