@@ -3,31 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Matchmaker Class Game - 2 Teams Edition</title>
+    <title>AI Matchmaker - Light Tech Edition</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@700&display=swap');
+
         body {
-            background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
-            color: #1e293b;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Light tech background */
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(210, 100%, 90%, 0.6) 0, transparent 50%), 
+                radial-gradient(at 100% 100%, hsla(270, 100%, 92%, 0.6) 0, transparent 50%);
+            color: #0f172a;
+            font-family: 'Inter', sans-serif;
             overflow: hidden;
             margin: 0;
             padding: 0;
         }
         
-        /* Khung thẻ theo chiều ngang */
+        /* Glassmorphism for Light Mode */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
         .card-container {
             perspective: 1000px;
-            width: 780px; 
-            height: 420px;
+            /* TĂNG KÍCH THƯỚC TỔNG THỂ CỦA THẺ */
+            width: 880px; 
+            height: 480px;
         }
+
         .tinder-card {
             transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.5s ease-out;
             box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
-            background: white;
+            background: #ffffff;
             border-radius: 1.5rem;
             position: absolute;
             width: 100%;
@@ -35,111 +51,167 @@
             display: flex;
             flex-direction: row;
             overflow: hidden;
-            border: 4px solid white;
+            border: 1px solid #e2e8f0;
         }
-        .swipe-right { transform: translateX(120%) rotate(15deg); opacity: 0; }
-        .swipe-left { transform: translateX(-120%) rotate(-15deg); opacity: 0; }
+
+        .swipe-right { transform: translateX(120%) rotate(10deg); opacity: 0; }
+        .swipe-left { transform: translateX(-120%) rotate(-10deg); opacity: 0; }
         
-        /* Con dấu Match / Reject */
         .stamp {
             position: absolute;
             top: 40px;
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 900;
             text-transform: uppercase;
             border: 6px solid;
             border-radius: 10px;
-            padding: 5px 20px;
+            padding: 10px 25px;
             opacity: 0;
             z-index: 20;
             transition: opacity 0.3s;
-            background: rgba(255,255,255,0.9);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            letter-spacing: 2px;
         }
-        .stamp-match { color: #22c55e; border-color: #22c55e; right: 40px; transform: rotate(-15deg); }
+        .stamp-match { color: #10b981; border-color: #10b981; right: 40px; transform: rotate(-15deg); }
         .stamp-reject { color: #ef4444; border-color: #ef4444; left: 40px; transform: rotate(15deg); }
         
-        /* Hiệu ứng đồng hồ */
         .timer-glow { animation: pulse-red 1s infinite; color: #ef4444; }
         @keyframes pulse-red {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); text-shadow: 0 0 15px rgba(239, 68, 68, 0.5); }
-            100% { transform: scale(1); }
+            0% { transform: scale(1); text-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+            50% { transform: scale(1.05); text-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+            100% { transform: scale(1); text-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
         }
 
         .hidden-start { display: none !important; }
+
+        .team-active {
+            box-shadow: 0 0 0 4px currentColor;
+            transform: scale(1.05);
+            background: #ffffff;
+            opacity: 1 !important;
+        }
+        
+        /* Custom Toast Alert Animation */
+        .toast-show {
+            transform: translate(-50%, 0) !important;
+            opacity: 1 !important;
+        }
+
+        /* Ẩn thanh cuộn nếu chữ quá dài nhưng vẫn cho phép cuộn */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
     </style>
 </head>
 <body class="h-screen w-screen flex flex-col relative">
 
+    <!-- CUSTOM TOAST NOTIFICATION -->
+    <div id="custom-toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 z-[100] transition-all duration-300 flex items-center gap-3 bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-xl shadow-lg font-bold">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+        <span id="toast-message">ATTENTION: Please select TEAM 1 or TEAM 2 first!</span>
+    </div>
+
     <!-- START SCREEN -->
-    <div id="start-screen" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-md">
-        <h1 class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-8 drop-shadow-sm">
+    <div id="start-screen" class="absolute inset-0 z-50 flex flex-col items-center justify-center bg-white/90 backdrop-blur-md">
+        <h1 class="text-7xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 mb-6 drop-shadow-sm tracking-tight">
             AI MATCHMAKER
         </h1>
-        <p class="text-xl text-gray-600 mb-8 max-w-2xl text-center font-medium">
-            Luật chơi: 2 Đội. 30s đọc hồ sơ - 45s thuyết phục. <br>Hãy dùng đúng từ vựng AI để ghép đôi thành công!
-        </p>
-        <button onclick="startGame()" class="px-10 py-5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl font-bold text-3xl shadow-xl transition transform hover:scale-105">
-            ▶ BẮT ĐẦU TRÒ CHƠI
+        <div class="glass-panel p-8 rounded-2xl max-w-2xl text-center mb-10 border border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 uppercase tracking-widest border-b border-gray-200 pb-4">Mission Briefing</h2>
+            <ul class="text-lg text-gray-600 text-left space-y-3 font-medium">
+                <li><span class="text-blue-600 font-bold">⚡ Starting points:</span> 400 for both teams.</li>
+                <li><span class="text-blue-600 font-bold">✋ Fastest hand:</span> Gets the right to speak.</li>
+                <li><span class="text-blue-600 font-bold">⏱️ Time limit:</span> 30s Analyze -> 45s Persuade.</li>
+                <li><span class="text-green-600 font-bold">✔ Match:</span> +50 Points.</li>
+                <li><span class="text-red-600 font-bold">✖ Reject:</span> -20 Points.</li>
+            </ul>
+        </div>
+        <button onclick="startGame()" class="px-12 py-5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl font-bold text-2xl shadow-xl transition-all transform hover:scale-105 uppercase tracking-wider">
+            Initialize System
         </button>
     </div>
 
-    <!-- Nút Fullscreen -->
-    <button onclick="toggleFullScreen()" class="absolute top-4 right-4 z-40 bg-white/50 hover:bg-white text-gray-700 p-3 rounded-full shadow transition backdrop-blur-sm">
+    <!-- END GAME SCREEN -->
+    <div id="end-screen" class="absolute inset-0 z-[60] flex flex-col items-center justify-center bg-white/95 backdrop-blur-xl hidden-start opacity-0 transition-opacity duration-700">
+        <h1 class="text-3xl font-bold text-gray-500 tracking-[0.3em] uppercase mb-2">Simulation Complete</h1>
+        <h2 id="winner-title" class="text-7xl font-black mb-12 drop-shadow-md">WINNER</h2>
+        
+        <div class="flex gap-16 items-center">
+            <div id="end-team1" class="text-center p-8 rounded-3xl transition-transform duration-500">
+                <p class="text-xl font-bold text-gray-500 tracking-widest mb-2">TEAM 1</p>
+                <p id="final-score-1" class="text-7xl font-['JetBrains_Mono'] font-black text-blue-600">400</p>
+            </div>
+            
+            <div class="text-4xl font-bold text-gray-300">VS</div>
+            
+            <div id="end-team2" class="text-center p-8 rounded-3xl transition-transform duration-500">
+                <p class="text-xl font-bold text-gray-500 tracking-widest mb-2">TEAM 2</p>
+                <p id="final-score-2" class="text-7xl font-['JetBrains_Mono'] font-black text-purple-600">400</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Button -->
+    <button onclick="toggleFullScreen()" class="absolute top-4 right-4 z-40 glass-panel hover:bg-gray-100 text-gray-600 p-3 rounded-full transition shadow-sm">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
         </svg>
     </button>
 
-    <!-- BẢNG ĐIỂM (Thu nhỏ, đặt ở góc trái trên cùng) -->
-    <div id="score-container" class="absolute top-6 left-6 z-40 flex gap-4 hidden-start">
-        <div id="team1-box" class="bg-white rounded-2xl p-3 shadow-md border-4 border-blue-400 text-center transform transition duration-300 min-w-[100px]">
-            <h3 class="text-sm font-bold text-blue-600 mb-1">TEAM 1</h3>
-            <div id="score-team1" class="text-4xl font-black text-gray-800 leading-none">0</div>
+    <!-- SCOREBOARD -->
+    <div id="score-container" class="absolute top-8 left-8 z-40 flex gap-6 hidden-start">
+        <div id="team1-box" class="glass-panel rounded-xl p-4 border border-blue-200 text-blue-600 text-center transition-all duration-300 min-w-[140px] opacity-60">
+            <h3 class="text-sm font-bold uppercase tracking-widest mb-1 text-gray-500">TEAM 1</h3>
+            <div id="score-team1" class="text-5xl font-black font-['JetBrains_Mono'] leading-none">400</div>
         </div>
         
-        <div id="team2-box" class="bg-white rounded-2xl p-3 shadow-md border-4 border-transparent opacity-60 text-center transform transition duration-300 min-w-[100px]">
-            <h3 class="text-sm font-bold text-purple-600 mb-1">TEAM 2</h3>
-            <div id="score-team2" class="text-4xl font-black text-gray-800 leading-none">0</div>
+        <div id="team2-box" class="glass-panel rounded-xl p-4 border border-purple-200 text-purple-600 text-center transition-all duration-300 min-w-[140px] opacity-60">
+            <h3 class="text-sm font-bold uppercase tracking-widest mb-1 text-gray-500">TEAM 2</h3>
+            <div id="score-team2" class="text-5xl font-black font-['JetBrains_Mono'] leading-none">400</div>
         </div>
     </div>
 
-    <!-- MAIN LAYOUT -->
-    <div id="game-area" class="w-full h-screen flex items-center justify-center gap-12 hidden-start relative px-10">
+    <!-- MAIN GAME AREA -->
+    <div id="game-area" class="w-full h-screen flex items-center justify-center gap-10 hidden-start relative px-10">
         
-        <!-- CỘT GIỮA: ĐỒNG HỒ & KHUNG THẺ -->
-        <div class="flex flex-col items-center justify-center relative">
+        <!-- CENTER: TIMER & CARD -->
+        <div class="flex flex-col items-center justify-center relative mt-12">
             
-            <!-- Đồng hồ -->
-            <div id="timer-display" class="text-7xl font-mono font-black text-gray-800 mb-6 flex items-center justify-center transition-all duration-300">
+            <!-- Timer -->
+            <div id="timer-display" class="text-7xl font-['JetBrains_Mono'] font-black text-gray-800 mb-8 flex items-center justify-center transition-all duration-300 tracking-wider">
                 00:00
             </div>
 
-            <!-- Khung Card Ngang -->
+            <!-- Horizontal Card -->
             <div class="card-container">
                 <div id="main-card" class="tinder-card">
                     <div id="stamp-match" class="stamp stamp-match">MATCH!</div>
                     <div id="stamp-reject" class="stamp stamp-reject">REJECT!</div>
                     
-                    <!-- Nửa Trái: Ảnh -->
-                    <div class="w-2/5 h-full relative border-r border-gray-200 bg-gray-100 flex-shrink-0">
+                    <!-- Left: Image (Giờ chiếm 50% thẻ) -->
+                    <div class="w-1/2 h-full relative border-r border-gray-200 bg-gray-100 flex-shrink-0">
                         <img id="profile-img" class="w-full h-full object-cover" src="" alt="Profile Photo">
                     </div>
                     
-                    <!-- Nửa Phải: Nội dung Bio -->
-                    <div class="w-3/5 h-full flex flex-col bg-white">
-                        <div class="px-8 py-5 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-blue-50 to-purple-50">
-                            <h2 id="profile-name" class="text-3xl font-bold text-gray-800 tracking-tight">Name</h2>
-                            <span id="profile-icon" class="text-5xl drop-shadow-sm">🤓</span>
+                    <!-- Right: Bio (Giờ chiếm 50% thẻ) -->
+                    <div class="w-1/2 h-full flex flex-col bg-white">
+                        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/80">
+                            <h2 id="profile-name" class="text-2xl font-bold text-gray-900 tracking-tight">Name</h2>
+                            <span id="profile-icon" class="text-4xl drop-shadow-sm">🤓</span>
                         </div>
                         
-                        <div class="p-8 flex-1 flex flex-col justify-center">
-                            <h3 class="text-sm font-bold text-blue-500 mb-4 uppercase tracking-widest flex items-center gap-2">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                Bio / Vấn đề
+                        <!-- Vùng chứa Bio với khả năng cuộn ẩn (trường hợp chữ quá dài) -->
+                        <div class="p-6 flex-1 flex flex-col justify-center overflow-y-auto no-scrollbar">
+                            <h3 class="text-xs font-bold text-blue-500 mb-3 uppercase tracking-[0.2em] flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                Target Bio / Problem
                             </h3>
-                            <p id="profile-bio" class="text-2xl leading-relaxed text-gray-700 italic">
+                            <p id="profile-bio" class="text-lg leading-relaxed text-gray-700 italic font-light">
                                 "Bio description goes here..."
                             </p>
                         </div>
@@ -148,26 +220,42 @@
             </div>
         </div>
 
-        <!-- CỘT PHẢI: ĐIỀU KHIỂN CỦA GIÁO VIÊN -->
-        <div class="w-[280px] flex flex-col gap-4 bg-white/60 p-5 rounded-3xl shadow-sm border border-white backdrop-blur-sm">
-            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest text-center mb-1">Teacher Controls</h4>
+        <!-- RIGHT: TEACHER CONTROLS -->
+        <div class="w-[320px] flex flex-col gap-5 glass-panel p-6 rounded-2xl mt-12">
             
-            <button onclick="startTimer(30)" class="w-full py-4 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-xl font-bold text-xl shadow-sm transition flex justify-center items-center gap-2">
-                ⏱️ 30s Prep
-            </button>
-            <button onclick="startTimer(45)" class="w-full py-4 bg-yellow-100 hover:bg-yellow-200 text-yellow-800 rounded-xl font-bold text-xl shadow-sm transition flex justify-center items-center gap-2 mb-2">
-                🗣️ 45s Speak
-            </button>
+            <!-- Team Selection -->
+            <div class="bg-white/50 p-4 rounded-xl border border-gray-200">
+                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest text-center mb-3">1. Select Answering Team</h4>
+                <div class="flex gap-2">
+                    <button onclick="selectTeam(1)" id="btn-sel-t1" class="flex-1 py-3 bg-white hover:bg-blue-50 text-blue-600 border border-blue-200 rounded-lg font-bold text-sm transition">TEAM 1</button>
+                    <button onclick="selectTeam(2)" id="btn-sel-t2" class="flex-1 py-3 bg-white hover:bg-purple-50 text-purple-600 border border-purple-200 rounded-lg font-bold text-sm transition">TEAM 2</button>
+                </div>
+            </div>
+
+            <!-- Timers -->
+            <div>
+                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest text-center mb-2">2. Timers</h4>
+                <div class="flex gap-2">
+                    <button onclick="startTimer(30)" class="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-bold text-sm transition shadow-sm">⏱️ 30s Prep</button>
+                    <button onclick="startTimer(45)" class="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-bold text-sm transition shadow-sm">🗣️ 45s Speak</button>
+                </div>
+            </div>
             
-            <button onclick="handleSwipe('right')" class="w-full py-4 bg-green-500 hover:bg-green-600 text-white rounded-xl font-bold text-xl shadow-md transition transform hover:-translate-y-1">
-                💚 MATCH (+1đ)
-            </button>
-            <button onclick="handleSwipe('left')" class="w-full py-4 bg-red-500 hover:bg-red-600 text-white rounded-xl font-bold text-xl shadow-md transition transform hover:-translate-y-1 mb-2">
-                ❌ REJECT
-            </button>
+            <!-- Actions -->
+            <div>
+                <h4 class="text-xs font-bold text-gray-500 uppercase tracking-widest text-center mb-2">3. Evaluate</h4>
+                <button onclick="handleSwipe('right')" class="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl font-bold text-xl shadow-md transition transform hover:-translate-y-1 mb-3">
+                    ✔ MATCH (+50)
+                </button>
+                <button onclick="handleSwipe('left')" class="w-full py-4 bg-rose-500 hover:bg-rose-600 text-white rounded-xl font-bold text-xl shadow-md transition transform hover:-translate-y-1">
+                    ✖ REJECT (-20)
+                </button>
+            </div>
+
+            <hr class="border-gray-200 my-1">
             
-            <button onclick="nextProfile()" class="w-full py-4 bg-gray-800 hover:bg-gray-900 text-white rounded-xl font-bold text-xl shadow-md transition flex justify-center items-center gap-2">
-                Next Profile ⏭️
+            <button onclick="nextProfile()" class="w-full py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold text-lg border border-gray-300 transition flex justify-center items-center gap-2">
+                Next Target ⏭️
             </button>
         </div>
         
@@ -210,12 +298,22 @@
             }
         ];
 
+        // Dữ liệu vòng Tie-breaker
+        const tieBreakerProfile = {
+            name: "Principal Harris", 
+            icon: "🏫",
+            gender: "male",
+            img: "https://raw.githubusercontent.com/snaplanguages/Snap/9972a07616f201a4aaf866a04ae0eadff007fecf/docs/lessons/Profile%205.jpg", 
+            bio: "My school is in trouble. First, students are very passive; they don't interact or share ideas with each other when doing group projects. Second, my teachers are exhausted because students keep asking them to explain basic concepts at midnight. I need ONE technology that solves BOTH problems and creates a friendly environment."
+        };
+
         let currentIndex = 0;
         let timerInterval;
         let ttsTimeout;
+        let toastTimeout;
         
-        let currentTeam = 1;
-        let scores = { 1: 0, 2: 0 };
+        let activeTeam = null;
+        let scores = { 1: 400, 2: 400 };
 
         const card = document.getElementById('main-card');
         const timerDisplay = document.getElementById('timer-display');
@@ -226,13 +324,31 @@
         function toggleFullScreen() {
             if (!document.fullscreenElement) {
                 document.documentElement.requestFullscreen().catch(err => {
-                    console.log(`Lỗi fullscreen: ${err.message}`);
+                    console.log(`Fullscreen error: ${err.message}`);
                 });
             } else {
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
                 }
             }
+        }
+
+        function showCustomAlert(msg, type = "error") {
+            const toast = document.getElementById('custom-toast');
+            document.getElementById('toast-message').innerText = msg;
+            
+            if(type === "warning") {
+                toast.className = "fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 z-[100] transition-all duration-300 flex items-center gap-3 bg-yellow-100 border border-yellow-400 text-yellow-700 px-6 py-4 rounded-xl shadow-lg font-bold";
+            } else {
+                toast.className = "fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 z-[100] transition-all duration-300 flex items-center gap-3 bg-red-100 border border-red-400 text-red-700 px-6 py-4 rounded-xl shadow-lg font-bold";
+            }
+            
+            clearTimeout(toastTimeout);
+            toast.classList.add('toast-show');
+            
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('toast-show');
+            }, 3500);
         }
 
         function startGame() {
@@ -244,25 +360,56 @@
                 window.speechSynthesis.getVoices(); 
             }
             
-            updateTeamUI();
             loadProfile(0);
         }
 
-        function updateTeamUI() {
+        function selectTeam(teamNumber) {
+            activeTeam = teamNumber;
             const t1Box = document.getElementById('team1-box');
             const t2Box = document.getElementById('team2-box');
+            const btn1 = document.getElementById('btn-sel-t1');
+            const btn2 = document.getElementById('btn-sel-t2');
 
-            if (currentTeam === 1) {
-                t1Box.classList.remove('opacity-60', 'border-transparent');
-                t1Box.classList.add('border-blue-400', 'scale-105');
-                t2Box.classList.add('opacity-60', 'border-transparent');
-                t2Box.classList.remove('border-purple-400', 'scale-105');
+            // Reset styles
+            t1Box.classList.remove('team-active', 'opacity-100');
+            t1Box.classList.add('opacity-60');
+            t2Box.classList.remove('team-active', 'opacity-100');
+            t2Box.classList.add('opacity-60');
+            
+            btn1.classList.remove('bg-blue-600', 'text-white');
+            btn1.classList.add('bg-white', 'text-blue-600');
+            btn2.classList.remove('bg-purple-600', 'text-white');
+            btn2.classList.add('bg-white', 'text-purple-600');
+
+            // Apply active styles
+            if (teamNumber === 1) {
+                t1Box.classList.remove('opacity-60');
+                t1Box.classList.add('team-active', 'opacity-100', 'text-blue-600');
+                btn1.classList.remove('bg-white', 'text-blue-600');
+                btn1.classList.add('bg-blue-600', 'text-white');
             } else {
-                t2Box.classList.remove('opacity-60', 'border-transparent');
-                t2Box.classList.add('border-purple-400', 'scale-105');
-                t1Box.classList.add('opacity-60', 'border-transparent');
-                t1Box.classList.remove('border-blue-400', 'scale-105');
+                t2Box.classList.remove('opacity-60');
+                t2Box.classList.add('team-active', 'opacity-100', 'text-purple-600');
+                btn2.classList.remove('bg-white', 'text-purple-600');
+                btn2.classList.add('bg-purple-600', 'text-white');
             }
+        }
+
+        function deselectTeams() {
+            activeTeam = null;
+            document.getElementById('team1-box').classList.add('opacity-60');
+            document.getElementById('team1-box').classList.remove('team-active', 'opacity-100');
+            document.getElementById('team2-box').classList.add('opacity-60');
+            document.getElementById('team2-box').classList.remove('team-active', 'opacity-100');
+            
+            const btn1 = document.getElementById('btn-sel-t1');
+            const btn2 = document.getElementById('btn-sel-t2');
+            
+            btn1.classList.remove('bg-blue-600', 'text-white');
+            btn1.classList.add('bg-white', 'text-blue-600');
+            
+            btn2.classList.remove('bg-purple-600', 'text-white');
+            btn2.classList.add('bg-white', 'text-purple-600');
         }
 
         function speakBioText(text, gender) {
@@ -271,27 +418,15 @@
             window.speechSynthesis.cancel();
             const utterance = new SpeechSynthesisUtterance(text);
             
-            if (gender === 'female') {
-                utterance.pitch = 1.4;
-                utterance.rate = 0.95;
-            } else {
-                utterance.pitch = 0.8;
-                utterance.rate = 0.95;
-            }
+            utterance.pitch = gender === 'female' ? 1.4 : 0.8;
+            utterance.rate = 0.95;
             
             const voices = window.speechSynthesis.getVoices();
-            let selectedVoice = null;
+            let selectedVoice = voices.find(v => v.lang.includes('en') && 
+                (v.name.includes(gender === 'female' ? 'Female' : 'Male') || 
+                 v.name.includes(gender === 'female' ? 'Zira' : 'David')));
             
-            if (gender === 'female') {
-                selectedVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Female') || v.name.includes('Zira') || v.name.includes('Samantha')));
-            } else {
-                selectedVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Male') || v.name.includes('David') || v.name.includes('Alex')));
-            }
-            
-            if (selectedVoice) {
-                utterance.voice = selectedVoice;
-            }
-            
+            if (selectedVoice) utterance.voice = selectedVoice;
             window.speechSynthesis.speak(utterance);
         }
 
@@ -300,20 +435,37 @@
             window.speechSynthesis.cancel();
             timerDisplay.innerText = "00:00";
             timerDisplay.classList.remove('timer-glow');
+            
+            deselectTeams();
 
-            if(index >= profiles.length) {
-                document.getElementById('profile-name').innerText = "Game Over!";
-                document.getElementById('profile-bio').innerText = `Kết quả chung cuộc: Team 1 (${scores[1]} điểm) - Team 2 (${scores[2]} điểm)`;
-                document.getElementById('profile-icon').innerText = "🏆";
-                document.getElementById('profile-img').src = "https://placehold.co/600x800/fbbf24/ffffff?text=Winner!";
+            // Nếu đã qua 4 thẻ đầu
+            if (index === 4) {
+                if (scores[1] === scores[2]) {
+                    showCustomAlert("TIE DETECTED! INITIATING SUDDEN DEATH ROUND! 🚨", "warning");
+                    renderCardData(tieBreakerProfile);
+                    return;
+                } else {
+                    setTimeout(() => { showEndGameScreen(); }, 1000);
+                    return;
+                }
+            } 
+            else if (index > 4) {
+                setTimeout(() => { showEndGameScreen(); }, 1000);
                 return;
             }
             
-            const p = profiles[index];
+            renderCardData(profiles[index]);
+        }
+
+        function renderCardData(p) {
             document.getElementById('profile-name').innerText = p.name;
             document.getElementById('profile-bio').innerText = `"${p.bio}"`;
             document.getElementById('profile-icon').innerText = p.icon;
             document.getElementById('profile-img').src = p.img;
+            
+            // Xóa style và reset scroll của khung chữ
+            const bioContainer = document.querySelector('.overflow-y-auto');
+            if (bioContainer) bioContainer.scrollTop = 0;
             
             card.className = "tinder-card";
             document.getElementById('stamp-match').style.opacity = '0';
@@ -321,7 +473,40 @@
 
             ttsTimeout = setTimeout(() => {
                 speakBioText(p.bio, p.gender);
-            }, 2000);
+            }, 1500);
+        }
+
+        function showEndGameScreen() {
+            const endScreen = document.getElementById('end-screen');
+            const title = document.getElementById('winner-title');
+            const s1 = document.getElementById('final-score-1');
+            const s2 = document.getElementById('final-score-2');
+            const t1Box = document.getElementById('end-team1');
+            const t2Box = document.getElementById('end-team2');
+
+            s1.innerText = scores[1];
+            s2.innerText = scores[2];
+
+            if (scores[1] > scores[2]) {
+                title.innerHTML = '<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-cyan-400">TEAM 1 WINS! 🏆</span>';
+                t1Box.classList.add('bg-blue-50', 'border-4', 'border-blue-400', 'scale-110');
+                t2Box.classList.add('opacity-50');
+            } else if (scores[2] > scores[1]) {
+                title.innerHTML = '<span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">TEAM 2 WINS! 🏆</span>';
+                t2Box.classList.add('bg-purple-50', 'border-4', 'border-purple-400', 'scale-110');
+                t1Box.classList.add('opacity-50');
+            } else {
+                title.innerHTML = '<span class="text-gray-700">IT\'S A TIE! 🤝</span>';
+                t1Box.classList.add('bg-gray-100');
+                t2Box.classList.add('bg-gray-100');
+            }
+
+            endScreen.classList.remove('hidden-start');
+            setTimeout(() => {
+                endScreen.classList.remove('opacity-0');
+            }, 50);
+
+            triggerConfetti(true);
         }
 
         function startTimer(seconds) {
@@ -362,22 +547,38 @@
             audioTick.pause();
         }
 
+        function updateScoreAnimation(teamId) {
+            const scoreElement = document.getElementById(`score-team${teamId}`);
+            scoreElement.classList.add('scale-150');
+            setTimeout(() => scoreElement.classList.remove('scale-150'), 300);
+        }
+
         function handleSwipe(direction) {
-            if(currentIndex >= profiles.length) return;
+            if(currentIndex > profiles.length) return;
+            
+            if(!activeTeam) {
+                showCustomAlert("Please select TEAM 1 or TEAM 2 first!");
+                return;
+            }
             
             stopTimer();
             window.speechSynthesis.cancel(); 
             
             if (direction === 'right') {
-                scores[currentTeam]++;
-                document.getElementById(`score-team${currentTeam}`).innerText = scores[currentTeam];
+                scores[activeTeam] += 50;
+                document.getElementById(`score-team${activeTeam}`).innerText = scores[activeTeam];
+                updateScoreAnimation(activeTeam);
                 
                 document.getElementById('stamp-match').style.opacity = '1';
                 card.classList.add('swipe-right');
                 audioMatch.currentTime = 0;
                 audioMatch.play();
-                triggerConfetti();
+                triggerConfetti(false);
             } else {
+                scores[activeTeam] -= 20;
+                document.getElementById(`score-team${activeTeam}`).innerText = scores[activeTeam];
+                updateScoreAnimation(activeTeam);
+
                 document.getElementById('stamp-reject').style.opacity = '1';
                 card.classList.add('swipe-left');
                 audioReject.currentTime = 0;
@@ -386,26 +587,26 @@
         }
 
         function nextProfile() {
-            if(currentIndex < profiles.length) {
+            if(currentIndex <= profiles.length) {
                 currentIndex++;
-                currentTeam = currentTeam === 1 ? 2 : 1;
-                updateTeamUI();
                 loadProfile(currentIndex);
             }
         }
 
-        function triggerConfetti() {
-            var duration = 2.5 * 1000;
+        function triggerConfetti(isEndGame) {
+            var duration = (isEndGame ? 8 : 2) * 1000;
             var end = Date.now() + duration;
 
             (function frame() {
                 confetti({
-                    particleCount: 5, angle: 60, spread: 55, origin: { x: 0 },
-                    colors: ['#22c55e', '#3b82f6', '#eab308']
+                    particleCount: isEndGame ? 8 : 4, 
+                    angle: 60, spread: 55, origin: { x: 0 },
+                    colors: ['#2563eb', '#9333ea', '#3b82f6', '#d8b4fe']
                 });
                 confetti({
-                    particleCount: 5, angle: 120, spread: 55, origin: { x: 1 },
-                    colors: ['#22c55e', '#3b82f6', '#eab308']
+                    particleCount: isEndGame ? 8 : 4, 
+                    angle: 120, spread: 55, origin: { x: 1 },
+                    colors: ['#2563eb', '#9333ea', '#3b82f6', '#d8b4fe']
                 });
                 if (Date.now() < end) requestAnimationFrame(frame);
             }());
