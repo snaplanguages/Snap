@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mua đồ | SnapChinese</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link href="https://fonts.googleapis.com/css2=family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; }
+        :root {
+            /* Tone màu mới: Amber (Hổ phách) & Orange (Cam) phù hợp bối cảnh mua sắm, cửa hàng */
+            --bg-main: #fefaf0; /* Amber 50 tinh chỉnh nhẹ */
+            --box-bg: #ffffff;
+            --pastel-primary: #fef3c7; /* Amber 100 */
+            --pastel-secondary: #ffedd5; /* Orange 100 */
+            --text-main: #1e293b;
+            --text-pinyin: #ea580c; /* Orange 600 */
+            --highlight: #d97706; /* Amber 600 */
+            --highlight-hover: #b45309; /* Amber 700 */
+            --tile-bg: #f8fafc;
+            --tile-border: #cbd5e1;
+            --tile-border-hover: #fbbf24; /* Amber 400 */
+            --tooltip-bg: #0f172a;
+            --quiz-bg: #f8fafc;
+            --resizer-bg: #cbd5e1;
+            --resizer-hover: #d97706;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--box-bg);
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(217, 119, 6, 0.1);
+            padding: 30px;
+        }
+
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { color: var(--highlight); font-size: 30px; margin: 0 0 8px 0; font-weight: 700; }
+        .header p { font-size: 18px; color: #64748b; margin: 0; font-weight: 500;}
+        .badge { background: #ea580c; color: white; padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 700; vertical-align: middle; margin-left: 10px;}
+
+        /* --- AUDIO & CONTROLS --- */
+        .controls-bar {
+            background: var(--pastel-primary);
+            padding: 15px 25px;
+            border-radius: 16px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            flex-wrap: wrap;
+            border: 2px solid #fde68a;
+        }
+
+        .audio-player audio { height: 44px; outline: none; border-radius: 22px; }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .btn-action {
+            background: var(--highlight); color: white; border: none; padding: 10px 18px;
+            border-radius: 12px; cursor: pointer; font-family: inherit; font-weight: 600;
+            display: flex; align-items: center; gap: 8px; transition: 0.3s;
+            box-shadow: 0 4px 6px rgba(217, 119, 6, 0.25);
+        }
+        .btn-action:hover { background: var(--highlight-hover); transform: translateY(-2px); }
+        .btn-action.off { background: #64748b; box-shadow: none; }
+
+        /* --- READER AREA WITH DRAGGABLE RESIZER --- */
+        .reader-wrapper { display: flex; margin-bottom: 30px; align-items: stretch; }
+        .column { padding: 25px; background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; overflow-y: auto; max-height: 800px; }
+        
+        .left-pane { flex: 0 0 55%; min-width: 30%; }
+        .right-pane { flex: 1; min-width: 30%; }
+
+        /* Resizer styles */
+        .resizer {
+            width: 12px;
+            cursor: col-resize;
+            background-color: transparent;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin: 0 10px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+        }
+        .resizer::after {
+            content: "";
+            width: 4px;
+            height: 40px;
+            background-color: var(--resizer-bg);
+            border-radius: 2px;
+            transition: background-color 0.2s;
+        }
+        .resizer:hover::after, .resizer:active::after { background-color: var(--resizer-hover); }
+        .resizer:hover { background-color: #f1f5f9; }
+
+        .chat-container { display: flex; flex-direction: column; gap: 15px; }
+        
+        .dialogue-line { display: flex; align-items: flex-start; gap: 12px; }
+        
+        .speaker-label {
+            background: var(--highlight); color: white; font-weight: 700;
+            width: 36px; height: 36px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; font-size: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-top: 5px;
+        }
+        .speaker-label.b { background: #ea580c; }
+
+        .word-grid { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; }
+
+        .word-box {
+            display: inline-flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative; cursor: pointer; background: var(--tile-bg);
+            border: 2px solid var(--tile-border); border-radius: 12px;
+            padding: 6px 12px; min-width: 50px; transition: all 0.15s ease;
+            box-shadow: 0 4px 0 var(--tile-border); 
+            margin-bottom: 4px;
+            z-index: 1;
+        }
+        
+        .word-box:hover { 
+            border-color: var(--tile-border-hover); 
+            box-shadow: 0 4px 0 var(--tile-border-hover); 
+            transform: translateY(-2px); 
+            background: #fef3c7;
+            z-index: 100;
+        }
+        .word-box:active { transform: translateY(2px); box-shadow: 0 0 0 var(--tile-border-hover); }
+
+        .pinyin { font-size: 13px; color: var(--text-pinyin); font-weight: 700; margin-bottom: 2px; transition: opacity 0.3s; opacity: 0; }
+        .char { font-size: 24px; color: var(--text-main); font-weight: 600; }
+        
+        .punct { font-size: 24px; color: #64748b; font-weight: 700; padding-bottom: 6px; }
+
+        .word-box::after {
+            content: attr(data-tooltip); position: absolute; top: 110%; left: 50%; transform: translateX(-50%) translateY(8px);
+            background: var(--tooltip-bg); color: white; padding: 6px 14px; border-radius: 8px;
+            font-size: 14px; white-space: nowrap; opacity: 0; visibility: hidden; transition: all 0.25s ease; z-index: 10;
+        }
+        .word-box:hover::after { opacity: 1; visibility: visible; transform: translateX(-50%) translateY(0); }
+
+        /* Translation Column */
+        .viet-content { font-size: 16px; color: #475569; line-height: 1.8; filter: blur(6px); transition: filter 0.4s; user-select: none; }
+        .viet-content.show { filter: blur(0); user-select: auto; }
+        .blur-notice { text-align: center; font-size: 14px; color: #ea580c; font-weight: 600; margin-bottom: 15px; }
+        .trans-line { margin-bottom: 12px; padding: 12px; background: #f8fafc; border-radius: 12px; border-left: 4px solid var(--highlight); }
+        .trans-line.b { border-left-color: #ea580c; background: #fff7ed; }
+
+        /* --- GRAMMAR & QUIZ --- */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .info-box { padding: 22px; border-radius: 16px; font-size: 15px; line-height: 1.7; }
+        .grammar-box { background: var(--pastel-primary); border: 1px solid #fde68a; height: fit-content; }
+        .quiz-box { background: var(--quiz-bg); border: 2px solid #cbd5e1; display: flex; flex-direction: column; justify-content: space-between; min-height: 320px; }
+        
+        .info-box h3 { margin-top: 0; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; color: #1e293b; }
+        
+        /* Quiz Carousel */
+        .quiz-container { flex-grow: 1; }
+        .quiz-step { display: none; }
+        .quiz-step.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+
+        .quiz-question { font-weight: 700; margin-bottom: 15px; font-size: 16px; color: var(--highlight); line-height: 1.5; }
+        
+        .quiz-option {
+            background: white; border: 2px solid #e2e8f0; padding: 11px 15px; 
+            border-radius: 12px; margin-bottom: 10px; cursor: pointer; transition: 0.2s; font-weight: 600; color: #334155;
+        }
+        .quiz-option:hover { border-color: var(--highlight); background: var(--pastel-primary); }
+        .quiz-option.correct { background: #10b981 !important; color: white !important; border-color: #10b981 !important; }
+        .quiz-option.wrong { background: #ef4444 !important; color: white !important; border-color: #ef4444 !important; }
+        
+        #quiz-feedback { margin: 10px 0; font-weight: 700; font-size: 14.5px; min-height: 22px; text-align: center; }
+
+        .quiz-nav { display: flex; align-items: center; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 2px dashed #e2e8f0; }
+        .btn-quiz-nav { background: #475569; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px; transition: 0.2s; }
+        .btn-quiz-nav:hover:not(:disabled) { background: var(--highlight); }
+        .btn-quiz-nav:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; }
+        #quiz-progress { font-weight: 700; color: #64748b; font-size: 14px; }
+
+        @media (max-width: 900px) {
+            .reader-wrapper { flex-direction: column; gap: 20px; }
+            .left-pane, .right-pane { width: 100% !important; flex: none !important; max-height: none; }
+            .resizer { display: none; }
+            .info-grid { grid-template-columns: 1fr; }
+            .controls-bar { flex-direction: column; justify-content: center; text-align: center; }
+            .audio-player { justify-content: center; width: 100%; }
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .container { padding: 18px 15px; border-radius: 20px; }
+            .header h1 { font-size: 24px; }
+            .header p { font-size: 15px; }
+            .word-box { padding: 4px 8px; min-width: 40px; border-width: 1px; border-radius: 8px; box-shadow: 0 3px 0 var(--tile-border); }
+            .word-box:hover, .word-box:focus, .word-box:active { box-shadow: 0 3px 0 var(--tile-border-hover); }
+            .char { font-size: 20px; }
+            .pinyin { font-size: 11px; }
+            .punct { font-size: 20px; padding-bottom: 4px; }
+            .speaker-label { width: 30px; height: 30px; font-size: 15px; margin-top: 2px;}
+            .column { padding: 15px; }
+            .chat-container { gap: 12px; }
+            .word-grid { gap: 6px; }
+            .btn-action { padding: 8px 12px; font-size: 13px; flex-grow: 1; justify-content: center;}
+            .btn-group { width: 100%; display: flex; }
+            .word-box::after { font-size: 12px; padding: 5px 8px; top: -120%; transform: translateX(-50%) translateY(8px); }
+        }
+        @media (max-width: 375px) {
+            .char { font-size: 18px; }
+            .word-box { padding: 3px 6px; min-width: 36px;}
+            .btn-action { font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>买东西 <span class="badge">HSK1</span></h1>
+        <p>Mua đồ (Mua sắm)</p>
+    </div>
+
+    <div class="controls-bar">
+        <div class="audio-player">
+            <audio controls>
+                <source src="https://traffic.libsyn.com/secure/learnchinese/1058.mp3" type="audio/mpeg">
+                Trình duyệt không hỗ trợ audio.
+            </audio>
+        </div>
+        <div class="btn-group">
+            <button class="btn-action off" onclick="togglePinyin()" id="btnPinyin">👁️ Hiện Pinyin</button>
+            <button class="btn-action off" onclick="toggleTranslate()" id="btnTranslate">👁️ Hiện Bản Dịch</button>
+        </div>
+    </div>
+
+    <div class="reader-wrapper">
+        <div class="column left-pane" id="leftPane">
+            <div class="chat-container" id="chineseText">
+                
+                <!-- Dòng 1 -->
+                <div class="dialogue-line">
+                    <div class="speaker-label a">A</div>
+                    <div class="word-grid">
+                        <div class="word-box" data-tooltip="Ông / Ngài" onclick="speak(this)"><span class="pinyin">xiān shēng</span><span class="char">先生</span></div>
+                        <span class="punct">，</span>
+                        <div class="word-box" data-tooltip="Bạn / Ông" onclick="speak(this)"><span class="pinyin">nǐ</span><span class="char">你</span></div>
+                        <div class="word-box" data-tooltip="Muốn" onclick="speak(this)"><span class="pinyin">xiǎng</span><span class="char">想</span></div>
+                        <div class="word-box" data-tooltip="Mua" onclick="speak(this)"><span class="pinyin">mǎi</span><span class="char">买</span></div>
+                        <div class="word-box" data-tooltip="Cái gì" onclick="speak(this)"><span class="pinyin">shén me</span><span class="char">什么</span></div>
+                        <span class="punct">？</span>
+                    </div>
+                </div>
+
+                <!-- Dòng 2 -->
+                <div class="dialogue-line">
+                    <div class="speaker-label b">B</div>
+                    <div class="word-grid">
+                        <div class="word-box" data-tooltip="Tôi" onclick="speak(this)"><span class="pinyin">wǒ</span><span class="char">我</span></div>
+                        <div class="word-box" data-tooltip="Rất" onclick="speak(this)"><span class="pinyin">hěn</span><span class="char">很</span></div>
+                        <div class="word-box" data-tooltip="Khát" onclick="speak(this)"><span class="pinyin">kě</span><span class="char">渴</span></div>
+                        <span class="punct">，</span>
+                        <div class="word-box" data-tooltip="Có" onclick="speak(this)"><span class="pinyin">yǒu</span><span class="char">有</span></div>
+                        <div class="word-box" data-tooltip="Uống" onclick="speak(this)"><span class="pinyin">hē</span><span class="char">喝</span></div>
+                        <div class="word-box" data-tooltip="Trợ từ" onclick="speak(this)"><span class="pinyin">de</span><span class="char">的</span></div>
+                        <div class="word-box" data-tooltip="Đồ đạc / Thứ" onclick="speak(this)"><span class="pinyin">dōng xi</span><span class="char">东西</span></div>
+                        <div class="word-box" data-tooltip="Không (Trợ từ)" onclick="speak(this)"><span class="pinyin">ma</span><span class="char">吗</span></div>
+                        <span class="punct">？</span>
+                    </div>
+                </div>
+
+                <!-- Dòng 3 -->
+                <div class="dialogue-line">
+                    <div class="speaker-label a">A</div>
+                    <div class="word-grid">
+                        <div class="word-box" data-tooltip="Có" onclick="speak(this)"><span class="pinyin">yǒu</span><span class="char">有</span></div>
+                        <span class="punct">。</span>
+                        <div class="word-box" data-tooltip="Chúng tôi" onclick="speak(this)"><span class="pinyin">wǒ men</span><span class="char">我们</span></div>
+                        <div class="word-box" data-tooltip="Có" onclick="speak(this)"><span class="pinyin">yǒu</span><span class="char">有</span></div>
+                        <div class="word-box" data-tooltip="Nước" onclick="speak(this)"><span class="pinyin">shuǐ</span><span class="char">水</span></div>
+                        <span class="punct">、</span>
+                        <div class="word-box" data-tooltip="Trà" onclick="speak(this)"><span class="pinyin">chá</span><span class="char">茶</span></div>
+                        <span class="punct">、</span>
+                        <div class="word-box" data-tooltip="Sữa bò" onclick="speak(this)"><span class="pinyin">niú nǎi</span><span class="char">牛奶</span></div>
+                        <span class="punct">、</span>
+                        <div class="word-box" data-tooltip="Cà phê" onclick="speak(this)"><span class="pinyin">kā fēi</span><span class="char">咖啡</span></div>
+                        <span class="punct">、</span>
+                        <div class="word-box" data-tooltip="Bia" onclick="speak(this)"><span class="pinyin">pí jiǔ</span><span class="char">啤酒</span></div>
+                        <span class="punct">，</span>
+                        <div class="word-box" data-tooltip="Bạn / Ông" onclick="speak(this)"><span class="pinyin">nǐ</span><span class="char">你</span></div>
+                        <div class="word-box" data-tooltip="Muốn" onclick="speak(this)"><span class="pinyin">xiǎng</span><span class="char">想</span></div>
+                        <div class="word-box" data-tooltip="Uống" onclick="speak(this)"><span class="pinyin">hē</span><span class="char">喝</span></div>
+                        <div class="word-box" data-tooltip="Cái gì" onclick="speak(this)"><span class="pinyin">shén me</span><span class="char">什么</span></div>
+                        <span class="punct">？</span>
+                    </div>
+                </div>
+
+                <!-- Dòng 4 -->
+                <div class="dialogue-line">
+                    <div class="speaker-label b">B</div>
+                    <div class="word-grid">
+                        <div class="word-box" data-tooltip="Tôi" onclick="speak(this)"><span class="pinyin">wǒ</span><span class="char">我</span></div>
+                        <div class="word-box" data-tooltip="Muốn / Cần" onclick="speak(this)"><span class="pinyin">yào</span><span class="char">要</span></div>
+                        <div class="word-box" data-tooltip="Một" onclick="speak(this)"><span class="pinyin">yī</span><span class="char">一</span></div>
+                        <div class="word-box" data-tooltip="Chai (Lượng từ)" onclick="speak(this)"><span class="pinyin">píng</span><span class="char">瓶</span></div>
+                        <div class="word-box" data-tooltip="Bia" onclick="speak(this)"><span class="pinyin">pí jiǔ</span><span class="char">啤酒</span></div>
+                        <span class="punct">。</span>
+                    </div>
+                </div>
+
+                <!-- Dòng 5 -->
+                <div class="dialogue-line">
+                    <div class="speaker-label a">A</div>
+                    <div class="word-grid">
+                        <div class="word-box" data-tooltip="Được rồi / Vâng" onclick="speak(this)"><span class="pinyin">hǎo de</span><span class="char">好的</span></div>
+                        <span class="punct">，</span>
+                        <div class="word-box" data-tooltip="Còn / Thêm" onclick="speak(this)"><span class="pinyin">hái</span><span class="char">还</span></div>
+                        <div class="word-box" data-tooltip="Muốn / Cần" onclick="speak(this)"><span class="pinyin">yào</span><span class="char">要</span></div>
+                        <div class="word-box" data-tooltip="Cái gì" onclick="speak(this)"><span class="pinyin">shén me</span><span class="char">什么</span></div>
+                        <div class="word-box" data-tooltip="Không (Trợ từ)" onclick="speak(this)"><span class="pinyin">ma</span><span class="char">吗</span></div>
+                        <span class="punct">？</span>
+                    </div>
+                </div>
+
+                <!-- Dòng 6 -->
+                <div class="dialogue-line">
+                    <div class="speaker-label b">B</div>
+                    <div class="word-grid">
+                        <div class="word-box" data-tooltip="Tôi" onclick="speak(this)"><span class="pinyin">wǒ</span><span class="char">我</span></div>
+                        <div class="word-box" data-tooltip="Cũng" onclick="speak(this)"><span class="pinyin">yě</span><span class="char">也</span></div>
+                        <div class="word-box" data-tooltip="Mua" onclick="speak(this)"><span class="pinyin">mǎi</span><span class="char">买</span></div>
+                        <div class="word-box" data-tooltip="Ít / Vài" onclick="speak(this)"><span class="pinyin">xiē</span><span class="char">些</span></div>
+                        <div class="word-box" data-tooltip="Ăn" onclick="speak(this)"><span class="pinyin">chī</span><span class="char">吃</span></div>
+                        <div class="word-box" data-tooltip="Trợ từ" onclick="speak(this)"><span class="pinyin">de</span><span class="char">的</span></div>
+                        <div class="word-box" data-tooltip="Đồ đạc / Thứ" onclick="speak(this)"><span class="pinyin">dōng xi</span><span class="char">东西</span></div>
+                        <div class="word-box" data-tooltip="Nhé / Thôi" onclick="speak(this)"><span class="pinyin">ba</span><span class="char">吧</span></div>
+                        <span class="punct">。</span>
+                    </div>
+                </div>
+
+                <!-- Dòng 7 -->
+                <div class="dialogue-line">
+                    <div class="speaker-label a">A</div>
+                    <div class="word-grid">
+                        <div class="word-box" data-tooltip="Không vấn đề" onclick="speak(this)"><span class="pinyin">méi wèn tí</span><span class="char">没问题</span></div>
+                        <span class="punct">。</span>
+                        <div class="word-box" data-tooltip="Chúng tôi" onclick="speak(this)"><span class="pinyin">wǒ men</span><span class="char">我们</span></div>
+                        <div class="word-box" data-tooltip="Có" onclick="speak(this)"><span class="pinyin">yûou</span><span class="char">有</span></div>
+                        <div class="word-box" data-tooltip="Cơm" onclick="speak(this)"><span class="pinyin">mǐ fàn</span><span class="char">米饭</span></div>
+                        <span class="punct">、</span>
+                        <div class="word-box" data-tooltip="Mì sợi" onclick="speak(this)"><span class="pinyin">miàn tiáo</span><span class="char">面条</span></div>
+                        <span class="punct">，</span>
+                        <div class="word-box" data-tooltip="Cũng" onclick="speak(this)"><span class="pinyin">yě</span><span class="char">也</span></div>
+                        <div class="word-box" data-tooltip="Có" onclick="speak(this)"><span class="pinyin">yǒu</span><span class="char">有</span></div>
+                        <div class="word-box" data-tooltip="Bánh mì" onclick="speak(this)"><span class="pinyin">miàn bāo</span><span class="char">面包</span></div>
+                        <span class="punct">，</span>
+                        <div class="word-box" data-tooltip="Bạn / Ông" onclick="speak(this)"><span class="pinyin">nǐ</span><span class="char">你</span></div>
+                        <div class="word-box" data-tooltip="Muốn" onclick="speak(this)"><span class="pinyin">xiǎng</span><span class="char">想</span></div>
+                        <div class="word-box" data-tooltip="Muốn / Lấy" onclick="speak(this)"><span class="pinyin">yào</span><span class="char">要</span></div>
+                        <div class="word-box" data-tooltip="Cái nào" onclick="speak(this)"><span class="pinyin">nǎ gè</span><span class="char">哪个</span></div>
+                        <span class="punct">？</span>
+                    </div>
+                </div>
+
+                <!-- Dòng 8 -->
+                <div class="dialogue-line">
+                    <div class="speaker-label b">B</div>
+                    <div class="word-grid">
+                        <div class="word-box" data-tooltip="Một cái" onclick="speak(this)"><span class="pinyin">yī gè</span><span class="char">一个</span></div>
+                        <div class="word-box" data-tooltip="Bánh mì" onclick="speak(this)"><span class="pinyin">miàn bāo</span><span class="char">面包</span></div>
+                        <span class="punct">。</span>
+                        <div class="word-box" data-tooltip="Tổng cộng" onclick="speak(this)"><span class="pinyin">yī gòng</span><span class="char">一共</span></div>
+                        <div class="word-box" data-tooltip="Bao nhiêu" onclick="speak(this)"><span class="pinyin">duō shǎo</span><span class="char">多少</span></div>
+                        <div class="word-box" data-tooltip="Tiền" onclick="speak(this)"><span class="pinyin">qián</span><span class="char">钱</span></div>
+                        <span class="punct">？</span>
+                    </div>
+                </div>
+
+                <!-- Dòng 9 -->
+                <div class="dialogue-line">
+                    <div class="speaker-label a">A</div>
+                    <div class="word-grid">
+                        <div class="word-box" data-tooltip="Bia" onclick="speak(this)"><span class="pinyin">pí jiǔ</span><span class="char">啤酒</span></div>
+                        <div class="word-box" data-tooltip="3 đồng rưỡi (3.5 tệ)" onclick="speak(this)"><span class="pinyin">sān kuài wǔ</span><span class="char">三块五</span></div>
+                        <span class="punct">，</span>
+                        <div class="word-box" data-tooltip="Bánh mì" onclick="speak(this)"><span class="pinyin">miàn bāo</span><span class="char">面包</span></div>
+                        <div class="word-box" data-tooltip="10 đồng (10 tệ)" onclick="speak(this)"><span class="pinyin">shí kuài</span><span class="char">十块</span></div>
+                        <span class="punct">，</span>
+                        <div class="word-box" data-tooltip="Tổng cộng" onclick="speak(this)"><span class="pinyin">yī gòng</span><span class="char">一共</span></div>
+                        <div class="word-box" data-tooltip="13 đồng rưỡi (13.5 tệ)" onclick="speak(this)"><span class="pinyin">shí sān kuài wǔ</span><span class="char">十三块五</span></div>
+                        <span class="punct">。</span>
+                    </div>
+                </div>
+
+                <!-- Dòng 10 -->
+                <div class="dialogue-line">
+                    <div class="speaker-label b">B</div>
+                    <div class="word-grid">
+                        <div class="word-box" data-tooltip="Được rồi / Vâng" onclick="speak(this)"><span class="pinyin">hǎo de</span><span class="char">好的</span></div>
+                        <span class="punct">，</span>
+                        <div class="word-box" data-tooltip="Đưa / Cho" onclick="speak(this)"><span class="pinyin">gěi</span><span class="char">给</span></div>
+                        <div class="word-box" data-tooltip="Bạn / Ông" onclick="speak(this)"><span class="pinyin">nǐ</span><span class="char">你</span></div>
+                        <div class="word-box" data-tooltip="Tiền" onclick="speak(this)"><span class="pinyin">qián</span><span class="char">钱</span></div>
+                        <span class="punct">。</span>
+                    </div>
+                </div>
+
+                <!-- Dòng 11 -->
+                <div class="dialogue-line">
+                    <div class="speaker-label a">A</div>
+                    <div class="word-grid">
+                        <div class="word-box" data-tooltip="Đây là" onclick="speak(this)"><span class="pinyin">zhè shì</span><span class="char">这是</span></div>
+                        <div class="word-box" data-tooltip="Bạn / Ông" onclick="speak(this)"><span class="pinyin">nǐ</span><span class="char">你</span></div>
+                        <div class="word-box" data-tooltip="Mua" onclick="speak(this)"><span class="pinyin">mǎi</span><span class="char">买</span></div>
+                        <div class="word-box" data-tooltip="Trợ từ" onclick="speak(this)"><span class="pinyin">de</span><span class="char">的</span></div>
+                        <div class="word-box" data-tooltip="Đồ đạc / Thứ" onclick="speak(this)"><span class="pinyin">dōng xi</span><span class="char">东西</span></div>
+                        <span class="punct">，</span>
+                        <div class="word-box" data-tooltip="Tạm biệt" onclick="speak(this)"><span class="pinyin">zài jiàn</span><span class="char">再见</span></div>
+                        <span class="punct">。</span>
+                    </div>
+                </div>
+
+                <!-- Dòng 12 -->
+                <div class="dialogue-line">
+                    <div class="speaker-label b">B</div>
+                    <div class="word-grid">
+                        <div class="word-box" data-tooltip="Tạm biệt" onclick="speak(this)"><span class="pinyin">zài jiàn</span><span class="char">再见</span></div>
+                        <span class="punct">。</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="resizer" id="dragMe"></div>
+
+        <div class="column right-pane" id="rightPane">
+            <div class="blur-notice" id="blurNotice">🎧 Nghe hiểu trước khi xem bản dịch nhé!</div>
+            <div class="viet-content" id="vietText">
+                <div class="trans-line"><b>A:</b> Chào ông, ông muốn mua gì ạ?</div>
+                <div class="trans-line b"><b>B:</b> Tôi đang rất khát, có đồ uống gì không?</div>
+                <div class="trans-line"><b>A:</b> Có ạ. Chúng tôi có nước, trà, sữa bò, cà phê, bia, ông muốn uống gì?</div>
+                <div class="trans-line b"><b>B:</b> Lấy cho tôi một chai bia.</div>
+                <div class="trans-line"><b>A:</b> Dạ được, ông còn cần mua gì nữa không?</div>
+                <div class="trans-line b"><b>B:</b> Để tôi mua thêm chút đồ ăn nữa nhé.</div>
+                <div class="trans-line"><b>A:</b> Không vấn đề gì. Chúng tôi có cơm, mì sợi, và cũng có cả bánh mì nữa, ông muốn lấy loại nào?</div>
+                <div class="trans-line b"><b>B:</b> Một cái bánh mì. Tổng cộng hết bao nhiêu tiền?</div>
+                <div class="trans-line"><b>A:</b> Bia 3 đồng rưỡi, bánh mì 10 đồng, tổng cộng hết 13 đồng rưỡi.</div>
+                <div class="trans-line b"><b>B:</b> Được, gửi tiền anh này.</div>
+                <div class="trans-line"><b>A:</b> Đây là đồ ông mua, tạm biệt ông.</div>
+                <div class="trans-line b"><b>B:</b> Tạm biệt.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-grid">
+        <div class="info-box grammar-box">
+            <h3>📘 Cẩm nang Ngữ pháp</h3>
+            <p>• <b>想 (xiǎng) + Động từ:</b> Muốn làm việc gì đó.<br><i>Ví dụ: 你想买什么？ (Bạn muốn mua gì?)</i></p>
+            <p>• <b>有 (yǒu) + Noun + 吗 (ma)？:</b> Câu hỏi kiểm tra sự tồn tại (Có... không?).<br><i>Ví dụ: 有喝的东西吗？ (Có đồ gì uống không?)</i></p>
+            <p>• <b>一共 (yī gòng):</b> Tổng cộng (Thường đặt trước cụm số lượng/tiền tệ).<br><i>Ví dụ: 一共多少钱？ (Tổng cộng bao nhiêu tiền?)</i></p>
+            <p>• <b>Khẩu ngữ tiền tệ (块 - kuài):</b> Biểu thị đơn vị Đồng (Tệ). Cấu trúc số lẻ: [X 块 Y] nghĩa là X đồng Y hào.<br><i>Ví dụ: 三块五 (3 đồng 5 hào / 3.5 tệ).</i></p>
+        </div>
+        
+        <div class="info-box quiz-box">
+            <h3>🎯 Trắc Nghiệm Nghe Hiểu</h3>
+            
+            <div class="quiz-container">
+                <div class="quiz-step active" data-step="1" data-correct="1">
+                    <div class="quiz-question">Câu 1: B 为什么想买喝的东西？<br>(Tại sao B lại muốn mua đồ uống?)</div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">A. 因为他很饿 (Vì ông ấy rất đói)</div>
+                    <div class="quiz-option" onclick="selectOption(this, true)">B. 因为他很渴 (Vì ông ấy rất khát)</div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">C. 因为他很高兴 (Vì ông ấy rất vui)</div>
+                </div>
+
+                <div class="quiz-step" data-step="2" data-correct="2">
+                    <div class="quiz-question">Câu 2: B 要了什么喝的东西？<br>(B đã lấy đồ uống gì?)</div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">A. 牛奶 (Sữa bò)</div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">B. 咖啡 (Cà phê)</div>
+                    <div class="quiz-option" onclick="selectOption(this, true)">C. 啤酒 (Bia)</div>
+                </div>
+
+                <div class="quiz-step" data-step="3" data-correct="0">
+                    <div class="quiz-question">Câu 3: 商店里有什么吃的东西？<br>(Cửa hàng có đồ ăn gì?)</div>
+                    <div class="quiz-option" onclick="selectOption(this, true)">A. 米饭、面条、面包 (Cơm, mì, bánh mì)</div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">B. 水果、苹果、香蕉 (Hoa quả, táo, chuối)</div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">C. 包子、饺子、茶 (Bánh bao, sủi cảo, trà)</div>
+                </div>
+
+                <div class="quiz-step" data-step="4" data-correct="2">
+                    <div class="quiz-question">Câu 4: B 一共花了多少钱？<br>(B tổng cộng đã tiêu bao nhiêu tiền?)</div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">A. 三块五 (3 đồng rưỡi)</div>
+                    <div class="quiz-option" onclick="selectOption(this, false)">B. 十块 (10 đồng)</div>
+                    <div class="quiz-option" onclick="selectOption(this, true)">C. 十三块五 (13 đồng rưỡi)</div>
+                </div>
+            </div>
+
+            <div id="quiz-feedback"></div>
+
+            <div class="quiz-nav">
+                <button class="btn-quiz-nav" id="btnPrev" onclick="changeQuestion(-1)" disabled>⬅ Quay lại</button>
+                <span id="quiz-progress">Câu 1 / 4</span>
+                <button class="btn-quiz-nav" id="btnNext" onclick="changeQuestion(1)">Tiếp theo ➡</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 1. Quản lý Ẩn/Hiện Pinyin
+    let isPinyinVisible = false;
+    function togglePinyin() {
+        const pinyins = document.querySelectorAll('.pinyin');
+        const btn = document.getElementById('btnPinyin');
+        isPinyinVisible = !isPinyinVisible;
+        
+        pinyins.forEach(p => p.style.opacity = isPinyinVisible ? '1' : '0');
+
+        if(isPinyinVisible) {
+            btn.innerHTML = "👁️ Ẩn Pinyin";
+            btn.classList.remove('off');
+        } else {
+            btn.innerHTML = "👁️ Hiện Pinyin";
+            btn.classList.add('off');
+        }
+    }
+
+    // 2. Quản lý Ẩn/Hiện Bản Dịch Tiếng Việt
+    let isTranslateVisible = false;
+    function toggleTranslate() {
+        const vietText = document.getElementById('vietText');
+        const blurNotice = document.getElementById('blurNotice');
+        const btn = document.getElementById('btnTranslate');
+        isTranslateVisible = !isTranslateVisible;
+        
+        if(isTranslateVisible) {
+            vietText.classList.add('show');
+            blurNotice.style.display = 'none';
+            btn.innerHTML = "👁️ Ẩn Bản Dịch";
+            btn.classList.remove('off');
+        } else {
+            vietText.classList.remove('show');
+            blurNotice.style.display = 'block';
+            btn.innerHTML = "👁️ Hiện Bản Dịch";
+            btn.classList.add('off');
+        }
+    }
+
+    // 3. Đọc từ khi bấm vào Box bằng Web Speech API
+    const synth = window.speechSynthesis;
+    function speak(element) {
+        synth.cancel();
+        const text = element.querySelector('.char').innerText;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'zh-CN'; 
+        synth.speak(utterance);
+    }
+
+    // 4. Logic Carousel Câu hỏi trắc nghiệm
+    let currentStep = 1;
+    const totalSteps = 4;
+
+    function changeQuestion(direction) {
+        document.querySelector(`.quiz-step[data-step="${currentStep}"]`).classList.remove('active');
+        currentStep += direction;
+        document.querySelector(`.quiz-step[data-step="${currentStep}"]`).classList.add('active');
+        
+        document.getElementById('btnPrev').disabled = (currentStep === 1);
+        document.getElementById('btnNext').disabled = (currentStep === totalSteps);
+        document.getElementById('quiz-progress').innerText = `Câu ${currentStep} / ${totalSteps}`;
+        document.getElementById('quiz-feedback').innerHTML = "";
+    }
+
+    function selectOption(element, isCorrect) {
+        const currentQuizStep = element.closest('.quiz-step');
+        const options = currentQuizStep.querySelectorAll('.quiz-option');
+        
+        options.forEach(opt => {
+            opt.classList.remove('correct', 'wrong');
+            opt.style.pointerEvents = 'none'; 
+        });
+
+        const feedback = document.getElementById('quiz-feedback');
+
+        if (isCorrect) {
+            element.classList.add('correct');
+            feedback.innerHTML = "🎉 Chính xác! Bạn nghe rất tốt.";
+            feedback.style.color = "#10b981";
+        } else {
+            element.classList.add('wrong');
+            feedback.innerHTML = "❌ Sai rồi! Hãy nghe kỹ lại đoạn hội thoại nhé.";
+            feedback.style.color = "#ef4444";
+            
+            const correctIndex = currentQuizStep.getAttribute('data-correct');
+            options[correctIndex].classList.add('correct');
+        }
+    }
+
+    // 5. Logic Resizer (Kéo thả thay đổi kích thước cột linh hoạt)
+    const resizer = document.getElementById('dragMe');
+    const leftPane = document.getElementById('leftPane');
+    let x = 0;
+    let leftWidth = 0;
+
+    const mouseDownHandler = function(e) {
+        x = e.clientX;
+        leftWidth = leftPane.getBoundingClientRect().width;
+
+        document.addEventListener('mousemove', mouseMoveHandler);
+        document.addEventListener('mouseup', mouseUpHandler);
+        
+        resizer.style.backgroundColor = 'var(--resizer-hover)';
+        document.body.style.cursor = 'col-resize';
+        
+        leftPane.style.userSelect = 'none';
+        leftPane.style.pointerEvents = 'none';
+    };
+
+    const mouseMoveHandler = function(e) {
+        const dx = e.clientX - x;
+        const containerWidth = resizer.parentNode.getBoundingClientRect().width;
+        const newLeftWidth = ((leftWidth + dx) * 100) / containerWidth;
+
+        // Giới hạn kéo thả an toàn từ 20% đến 80% chiều rộng màn hình
+        if(newLeftWidth > 20 && newLeftWidth < 80) {
+            leftPane.style.flex = `0 0 ${newLeftWidth}%`;
+        }
+    };
+
+    const mouseUpHandler = function() {
+        resizer.style.removeProperty('background-color');
+        document.body.style.removeProperty('cursor');
+        
+        leftPane.style.removeProperty('user-select');
+        leftPane.style.removeProperty('pointer-events');
+
+        document.removeEventListener('mousemove', mouseMoveHandler);
+        document.removeEventListener('mouseup', mouseUpHandler);
+    };
+
+    resizer.addEventListener('mousedown', mouseDownHandler);
+</script>
+
+</body>
+</html>
