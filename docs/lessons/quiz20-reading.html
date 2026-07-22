@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passage 2 Test 7 | SnapEnglish</title>
+    <link rel="icon" type="image/png" href="ảnh.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Theme Chuyên nghiệp - Xanh Đại dương nhạt */
+            --primary: #0284c7; 
+            --primary-dark: #0369a1; 
+            --accent: #bae6fd;
+            --bg-body: #f0f9ff;
+            --bg-pane: #ffffff;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --border-color: #e0f2fe;
+            --highlight-color: #fef08a;
+            --correct: #16a34a;
+            --wrong: #dc2626;
+            --exp-bg: #f0fdf4;
+            --header-h: 70px;
+            --footer-h: 80px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex; flex-direction: column;
+            overflow: hidden;
+            font-size: 16px;
+        }
+
+        /* --- OVERLAY & MODAL --- */
+        #setupOverlay, .custom-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.85); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999;
+        }
+        .setup-modal, .custom-modal {
+            background: white; padding: 35px; border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(2, 132, 199, 0.15);
+            width: 90%; max-width: 500px; text-align: center;
+            border: 2px solid var(--accent);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 90vh; overflow-y: auto;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .setup-modal h2, .custom-modal h2 { color: var(--primary-dark); font-size: 24px; margin-top: 0; font-weight: 700; }
+        .mode-btn {
+            display: block; width: 100%; padding: 14px; margin: 12px 0;
+            border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: 0.3s; font-family: inherit;
+        }
+        .mode-practice { background: #fef2f2; color: #b91c1c; border: 2px solid #fecaca; }
+        .mode-practice:hover, .mode-practice.selected { background: #ef4444; color: white; border-color: #ef4444; }
+        .mode-mock { background: #f0f9ff; color: var(--primary-dark); border: 2px solid #bae6fd; }
+        .mode-mock:hover, .mode-mock.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .mode-history { background: #f8fafc; color: #475569; border: 2px solid #cbd5e1; }
+        .mode-history:hover { background: #e2e8f0; border-color: #94a3b8; color: #1e293b; }
+        
+        #timeInputBox { display: none; margin: 20px 0; }
+        #timeInput { 
+            width: 90px; padding: 8px; font-size: 16px; text-align: center; 
+            border: 2px solid #cbd5e1; border-radius: 8px; font-family: inherit; outline: none;
+            color: var(--primary-dark); font-weight: bold;
+        }
+        #timeInput:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.2); }
+        
+        .start-btn {
+            background: var(--primary); color: white; border: none; padding: 12px 30px;
+            border-radius: 30px; font-size: 16px; font-weight: 600; cursor: pointer;
+            margin-top: 15px; transition: 0.3s; display: none; box-shadow: 0 5px 15px rgba(2, 132, 199, 0.3);
+        }
+        .start-btn:hover { transform: translateY(-2px); }
+
+        .modal-actions { display: flex; gap: 15px; margin-top: 20px; justify-content: center; }
+        .btn-cancel, .btn-confirm {
+            padding: 10px 18px; border-radius: 10px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.2s; font-family: inherit; flex: 1; border: none;
+        }
+        .btn-cancel { background: #f1f5f9; color: #475569; border: 2px solid #cbd5e1; }
+        .btn-cancel:hover { background: #e2e8f0; }
+        .btn-confirm { background: var(--primary); color: white; box-shadow: 0 4px 0 var(--primary-dark); }
+        .btn-confirm:active { transform: translateY(4px); box-shadow: none; }
+
+        /* Lịch sử Table */
+        .table-wrapper { width: 100%; overflow-x: auto; border-radius: 10px; border: 1px solid var(--border-color); margin-top: 15px; }
+        #historyTable { width: 100%; border-collapse: collapse; min-width: 400px; background: white;}
+        #historyTable th { background: #f1f5f9; color: var(--primary-dark); padding: 12px; font-weight: 600; font-size: 14px;}
+        #historyTable td { padding: 12px; border-bottom: 1px solid #e2e8f0; font-size: 14px; vertical-align: middle;}
+        #historyTable tr:hover { background: #f8fafc; }
+
+        /* --- HEADER --- */
+        header {
+            height: var(--header-h); background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 20px; z-index: 100;
+        }
+        
+        .brand { font-size: 20px; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        .brand span { background: var(--primary); color: white; padding: 4px 8px; border-radius: 8px; font-size: 14px; }
+
+        .tab-container { display: flex; background: #f1f5f9; padding: 4px; border-radius: 20px; gap: 4px; overflow-x: auto;}
+        .tab-btn {
+            border: none; background: transparent; padding: 8px 18px; font-size: 15px;
+            font-family: inherit; font-weight: 600; color: var(--text-light);
+            cursor: pointer; border-radius: 15px; transition: all 0.3s; white-space: nowrap;
+        }
+        .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+        .controls { display: flex; gap: 15px; align-items: center; }
+        .timer-box { 
+            font-family: monospace; font-weight: 700; color: #b91c1c; 
+            background: #fef2f2; padding: 8px 15px; border-radius: 10px; font-size: 18px; border: 1px solid #fecaca;
+        }
+        .btn-submit { 
+            background: var(--primary); color: white; border: none; padding: 8px 20px; 
+            border-radius: 10px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s;
+            font-family: inherit; box-shadow: 0 3px 0 var(--primary-dark); white-space: nowrap;
+        }
+        .btn-submit:active { transform: translateY(3px); box-shadow: none; }
+
+        /* --- LAYOUT --- */
+        .container { 
+            display: flex; 
+            height: calc(100vh - var(--header-h) - var(--footer-h)); 
+            width: 100%;
+        }
+
+        .pane {
+            flex: 1; padding: 30px 40px; overflow-y: auto;
+            position: relative; scroll-behavior: smooth;
+        }
+        .pane-left { 
+            background: #fff; border-right: 2px solid var(--border-color); 
+            font-size: 16px; line-height: 1.7; text-align: justify; color: #334155;
+        }
+        .pane-right { background: #f8fafc; }
+
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- CONTENT STYLES --- */
+        .passage-title { text-align: center; color: var(--primary-dark); margin-bottom: 20px; border-bottom: 2px dashed var(--accent); padding-bottom: 12px; font-size: 24px; font-weight: 700;}
+        .paragraph { margin-bottom: 18px; }
+        .paragraph-label { color: var(--primary); font-weight: 700; font-size: 1.05em; margin-right: 5px; }
+        
+        .passage-content, .question-group { display: none; animation: fadeIn 0.3s; }
+        .passage-content.active, .question-group.active { display: block; }
+        .question-group { padding-bottom: 40px; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* EVIDENCE HIGHLIGHTS */
+        .ev-box { 
+            padding: 1px 3px; border-radius: 4px; 
+            transition: all 0.4s ease; 
+            border: 2px solid transparent;
+            background-color: transparent;
+            color: inherit;
+        }
+        .ev-box.focus-blink {
+            border-color: var(--primary-dark) !important;
+            transform: scale(1.02); 
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2) !important; 
+            background-color: var(--highlight-color) !important;
+            z-index: 10; position: relative;
+        }
+
+        /* --- QUESTIONS UI --- */
+        .question-section { padding: 20px; border: 1px solid var(--border-color); background: #fff; margin-bottom: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);}
+        .instruction { color: var(--primary-dark); font-weight: 600; margin-bottom: 15px; font-size: 15px; background: #e0f2fe; padding: 12px; border-radius: 8px; border-left: 4px solid var(--primary);}
+
+        .q-row { display: flex; align-items: baseline; margin-bottom: 15px; font-size: 15px; }
+        .q-num { font-weight: bold; min-width: 30px; color: var(--primary); }
+        .q-content { flex: 1; line-height: 1.7; }
+
+        .input-gap {
+            display: inline-block; width: 140px; height: 32px;
+            border: 2px solid #cbd5e1; border-radius: 6px; 
+            text-align: center; font-weight: 600; color: var(--primary-dark);
+            font-size: 15px; margin: 0 5px; vertical-align: middle; transition: 0.2s; font-family: inherit;
+        }
+        .input-gap:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); }
+
+        select.input-select {
+            padding: 6px 10px; border: 2px solid #cbd5e1; border-radius: 6px;
+            font-size: 15px; cursor: pointer; font-weight: 500; color: var(--text-main); outline: none; margin-top: 6px; margin-right: 8px; font-family: inherit;
+        }
+        select.input-select:focus { border-color: var(--primary); }
+
+        .headings-list, .word-box {
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; margin-bottom: 20px;
+        }
+        .headings-list p { margin: 6px 0; font-size: 15px; color: #334155; }
+        .headings-list strong { color: var(--primary-dark); display: inline-block; width: 30px; }
+        .word-box { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; font-weight: 600; color: var(--primary-dark); }
+        .word-box span { background: white; padding: 6px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 14px;}
+
+        /* --- EXPLANATION BOX --- */
+        .exp-box {
+            display: none; background: #fff;
+            border: 2px solid var(--border-color); border-left: 5px solid var(--primary);
+            padding: 15px; margin-top: 10px; margin-bottom: 15px; border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(2, 132, 199, 0.08); 
+            animation: slideUp 0.3s ease-out;
+        }
+        .exp-box.show { display: block; }
+        .exp-title { 
+            font-weight: 700; color: var(--primary-dark); font-size: 16px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-bottom: 1px dashed var(--border-color); padding-bottom: 8px; margin-bottom: 10px;
+        }
+        .locate-btn {
+            background: #e0f2fe; border: 1px solid var(--accent); color: var(--primary-dark);
+            padding: 4px 10px; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 13px; transition: 0.2s; font-family: inherit;
+        }
+        .locate-btn:hover { background: var(--primary); color: white; }
+        
+        .exp-section { margin-bottom: 10px; font-size: 15px; line-height: 1.5; color: #334155; }
+        .exp-label { font-weight: 600; color: var(--primary-dark); display: inline-block; white-space: nowrap; margin-bottom: 5px; }
+        .exp-translate { background: #f8fafc; padding: 8px; border-radius: 4px; border-left: 3px solid #cbd5e1; font-style: italic; margin-top: 4px; }
+        .exp-keywords { background: #fffbeb; padding: 8px; border-radius: 4px; border: 1px dashed #fde68a; margin-top: 4px;}
+        .exp-detail { margin-top: 4px; }
+        .exp-keyword-match { color: #b45309; font-weight: 600; }
+
+        @keyframes slideUp { from { transform: translateY(10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* --- FOOTER --- */
+        footer {
+            height: var(--footer-h); background: #fff; border-top: 1px solid var(--border-color);
+            display: flex; align-items: center; padding: 0 20px; gap: 15px; z-index: 100;
+        }
+        .palette-scroller { flex: 1; display: flex; gap: 8px; overflow-x: auto; padding: 8px 0; align-items: center;}
+        .nav-dot {
+            min-width: 36px; height: 36px; border: 2px solid #e2e8f0; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold;
+            cursor: pointer; color: #94a3b8; background: white; transition: 0.2s; flex-shrink: 0;
+        }
+        .nav-dot.done { background: #e0f2fe; color: var(--primary-dark); border-color: var(--accent); }
+        .nav-dot:hover { border-color: var(--primary); color: var(--primary); }
+
+        /* HIGHLIGHT MENU */
+        .highlight { background-color: var(--highlight-color); cursor: pointer; border-radius: 2px; padding: 1px 0;}
+        #ctxMenu {
+            position: absolute; display: none; background: white; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12); border-radius: 8px; 
+            font-size: 14px; z-index: 99999; border: 1px solid #eee; min-width: 140px; overflow: hidden;
+        }
+        #ctxMenu button {
+            background: none; border: none; padding: 10px 15px; 
+            width: 100%; text-align: left; cursor: pointer; display: block; font-weight: 600; color: #444; font-family: inherit;
+        }
+        #ctxMenu button:hover { background: #f8fafc; color: var(--primary-dark); }
+        #ctxMenu button.delete:hover { background: #fef2f2; color: var(--wrong); }
+
+        .feedback { display: inline-block; font-weight: bold; font-size: 15px; margin-left: 8px; }
+        .correct { color: var(--correct); }
+        .wrong { color: var(--wrong); }
+
+        @media (max-width: 768px) {
+            .container { flex-direction: column; }
+            .pane { height: 50%; padding: 20px; }
+            .pane-left { border-right: none; border-bottom: 2px solid var(--border-color); }
+            header { padding: 10px; height: auto; flex-wrap: wrap; gap: 10px;}
+            .tab-container { width: 100%; order: 3; justify-content: space-between;}
+            .controls { order: 2; }
+            .setup-modal { padding: 25px 20px; }
+            .input-gap { width: 100%; margin: 5px 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="setupOverlay">
+    <div class="setup-modal" id="setupContent">
+        <h2>Chào mừng đến với Reading Library ✨</h2>
+        <p style="font-size: 15px; color: #64748b; margin-bottom: 20px;">Hôm nay bạn muốn rèn luyện theo cách nào?</p>
+        
+        <button class="mode-btn mode-practice" onclick="selectMode('practice')">🎯 Luyện Tập</button>
+        <button class="mode-btn mode-mock" onclick="selectMode('mock')">🏆 Thi Thử (20 Phút)</button>
+        <button class="mode-btn mode-history" onclick="openHistoryTab()">🕒 Xem Lịch Sử</button>
+        
+        <div id="timeInputBox">
+            <label style="font-size: 15px; font-weight: bold; color: #475569;">Cài đặt thời gian (phút): </label>
+            <input type="number" id="timeInput" value="20" min="5" max="60">
+        </div>
+        
+        <button class="start-btn" id="startBtn" onclick="askReady()">Sẵn sàng (OK)</button>
+    </div>
+
+    <div class="setup-modal" id="historyContent" style="display: none;">
+        <h2>Lịch Sử Làm Bài</h2>
+        <div id="historyLoading" style="text-align: center; color: var(--text-light); margin: 15px 0;">Đang tải dữ liệu...</div>
+        
+        <div class="table-wrapper">
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Ngày làm</th>
+                        <th>Kết quả</th>
+                        <th>Band</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody"></tbody>
+            </table>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn-cancel" style="width: auto;" onclick="backToMenu()">Quay lại Menu</button>
+        </div>
+    </div>
+</div>
+
+<div id="startConfirmOverlay" class="custom-overlay" style="display: none;">
+    <div class="custom-modal">
+        <h2>Xác nhận bắt đầu</h2>
+        <p id="startConfirmMsg" style="font-size: 15px; color: #475569; margin-bottom: 15px; white-space: pre-line;"></p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeStartConfirmModal()">Huỷ</button>
+            <button class="btn-confirm" onclick="startTestActual()">OK</button>
+        </div>
+    </div>
+</div>
+
+<header>
+    <div class="brand">
+        <span>SnapEnglish</span> Passage 2 Test 7
+    </div>
+    
+    <div class="tab-container">
+        <button class="tab-btn active">Passage 2</button>
+    </div>
+
+    <div class="controls">
+        <div class="timer-box">⏱ <span id="timer">00:00</span></div>
+        <button class="btn-submit" id="btnSubmitMain" onclick="submitTest(true)">NỘP BÀI</button>
+    </div>
+</header>
+
+<div class="container" id="mainContainer">
+    
+    <div class="pane pane-left" id="passagePane">
+        
+        <div id="text-p2" class="passage-content active">
+            <h2 class="passage-title">Computer Viruses</h2>
+            <p class="paragraph">Computers can do anything: from running spread sheets, word processors and power stations to music synthesisers and missile control systems. And because computers can do anything, they can in particular run viruses and any other nasty software.</p>
+
+            <p class="paragraph">Viruses are unique in their abilities, as <span id="ev-14" class="ev-box">they can stop many computers at once.</span> This would be much more serious for a small company than normal faults that affect only one PC at a time. Thus, viruses rank with hazards like power cuts and fire in their effect and speed of action. Worse than fire though, people may find that they cannot take their work elsewhere, for if they did, they might simply take the virus infection with them and bring more systems down. Secondly, viruses can distribute disinformation and bring shame to individuals or organisations: viruses may send malicious email apparently on behalf of the person whose computer has been infected, harming their <span id="ev-15" class="ev-box">reputations.</span></p>
+
+            <p class="paragraph">A computer virus is a piece of program code that attaches copies of itself to other programs, incorporating itself into them, so that the modified programs, while still possibly performing their intended function, surreptitiously do other things. Programs so corrupted seek others to which to attach the virus, and so the infection circulates. <span id="ev-16" class="ev-box">Successful viruses lie low until they have thoroughly infiltrated the system</span>, and only reveal their presence when they cause damage. <span id="ev-17" class="ev-box">The effect of a virus is rarely linked back to its originator</span>, so viruses make attractive weapons for vandals. Computer viruses generally work by altering files that contain otherwise harmless programs. This is infection. When an infected program is invoked, it seeks other programs stored in files to which it has write permission, and infects them by modifying the files to include a copy of itself and inserting an instruction to branch to that code at the old program’s starting point. Then the virus starts up the original program, so that the user is unaware of its intervention. Viruses are classified as being one of two types: ‘research’ or ‘in the wild’. A research virus is one that has been written for research or study purposes and has <span id="ev-18" class="ev-box">received almost no distribution to the public (creating no risks).</span></p>
+
+            <p class="paragraph">Before the spread of the Internet, most computer viruses were spread by removable media, predominantly <span id="ev-19" class="ev-box">floppy disks.</span> Some viruses spread by infecting programs stored on these disks, while others installed themselves into the disk boot sector. Until floppy disks were replaced by other removable media, this was the most successful infection strategy and boot sector viruses were the most common in the wild for many years.</p>
+
+            <p class="paragraph">The term ‘computer virus’ is a popular catchall for all kinds of malicious software. <span id="ev-20" class="ev-box">A logic bomb</span> is a destructive program activated by a certain combination of circumstances, or on a certain date, to delete information. A Trojan horse is any bug inserted into a computer program that takes advantage of the trusted status of its host by surreptitiously performing unintended functions. <span id="ev-21" class="ev-box">A worm</span> is a distributed program that invades computers on a network. It consists of several processes or segments that keep in touch through the network; when one is lost, the others conspire to replace it on another server.</p>
+
+            <p class="paragraph">Viruses today have no distinct identity, but typically undergo <span id="ev-22" class="ev-box">mutation</span> each time they copy themselves to other files. This, combined with various cryptographic techniques, makes modern viruses difficult to detect. False alarms have become an increasing problem, particularly with users sending chain email warning about supposed virus problems; ironically, the panics may cause more problems than the viruses they warn about. <span id="ev-23" class="ev-box">Email</span> though has become the most popular way to disperse viruses today, because powerful commercial email packages are themselves programmable and users often configure email systems to helpfully run programs automatically.</p>
+
+            <p class="paragraph">Viruses are not difficult to develop. The majority of viruses are simple <span id="ev-24" class="ev-box">variants</span> of others and many virus construction kits are readily available on the Internet. Viruses have been created since the 1960’s, although the term ‘computer virus’ was only formally defined by Fred Cohen in 1983. One of the first virus attacks occurred in late 1987 when, over a two-month period, a virus quietly insinuated itself into programs at a Middle East university. It was noticed because it caused programs to grow longer. Once discovered, it was analysed and an antidote devised. It was designed to slow processors down on certain Fridays, and to erase all files on Friday, 13 May.</p>
+
+            <p class="paragraph">It is common that certain viruses have been given names. Once discovered and named, programmers can create ‘antidotes’ that delete the viruses from the system. The obvious, but generally impractical defence against viruses is never to use anyone else’s software and never to connect with anyone else’s computer. A more practical approach to protect computers is to regularly or continuously run programs that recognise viruses and try to eliminate virus infections before they do too much damage. Because new viruses are being devised every day, it is important and sensible to keep detection programs up to date, by, for example, a regular <span id="ev-25" class="ev-box">subscription</span> from a reputable firm, and to minimise risky procedures, such as sharing information as infrequently as possible.</p>
+
+            <p class="paragraph">All protection approaches are trade-offs. Eternal vigilance on the part of users is important, and, above all, <span id="ev-26" class="ev-box">education of users</span> to the possible results of their actions.</p>
+        </div>
+
+    </div>
+
+    <div class="pane pane-right" id="questionPane">
+        
+        <div id="q-group-2" class="question-group active">
+            
+            <div class="question-section">
+                <div class="instruction">Questions 14-18: Complete the summary using the words in the box below. Write your answers in boxes 14-18 on your answer sheet.</div>
+                
+                <div class="word-box">
+                    <span>recipes</span> <span>kill</span> <span>spread</span> <span>origins</span> <span>die</span> <span>cures</span> <span>reputations</span> <span>hide</span> <span>jobs</span> <span>risks</span>
+                </div>
+
+                <div style="background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px dashed #cbd5e1; line-height: 2.2; font-size: 15px;">
+                    <strong>COMPUTER VIRUSES</strong><br>
+                    Computers today can perform all tasks, including running computer viruses.
+                    Viruses are worse than other computer problems, due to their ability to 
+                    <b>14.</b> <input type="text" class="input-gap" id="ans-14" oninput="updateNav(14)"> <span id="fb-14" class="feedback"></span> 
+                    to other systems. Viruses can also circulate misrepresentations and the 
+                    <b>15.</b> <input type="text" class="input-gap" id="ans-15" oninput="updateNav(15)"> <span id="fb-15" class="feedback"></span> 
+                    of people and groups can be harmed.<br>
+                    Computer viruses are pieces of program code that become part of programs and then spread to other programs and computers. They usually 
+                    <b>16.</b> <input type="text" class="input-gap" id="ans-16" oninput="updateNav(16)"> <span id="fb-16" class="feedback"></span> 
+                    themselves within systems before creating harm and their 
+                    <b>17.</b> <input type="text" class="input-gap" id="ans-17" oninput="updateNav(17)"> <span id="fb-17" class="feedback"></span> 
+                    are difficult to trace.<br>
+                    Viruses also distribute themselves around files and computers without being noticed. Viruses can be ‘research’ or ‘in the wild’, the former usually creating no 
+                    <b>18.</b> <input type="text" class="input-gap" id="ans-18" oninput="updateNav(18)"> <span id="fb-18" class="feedback"></span>.
+                </div>
+                <div id="fb-container-14-18" style="display:flex; flex-direction:column; gap:10px; margin-top: 15px;"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 19-23: Answer the questions below. Write <strong>NO MORE THAN THREE WORDS</strong> from the text for each answer.</div>
+                
+                <div class="q-row" id="q-row-19">
+                    <span class="q-num">19.</span>
+                    <span class="q-content">What type of removable media was first responsible for the distribution of computer viruses?
+                        <br><input type="text" class="input-gap" style="width: 250px; margin-top: 5px;" id="ans-19" oninput="updateNav(19)"> <span id="fb-19" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-19"></div>
+
+                <div class="q-row" id="q-row-20">
+                    <span class="q-num">20.</span>
+                    <span class="q-content">What type of computer virus can be set to delete information at a particular time?
+                        <br><input type="text" class="input-gap" style="width: 250px; margin-top: 5px;" id="ans-20" oninput="updateNav(20)"> <span id="fb-20" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-20"></div>
+
+                <div class="q-row" id="q-row-21">
+                    <span class="q-num">21.</span>
+                    <span class="q-content">What type of computer virus attacks networked computers?
+                        <br><input type="text" class="input-gap" style="width: 250px; margin-top: 5px;" id="ans-21" oninput="updateNav(21)"> <span id="fb-21" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-21"></div>
+
+                <div class="q-row" id="q-row-22">
+                    <span class="q-num">22.</span>
+                    <span class="q-content">What combines with various cryptographic techniques to make a modern computer virus difficult to discover?
+                        <br><input type="text" class="input-gap" style="width: 250px; margin-top: 5px;" id="ans-22" oninput="updateNav(22)"> <span id="fb-22" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-22"></div>
+
+                <div class="q-row" id="q-row-23">
+                    <span class="q-num">23.</span>
+                    <span class="q-content">What is the most common way to distribute a computer virus nowadays?
+                        <br><input type="text" class="input-gap" style="width: 250px; margin-top: 5px;" id="ans-23" oninput="updateNav(23)"> <span id="fb-23" class="feedback"></span>
+                    </span>
+                </div>
+                <div id="exp-23"></div>
+            </div>
+
+            <div class="question-section">
+                <div class="instruction">Questions 24-26: Complete the sentences below. Write <strong>NO MORE THAN THREE WORDS</strong> from the text for each answer.</div>
+                
+                <div class="q-row" id="q-row-24">
+                    <span class="q-num">24.</span>
+                    <span class="q-content">Most viruses are just simple <input type="text" class="input-gap" style="width: 180px;" id="ans-24" oninput="updateNav(24)"> <span id="fb-24" class="feedback"></span> of pre-existing viruses.
+                    </span>
+                </div>
+                <div id="exp-24"></div>
+
+                <div class="q-row" id="q-row-25">
+                    <span class="q-num">25.</span>
+                    <span class="q-content"><input type="text" class="input-gap" style="width: 220px;" id="ans-25" oninput="updateNav(25)"> <span id="fb-25" class="feedback"></span> to a trustworthy company that deals in virus protection is a practical precaution against computer viruses.
+                    </span>
+                </div>
+                <div id="exp-25"></div>
+
+                <div class="q-row" id="q-row-26">
+                    <span class="q-num">26.</span>
+                    <span class="q-content">The key action to avoid computer viruses is the <input type="text" class="input-gap" style="width: 200px;" id="ans-26" oninput="updateNav(26)"> <span id="fb-26" class="feedback"></span>, so that they appreciate the potential consequences of what they do.
+                    </span>
+                </div>
+                <div id="exp-26"></div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div id="confirmOverlay" class="custom-overlay" style="display:none;">
+    <div class="custom-modal">
+        <h2>Xác nhận nộp bài</h2>
+        <p style="font-size: 15px; color: #475569; margin-bottom: 20px;">Bạn có chắc chắn muốn nộp bài để xem đáp án và giải thích chi tiết không?</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmModal()">Quay lại</button>
+            <button class="btn-confirm" onclick="executeSubmit()">Nộp bài</button>
+        </div>
+    </div>
+</div>
+
+<div id="resultOverlay" class="custom-overlay" style="display:none;">
+    <div class="custom-modal">
+        <h2 id="resultTitle">🎉 Kết Quả Bài Thi</h2>
+        <div style="font-size: 64px; font-weight: 800; color: var(--primary); margin: 20px 0; letter-spacing: -2px;" id="scoreDisplay">0/13</div>
+        <div style="font-size: 24px; font-weight: 800; color: var(--correct); margin-bottom: 25px; background: #ecfdf5; display: inline-block; padding: 12px 30px; border-radius: 20px; border: 2px solid #a7f3d0;" id="bandDisplay">Band: 0.0</div>
+        <button class="btn-confirm" style="width: 100%;" onclick="closeResultModal()">Xem giải thích chi tiết</button>
+    </div>
+</div>
+
+<div id="deleteConfirmOverlay" class="custom-overlay" style="display:none;">
+    <div class="custom-modal">
+        <h2>Xác nhận xóa</h2>
+        <p style="font-size: 15px; color: #475569; margin-bottom: 20px;">Bạn có chắc chắn muốn xóa bài làm này khỏi lịch sử không? Hành động này không thể hoàn tác.</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeDeleteModal()">Quay lại</button>
+            <button class="btn-confirm" style="background: var(--wrong); box-shadow: 0 4px 0 #b91c1c;" onclick="executeDelete()">Xóa</button>
+        </div>
+    </div>
+</div>
+
+<div id="ctxMenu">
+    <button onclick="doHighlight()">🖍 Highlight</button>
+    <button onclick="removeHighlight()" class="delete">🗑 Xóa Highlight</button>
+</div>
+
+<footer>
+    <div style="font-size:13px; font-weight:bold; color:#64748b; text-transform:uppercase;">Điều hướng:</div>
+    <div class="palette-scroller" id="navPalette"></div>
+</footer>
+
+<script>
+    // --- STATE & DATA ---
+    let currentMode = '';
+    let testDuration = 0; 
+    let timerInterval = null;
+    let isSubmitted = false;
+    
+    const START_Q = 14;
+    const END_Q = 26;
+    const TOTAL_QUESTIONS = 13;
+
+    // --- SETUP MODAL LOGIC ---
+    function selectMode(mode) {
+        currentMode = mode;
+        document.querySelector('.mode-practice').classList.toggle('selected', mode === 'practice');
+        document.querySelector('.mode-mock').classList.toggle('selected', mode === 'mock');
+        
+        document.getElementById('timeInputBox').style.display = (mode === 'practice') ? 'block' : 'none';
+        document.getElementById('startBtn').style.display = 'inline-block';
+    }
+
+    function openHistoryTab() {
+        document.getElementById('setupContent').style.display = 'none';
+        document.getElementById('historyContent').style.display = 'block';
+        if(window.taiLichSuIELTS) window.taiLichSuIELTS();
+    }
+
+    function backToMenu() {
+        document.getElementById('historyContent').style.display = 'none';
+        document.getElementById('setupContent').style.display = 'block';
+    }
+
+    function askReady() {
+        let confirmMsg = currentMode === 'mock' 
+            ? "Bạn chọn Thi Thử (20 phút).\nBạn đã sẵn sàng bước vào bài làm chưa?" 
+            : `Bạn chọn Luyện Tập (${document.getElementById('timeInput').value} phút).\nBạn đã sẵn sàng chưa?`;
+            
+        document.getElementById('startConfirmMsg').innerText = confirmMsg;
+        document.getElementById('startConfirmOverlay').style.display = 'flex';
+    }
+
+    function closeStartConfirmModal() { document.getElementById('startConfirmOverlay').style.display = 'none'; }
+
+    function startTestActual() {
+        document.getElementById('startConfirmOverlay').style.display = 'none';
+        let minutes = (currentMode === 'mock') ? 20 : parseInt(document.getElementById('timeInput').value);
+        if(isNaN(minutes) || minutes < 1) minutes = 20;
+        testDuration = minutes * 60;
+        
+        document.getElementById('setupOverlay').style.display = 'none';
+        startTimer();
+    }
+
+    const correctAnswers = {
+        14: "SPREAD",
+        15: "REPUTATIONS",
+        16: "HIDE",
+        17: "ORIGINS",
+        18: "RISKS",
+        19: ["FLOPPY DISKS", "FLOPPY DISK", "DISKS", "DISK"],
+        20: ["A LOGIC BOMB", "LOGIC BOMB"],
+        21: ["A WORM", "WORM"],
+        22: ["MUTATION"],
+        23: ["EMAIL"],
+        24: ["VARIANTS"],
+        25: ["A SUBSCRIPTION", "A REGULAR SUBSCRIPTION", "SUBSCRIPTION", "REGULAR SUBSCRIPTION"],
+        26: ["EDUCATION OF USERS"]
+    };
+
+    const explanations = {
+        14: { translation: "Khả năng [lan truyền] sang các hệ thống khác.", keywords: "<span class='exp-keyword-match'>stop many computers at once = spread to other systems</span>", exp: "Đoạn 2 nêu rõ virus có thể làm dừng nhiều máy tính cùng lúc, lan truyền gây hại rộng hơn.", colorClass: "ev-14" },
+        15: { translation: "[Danh tiếng] của mọi người và các tổ chức có thể bị tổn hại.", keywords: "<span class='exp-keyword-match'>bring shame = harm reputations</span>", exp: "Đoạn 2 đề cập việc gửi email mạo danh làm tổn hại danh tiếng (reputations) của cá nhân/tổ chức.", colorClass: "ev-15" },
+        16: { translation: "Chúng thường [ẩn nấp] bên trong hệ thống trước khi gây hại.", keywords: "<span class='exp-keyword-match'>lie low = hide</span>", exp: "Đoạn 3 đề cập: 'Successful viruses lie low until they have thoroughly infiltrated...', lie low đồng nghĩa với hide.", colorClass: "ev-16" },
+        17: { translation: "[Nguồn gốc] của chúng rất khó để truy vết.", keywords: "<span class='exp-keyword-match'>effect rarely linked back to its originator = origins difficult to trace</span>", exp: "Đoạn 3 cho biết tác động của virus hiếm khi dẫn ngược lại người tạo ra nó (originator/origins).", colorClass: "ev-17" },
+        18: { translation: "...nghiên cứu thường không tạo ra [rủi ro] nào.", keywords: "<span class='exp-keyword-match'>no distribution to the public = no risks</span>", exp: "Đoạn 3 ghi 'research virus' gần như không phát tán ra công chúng nên không gây ra rủi ro (risks).", colorClass: "ev-18" },
+        19: { translation: "Đĩa mềm (Floppy disks)", keywords: "<span class='exp-keyword-match'>spread by removable media, predominantly floppy disks</span>", exp: "Đoạn 4 ghi rõ trước khi có Internet, virus lây qua các thiết bị lưu trữ di động mà chủ yếu là đĩa mềm (floppy disks).", colorClass: "ev-19" },
+        20: { translation: "Bom logic (A logic bomb)", keywords: "<span class='exp-keyword-match'>A logic bomb ... activated on a certain date, to delete information</span>", exp: "Đoạn 5 định nghĩa logic bomb là chương trình được kích hoạt vào thời điểm cụ thể để xóa dữ liệu.", colorClass: "ev-20" },
+        21: { translation: "Sâu máy tính (A worm)", keywords: "<span class='exp-keyword-match'>A worm is a distributed program that invades computers on a network</span>", exp: "Đoạn 5 ghi rõ worm là loại chương trình xâm nhập các máy tính trong cùng mạng lưới (network).", colorClass: "ev-21" },
+        22: { translation: "Sự đột biến (Mutation)", keywords: "<span class='exp-keyword-match'>undergo mutation ... combined with cryptographic techniques</span>", exp: "Đoạn 6 nêu rõ sự đột biến (mutation) kết hợp với các kỹ thuật mã hóa làm cho virus hiện đại khó phát hiện.", colorClass: "ev-22" },
+        23: { translation: "Thư điện tử (Email)", keywords: "<span class='exp-keyword-match'>Email ... most popular way to disperse viruses today</span>", exp: "Đoạn 6 khẳng định Email đã trở thành phương thức phổ biến nhất để phát tán virus hiện nay.", colorClass: "ev-23" },
+        24: { translation: "Biến thể (variants)", keywords: "<span class='exp-keyword-match'>simple variants of others</span>", exp: "Đoạn 7 chỉ ra phần lớn virus chỉ là các biến thể đơn giản (simple variants) của các loại virus có sẵn.", colorClass: "ev-24" },
+        25: { translation: "Việc đăng ký (A regular subscription)", keywords: "<span class='exp-keyword-match'>regular subscription from a reputable firm</span>", exp: "Đoạn 8 khuyên người dùng nên duy trì đăng ký định kỳ (regular subscription) dịch vụ từ hãng uy tín.", colorClass: "ev-25" },
+        26: { translation: "Giáo dục người dùng (education of users)", keywords: "<span class='exp-keyword-match'>above all, education of users to the possible results</span>", exp: "Đoạn cuối nhấn mạnh hành động quan trọng nhất là giáo dục người dùng (education of users) về hậu quả hành vi của họ.", colorClass: "ev-26" }
+    };
+
+    window.onload = function() {
+        renderPalette();
+        document.getElementById('setupOverlay').style.display = 'flex';
+    }
+
+    function renderPalette() {
+        const nav = document.getElementById("navPalette");
+        for (let i = START_Q; i <= END_Q; i++) {
+            let dot = document.createElement("div");
+            dot.className = "nav-dot"; dot.id = `nav-${i}`; dot.innerText = i;
+            dot.onclick = () => scrollToQuestion(i);
+            nav.appendChild(dot);
+        }
+    }
+
+    function scrollToQuestion(id) {
+        setTimeout(() => {
+            let targetId = `q-row-${id}`;
+            let el = document.getElementById(targetId);
+            if(!el && id >= 14 && id <= 18) {
+                el = document.getElementById(`ans-${id}`);
+            }
+            if(el) {
+                el.scrollIntoView({behavior:"smooth", block:"center"});
+                el.style.backgroundColor = "var(--highlight-color)";
+                setTimeout(() => el.style.backgroundColor = "", 1000);
+            }
+        }, 100);
+    }
+
+    function updateNav(id) {
+        let nav = document.getElementById(`nav-${id}`);
+        if (!nav) return;
+        
+        let val = "";
+        let el = document.getElementById(`ans-${id}`);
+        if (el) val = el.value;
+        
+        if (val && val.trim() !== "") nav.classList.add("done");
+        else nav.classList.remove("done");
+    }
+
+    function startTimer() {
+        let display = document.getElementById("timer");
+        timerInterval = setInterval(function () {
+            let m = Math.floor(testDuration / 60);
+            let s = testDuration % 60;
+            display.textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+            if (--testDuration < 0) { clearInterval(timerInterval); executeSubmit(); }
+        }, 1000);
+    }
+
+    function submitTest(manual) {
+        if (isSubmitted) return;
+        if (manual) document.getElementById('confirmOverlay').style.display = 'flex';
+        else executeSubmit();
+    }
+
+    function closeConfirmModal() { document.getElementById('confirmOverlay').style.display = 'none'; }
+    function closeResultModal() { document.getElementById('resultOverlay').style.display = 'none'; }
+
+    // Hàm tính Band điểm IELTS Reading
+    window.calculateIeltsBand = function(correct, total) {
+        let normalizedCorrect = (correct / total) * 40;
+        if (normalizedCorrect >= 39) return 9.0;
+        if (normalizedCorrect >= 37) return 8.5;
+        if (normalizedCorrect >= 35) return 8.0;
+        if (normalizedCorrect >= 33) return 7.5;
+        if (normalizedCorrect >= 30) return 7.0;
+        if (normalizedCorrect >= 27) return 6.5;
+        if (normalizedCorrect >= 23) return 6.0;
+        if (normalizedCorrect >= 19) return 5.5;
+        if (normalizedCorrect >= 15) return 5.0;
+        if (normalizedCorrect >= 13) return 4.5;
+        if (normalizedCorrect >= 10) return 4.0;
+        if (normalizedCorrect >= 8) return 3.5;
+        if (normalizedCorrect >= 6) return 3.0;
+        return 2.5;
+    }
+
+    function executeSubmit(isReviewMode = false) {
+        document.getElementById('confirmOverlay').style.display = 'none';
+        isSubmitted = true;
+        clearInterval(timerInterval);
+        document.querySelectorAll('input, select').forEach(el => el.disabled = true);
+        
+        let score = 0;
+        let userAnswersDict = {}; 
+        const summaryExpContainer = document.getElementById('fb-container-14-18');
+        if(summaryExpContainer) summaryExpContainer.innerHTML = "";
+
+        for (let i = START_Q; i <= END_Q; i++) {
+            let userAns = "";
+            let el = document.getElementById(`ans-${i}`);
+            
+            if (el) userAns = el.value.trim().toUpperCase();
+            userAnswersDict['ans-'+i] = userAns;
+
+            let correctAnswer = correctAnswers[i];
+            let isCorrect = false;
+
+            if (Array.isArray(correctAnswer)) {
+                isCorrect = correctAnswer.includes(userAns);
+            } else {
+                isCorrect = (userAns === correctAnswer);
+            }
+
+            if (isCorrect) score++;
+
+            let fb = document.getElementById(`fb-${i}`);
+            let correctStr = Array.isArray(correctAnswer) ? correctAnswer.join(" / ") : correctAnswer;
+            if (fb) {
+                fb.innerText = isCorrect ? "✓" : `✗ (${correctStr})`;
+                fb.className = isCorrect ? "feedback correct" : "feedback wrong";
+            }
+
+            if(explanations[i]) {
+                let expData = explanations[i];
+                let htmlContent = `
+                    <div class="exp-box show">
+                        <div class="exp-title">
+                            💡 Giải thích Câu ${i}
+                            ${expData.colorClass ? `<button class="locate-btn" onclick="scrollToEvidence('${expData.colorClass}')">📍 Xem dẫn chứng</button>` : ''}
+                        </div>
+                        <div class="exp-section">
+                            <span class="exp-label">👉 Dịch nghĩa:</span> 
+                            <div class="exp-translate">${expData.translation}</div>
+                        </div>
+                        ${expData.keywords ? `
+                        <div class="exp-section">
+                            <span class="exp-label">🔑 Từ khóa:</span> 
+                            <div class="exp-keywords">${expData.keywords}</div>
+                        </div>` : ''}
+                        <div class="exp-section">
+                            <span class="exp-label">🧠 Phân tích:</span> 
+                            <div class="exp-detail">${expData.exp}</div>
+                        </div>
+                    </div>`;
+
+                // Đưa giải thích vào đúng vị trí
+                if (i >= 14 && i <= 18) {
+                    if(summaryExpContainer) summaryExpContainer.innerHTML += htmlContent;
+                } else {
+                    let expContainer = document.getElementById(`exp-${i}`);
+                    if(expContainer) expContainer.innerHTML = htmlContent;
+                }
+            }
+        } 
+
+        document.getElementById('scoreDisplay').innerText = score + "/" + TOTAL_QUESTIONS;
+        let bandScore = window.calculateIeltsBand(score, TOTAL_QUESTIONS);
+        document.getElementById('bandDisplay').innerText = "Band: " + (Number.isInteger(bandScore) ? bandScore + ".0" : bandScore);
+        document.getElementById('resultOverlay').style.display = 'flex';
+
+        if (!isReviewMode && window.luuDiemLenFirebase) {
+            let initialTime = (currentMode === 'mock') ? 20 * 60 : parseInt(document.getElementById('timeInput').value) * 60;
+            let timeTakenMinutes = Math.round((initialTime - testDuration) / 60);
+            window.luuDiemLenFirebase(score, timeTakenMinutes, userAnswersDict);
+        }
+    }
+
+    // HÀM XEM LẠI LỊCH SỬ
+    window.xemLaiLichSu = function(docId) {
+        let attempt = window.historyDataList.find(d => d.id === docId);
+        if(!attempt) return;
+        
+        document.getElementById('setupOverlay').style.display = 'none';
+        
+        let ans = attempt.userAnswers || {};
+        for(let i = START_Q; i <= END_Q; i++) {
+            let val = ans['ans-'+i] || '';
+            let el = document.getElementById(`ans-${i}`);
+            if (el) el.value = val;
+        }
+
+        executeSubmit(true);
+    }
+        
+    function scrollToEvidence(id) {
+        const evElement = document.getElementById(id);
+        if(evElement) {
+            setTimeout(() => {
+                evElement.scrollIntoView({behavior: "smooth", block: "center"});
+                evElement.classList.remove("focus-blink");
+                void evElement.offsetWidth;
+                evElement.classList.add("focus-blink");
+                setTimeout(() => evElement.classList.remove("focus-blink"), 1500);
+            }, 100);
+        }
+    }
+
+    // --- HIGHLIGHT SYSTEM ---
+    const container = document.getElementById("mainContainer");
+    const menu = document.getElementById("ctxMenu");
+    let targetEl = null; let selectedRange = null;
+
+    container.addEventListener("contextmenu", (e) => {
+        if (!e.target.closest('.pane')) return;
+        e.preventDefault();
+        targetEl = null; selectedRange = null; menu.style.display = "none";
+        
+        if (e.target.classList.contains("highlight")) {
+            targetEl = e.target;
+            showMenu(e.pageX, e.pageY, "remove"); return;
+        }
+
+        let sel = window.getSelection();
+        if (sel.toString().trim().length > 0 && container.contains(sel.anchorNode)) {
+            selectedRange = sel.getRangeAt(0).cloneRange();
+            showMenu(e.pageX, e.pageY, "add");
+        }
+    });
+
+    document.addEventListener("click", (e) => { if (!menu.contains(e.target)) menu.style.display = "none"; });
+
+    function showMenu(x, y, mode) {
+        menu.style.display = "block";
+        let mw = menu.offsetWidth; let mh = menu.offsetHeight;
+        menu.style.left = (x + mw > window.innerWidth ? window.innerWidth - mw - 10 : x) + "px";
+        menu.style.top = (y + mh > window.innerHeight ? window.innerHeight - mh - 10 : y) + "px";
+        menu.children[0].style.display = (mode === "add") ? "block" : "none";
+        menu.children[1].style.display = (mode === "remove") ? "block" : "none";
+    }
+
+   function doHighlight() {
+        if (selectedRange && !selectedRange.collapsed) {
+            let span = document.createElement("span"); 
+            span.className = "highlight";
+            try { 
+                selectedRange.surroundContents(span); 
+            } catch(e) {
+                span.appendChild(selectedRange.extractContents());
+                selectedRange.insertNode(span);
+            }
+            window.getSelection().removeAllRanges();
+        }
+        menu.style.display = "none";
+    }
+
+    function removeHighlight() {
+        if (targetEl) {
+            let text = document.createTextNode(targetEl.textContent);
+            targetEl.parentNode.replaceChild(text, targetEl);
+            container.normalize();
+        }
+        menu.style.display = "none";
+    }
+</script>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+        authDomain: "snapenglish-cb6e2.firebaseapp.com",
+        projectId: "snapenglish-cb6e2",
+        storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+        messagingSenderId: "373152038413",
+        appId: "1:373152038413:web:19284622571390f8585f44"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            window.currentUserUid = user.uid;
+            window.currentUserEmail = user.email;
+        }
+    });
+
+   window.luuDiemLenFirebase = async function(diemSo, timeTakenMinutes, userAnswersDict) {
+        if (!window.currentUserUid) return;
+        
+        let bandScore = window.calculateIeltsBand ? window.calculateIeltsBand(diemSo, 13) : 0;
+        let timestamp = Date.now();
+        let idLuotThi = window.currentUserUid + "_ielts_R_T7_P2_" + timestamp;
+
+        try {
+            await setDoc(doc(db, "user_ielts_scores", idLuotThi), {
+                email: window.currentUserEmail,
+                skill: "Reading",
+                testName: "Test 7",
+                partName: "Passage 2",
+                timeTaken: timeTakenMinutes.toString(),
+                correctQ: diemSo,
+                totalQ: 13,
+                bandScore: bandScore,
+                userAnswers: userAnswersDict,
+                date: new Date().toLocaleDateString("vi-VN"),
+                timestamp: timestamp
+            });
+        } catch(e) {
+            console.error("Lỗi khi lưu điểm: ", e);
+        }
+    }
+
+    // TẢI LỊCH SỬ
+    window.taiLichSuIELTS = async function() {
+        const tbody = document.getElementById("historyBody");
+        const loading = document.getElementById("historyLoading");
+
+        if (!window.currentUserUid) {
+            tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>Vui lòng đăng nhập hệ thống để xem lịch sử.</td></tr>";
+            loading.style.display = "none";
+            return;
+        }
+
+        loading.style.display = "block";
+        tbody.innerHTML = "";
+
+        try {
+            const q = query(
+                collection(db, "user_ielts_scores"),
+                where("email", "==", window.currentUserEmail),
+                where("skill", "==", "Reading"),
+                where("testName", "==", "Test 7"),
+                where("partName", "==", "Passage 2")
+            );
+
+            const querySnapshot = await getDocs(q);
+            let html = "";
+            
+            if (querySnapshot.empty) {
+                html = "<tr><td colspan='4' style='text-align:center;'>Bạn chưa làm bài test này.</td></tr>";
+            } else {
+                window.historyDataList = [];
+                querySnapshot.forEach((doc) => { 
+                    let data = doc.data();
+                    data.id = doc.id; 
+                    window.historyDataList.push(data); 
+                });
+                
+                window.historyDataList.sort((a, b) => b.timestamp - a.timestamp);
+
+                window.historyDataList.forEach((data) => {
+                    let dateObj = new Date(data.timestamp);
+                    let dateString = dateObj.toLocaleDateString("vi-VN") + " " + dateObj.getHours() + ":" + (dateObj.getMinutes() < 10 ? '0':'') + dateObj.getMinutes();
+
+                   html += `
+                        <tr>
+                            <td>${dateString}</td>
+                            <td><strong>${data.correctQ} / ${data.totalQ || 13}</strong></td>
+                            <td><strong style="color: var(--primary-dark); font-size: 1.1em;">${data.bandScore}</strong></td>
+                            <td>
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="xemLaiLichSu('${data.id}')" class="btn-confirm" style="padding: 6px 12px; background: #e0f2fe; color: #0284c7; box-shadow: none;">Xem lại</button>
+                                    <button onclick="xoaLichSu('${data.id}', this)" class="btn-cancel" style="padding: 6px 12px; border-color: #fca5a5; color: #dc2626;">Xóa</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+            tbody.innerHTML = html;
+        } catch (error) {
+            console.error("Lỗi fetch lịch sử: ", error);
+            tbody.innerHTML = "<tr><td colspan='4' style='text-align:center; color: var(--danger);'>Đã xảy ra lỗi tải dữ liệu.</td></tr>";
+        } finally {
+            loading.style.display = "none";
+        }
+    }
+
+    let itemToDeleteId = null;
+    let itemToDeleteBtn = null;
+
+    window.xoaLichSu = function(docId, btnElement) {
+        itemToDeleteId = docId;
+        itemToDeleteBtn = btnElement;
+        document.getElementById('deleteConfirmOverlay').style.display = 'flex';
+    }
+
+    window.closeDeleteModal = function() {
+        document.getElementById('deleteConfirmOverlay').style.display = 'none';
+        itemToDeleteId = null;
+        itemToDeleteBtn = null;
+    }
+
+    window.executeDelete = async function() {
+        if (!itemToDeleteId || !itemToDeleteBtn) return;
+        
+        let docId = itemToDeleteId;
+        let btnElement = itemToDeleteBtn;
+        closeDeleteModal();
+
+        let originalText = btnElement.innerText;
+        btnElement.innerText = "...";
+        btnElement.disabled = true;
+
+        try {
+            await deleteDoc(doc(db, "user_ielts_scores", docId));
+            window.taiLichSuIELTS(); 
+        } catch (error) {
+            console.error("Lỗi khi xóa lịch sử: ", error);
+            btnElement.innerText = "Lỗi!";
+            setTimeout(() => {
+                btnElement.innerText = originalText;
+                btnElement.disabled = false;
+            }, 2000);
+        }
+    }
+</script>
+</body>
+</html>
