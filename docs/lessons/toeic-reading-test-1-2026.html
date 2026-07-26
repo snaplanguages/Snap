@@ -2792,513 +2792,256 @@ function toggleNav() {
     document.getElementById('navPanel').classList.toggle('show');
 }
 
-// Bấm ra ngoài khoảng trắng sẽ tự động đóng Menu
-document.addEventListener('click', function(e) {
-    let panel = document.getElementById('navPanel');
-    let btn = document.querySelector('.btn-toggle-nav');
-    if (panel && btn && panel.classList.contains('show') && !panel.contains(e.target) && !btn.contains(e.target)) {
-        panel.classList.remove('show');
-    }
+
+
+
+
+        
+// Variable Trạng thái ứng dụng
+let currentTab = 1;
+let isSubmitted = false;
+let userAnswers = {};
+let observer = null;
+
+// Dữ liệu bài đọc mẫu (Nếu Part 6/7 có bài đọc riêng theo nhóm câu hỏi)
+const passageData = {
+    // Ví dụ bài đọc dành cho Part 5 hoặc Part 6/7 theo id/nhóm câu
+    101: { title: "Passage / Context 101-105", content: "The annual lecture series will begin at 6:00 P.M. Attendees are encouraged to stay for the Q&A session.", vi: "Chuỗi bài giảng hàng năm sẽ bắt đầu lúc 6:00 tối. Những người tham dự được khuyến khích ở lại tham gia phiên hỏi đáp." },
+    106: { title: "Passage / Context 106-110", content: "Pirkle Books is introducing new automated cash registers to keep track of store inventory seamlessly.", vi: "Nhà sách Pirkle Books đang đưa vào sử dụng máy tính tiền tự động mới để theo dõi kho hàng của cửa hàng một cách liền mạch." }
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    initApp();
 });
-// --- SETUP MODAL LOGIC ---
-function selectMode(mode) {
-    currentMode = mode;
-    document.querySelector('.mode-practice').classList.toggle('selected', mode === 'practice');
-    document.querySelector('.mode-mock').classList.toggle('selected', mode === 'mock');
-    
-    document.getElementById('timeInputBox').style.display = (mode === 'practice') ? 'block' : 'none';
-    
-    // Đổi 'inline-block' thành 'block'
-    document.getElementById('startBtn').style.display = '';
+
+function initApp() {
+    renderPart5();
+    renderNavPalette();
+    setupScrollObserver(); // Kích hoạt tính năng cuộn đến đâu đổi bài đọc đến đó
+    showSetupModal();
 }
 
-function askReady() {
-    let confirmMsg = currentMode === 'mock' 
-        ? "Bạn chọn Thi Thử (75 phút chuẩn TOEIC Reading).\nBạn đã sẵn sàng bước vào bài làm chưa?" 
-        : `Bạn chọn Luyện Tập (${document.getElementById('timeInput').value} phút).\nBạn đã sẵn sàng chưa?`;
-        
-    document.getElementById('startConfirmMsg').innerText = confirmMsg;
-    document.getElementById('startConfirmOverlay').style.display = 'flex';
-}
+// 1. RENDER CÂU HỎI VÀ KHUNG GIẢI THÍCH (TÍCH HỢP TỪ toeicData.exp)
+function renderPart5() {
+    const container = document.getElementById("render-part5");
+    if (!container || !toeicData.part5) return;
 
-function closeStartConfirmModal() {
-    document.getElementById('startConfirmOverlay').style.display = 'none';
-}
+    let html = "";
+    toeicData.part5.forEach((item, index) => {
+        const qNum = item.id;
+        const exp = item.exp || {};
 
-function startTestActual() {
-    document.getElementById('startConfirmOverlay').style.display = 'none';
-    
-    let minutes = (currentMode === 'mock') ? 75 : parseInt(document.getElementById('timeInput').value);
-    if(isNaN(minutes) || minutes < 1) minutes = 75;
-    testDuration = minutes * 60;
-    
-    document.getElementById('setupOverlay').style.display = 'none';
-    startTimer();
-    
-}
-
-// --- HÀM TÔ MÀU DẪN CHỨNG HIỆN SẴN ---
-function applyEvidenceColors() {
-    const pastelColors = [
-        { bg: '#ffadad', text: '#5a1c1c' }, // Đỏ pastel
-        { bg: '#ffd6a5', text: '#663d14' }, // Cam pastel
-        { bg: '#caffbf', text: '#1f4d1f' }, // Xanh lá pastel
-        { bg: '#9bf6ff', text: '#16565c' }, // Xanh dương pastel
-        { bg: '#a0c4ff', text: '#1c3666' }, // Xanh biển pastel
-        { bg: '#bdb2ff', text: '#352666' }, // Tím pastel
-        { bg: '#ffc6ff', text: '#661a66' }, // Hồng pastel
-        { bg: '#e2f0cb', text: '#3e5222' }  // Xanh rêu pastel
-    ];
-
-    let colorIndex = 0;
-    let usedColors = {}; 
-
-    let evElements = document.querySelectorAll('.ev-box');
-
-    evElements.forEach(el => {
-        let idString = el.id;
-        if (!idString) return;
-        let match = idString.match(/ev-(\d+)/);
-        if (match) {
-            let qId = match[1];
-            if (!usedColors[qId]) {
-                usedColors[qId] = pastelColors[colorIndex % pastelColors.length];
-                colorIndex++;
-            }
-            el.style.backgroundColor = usedColors[qId].bg;
-            el.style.color = usedColors[qId].text;
-            el.style.padding = "2px 5px";
-            el.style.borderRadius = "6px";
-            el.style.fontWeight = "600";
-            el.style.transition = "all 0.3s ease";
-        }
-    });
-}
-
-// --- INIT ---
-window.onload = function() {
-    renderDynamicContent();
-    switchTab(1); 
-    document.getElementById('setupOverlay').style.display = 'flex';
-}
-
-function renderDynamicContent() {
-    let part5Html = '';
-    let part6Html = '';
-    let part7Html = '';
-    let leftPaneHtml = ''; 
-    let middlePaneHtml = ''; // Thêm biến lưu HTML tiếng Việt
-
-    if(toeicData.part5) {
-        part5Html += `<div class="instruction" style="background:var(--exp-bg); color:var(--primary-dark); padding:15px; border-radius:12px; margin-bottom:25px; font-weight:bold;"> <u>Part 5: Incomplete Sentences</u><br>Choose the word or phrase that best completes the sentence.</div>`;
-        toeicData.part5.forEach(q => {
-            part5Html += createTOEICQuestion(q);
-            allQuestionIds.push(q.id);
-            answerKey[q.id] = formatAnswer(q.options, q.a || q.correct);
-        });
-        document.getElementById('render-part5').innerHTML = part5Html;
-    }
-
-    if(toeicData.part6) {
-        part6Html += `<div class="instruction" style="background:var(--exp-bg); color:var(--primary-dark); padding:15px; border-radius:12px; margin-bottom:25px; font-weight:bold;"> <u>Part 6: Text Completion</u><br>Choose the best word or phrase for each blank.</div>`;
-        toeicData.part6.forEach(passageObj => {
-            leftPaneHtml += `<div id="passage-${passageObj.passageId}" class="passage-text-content" style="display:none; margin-bottom: 30px;">${passageObj.passage}</div>`;
-            // Kéo bản dịch Part 6 (nếu có)
-            let vieContent = passageObj.vieHtml ? passageObj.vieHtml : "<i>(Đoạn này chưa cập nhật bản dịch tiếng Việt)</i>";
-            middlePaneHtml += `<div id="vie-passage-${passageObj.passageId}" class="passage-text-content" style="display:none; margin-bottom: 30px;">${vieContent}</div>`;
-            
-            part6Html += createQuestionsBlock(passageObj);
-        });
-        document.getElementById('render-part6').innerHTML = part6Html;
-    }
-
-    // Thay thế đoạn code render Part 7 trong hàm renderDynamicContent():
-if(toeicData.part7) {
-        part7Html += `<div class="instruction" style="background:var(--exp-bg); color:var(--primary-dark); padding:15px; border-radius:12px; margin-bottom:25px; font-weight:bold;"> <u>Part 7: Reading Comprehension</u><br>Read the passages and answer the questions.</div>`;
-        toeicData.part7.forEach(passageObj => {
-            // Đẩy nội dung tiếng Anh vào cột trái
-            leftPaneHtml += `<div id="passage-${passageObj.passageId}" class="passage-text-content" style="display:none; margin-bottom: 30px;">${passageObj.passage}</div>`;
-            
-            // Đẩy bản dịch vào cột giữa (middle pane)
-            let vieContent = passageObj.vieHtml ? passageObj.vieHtml : "<i>(Đoạn này chưa cập nhật bản dịch tiếng Việt)</i>";
-            middlePaneHtml += `<div id="vie-passage-${passageObj.passageId}" class="passage-text-content" style="display:none; margin-bottom: 30px;">${vieContent}</div>`;
-            
-            part7Html += createQuestionsBlock(passageObj);
-        });
-        document.getElementById('render-part7').innerHTML = part7Html;
-    }
-
-    document.getElementById('passage-content-container').innerHTML += leftPaneHtml;
-    document.getElementById('vietnamese-content-container').innerHTML += middlePaneHtml; // Đổ vào cột giữa
-
-    const nav = document.getElementById("navPalette");
-    allQuestionIds = allQuestionIds.filter(id => id); 
-    allQuestionIds.sort((a, b) => a - b);
-    allQuestionIds.forEach(id => {
-        let dot = document.createElement("div");
-        dot.className = "nav-dot"; 
-        dot.id = `nav-${id}`; 
-        dot.innerText = id;
-        dot.onclick = () => scrollToQuestion(id);
-        nav.appendChild(dot);
-    });
-
-  
-}
-
-function formatAnswer(options, answer) {
-    if(!options) return answer;
-    if(Array.isArray(options)) {
-        // Bỏ qua mảng object của Part 7 vì đáp án đã là A,B,C,D sẵn
-        if (typeof options[0] === 'object') return answer; 
-        let labels = ["A", "B", "C", "D"];
-        let idx = options.indexOf(answer);
-        return idx !== -1 ? labels[idx] : answer;
-    }
-    return answer; 
-}
-
-function createTOEICQuestion(qObj) {
-    if(!qObj || !qObj.id) return ""; 
-    let text = qObj.q || qObj.text || qObj.qEng || "";
-    
-    // MẸO 1: Tự động bọc phần chữ trong ngoặc (...) ở câu hỏi
-    text = text.replace(/(\([^)]+\))/g, '<span class="vi-trans">$1</span>');
-
-    let opts = qObj.options;
-    let optsHTML = "";
-
-    let inputStyle = `margin-right:12px; transform:scale(1.3); cursor:pointer;`;
-    let labelStyle = `display:block; margin:5px 0 5px -10px; padding:8px 12px; border-radius:10px; cursor:pointer; border:1px solid transparent; transition:0.2s; font-size:18px;`;
-    
-    if (Array.isArray(opts)) {
-        let labels = ["A", "B", "C", "D"];
-        opts.forEach((opt, i) => {
-            let optText = typeof opt === 'object' ? opt.en : opt;
-            
-            // MẸO 2: Tự động bọc chữ trong ngoặc ở đáp án (Trường hợp mảng)
-            if (typeof optText === 'string') {
-                optText = optText.replace(/(\([^)]+\))/g, '<span class="vi-trans">$1</span>');
-            }
-
-            let optValue = typeof opt === 'object' ? opt.key : labels[i];
-            optsHTML += `<label class="mc-option" style="${labelStyle}" onmouseover="this.style.background='var(--exp-bg)'" onmouseout="this.style.background='transparent'"><input type="radio" name="q${qObj.id}" value="${optValue}" style="${inputStyle}" onclick="checkNav(${qObj.id})"> <b>${labels[i]}.</b> ${optText}</label>`;
-        });
-    } else {
-        for (let key in opts) {
-            // MẸO 3: Tự động bọc chữ trong ngoặc ở đáp án (Trường hợp Object)
-            let optText = opts[key];
-            if (typeof optText === 'string') {
-                optText = optText.replace(/(\([^)]+\))/g, '<span class="vi-trans">$1</span>');
-            }
-            
-            optsHTML += `<label class="mc-option" style="${labelStyle}" onmouseover="this.style.background='var(--exp-bg)'" onmouseout="this.style.background='transparent'"><input type="radio" name="q${qObj.id}" value="${key}" style="${inputStyle}" onclick="checkNav(${qObj.id})"> <b>${key}.</b> ${optText}</label>`;
-        }
-    }
-
-    return `<div class="q-row" id="q-row-${qObj.id}" style="margin-bottom:25px; display:flex;">
-                <div class="q-num" style="min-width:35px; height:35px; background:var(--primary); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; margin-right:15px; flex-shrink:0;">${qObj.id}</div>
-                <div class="q-text" style="flex:1; font-size:18px; line-height:1.8;">
-                    <div class="q-content-wrapper">
-                        <b>${text}</b><br>${optsHTML}
-                        <span id="fb-${qObj.id}" class="feedback" style="font-weight:bold; margin-left:10px;"></span>
-                    </div>
-                    <div id="exp-${qObj.id}" class="exp-container"></div>
-                </div>
-            </div>`;
-}
-
-function createQuestionsBlock(passageObj) {
-    let html = `<div class="questions-block" style="margin-bottom: 40px; background: transparent; padding: 0;" onmouseenter="showPassage('${passageObj.passageId}')">`;
-    html += `<div style="color:var(--primary-dark); font-weight:bold; margin-bottom:15px; border-bottom: 2px solid var(--border); padding-bottom:10px; font-size: 18px;">📝 Questions for Passage: ${passageObj.passageId}</div>`;
-    
-    let validQuestions = passageObj.questions.filter(q => q && q.id);
-
-    validQuestions.forEach(q => {
-        html += createTOEICQuestion(q);
-        allQuestionIds.push(q.id);
-        
-        // Sửa lỗi 3: Tìm đúng thuộc tính đáp án cho cả 3 Part
-        let correctAns = q.a || q.correct;
-        if (!correctAns && Array.isArray(q.options) && typeof q.options[0] === 'object') {
-            let correctObj = q.options.find(o => o.isCorrect);
-            if (correctObj) correctAns = correctObj.key;
-        }
-        
-        answerKey[q.id] = formatAnswer(q.options, correctAns);
-    });
-    html += `</div>`;
-    return html;
-}
-
-function switchTab(n) {
-    document.querySelectorAll('.tab-btn').forEach((b, i) => { b.classList.toggle('active', i + 1 === n); });
-    document.querySelectorAll('.question-group').forEach((q, i) => { q.style.display = (i + 1 === n) ? 'block' : 'none'; });
-    
-    document.querySelectorAll('.passage-text-content').forEach(p => p.style.display = 'none');
-
-    let paneLeft = document.getElementById('passagePane');
-    let paneMiddle = document.getElementById('vietnamesePane');
-    let introText = document.getElementById('left-title');
-    
-    if(n === 1) {
-        if(paneLeft) paneLeft.style.display = 'none';
-        if(paneMiddle) paneMiddle.style.display = 'none';
-        // Ẩn luôn tiêu đề ở Part 5 vì không cần thiết
-        if(introText) introText.style.display = 'none'; 
-    } else {
-        if(paneLeft) paneLeft.style.display = 'block';
-        if(paneMiddle) paneMiddle.style.display = isSubmitted ? 'block' : 'none';
-        // Hiện lại tiêu đề ở dạng ghi chú nhỏ, sát mép trên
-        if(introText) {
-            introText.style.display = 'block';
-            introText.innerHTML = `<span style="font-size:16px; color:#888; font-weight:normal; display:block; padding-bottom: 10px;">(Cuộn chuột vào nhóm câu hỏi bên phải để xem đoạn văn tương ứng)</span>`;
-        }
-    }
-    
-    document.querySelector('.pane-right').scrollTop = 0;
-    if(paneLeft) paneLeft.scrollTop = 0;
-}
-function showPassage(passageId) {
-    document.querySelectorAll('.passage-text-content').forEach(p => p.style.display = 'none');
-    
-    // Hiện bài tiếng Anh
-    let pEng = document.getElementById(`passage-${passageId}`);
-    if (pEng) pEng.style.display = 'block';
-
-    // Hiện bản dịch tiếng Việt tương ứng (Cột 2)
-    let pVie = document.getElementById(`vie-passage-${passageId}`);
-    if (pVie) pVie.style.display = 'block';
-}
-
-function checkNav(id) {
-    if(isSubmitted) return;
-    let val = "";
-    let radios = document.getElementsByName(`q${id}`);
-    for (let r of radios) if (r.checked) val = r.value;
-
-    let nav = document.getElementById(`nav-${id}`);
-    if(nav) {
-        if (val) nav.classList.add("done");
-        else nav.classList.remove("done");
-    }
-}
-
-function scrollToQuestion(id) {
-    document.getElementById('navPanel').classList.remove('show'); // Dòng chèn thêm
-    let group = 1;
-    if (toeicData.part6.some(p => p.questions.some(q => q.id == id))) group = 2;
-    if (toeicData.part7.some(p => p.questions.some(q => q.id == id))) group = 3;
-    
-    switchTab(group);
-    
-    setTimeout(() => {
-        let el = document.getElementById(`q-row-${id}`);
-        if (el) {
-            el.scrollIntoView({behavior: "smooth", block: "center"});
-            el.style.transition = "background 0.5s";
-            el.style.background = "#fff9c4";
-            setTimeout(() => el.style.background = "transparent", 1000);
-            
-            // Kích hoạt hiển thị đoạn văn luôn
-            let parentBlock = el.closest('.questions-block');
-            if(parentBlock) {
-                // Kích hoạt event onmouseenter bằng code
-                let mouseEvent = new MouseEvent('mouseenter');
-                parentBlock.dispatchEvent(mouseEvent);
-            }
-        }
-    }, 100);
-}
-// --- HỆ THỐNG POPUP TÙY CHỈNH ---
-function showCustomAlert(msg) {
-    document.getElementById('genericAlertMsg').innerText = msg;
-    document.getElementById('genericAlertOverlay').style.display = 'flex';
-}
-
-function closeGenericAlert() {
-    document.getElementById('genericAlertOverlay').style.display = 'none';
-}
-
-function showCustomConfirm(msg, onConfirmCallback) {
-    document.getElementById('genericConfirmMsg').innerText = msg;
-    let confirmBtn = document.getElementById('genericConfirmBtn');
-    
-    // Gỡ bỏ các sự kiện click cũ để tránh bị lặp hành động
-    let newBtn = confirmBtn.cloneNode(true);
-    confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
-    
-    newBtn.addEventListener('click', function() {
-        document.getElementById('genericConfirmOverlay').style.display = 'none';
-        if (typeof onConfirmCallback === 'function') {
-            onConfirmCallback();
-        }
-    });
-
-    document.getElementById('genericConfirmOverlay').style.display = 'flex';
-}
-
-function closeGenericConfirm() {
-    document.getElementById('genericConfirmOverlay').style.display = 'none';
-}
-// --- TIMER ---
-function startTimer() {
-    let display = document.getElementById("timer");
-    timerInterval = setInterval(function () {
-        let m = Math.floor(testDuration / 60);
-        let s = testDuration % 60;
-        display.textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
-        if (--testDuration < 0) { 
-            clearInterval(timerInterval); 
-            submitTest(false); 
-        }
-    }, 1000);
-}
-window.openHistoryModal = openHistoryModal;
-window.closeHistoryModal = closeHistoryModal;
-window.restoreAttempt = restoreAttempt;
-window.deleteAttempt = deleteAttempt; // Thêm kết nối cho hàm Xóa
-
-// --- QUẢN LÝ LỊCH SỬ LÀM BÀI ---
-const HISTORY_KEY = "snapenglish_test1_2026_history";
-let isReviewingMode = false;
-function openHistoryModal() {
-    // Lấy dữ liệu lịch sử từ localStorage
-    let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-    let historyListEl = document.getElementById('historyList');
-    let listHtml = '';
-
-    // Kiểm tra nếu chưa có lịch sử
-    if (history.length === 0) {
-        listHtml = '<p style="text-align: center; color: #888; margin-top: 20px;">Chưa có dữ liệu làm bài.</p>';
-    } else {
-        // Duyệt qua từng bài làm và tạo giao diện hiển thị
-        history.forEach(attempt => {
-            listHtml += `
-                <div class="history-item">
-                    <div class="history-info">
-                        <span class="history-date">📅 ${attempt.date} - ⏰ ${attempt.time}</span>
-                        <span class="history-score">🏆 Điểm: ${attempt.score}/${attempt.total} (${attempt.toeicScore} điểm)</span>
-                    </div>
-                    <div style="display: flex; gap: 5px;">
-                        <button class="btn-review" onclick="restoreAttempt(${attempt.id})">Xem lại</button>
-                        <button class="btn-delete-history" onclick="deleteAttempt(${attempt.id})" title="Xóa bài làm này">✖</button>
+        html += `
+        <div class="q-item" id="q-item-${qNum}" data-qnum="${qNum}" style="margin-bottom: 30px; padding: 20px; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04);">
+            <div class="q-text" id="q-text-${qNum}">
+                <div class="q-content-wrapper">
+                    <p style="font-size: 18px; font-weight: 700; color: var(--primary-dark);">
+                        Câu ${qNum}: <span style="font-weight: 500; color: #333;">${item.q}</span>
+                    </p>
+                    
+                    <div class="options-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                        ${item.options.map(opt => `
+                            <button class="mc-option opt-${qNum}" data-q="${qNum}" data-val="${opt}" onclick="selectAnswer(${qNum}, '${opt}', this)" style="padding: 12px; border: 2px solid var(--border); border-radius: 10px; background: white; text-align: left; font-size: 16px; cursor: pointer; font-family: inherit;">
+                                <b>${getOptLabel(opt, item.options)}</b> ${opt}
+                            </button>
+                        `).join('')}
                     </div>
                 </div>
-            `;
-        });
-    }
-    
-    // Đổ dữ liệu vào danh sách và hiển thị bảng Modal
-    historyListEl.innerHTML = listHtml;
-    document.getElementById('historyOverlay').style.display = 'flex';
-}
 
-function closeHistoryModal() {
-    // Ẩn bảng Modal lịch sử
-    document.getElementById('historyOverlay').style.display = 'none';
-}
-function saveAttemptToHistory(score, total, userAnswersMap) {
-    let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-    let now = new Date();
-    
-    let attempt = {
-        id: Date.now(),
-        date: now.toLocaleDateString('vi-VN'),
-        time: now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-        score: score,
-        total: total,
-        toeicScore: calculateToeicReading(score, total),
-        answers: userAnswersMap // Lưu lại toàn bộ ABCD đã chọn
-    };
-    
-    history.unshift(attempt); // Đẩy bài mới nhất lên đầu
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-
-    // ĐỒNG BỘ LÊN CLOUD NGAY SAU KHI LƯU
-    if (window.syncHistoryToCloud) {
-        window.syncHistoryToCloud(history);
-    }
-}
-
-function deleteAttempt(attemptId) {
-    showCustomConfirm("Bạn có chắc chắn muốn xóa bài làm này khỏi lịch sử không?", function() {
-        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-        history = history.filter(h => h.id !== attemptId); 
-        localStorage.setItem(HISTORY_KEY, JSON.stringify(history)); 
-        
-        // ĐỒNG BỘ THAO TÁC XÓA LÊN CLOUD
-        if (window.syncHistoryToCloud) {
-            window.syncHistoryToCloud(history);
-        }
-        
-        openHistoryModal(); 
+                <!-- KHUNG GIẢI THÍCH (Chỉ hiển thị sau khi nộp bài) -->
+                <div class="exp-container">
+                    <div class="exp-box" id="exp-box-${qNum}">
+                        <div class="exp-title">💡 Giải thích chi tiết câu ${qNum}</div>
+                        
+                        ${exp.trans ? `<div class="exp-quote">${exp.trans}</div>` : ''}
+                        
+                        ${exp.correct ? `<div class="exp-text"><b>Đáp án đúng:</b> ${exp.correct}</div>` : ''}
+                        ${exp.wrong ? `<div class="exp-text" style="margin-top: 8px;"><b>Phân tích đáp án sai:</b> ${exp.wrong}</div>` : ''}
+                        ${exp.grammar ? `<div class="exp-text" style="margin-top: 8px;"><b>Ngữ pháp liên quan:</b> ${exp.grammar}</div>` : ''}
+                        ${exp.vocab ? `<div class="exp-vocab" style="margin-top: 10px;"><b>Từ vựng quan trọng:</b> ${exp.vocab}</div>` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
     });
-}
-function restoreAttempt(attemptId) {
-    let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-    let attempt = history.find(h => h.id === attemptId);
-    
-    if(!attempt) return;
 
-    isReviewingMode = true; // Bật cờ hiệu "Đang xem lại"
-    document.getElementById('historyOverlay').style.display = 'none';
-    document.getElementById('setupOverlay').style.display = 'none';
-    
-    document.querySelectorAll('input[type="radio"]').forEach(el => {
-        el.disabled = false;
-        el.checked = false; 
-    });
-    
-    // Tự động đánh dấu lại các Radio button đáp án học viên đã chọn trong lịch sử
-    for (let qId in attempt.answers) {
-        let val = attempt.answers[qId];
-        if (val) {
-            let radio = document.querySelector(`input[name="q${qId}"][value="${val}"]`);
-            if (radio) radio.checked = true;
-        }
-    }
-    
-   // Đổi chữ nút Nộp bài thành "Đang xem lại" cho ngầu
-    let btnSubmit = document.querySelector('.btn-submit');
-    if(btnSubmit) {
-        btnSubmit.innerText = "ĐANG XEM LẠI";
-        btnSubmit.style.background = "#888";
-        btnSubmit.style.boxShadow = "none";
-    }
-
-    // --- THÊM 2 DÒNG NÀY VÀO TRƯỚC DẤU NGOẶC NHỌN ĐÓNG HÀM ---
-    isSubmitted = false; 
-    executeSubmit();
+    container.innerHTML = html;
 }
 
-
-function scrollToEvidence(evId) {
-    const evElement = document.getElementById(evId);
-    if(evElement) {
-        // Cuộn đoạn văn chứa dẫn chứng vào giữa màn hình
-        evElement.scrollIntoView({behavior: "smooth", block: "center"});
-        
-        // Thêm class 'focus-blink' để bật chế độ nháy vàng in đậm
-        evElement.classList.add("focus-blink");
-        
-        // Tắt nổi bật sau 1.5 giây để trả văn bản về bình thường
-        setTimeout(() => {
-            evElement.classList.remove("focus-blink");
-        }, 1500);
-    } else {
-        showCustomAlert("Chưa được gắn ID dẫn chứng trong bài đọc!");
-    }
+function getOptLabel(opt, options) {
+    const idx = options.indexOf(opt);
+    return ["(A)", "(B)", "(C)", "(D)"][idx] || "";
 }
-// --- GRADING ---
-function submitTest(manual) {
+
+// 2. CHỌN ĐÁP ÁN & BẢNG ĐIỀU HƯỚNG
+function selectAnswer(qNum, val, btnEl) {
     if (isSubmitted) return;
-    if (manual) document.getElementById('confirmOverlay').style.display = 'flex';
-    else executeSubmit();
+    
+    userAnswers[qNum] = val;
+    document.querySelectorAll(`.opt-${qNum}`).forEach(b => {
+        b.style.borderColor = "var(--border)";
+        b.style.background = "white";
+    });
+    btnEl.style.borderColor = "var(--primary)";
+    btnEl.style.background = "#fff0f3";
+
+    // Cập nhật trạng thái câu làm xong trên bảng câu hỏi
+    const navDot = document.getElementById(`nav-dot-${qNum}`);
+    if (navDot) navDot.classList.add("done");
 }
 
-function closeConfirmModal() { document.getElementById('confirmOverlay').style.display = 'none'; }
-function closeResultModal() { document.getElementById('resultOverlay').style.display = 'none'; }
+function renderNavPalette() {
+    const palette = document.getElementById("navPalette");
+    if (!palette || !toeicData.part5) return;
+
+    let html = "";
+    toeicData.part5.forEach(item => {
+        html += `<div class="nav-dot" id="nav-dot-${item.id}" onclick="scrollToQuestion(${item.id})">${item.id}</div>`;
+    });
+    palette.innerHTML = html;
+}
+
+function scrollToQuestion(qNum) {
+    const el = document.getElementById(`q-item-${qNum}`);
+    if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        toggleNav();
+    }
+}
+
+// 3. XỬ LÝ KHI VUỐT/CUỘN XUỐNG CÂU HỎI NÀO THÌ HIỂN THỊ BÀI ĐỌC TƯƠNG ỨNG (SCROLL SYNC)
+function setupScrollObserver() {
+    const paneRight = document.querySelector('.pane-right');
+    const questions = document.querySelectorAll('.q-item');
+
+    if (!paneRight || questions.length === 0) return;
+
+    const observerOptions = {
+        root: paneRight,
+        threshold: 0.4 // Đạt 40% câu hỏi trên màn hình sẽ kích hoạt
+    };
+
+    observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const qNum = entry.target.getAttribute('data-qnum');
+                updatePassageForQuestion(qNum);
+            }
+        });
+    }, observerOptions);
+
+    questions.forEach(q => observer.observe(q));
+}
+
+function updatePassageForQuestion(qNum) {
+    const passageContainer = document.getElementById("passage-content-container");
+    const vietnameseContainer = document.getElementById("vietnamese-content-container");
+    
+    // Tìm bài đọc tương ứng với câu hỏi (hoặc nhóm bài đọc gần nhất)
+    let pKey = Object.keys(passageData).reverse().find(key => Number(qNum) >= Number(key)) || 101;
+    let data = passageData[pKey];
+
+    if (data && passageContainer) {
+        passageContainer.innerHTML = `
+            <h3 style="color: var(--primary-dark); font-family: 'Lora', serif;">${data.title}</h3>
+            <p id="passage-text-${qNum}" style="line-height: 1.8;">${data.content}</p>
+        `;
+    }
+
+    if (data && vietnameseContainer) {
+        vietnameseContainer.innerHTML = `
+            <h3 style="color: #52b788; font-family: 'Lora', serif;">Bản dịch tiếng Việt</h3>
+            <p style="line-height: 1.8;">${data.vi}</p>
+        `;
+    }
+}
+
+// 4. HIỆU ỨNG HIGHLIGHT & FOCUS BLINK KHI BẤM VÀO DẪN CHỨNG
+function focusClue(elementId) {
+    const el = document.getElementById(elementId) || document.querySelector(elementId);
+    if (!el) return;
+
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    el.classList.add('focus-blink');
+
+    setTimeout(() => {
+        el.classList.remove('focus-blink');
+    }, 2500); // Tự động tắt nháy vàng sau 2.5s
+}
+
+// 5. NỘP BÀI VÀ HỂN THỊ LỜI GIẢI
+function submitTest(confirm = true) {
+    if (confirm) {
+        document.getElementById("confirmOverlay").style.display = "flex";
+    } else {
+        executeSubmit();
+    }
+}
+
+function executeSubmit() {
+    isSubmitted = true;
+    closeConfirmModal();
+
+    // Thêm class show-translation để bật chế độ xem giải thích & bản dịch
+    const mainContainer = document.getElementById("mainContainer");
+    mainContainer.classList.add("show-translation");
+
+    // Hiện toàn bộ khung giải thích exp-box
+    toeicData.part5.forEach(item => {
+        const qNum = item.id;
+        const expBox = document.getElementById(`exp-box-${qNum}`);
+        if (expBox) expBox.classList.add("show");
+
+        // Tô màu đúng / sai cho các lựa chọn
+        const options = document.querySelectorAll(`.opt-${qNum}`);
+        options.forEach(optBtn => {
+            const val = optBtn.getAttribute('data-val');
+            if (val === item.a) {
+                optBtn.style.background = "#e8f5e9";
+                optBtn.style.borderColor = "var(--correct)";
+                optBtn.style.color = "#2e7d32";
+            } else if (userAnswers[qNum] === val && val !== item.a) {
+                optBtn.style.background = "#ffebee";
+                optBtn.style.borderColor = "var(--wrong)";
+                optBtn.style.color = "#c62828";
+            }
+        });
+    });
+
+    document.getElementById("resultOverlay").style.display = "flex";
+    document.getElementById("resultMessage").innerHTML = `Bạn đã hoàn thành bài làm! Lời giải chi tiết và bản dịch đã được mở ở cột bên phải và giữa.`;
+}
+
+// TOGGLE UI UTILS
+function switchTab(partNum) {
+    currentTab = partNum;
+    document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+        btn.classList.toggle('active', idx + 1 === partNum);
+    });
+    
+    document.getElementById("q-group-1").style.display = partNum === 1 ? "block" : "none";
+    document.getElementById("q-group-2").style.display = partNum === 2 ? "block" : "none";
+    document.getElementById("q-group-3").style.display = partNum === 3 ? "block" : "none";
+}
+
+function toggleNav() {
+    const nav = document.getElementById("navPanel");
+    if (nav) nav.classList.toggle("show");
+}
+
+function showSetupModal() {
+    document.getElementById("setupOverlay").style.display = "flex";
+}
+function selectMode(mode) {
+    document.getElementById("setupOverlay").style.display = "none";
+}
+function closeConfirmModal() {
+    document.getElementById("confirmOverlay").style.display = "none";
+}
+function closeResultModal() {
+    document.getElementById("resultOverlay").style.display = "none";
+}
 
 function executeSubmit() {
     document.getElementById('confirmOverlay').style.display = 'none';
