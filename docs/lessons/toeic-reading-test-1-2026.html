@@ -547,6 +547,32 @@ header {
     color: #451a03; /* Chữ màu nâu đậm cho dễ đọc trên nền vàng */
     text-align: justify;
 }
+        body.fullscreen-active header {
+    display: none;
+}
+
+/* Kéo giãn Container ra toàn bộ màn hình */
+body.fullscreen-active .container {
+    height: 100vh;
+}
+
+/* Thêm một nút thoát nhỏ ở góc màn hình khi đang Fullscreen (tùy chọn) */
+#exitFSBtn {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 9999;
+    padding: 8px 15px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    display: none;
+}
+body.fullscreen-active #exitFSBtn {
+    display: block;
+}
     </style>
 </head>
 <body>
@@ -564,6 +590,8 @@ header {
 
         <div class="controls">
     <div class="timer-box">⏱ <span id="timer">00:00</span></div>
+    <!-- Thêm nút Toàn màn hình ở đây -->
+    <button class="btn-toggle-nav" onclick="toggleFullScreen()" style="background: #e0f2fe; color: #0369a1;">🖥️</button>
     <button class="btn-toggle-nav" onclick="toggleNav()">📍 Bảng câu hỏi</button>
     <button class="btn-submit" onclick="submitTest(true)">NỘP BÀI</button>
 </div>
@@ -2963,6 +2991,30 @@ document.addEventListener('click', function(e) {
     let btn = document.querySelector('.btn-toggle-nav');
     if (panel && btn && panel.classList.contains('show') && !panel.contains(e.target) && !btn.contains(e.target)) {
         panel.classList.remove('show');
+    }
+});
+        function toggleFullScreen() {
+    // 1. Logic bật/tắt class CSS để ẩn Header
+    document.body.classList.toggle('fullscreen-active');
+
+    // 2. Logic gọi API trình duyệt để vào chế độ Fullscreen thực thụ
+    if (!document.fullscreenElement) {
+        // Vào chế độ toàn màn hình trình duyệt
+        document.documentElement.requestFullscreen().catch(err => {
+            console.error(`Không thể bật toàn màn hình: ${err.message}`);
+        });
+    } else {
+        // Thoát chế độ toàn màn hình trình duyệt
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
+}
+
+// Lắng nghe sự kiện nếu người dùng bấm phím ESC để thoát Fullscreen
+document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) {
+        document.body.classList.remove('fullscreen-active');
     }
 });
 // --- SETUP MODAL LOGIC ---
