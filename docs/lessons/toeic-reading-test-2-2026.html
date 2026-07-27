@@ -4179,11 +4179,9 @@ let currentStep = 0;
 function updatePagination() {
     const activeGroup = document.querySelector('.question-group[style*="display: block"]');
     if (!activeGroup) return;
-
-    const partSuffix = activeGroup.id.split('-').pop(); // Lấy số 1, 2 hoặc 3
+    const partSuffix = activeGroup.id.split('-').pop();
     const isPart5 = activeGroup.id === 'q-group-1';
-    
-    // Nếu đã nộp bài: hiện tất cả, ẩn thanh điều hướng
+
     if (isSubmitted) {
         activeGroup.querySelectorAll('.questions-block, .q-row').forEach(el => el.style.display = isPart5 ? 'flex' : 'block');
         document.getElementById(`paginationBox${partSuffix}`).style.display = 'none';
@@ -4191,89 +4189,58 @@ function updatePagination() {
     }
 
     const steps = isPart5 ? activeGroup.querySelectorAll('.q-row') : activeGroup.querySelectorAll('.questions-block');
-    
     steps.forEach((step, index) => {
         if (index === currentStep) {
             step.style.display = isPart5 ? 'flex' : 'block';
             if (!isPart5) {
-                // Đảm bảo gọi đúng hàm hiện bài đọc
-                const pId = step.getAttribute('onmouseenter').match(/'([^']+)'/)[6];
-                showPassage(pId);
+                // SỬA TẠI ĐÂY: Đổi [4] thành [5]
+                const match = step.getAttribute('onmouseenter').match(/'([^']+)'/);
+                if (match) showPassage(match[5]);
             }
         } else {
             step.style.display = 'none';
         }
     });
-
-    // Cập nhật trạng thái nút tương ứng với Part hiện tại
     document.getElementById(`btnPrev${partSuffix}`).disabled = (currentStep === 0);
     document.getElementById(`btnNext${partSuffix}`).disabled = (currentStep === steps.length - 1);
 }
 
-function changeStep(delta) {
-    currentStep += delta;
-    updatePagination();
-}
-
-function checkNav(id) {
-    if(isSubmitted) return;
-    let val = "";
-    let radios = document.getElementsByName(`q${id}`);
-    for (let r of radios) if (r.checked) val = r.value;
-
-    let nav = document.getElementById(`nav-${id}`);
-    if(nav) {
-        if (val) nav.classList.add("done");
-        else nav.classList.remove("done");
-    }
-}
-
+// --- 2. Sửa lỗi trong hàm scrollToQuestion ---
 function scrollToQuestion(id) {
-    // 1. Đóng bảng điều hướng sau khi bấm
     document.getElementById('navPanel').classList.remove('show');
-
-    // 2. Xác định câu hỏi thuộc Part nào (Group 1, 2, hay 3)
     let group = 1;
     if (toeicData.part6.some(p => p.questions.some(q => q.id == id))) group = 2;
     if (toeicData.part7.some(p => p.questions.some(q => q.id == id))) group = 3;
     
-    // 3. Chuyển sang Tab chứa câu hỏi đó
     switchTab(group); 
 
-    // 4. Tìm vị trí (index) của câu hỏi trong Part đó để cập nhật phân trang (Pagination)
     const activeGroup = document.getElementById(`q-group-${group}`);
     const steps = group === 1 ? activeGroup.querySelectorAll('.q-row') : activeGroup.querySelectorAll('.questions-block');
     
     steps.forEach((step, index) => {
         if (step.id === `q-row-${id}` || step.querySelector(`#q-row-${id}`)) {
-            currentStep = index; // Cập nhật vị trí hiện tại cho trình điều hướng Back/Next
+            currentStep = index; 
         }
     });
 
-    // 5. Cập nhật giao diện hiển thị câu hỏi
-    updatePagination();
+    updatePagination(); 
 
-    // 6. Xử lý hiệu ứng cuộn và hiển thị bài đọc (Dùng setTimeout để đợi giao diện render xong)
+    // SỬA TẠI ĐÂY: Khối này phải nằm TRONG hàm (trước dấu } kết thúc)
     setTimeout(() => {
         let el = document.getElementById(`q-row-${id}`);
         if (el) {
-            // Cuộn câu hỏi vào giữa màn hình
             el.scrollIntoView({behavior: "smooth", block: "center"});
-            
-            // Hiệu ứng nháy vàng để người dùng dễ nhận biết
             el.style.transition = "background 0.5s";
             el.style.background = "#fff9c4";
             setTimeout(() => el.style.background = "transparent", 1000);
 
-            // TỰ ĐỘNG HIỆN BÀI ĐỌC TƯƠNG ỨNG (Quan trọng cho Part 6 & 7)
             let parentBlock = el.closest('.questions-block');
             if(parentBlock) {
-                // Kích hoạt sự kiện mouseenter để gọi hàm showPassage()
                 let mouseEvent = new MouseEvent('mouseenter');
                 parentBlock.dispatchEvent(mouseEvent);
             }
         }
-    }, 150); // Tăng thời gian chờ lên một chút để ổn định hơn
+    }, 150);
 }
 function showCustomAlert(msg) {
     document.getElementById('genericAlertMsg').innerText = msg;
