@@ -4024,19 +4024,29 @@ function createQuestionsBlock(passageObj) {
     html += `<div style="color:var(--primary-dark); font-weight:bold; margin-bottom:15px; border-bottom: 2px solid var(--border); padding-bottom:10px; font-size: 18px;">📝 Questions for Passage: ${passageObj.passageId}</div>`;
     
     let validQuestions = passageObj.questions.filter(q => q && q.id);
+    
+    validQuestions.forEach(q => {
+        html += createTOEICQuestion(q);
+        allQuestionIds.push(q.id);
+        
+        // --- BẮT ĐẦU PHẦN SỬA LỖI ---
+        let correctAns = q.a || q.correct; 
+        
+        // Nếu là Part 6/7 (options là mảng các object)
+        if (!correctAns && Array.isArray(q.options)) {
+            // Tìm vị trí của option có thuộc tính "correct" là true
+            const foundIdx = q.options.findIndex(o => typeof o === 'object' && o.correct === true);
+            if (foundIdx !== -1) {
+                const labels = ["A", "B", "C", "D"];
+                correctAns = labels[foundIdx]; // Chuyển index 0,1,2,3 thành A,B,C,D
+            }
+        }
+        
+        answerKey[q.id] = correctAns; // Lưu nhãn A,B,C,D vào bộ nhớ chấm điểm
+        // --- KẾT THÚC PHẦN SỬA LỖI ---
 
-validQuestions.forEach(q => {
-    html += createTOEICQuestion(q);
-    allQuestionIds.push(q.id);
-    let correctAns = q.a || q.correct;
-    if (!correctAns && Array.isArray(q.options) && typeof q.options === 'object') {
-        let correctObj = q.options.find(o => o.isCorrect);
-        if (correctObj) correctAns = correctObj.key;
-    }
-    answerKey[q.id] = formatAnswer(q.options, correctAns);
-    // Nạp giải thích cho Part 6, 7 vào biến toàn cục
-    explanations[q.id] = { exp: q.explanation || "" };
-});
+        explanations[q.id] = { exp: q.explanation || "" };
+    });
     html += `</div>`;
     return html;
 }
