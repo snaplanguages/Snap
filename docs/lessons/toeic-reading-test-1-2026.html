@@ -548,54 +548,50 @@ header {
     text-align: justify;
 }
         body.fullscreen-active header {
-    display: none;
+    background: #f8fafc; /* Đổi màu nhẹ để phân biệt */
+    border-bottom: 2px solid var(--primary);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-/* Kéo giãn Container ra toàn bộ màn hình */
+/* Đảm bảo container vẫn tính toán đúng chiều cao */
 body.fullscreen-active .container {
-    height: 100vh;
+    height: calc(100vh - var(--header-h));
 }
 
-/* Thêm một nút thoát nhỏ ở góc màn hình khi đang Fullscreen (tùy chọn) */
-#exitFSBtn {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    z-index: 9999;
-    padding: 8px 15px;
-    background: rgba(0,0,0,0.5);
-    color: white;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
+/* Nút thoát toàn màn hình (hiện ở góc nếu cần) */
+.btn-exit-fs {
     display: none;
+    background: var(--wrong);
+    color: white;
 }
-body.fullscreen-active #exitFSBtn {
-    display: block;
+body.fullscreen-active .btn-exit-fs {
+    display: inline-block;
 }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="brand">
-            <span>SnapEnglish</span> Test 1 - 2026
-        </div>
-        
-        <div class="tab-container">
-            <button class="tab-btn active" onclick="switchTab(1)">Part 5</button>
-            <button class="tab-btn" onclick="switchTab(2)">Part 6</button>
-            <button class="tab-btn" onclick="switchTab(3)">Part 7</button>
-        </div>
+    <div class="brand">
+        <span>SnapEnglish</span> Test 1 - 2026
+    </div>
 
-        <div class="controls">
-    <div class="timer-box">⏱ <span id="timer">00:00</span></div>
-    <!-- Thêm nút Toàn màn hình ở đây -->
-    <button class="btn-toggle-nav" onclick="toggleFullScreen()" style="background: #e0f2fe; color: #0369a1;">🖥️</button>
-    <button class="btn-toggle-nav" onclick="toggleNav()">📍 Bảng câu hỏi</button>
-    <button class="btn-submit" onclick="submitTest(true)">NỘP BÀI</button>
-</div>
-    </header>
+    <div class="tab-container">
+        <button class="tab-btn active" onclick="switchTab(1)">Part 5</button>
+        <button class="tab-btn" onclick="switchTab(2)">Part 6</button>
+        <button class="tab-btn" onclick="switchTab(3)">Part 7</button>
+    </div>
+
+    <div class="controls">
+        <div class="timer-box">⏱ <span id="timer">00:00</span></div>
+        <!-- Nút bật/tắt toàn màn hình -->
+        <button class="btn-toggle-nav" id="fsBtn" onclick="toggleFullScreen()" style="background: #f0f9ff; color: #0369a1;">
+            🖥️
+        </button>
+        <button class="btn-toggle-nav" onclick="toggleNav()">📍 Bảng câu hỏi</button>
+        <button class="btn-submit" onclick="submitTest(true)">NỘP BÀI</button>
+    </div>
+</header>
 
     <div class="container" id="mainContainer">
         
@@ -2994,27 +2990,34 @@ document.addEventListener('click', function(e) {
     }
 });
         function toggleFullScreen() {
-    // 1. Logic bật/tắt class CSS để ẩn Header
-    document.body.classList.toggle('fullscreen-active');
-
-    // 2. Logic gọi API trình duyệt để vào chế độ Fullscreen thực thụ
+    const btn = document.getElementById('fsBtn');
+    
     if (!document.fullscreenElement) {
-        // Vào chế độ toàn màn hình trình duyệt
-        document.documentElement.requestFullscreen().catch(err => {
-            console.error(`Không thể bật toàn màn hình: ${err.message}`);
+        // Vào chế độ toàn màn hình
+        document.documentElement.requestFullscreen().then(() => {
+            document.body.classList.add('fullscreen-active');
+            btn.innerHTML = "✖ Thoát toàn màn hình";
+            btn.style.background = "#fff1f2"; 
+            btn.style.color = "#e11d48";
+        }).catch(err => {
+            showCustomAlert(`Lỗi: ${err.message}`);
         });
     } else {
-        // Thoát chế độ toàn màn hình trình duyệt
+        // Thoát chế độ toàn màn hình
         if (document.exitFullscreen) {
             document.exitFullscreen();
         }
     }
 }
 
-// Lắng nghe sự kiện nếu người dùng bấm phím ESC để thoát Fullscreen
+// Lắng nghe sự kiện thay đổi trạng thái fullscreen (để xử lý khi nhấn phím ESC)
 document.addEventListener('fullscreenchange', () => {
+    const btn = document.getElementById('fsBtn');
     if (!document.fullscreenElement) {
         document.body.classList.remove('fullscreen-active');
+        btn.innerHTML = "🖥️";
+        btn.style.background = "#f0f9ff";
+        btn.style.color = "#0369a1";
     }
 });
 // --- SETUP MODAL LOGIC ---
