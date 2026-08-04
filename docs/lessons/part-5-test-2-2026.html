@@ -1331,52 +1331,52 @@ localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
     }
 
     let pendingDeleteId = null;
-    function deleteAttempt(attemptId) {
-        pendingDeleteId = attemptId;
-        document.getElementById('customConfirmDeleteOverlay').style.display = 'flex';
-    }
-    
-    function closeConfirmDelete() {
-        pendingDeleteId = null;
-        document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
-    }
 
-    async function executeDelete() {
-  // 1. Kiểm tra nếu không có ID cần xóa thì thoát
-  if (pendingDeleteId === null) return;
-  let listEl = document.getElementById("historyList");
+function deleteAttempt(attemptId) {
+    pendingDeleteId = attemptId;
+    document.getElementById('customConfirmDeleteOverlay').style.display = 'flex';
+}
 
-  // 2. Đóng bảng xác nhận
-  document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
-
-  // 3. Hiển thị thông báo đang xử lý
-  if (listEl) {
-    listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang dọn dẹp... 🗑️☁️</div>`;
-  }
-
-  try {
-    // 4. Xóa trên Firebase (nếu có đăng nhập)
-    if (window.currentUserUid && window.deleteHistoryDocFirebase && pendingDeleteId) {
-      await window.deleteHistoryDocFirebase(pendingDeleteId.toString());
-    }
-
-    // 5. Xóa trong Local Storage
-    let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-    const pIdStr = pendingDeleteId.toString();
-    history = history.filter(h => {
-      const hId = h.id ? h.id.toString() : "";
-      const hDocId = h.docId ? h.docId.toString() : "";
-      return hId !== pIdStr && hDocId !== pIdStr;
-    });
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-
-    // 6. Hoàn tất và cập nhật lại giao diện
+function closeConfirmDelete() {
     pendingDeleteId = null;
-    await openHistoryModal(); 
-  } catch (error) {
-    console.error("Lỗi khi xóa:", error);
-    alert("Có lỗi xảy ra khi xóa lịch sử!");
-  }
+    document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+}
+
+async function executeDelete() {
+    if (pendingDeleteId === null) return;
+    let listEl = document.getElementById("historyList");
+
+    // 1. Đóng modal xác nhận
+    document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+
+    // 2. Hiển thị trạng thái chờ
+    if (listEl) {
+        listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang dọn dẹp... 🗑️☁️</div>`;
+    }
+
+    try {
+        // 3. Xóa trên Firebase (nếu có đăng nhập)
+        if (window.currentUserUid && window.deleteHistoryDocFirebase && pendingDeleteId) {
+            await window.deleteHistoryDocFirebase(pendingDeleteId.toString());
+        }
+
+        // 4. Xóa trong Local Storage
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        const pIdStr = pendingDeleteId.toString();
+        history = history.filter(h => {
+            const hId = h.id ? h.id.toString() : "";
+            const hDocId = h.docId ? h.docId.toString() : "";
+            return hId !== pIdStr && hDocId !== pIdStr;
+        });
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+        // 5. Cập nhật lại giao diện
+        pendingDeleteId = null;
+        await openHistoryModal(); 
+    } catch (error) {
+        console.error("Lỗi khi xóa:", error);
+        alert("Có lỗi xảy ra khi xóa lịch sử!");
+    }
 }
     
     function restoreAttempt(index) {
