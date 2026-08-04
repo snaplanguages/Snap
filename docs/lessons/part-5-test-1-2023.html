@@ -1249,15 +1249,17 @@
             answers: answersArray
         };
 
-        // Lưu local
-        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-        history.unshift(attempt);
-        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+       
+// 1. Đồng bộ Firebase trước để lấy docId (Mã nguồn cũ không gán lại giá trị) [3, 4]
+if (window.syncHistoryToFirebase) {
+    attempt = await window.syncHistoryToFirebase(attempt, TEST_ID);
+}
 
-        // Đồng bộ Firebase
-        if (window.syncHistoryToFirebase) {
-            await window.syncHistoryToFirebase(attempt, TEST_ID);
-        }
+// 2. Sau khi đã có docId trong đối tượng attempt, mới lưu vào local
+let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+history.unshift(attempt);
+localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
     }
 
     async function openHistoryModal() {
@@ -1356,15 +1358,21 @@
         listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang dọn dẹp trên Đám mây... 🗑️☁️</div>`;
     }
 
-    // 4. Xóa trên Firebase (nếu có đăng nhập)
-    if (window.currentUserUid && window.deleteHistoryDocFirebase && typeof pendingDeleteId === 'string') {
-        await window.deleteHistoryDocFirebase(pendingDeleteId);
-    }
+   // 4. Xóa trên Firebase (Bỏ kiểm tra 'string' khắt khe vì pendingDeleteId có thể là ID local)
+if (window.currentUserUid && window.deleteHistoryDocFirebase && pendingDeleteId) {
+    await window.deleteHistoryDocFirebase(pendingDeleteId.toString());
+}
 
-    // 5. Xóa trong Local Storage
-    let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-    history = history.filter(h => h.id != pendingDeleteId && h.docId != pendingDeleteId);
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+// 5. Xóa trong Local Storage (Sử dụng so sánh không nghiêm ngặt hoặc ép kiểu để tránh lỗi)
+let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+history = history.filter(h => {
+    // Chuyển tất cả về string để so sánh chính xác
+    let hId = h.id ? h.id.toString() : "";
+    let hDocId = h.docId ? h.docId.toString() : "";
+    let pId = pendingDeleteId.toString();
+    return hId !== pId && hDocId !== pId;
+});
+localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
 
     // 6. Reset ID chờ xóa và cập nhật lại giao diện lịch sử
     pendingDeleteId = null;
