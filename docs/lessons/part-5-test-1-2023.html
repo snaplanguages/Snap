@@ -1344,39 +1344,46 @@ localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
     }
 
    async function executeDelete() {
-    // 1. Kiểm tra nếu không có ID cần xóa thì thoát sớm
+    // 1. Kiểm tra nếu không có ID cần xóa thì thoát
     if (pendingDeleteId === null) return;
 
-    // 2. Khai báo listEl ở ngoài để toàn bộ hàm có thể sử dụng
     let listEl = document.getElementById("historyList");
     
-    // Đóng overlay xác nhận xóa
+    // 2. Đóng bảng xác nhận
     document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
 
-    // 3. Hiển thị trạng thái đang xử lý (nếu tìm thấy phần tử list)
+    // 3. Hiển thị thông báo đang xử lý
     if (listEl) {
-        listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang dọn dẹp trên Đám mây... 🗑️☁️</div>`;
+        listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang dọn dẹp... 🗑️☁️</div>`;
     }
 
-   // 4. Xóa trên Firebase (Bỏ kiểm tra 'string' khắt khe vì pendingDeleteId có thể là ID local)
-if (window.currentUserUid && window.deleteHistoryDocFirebase && pendingDeleteId) {
-    await window.deleteHistoryDocFirebase(pendingDeleteId.toString());
-}
+    try {
+        // 4. Xóa trên Firebase (nếu có đăng nhập)
+        if (window.currentUserUid && window.deleteHistoryDocFirebase && pendingDeleteId) {
+            await window.deleteHistoryDocFirebase(pendingDeleteId.toString());
+        }
 
-// 5. Xóa trong Local Storage (Sử dụng so sánh không nghiêm ngặt hoặc ép kiểu để tránh lỗi)
-let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-history = history.filter(h => {
-    // Chuyển tất cả về string để so sánh chính xác
-    let hId = h.id ? h.id.toString() : "";
-    let hDocId = h.docId ? h.docId.toString() : "";
-    let pId = pendingDeleteId.toString();
-    return hId !== pId && hDocId !== pId;
-});
-localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        // 5. Xóa trong Local Storage
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        const pIdStr = pendingDeleteId.toString();
+        
+        // Lọc bỏ mục có ID hoặc docId trùng với pIdStr
+        history = history.filter(h => {
+            const hId = h.id ? h.id.toString() : "";
+            const hDocId = h.docId ? h.docId.toString() : "";
+            return hId !== pIdStr && hDocId !== pIdStr;
+        });
 
-    // 6. Reset ID chờ xóa và cập nhật lại giao diện lịch sử
-    pendingDeleteId = null;
-    openHistoryModal();
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+        // 6. Hoàn tất và cập nhật lại giao diện
+        pendingDeleteId = null;
+        await openHistoryModal(); // Gọi lại để load danh sách mới nhất
+
+    } catch (error) {
+        console.error("Lỗi khi xóa:", error);
+        alert("Có lỗi xảy ra khi xóa lịch sử!");
+    }
 }
         
 
