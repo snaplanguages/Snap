@@ -922,7 +922,7 @@
   }
     ];
 
-   let currentQIndex = 0;
+    let currentQIndex = 0;
     let userAnswers = new Array(questionsData.length).fill(null);
     let isSubmitted = false;
     let testDuration = 0;
@@ -1249,7 +1249,7 @@
             answers: answersArray
         };
 
- // 1. Đồng bộ Firebase trước để lấy docId (Mã nguồn cũ không gán lại giá trị) [3, 4]
+        // 1. Đồng bộ Firebase trước để lấy docId (Mã nguồn cũ không gán lại giá trị) [3, 4]
 if (window.syncHistoryToFirebase) {
     attempt = await window.syncHistoryToFirebase(attempt, TEST_ID);
 }
@@ -1308,20 +1308,20 @@ localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
         listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px;">Cậu chưa làm bài lần nào trên tài khoản này. 🐾</div>`;
     } else {
         listEl.innerHTML = currentHistoryList.map((item, index) => {
-            let docId = item.docId || item.id;
-            return `
-            <div class="history-item">
+  // Đảm bảo lấy docId nếu có, nếu không thì lấy id (timestamp)
+  let deleteKey = item.docId ? item.docId.toString() : item.id.toString(); 
+  return `
+    <div class="history-item">
                 <div class="history-info">
                     <span class="history-date">Lần ${currentHistoryList.length - index}: ${item.time} - ${item.date}</span>
                     <span class="history-score">Đúng: ${item.score}/${item.total} câu</span>
                 </div>
                 <div style="display: flex; gap: 8px;">
                     <button class="btn-review" onclick="restoreAttempt(${index})">Xem lại</button>
-                    <button class="btn-delete-history" onclick="deleteAttempt('${docId}')" title="Xóa bài này">&times;</button>
-                </div>
-            </div>
-            `;
-        }).join("");
+                    <button class="btn-delete-history" onclick="deleteAttempt('${deleteKey}')">&times;</button>
+    </div>
+  `;
+}).join("");
     }
 }
 
@@ -1331,54 +1331,52 @@ localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
     }
 
     let pendingDeleteId = null;
-    function deleteAttempt(attemptId) {
-        pendingDeleteId = attemptId;
-        document.getElementById('customConfirmDeleteOverlay').style.display = 'flex';
-    }
-    
-    function closeConfirmDelete() {
-        pendingDeleteId = null;
-        document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
-    }
 
-   async function executeDelete() {
-  // 1. Kiểm tra nếu không có ID cần xóa thì thoát
+function deleteAttempt(attemptId) {
+    pendingDeleteId = attemptId;
+    document.getElementById('customConfirmDeleteOverlay').style.display = 'flex';
+}
+
+function closeConfirmDelete() {
+    pendingDeleteId = null;
+    document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+}
+
+async function executeDelete() {
   if (pendingDeleteId === null) return;
   let listEl = document.getElementById("historyList");
-
-  // 2. Đóng bảng xác nhận
   document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
 
-  // 3. Hiển thị thông báo đang xử lý
-  if (listEl) {
-    listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang dọn dẹp... 🗑️☁️</div>`;
-  }
-
   try {
-    // 4. Xóa trên Firebase (nếu có đăng nhập)
-    if (window.currentUserUid && window.deleteHistoryDocFirebase && pendingDeleteId) {
-      await window.deleteHistoryDocFirebase(pendingDeleteId.toString());
+    const pIdStr = pendingDeleteId.toString(); // Ép ID cần xóa về chuỗi
+
+    // 1. Xóa trên Firebase
+    if (window.currentUserUid && window.deleteHistoryDocFirebase) {
+      // Firebase cần docId chính xác (thường là chuỗi) [6]
+      await window.deleteHistoryDocFirebase(pIdStr);
     }
 
-    // 5. Xóa trong Local Storage
+    // 2. Xóa trong Local Storage (Quan trọng nhất cho dữ liệu cũ)
     let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-    const pIdStr = pendingDeleteId.toString();
+    
+    // Lọc cực kỳ nghiêm ngặt: kiểm tra cả id và docId của từng mục [3, 4]
     history = history.filter(h => {
       const hId = h.id ? h.id.toString() : "";
       const hDocId = h.docId ? h.docId.toString() : "";
+      // Nếu ID cần xóa trùng với bất kỳ mã định danh nào thì loại bỏ
       return hId !== pIdStr && hDocId !== pIdStr;
     });
+
     localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
 
-    // 6. Hoàn tất và cập nhật lại giao diện
+    // 3. Cập nhật lại giao diện
     pendingDeleteId = null;
     await openHistoryModal(); 
   } catch (error) {
-    console.error("Lỗi khi xóa:", error);
-    alert("Có lỗi xảy ra khi xóa lịch sử!");
+    console.error("Lỗi xóa:", error);
   }
 }
-
+    
     function restoreAttempt(index) {
         let attempt = currentHistoryList[index];
         if(!attempt) return;
