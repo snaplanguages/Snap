@@ -2151,87 +2151,79 @@ let currentPassageIndex = 0;
     let timeLeft = 0;
 
     function initQuiz() {
+        if(quizData.length === 0) {
+            document.getElementById('passage-container').innerHTML = "<h3>Chưa có dữ liệu bài tập (quizData)</h3>";
+            return;
+        }
         renderPassage();
         renderNavDots();
         updateNavigation();
     }
 
     function renderPassage() {
-    const data = quizData[currentPassageIndex];
-    
-    // SỬA LỖI: Reset tất cả thanh cuộn về đầu trang khi sang đoạn mới [3]
-    const containers = ['.passage-col', '.translation-col', '.question-col'];
-    containers.forEach(selector => {
-        const el = document.querySelector(selector);
-        if (el) el.scrollTop = 0;
-    });
-
-    // Hiển thị nội dung [3]
-    document.getElementById('passage-container').innerHTML = data.passage;
-    document.getElementById('translation-container').innerHTML = data.translation;
-    
-    let html = '';
-    data.questions.forEach((q) => {
-        html += `
-        <div class="question-block" id="q-block-${q.id}">
-            <div class="question-title">${q.text}</div>
-            <div class="options">
-        `;
+        const data = quizData[currentPassageIndex];
+        if(!data) return;
         
-        q.options.forEach((opt, idx) => {
-            const isChecked = selectedAnswers[q.id] === idx ? 'checked' : '';
-            const disabled = isSubmitted ? 'disabled' : '';
-            let statusClass = '';
-            
-            if (isSubmitted) {
-                if (opt.correct) statusClass = 'correct';
-                else if (selectedAnswers[q.id] === idx) statusClass = 'wrong';
-            }
-
-            let enText = opt.text;
-            let viText = "";
-            let match = opt.text.match(/(.*)\s\((.*)\)$/);
-            if(match) {
-                enText = match[4];
-                viText = match[5];
-            }
-
+        document.getElementById('passage-container').innerHTML = data.passage;
+        document.getElementById('translation-container').innerHTML = data.translation;
+        
+        let html = '';
+        data.questions.forEach((q) => {
             html += `
-            <label class="option-label ${isChecked ? 'selected' : ''} ${statusClass} ${disabled}" id="label-${q.id}-${idx}">
-                <input type="radio" name="q${q.id}" value="${idx}" ${isChecked} ${disabled} 
-                       onchange="selectAnswer(${q.id}, ${idx})">
-                <span class="option-text-en">${enText}</span>
-                ${(viText && isSubmitted) ? `<span class="option-text-vi">- ${viText}</span>` : ''}
-            </label>
+                <div class="question-block" id="q-block-${q.id}">
+                    <div class="question-title">${q.text}</div>
+                    <div class="options">
             `;
+            
+            q.options.forEach((opt, idx) => {
+                const isChecked = selectedAnswers[q.id] === idx ? 'checked' : '';
+                const disabled = isSubmitted ? 'disabled' : '';
+                let statusClass = '';
+                
+                if (isSubmitted) {
+                    if (opt.correct) statusClass = 'correct';
+                    else if (selectedAnswers[q.id] === idx) statusClass = 'wrong';
+                }
+                
+                let enText = opt.text;
+                let viText = "";
+                let match = opt.text.match(/(.*)\s\((.*)\)$/);
+                if(match) {
+                    enText = match[1];
+                    viText = match[2];
+                }
+
+                html += `
+                    <label class="option-label ${isChecked ? 'selected' : ''} ${statusClass} ${disabled}">
+                        <input type="radio" name="q${q.id}" value="${idx}" ${isChecked} ${disabled} onchange="selectAnswer(${q.id}, ${idx})">
+                        <span class="option-text-en">${enText}</span>
+                        ${(viText && isSubmitted) ? `<span class="option-text-vi">- ${viText}</span>` : ''}
+                    </label>
+                `;
+            });
+            
+            html += `</div>
+                <div class="explanation-box" id="exp-${q.id}">${q.explanation}</div>
+            </div>`;
         });
         
-        html += `</div>
-            <div class="explanation-box ${isSubmitted ? 'show' : ''}" id="exp-${q.id}">${q.explanation}</div>
-        </div>`;
-    });
-    
-    document.getElementById('questions-container').innerHTML = html;
-    document.getElementById('progress-text').innerText = `Đoạn ${currentPassageIndex + 1} / ${quizData.length}`; [6]
-}
-
-// SỬA LỖI: selectAnswer không nên gọi lại renderPassage() để tránh giật lag [7]
-function selectAnswer(qId, optIdx) {
-    if (isSubmitted) return;
-    
-    // Lưu đáp án
-    selectedAnswers[qId] = optIdx;
-    
-    // Cập nhật giao diện local thay vì render lại toàn bộ câu hỏi
-    const block = document.getElementById(`q-block-${qId}`);
-    if (block) {
-        block.querySelectorAll('.option-label').forEach(lbl => lbl.classList.remove('selected'));
-        const selectedLabel = document.getElementById(`label-${qId}-${optIdx}`);
-        if (selectedLabel) selectedLabel.classList.add('selected');
+        document.getElementById('questions-container').innerHTML = html;
+        document.getElementById('progress-text').innerText = `Đoạn ${currentPassageIndex + 1} / ${quizData.length}`;
+        
+        if (isSubmitted) {
+            data.questions.forEach(q => {
+                document.getElementById(`exp-${q.id}`).classList.add('show');
+            });
+        }
     }
-    
-    renderNavDots(); // Chỉ render lại danh sách câu hỏi bên trên [7]
-}
+
+    function selectAnswer(qId, optIdx) {
+        if (isSubmitted) return;
+        selectedAnswers[qId] = optIdx;
+        renderPassage();
+        renderNavDots();
+    }
+
     function changePassage(dir) {
         currentPassageIndex += dir;
         renderPassage();
@@ -2239,6 +2231,7 @@ function selectAnswer(qId, optIdx) {
     }
 
     function updateNavigation() {
+        if(quizData.length === 0) return;
         document.getElementById('btn-prev').style.display = currentPassageIndex === 0 ? 'none' : 'block';
         if (currentPassageIndex === quizData.length - 1) {
             document.getElementById('btn-next').style.display = 'none';
@@ -2280,9 +2273,7 @@ function selectAnswer(qId, optIdx) {
         document.getElementById('navDropdown').classList.remove('show');
     }
 
-    function toggleNavDropdown() {
-        document.getElementById('navDropdown').classList.toggle('show');
-    }
+    function toggleNavDropdown() { document.getElementById('navDropdown').classList.toggle('show'); }
 
     function askReady() {
         const timeInput = document.getElementById('timeInput').value;
@@ -2321,13 +2312,8 @@ function selectAnswer(qId, optIdx) {
         document.getElementById('timer').innerText = `${m}:${s}`;
     }
 
-    function askSubmit() {
-        document.getElementById('confirmOverlay').classList.add('active');
-    }
-
-    function closeConfirmModal() {
-        document.getElementById('confirmOverlay').classList.remove('active');
-    }
+    function askSubmit() { document.getElementById('confirmOverlay').classList.add('active'); }
+    function closeConfirmModal() { document.getElementById('confirmOverlay').classList.remove('active'); }
 
     function submitQuiz(isRestoring = false) {
         clearInterval(timerInterval);
@@ -2352,7 +2338,6 @@ function selectAnswer(qId, optIdx) {
      
         if(!isRestoring) {
             saveAttemptToHistory(correctCount, totalCount, selectedAnswers);
-
             if (window.luuDiemTOEICLenFirebase) {
                 window.luuDiemTOEICLenFirebase(totalCount, correctCount, "ETS 2023 - Test 1", "Reading", "Part 7");
             }
@@ -2367,21 +2352,146 @@ function selectAnswer(qId, optIdx) {
         renderNavDots();
     } 
 
-    function closeResult() {
-        document.getElementById('result-overlay').classList.remove('active');
+    function closeResult() { document.getElementById('result-overlay').classList.remove('active'); }
+
+    // --- HISTORY SYSTEM ---
+    const TEST_ID = "p7_test_1_2023"; // Đã đổi tên ID lưu trữ
+    const HISTORY_KEY = "snapenglish_" + TEST_ID + "_history";
+    let currentHistoryList = []; 
+
+    // Các hàm tương tác với Firebase & LocalStorage được định nghĩa lại ở dạng async
+    async function saveAttemptToHistory(score, total, answersObj) {
+        let now = new Date();
+        let timestamp = Date.now();
+        let attempt = {
+            id: timestamp, timestamp: timestamp, 
+            date: now.toLocaleDateString('vi-VN'),
+            time: now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+            score: score, total: total, answers: answersObj
+        };
+
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        history.unshift(attempt);
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+        if (window.syncHistoryToFirebase) { await window.syncHistoryToFirebase(attempt, TEST_ID); }
     }
 
-    function openVocab() {
-        document.getElementById('vocabOverlay').classList.add('active');
+    async function openHistoryModal() {
+        document.getElementById('setupOverlay').style.display = 'none';
+        document.getElementById('historyOverlay').style.display = 'flex';
+        let listEl = document.getElementById("historyList");
+
+        listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang đồng bộ dữ liệu... ☁️⏳</div>`;
+
+        if (window.currentUserUid && window.getHistoryFromFirebase) {
+            let cloudHistory = await window.getHistoryFromFirebase(TEST_ID);
+            if (!cloudHistory) cloudHistory = [];
+            
+            let localHistory = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+            let cloudIds = cloudHistory.map(item => item.id);
+            let hasNewSync = false;
+
+            for (let localItem of localHistory) {
+                if (!cloudIds.includes(localItem.id)) {
+                    await window.syncHistoryToFirebase(localItem, TEST_ID);
+                    cloudHistory.push(localItem);
+                    hasNewSync = true;
+                }
+            }
+            cloudHistory.sort((a, b) => b.timestamp - a.timestamp);
+            currentHistoryList = cloudHistory;
+
+            if (hasNewSync && typeof window.showInGameToast === "function") {
+    window.showInGameToast("☁️ Đã đồng bộ các lịch sử làm bài cũ lên Máy chủ!");
+}
+        } else {
+            currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        }
+
+        if (currentHistoryList.length === 0) {
+            listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px;">Cậu chưa làm bài lần nào trên tài khoản này. 🐾</div>`;
+        } else {
+            listEl.innerHTML = currentHistoryList.map((item, index) => {
+                let docId = item.docId || item.id;
+                return `
+                <div class="history-item">
+                    <div class="history-info">
+                        <span class="history-date">Lần ${currentHistoryList.length - index}: ${item.time} - ${item.date}</span>
+                        <span class="history-score">Đúng: ${item.score}/${item.total} câu</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-review" onclick="restoreAttempt(${index})">Xem lại</button>
+                        <button class="btn-delete-history" onclick="deleteAttempt('${docId}')" title="Xóa bài này">&times;</button>
+                    </div>
+                </div>
+                `;
+            }).join("");
+        }
+    }
+    
+    function closeHistoryModal() {
+        document.getElementById('historyOverlay').style.display = 'none';
+        document.getElementById('setupOverlay').style.display = 'flex';
     }
 
-    function closeVocab() {
-        document.getElementById('vocabOverlay').classList.remove('active');
+    let pendingDeleteId = null;
+    function deleteAttempt(attemptId) {
+        pendingDeleteId = attemptId;
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'flex';
+    }
+    
+    function closeConfirmDelete() {
+        pendingDeleteId = null;
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+    }
+    
+    async function executeDelete() {
+        if (pendingDeleteId !== null) {
+            document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+            let listEl = document.getElementById("historyList");
+            listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang dọn dẹp trên Đám mây... 🗑️☁️</div>`;
+
+            if (window.currentUserUid && window.deleteHistoryDocFirebase && typeof pendingDeleteId === 'string') {
+                await window.deleteHistoryDocFirebase(pendingDeleteId);
+            }
+
+            let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+history = history.filter(h => {
+    // pendingDeleteId có thể chứa uid, testId và id (ví dụ: uid_test7_123456)
+    // Cần kiểm tra xem đuôi của pendingDeleteId có khớp với h.id không
+    let isMatch = String(h.id) === String(pendingDeleteId) || 
+                  String(h.docId) === String(pendingDeleteId) || 
+                  String(pendingDeleteId).endsWith(String(h.id));
+    return !isMatch; // Chỉ giữ lại những bài không khớp
+});
+localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+            pendingDeleteId = null;
+            openHistoryModal(); 
+        }
     }
 
+    function restoreAttempt(index) {
+        let attempt = currentHistoryList[index];
+        if(!attempt) return;
+        document.getElementById('historyOverlay').style.display = 'none';
+        currentPassageIndex = 0;
+        
+        for (let key in selectedAnswers) delete selectedAnswers[key];
+        Object.assign(selectedAnswers, attempt.answers || {});
+        
+        isSubmitted = false; 
+        submitQuiz(true);
+    }
+
+    // --- UI HELPERS ---
+    function openVocab() { document.getElementById('vocabOverlay').classList.add('active'); }
+    function closeVocab() { document.getElementById('vocabOverlay').classList.remove('active'); }
     function showCustomAlert(message) { document.getElementById('customAlertMessage').innerText = message; document.getElementById('customAlertOverlay').style.display = 'flex'; }
     function closeCustomAlert() { document.getElementById('customAlertOverlay').style.display = 'none'; }
 
+    // --- HIGHLIGHT CHUỘT PHẢI ---
     const menu = document.getElementById("ctxMenu");
     let targetElement = null;
     let selectedRange = null;
@@ -2412,7 +2522,7 @@ function selectAnswer(qId, optIdx) {
         menu.children[1].style.display = (mode === "remove") ? "block" : "none";
     }
 
-   function doHighlight() {
+    function doHighlight() {
         if (selectedRange) {
             try { 
                 let span = document.createElement("span"); span.className = "highlight"; selectedRange.surroundContents(span); 
@@ -2430,160 +2540,12 @@ function selectAnswer(qId, optIdx) {
         }
         menu.style.display = "none";
     }
-
-    const TEST_ID = "p7_test_1_2023_part1"; 
-    const HISTORY_KEY = "snapenglish_" + TEST_ID + "_history";
-    let currentHistoryList = []; 
-
-    async function saveAttemptToHistory(score, total, answersArray) {
-    let now = new Date();
-    let timestamp = Date.now();
-    let attempt = {
-        id: timestamp, 
-        timestamp: timestamp, 
-        date: now.toLocaleDateString('vi-VN'),
-        time: now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
-        score: score,
-        total: total,
-        answers: answersArray
-    };
-
-    // 1. Đồng bộ Firebase TRƯỚC để nó gán 'docId' vào object attempt
-    if (window.syncHistoryToFirebase) {
-        await window.syncHistoryToFirebase(attempt, TEST_ID);
-    }
-
-    // 2. LƯU VÀO LOCAL SAU CÙNG (Lúc này attempt đã có đủ cả id và docId)
-    let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-    history.unshift(attempt);
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-}
-
-    async function openHistoryModal() {
-    document.getElementById('setupOverlay').style.display = 'none';
-    document.getElementById('historyOverlay').style.display = 'flex';
-    let listEl = document.getElementById("historyList");
-
-    listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang đồng bộ dữ liệu... ☁️⏳</div>`;
-
-    if (window.currentUserUid && window.getHistoryFromFirebase) {
-        // 1. Kéo dữ liệu từ Cloud về
-        let cloudHistory = await window.getHistoryFromFirebase(TEST_ID);
-        if (!cloudHistory) cloudHistory = [];
-        
-        // 2. Lấy dữ liệu cũ ở Local (trên máy hiện tại)
-        let localHistory = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-
-        // 3. THUẬT TOÁN ĐỒNG BỘ THÔNG MINH
-        // Lấy ra danh sách các ID đã có trên mây để đối chiếu
-        let cloudIds = cloudHistory.map(item => item.id);
-        let hasNewSync = false;
-
-        for (let localItem of localHistory) {
-            // Nếu bài ở Local CHƯA CÓ trên Cloud -> Đẩy nó lên Cloud
-            if (!cloudIds.includes(localItem.id)) {
-                await window.syncHistoryToFirebase(localItem, TEST_ID);
-                cloudHistory.push(localItem); // Thêm vào mảng hiện tại để hiển thị
-                hasNewSync = true;
-            }
-        }
-
-        // Sắp xếp lại danh sách từ mới nhất đến cũ nhất
-        cloudHistory.sort((a, b) => b.timestamp - a.timestamp);
-        currentHistoryList = cloudHistory;
-
-        // Báo hiệu nếu vừa đồng bộ thành công dữ liệu cũ
-        if (hasNewSync && typeof showInGameToast === "function") {
-            showInGameToast("☁️ Đã đồng bộ các lịch sử làm bài cũ lên Máy chủ!");
-        }
-
-    } else {
-        // Nếu làm khách (chưa đăng nhập), chỉ xem local
-        currentHistoryList = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-    }
-
-    // HIỂN THỊ RA MÀN HÌNH
-    if (currentHistoryList.length === 0) {
-        listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px;">Cậu chưa làm bài lần nào trên tài khoản này. 🐾</div>`;
-    } else {
-        listEl.innerHTML = currentHistoryList.map((item, index) => {
-            let docId = item.docId || item.id;
-            return `
-            <div class="history-item">
-                <div class="history-info">
-                    <span class="history-date">Lần ${currentHistoryList.length - index}: ${item.time} - ${item.date}</span>
-                    <span class="history-score">Đúng: ${item.score}/${item.total} câu</span>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="btn-review" onclick="restoreAttempt(${index})">Xem lại</button>
-                    <button class="btn-delete-history" onclick="deleteAttempt('${docId}')" title="Xóa bài này">&times;</button>
-                </div>
-            </div>
-            `;
-        }).join("");
-    }
-}
-function closeHistoryModal() {
-        document.getElementById('historyOverlay').style.display = 'none';
-        document.getElementById('setupOverlay').style.display = 'flex';
-    }
-
-    let pendingDeleteId = null;
-    function deleteAttempt(attemptId) {
-        pendingDeleteId = attemptId;
-        document.getElementById('customConfirmDeleteOverlay').style.display = 'flex';
-    }
-    
-    function closeConfirmDelete() {
-        pendingDeleteId = null;
-        document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
-    }
-    async function executeDelete() {
-    if (pendingDeleteId !== null) {
-        document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
-        let listEl = document.getElementById("historyList");
-        listEl.innerHTML = `<div style="text-align:center; color:#64748b; padding: 20px; font-weight: bold;">Đang dọn dẹp trên Đám mây... 🗑️☁️</div>`;
-
-        // Xóa trên Firebase (Đám mây)
-        if (window.currentUserUid && window.deleteHistoryDocFirebase && typeof pendingDeleteId === 'string') {
-            await window.deleteHistoryDocFirebase(pendingDeleteId);
-        }
-
-        // FIX LỖI ZOMBIE Ở LOCAL
-        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-        history = history.filter(h => {
-            let strId = String(h.id);
-            let strDocId = h.docId ? String(h.docId) : "";
-            let pId = String(pendingDeleteId);
-            
-            // Xóa loại bỏ nếu ID/DocID trùng nhau, HOẶC mã xóa trên mây có chứa mã ID local
-            return strId !== pId && strDocId !== pId && !pId.includes(strId);
-        });
-        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-
-        pendingDeleteId = null;
-        openHistoryModal(); 
-    }
-}
-    function restoreAttempt(index) {
-        let attempt = currentHistoryList[index];
-        if(!attempt) return;
-
-        document.getElementById('historyOverlay').style.display = 'none';
-        
-        currentPassageIndex = 0;
-        
-        for (let key in selectedAnswers) delete selectedAnswers[key];
-        Object.assign(selectedAnswers, attempt.answers || {});
-        
-        isSubmitted = false; 
-        submitQuiz(true);
-    }
 </script>
-    <script type="module">
+
+<script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-   import { getFirestore, doc, setDoc, collection, query, where, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDocs, collection, query, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
@@ -2597,15 +2559,13 @@ function closeHistoryModal() {
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-window.syncHistoryToFirebase = async function(attempt, testId) {
+
+    window.syncHistoryToFirebase = async function(attempt, testId) {
         if (!window.currentUserUid) return attempt;
         let docId = window.currentUserUid + "_" + testId + "_" + attempt.timestamp;
-        attempt.docId = docId;
-        attempt.uid = window.currentUserUid;
-        attempt.testId = testId;
+        attempt.docId = docId; attempt.uid = window.currentUserUid; attempt.testId = testId;
         try {
-            await setDoc(doc(db, "snapenglish_history", docId), attempt);
-            return attempt;
+            await setDoc(doc(db, "snapenglish_history", docId), attempt); return attempt;
         } catch (e) { console.error("Lỗi đồng bộ lịch sử đám mây:", e); return attempt; }
     };
 
@@ -2617,25 +2577,21 @@ window.syncHistoryToFirebase = async function(attempt, testId) {
             let history = [];
             querySnapshot.forEach((docSnap) => {
                 let data = docSnap.data();
-                if (data.testId === testId) {
-                    history.push(data);
-                }
+                if (data.testId === testId) history.push(data);
             });
-            history.sort((a, b) => b.timestamp - a.timestamp);
-            return history;
+            history.sort((a, b) => b.timestamp - a.timestamp); return history;
         } catch (e) { console.error("Lỗi tải lịch sử từ đám mây:", e); return null; }
     };
 
     window.deleteHistoryDocFirebase = async function(docId) {
         if (!window.currentUserUid || !docId) return;
-        try {
-            await deleteDoc(doc(db, "snapenglish_history", docId));
-        } catch (e) { console.error("Lỗi xóa lịch sử:", e); }
+        try { await deleteDoc(doc(db, "snapenglish_history", docId)); } catch (e) { console.error("Lỗi xóa lịch sử:", e); }
     };
-    function showInGameToast(msg) {
+
+    window.showInGameToast = function(msg) {
         let toast = document.createElement("div");
         toast.innerText = msg;
-        toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:#0f766e; color:white; padding:15px 20px; border-radius:12px; font-weight:bold; font-family:'Poppins',sans-serif; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0; transition:all 0.4s ease;";
+        toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:#3730a3; color:white; padding:15px 20px; border-radius:12px; font-weight:bold; font-family:'Be Vietnam Pro',sans-serif; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,0.2); transform:translateY(100px); opacity:0; transition:all 0.4s ease;";
         document.body.appendChild(toast);
         
         setTimeout(() => { toast.style.transform = "translateY(0)"; toast.style.opacity = "1"; }, 100);
@@ -2644,12 +2600,8 @@ window.syncHistoryToFirebase = async function(attempt, testId) {
     }
 
     onAuthStateChanged(auth, (user) => {
-        if (user) {
-            window.currentUserUid = user.uid;
-            window.currentUserEmail = user.email;
-        } else {
-            showInGameToast("⚠️ Bạn đang chơi dưới dạng Khách, điểm sẽ không lưu lên kho!");
-        }
+        if (user) { window.currentUserUid = user.uid; window.currentUserEmail = user.email; } 
+        else { window.showInGameToast("⚠️ Bạn đang chơi dưới dạng Khách, điểm sẽ không lưu lên kho!"); }
     });
 
     function calculateToeicScore(skill, correct, total) {
@@ -2665,21 +2617,18 @@ window.syncHistoryToFirebase = async function(attempt, testId) {
 
    window.luuDiemTOEICLenFirebase = async function(tongSoCau, soCauDung, tenBai, kyNang, tenPart) {
         if (!window.currentUserUid) {
-            showInGameToast("⚠️ Không thể lưu: Bạn cần đăng nhập để lưu điểm!");
-            return; 
+            window.showInGameToast("⚠️ Không thể lưu: Bạn cần đăng nhập để lưu điểm!"); return; 
         }
 
         let diemQuyDoi = calculateToeicScore(kyNang, soCauDung, tongSoCau);
-        
         let thoiGianHienTai = "--";
         let inputPhut = parseInt(document.getElementById('timeInput').value) || 55; 
         let tongThoiGianGoc = inputPhut * 60; 
 
         if (typeof timeLeft !== 'undefined') {
-    let thoiGianDaLam = tongThoiGianGoc - timeLeft;
+            let thoiGianDaLam = tongThoiGianGoc - timeLeft;
             if (thoiGianDaLam < 0) thoiGianDaLam = 0; 
-            let m = Math.floor(thoiGianDaLam / 60);
-            let s = thoiGianDaLam % 60;
+            let m = Math.floor(thoiGianDaLam / 60); let s = thoiGianDaLam % 60;
             thoiGianHienTai = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
         }
         
@@ -2688,283 +2637,13 @@ window.syncHistoryToFirebase = async function(attempt, testId) {
         
         try {
             await setDoc(doc(db, "user_toeic_scores", docId), {
-                email: window.currentUserEmail,
-                skill: kyNang,           
-                testName: tenBai,        
-                partName: tenPart,       
-                timeTaken: thoiGianHienTai,
-                totalQ: tongSoCau,
-                correctQ: soCauDung,
-                score: diemQuyDoi,       
-                date: new Date().toLocaleDateString('vi-VN'),
-                timestamp: timestamp
+                email: window.currentUserEmail, skill: kyNang, testName: tenBai, partName: tenPart,       
+                timeTaken: thoiGianHienTai, totalQ: tongSoCau, correctQ: soCauDung,
+                score: diemQuyDoi, date: new Date().toLocaleDateString('vi-VN'), timestamp: timestamp
             });
-            showInGameToast("☁️ Đã đồng bộ điểm số lên Máy Chủ!");
-        } catch (error) {
-            showInGameToast("❌ Lỗi đồng bộ: " + error.message);
-        }
+            window.showInGameToast("☁️ Đã đồng bộ điểm số lên Máy Chủ!");
+        } catch (error) { window.showInGameToast("❌ Lỗi đồng bộ: " + error.message); }
     }
-</script>
-    <script>
-    // 1. Khởi tạo thanh Admin (Ban đầu ẩn, chỉ hiện nếu đúng Email)
-    const adminPanel = document.createElement('div');
-    adminPanel.id = 'adminPanelContainer';
-    adminPanel.style.display = 'none'; // Mặc định ẩn
-    adminPanel.innerHTML = `
-        <div style="position: fixed; bottom: 0; left: 0; right: 0; background: #1e293b; padding: 10px 20px; z-index: 999999; display: flex; gap: 15px; box-shadow: 0 -5px 25px rgba(0,0,0,0.3); align-items: center; overflow-x: auto; white-space: nowrap; border-top: 3px solid #4f46e5;">
-            <label style="color: white; font-weight: bold; display: flex; align-items: center; gap: 5px; cursor: pointer; border-right: 2px solid #475569; padding-right: 15px;">
-                <input type="checkbox" id="adminToggle" style="transform: scale(1.3);"> BẬT EDIT
-            </label>
-            
-            <div id="adminTools" style="display: none; gap: 8px; align-items: center; width: 100%;">
-                <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-1')" style="background: #bbf7d0; color: #166534; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">1. Xanh</button>
-                <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-2')" style="background: #fecaca; color: #991b1b; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">2. Đỏ</button>
-                <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-3')" style="background: #bfdbfe; color: #1e3a8a; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">3. Biển</button>
-                <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-4')" style="background: #fed7aa; color: #9a3412; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">4. Cam</button>
-                <button onmousedown="event.preventDefault(); applyAdminHighlight('clue-highlight-5')" style="background: #e9d5ff; color: #581c87; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">5. Tím</button>
-                <button onmousedown="event.preventDefault(); removeSpecificHighlight()" style="background: #f1f5f9; color: #475569; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-weight:bold; margin-right: 10px;">🗑 Bỏ màu</button>
-
-                <button onmousedown="event.preventDefault(); insertCustomTable()" style="background: #0ea5e9; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer;">+ Bảng</button>
-                <button onmousedown="event.preventDefault(); insertCustomBox()" style="background: #a855f7; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; cursor: pointer;">+ Khung</button>
-
-                <div style="margin-left: auto; display: flex; gap: 10px;">
-                    <button id="adminLoadDraftBtn" style="background: #eab308; color: #1e1b4b; border: none; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer;" title="Khôi phục dữ liệu nháp đang sửa dở">📥 Khôi phục Nháp</button>
-                    <button id="adminSaveVocabBtn" style="background: #ec4899; color: white; border: none; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer;">💡 Copy Từ Vựng</button>
-                    <button id="adminCopyCurrentBtn" style="background: #3b82f6; color: white; border: none; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer;" title="Chỉ copy đoạn đang hiển thị trên màn hình">💾 Copy Đoạn Này</button>
-                    <button id="adminSaveBtn" style="background: #22c55e; color: white; border: none; padding: 6px 12px; border-radius: 5px; font-weight: bold; cursor: pointer;">💾 Copy Toàn Bộ</button>
-                </div>
-            </div>
-        </div>
-    `;
-    document.body.appendChild(adminPanel);
-
-    let isAdminMode = false;
-
-    // 2. Kiểm tra Phân quyền (RBAC) liên tục mỗi giây để chờ Firebase tải xong User
-    const authCheckInterval = setInterval(() => {
-        if (window.currentUserEmail === "nguyenthihongphucb@gmail.com") {
-            document.getElementById('adminPanelContainer').style.display = 'block';
-            clearInterval(authCheckInterval); // Đã xác thực xong thì dừng việc check
-        }
-    }, 1000);
-
-    // Ghi đè hàm renderPassage
-    const originalRenderPassage = renderPassage;
-    renderPassage = function() {
-        originalRenderPassage();
-        if (isAdminMode) enableEditingForCurrentPassage();
-    };
-
-    // Xử lý bật/tắt
-    document.getElementById('adminToggle').addEventListener('change', function(e) {
-        isAdminMode = e.target.checked;
-        const adminTools = document.getElementById('adminTools');
-        const vocabOverlay = document.getElementById('vocabOverlay');
-        const vocabList = document.querySelector('.vocab-list');
-
-        if (isAdminMode) {
-            adminTools.style.display = 'flex';
-            document.getElementById('mainLayout').classList.add('submitted-layout');
-            document.getElementById('vocabBtn').style.display = 'flex'; // Ép hiện nút bóng đèn
-            
-            // Bật edit cho Từ vựng
-            if(vocabList) {
-                vocabList.setAttribute('contenteditable', 'true');
-                vocabList.style.outline = '2px dashed #ec4899';
-                vocabList.style.padding = '10px';
-            }
-
-            enableEditingForCurrentPassage();
-            showCustomAlert("🛠 CHẾ ĐỘ ADMIN ĐÃ BẬT\n\n- Quyền lực đã được cấp cho: nguyenthihongphucb@gmail.com\n- Các thanh công cụ đã được ghim xuống dưới cùng.\n- Click vào Bóng đèn 💡 để sửa luôn từ vựng nhé.");
-        } else {
-            adminTools.style.display = 'none';
-            document.getElementById('mainLayout').classList.remove('submitted-layout');
-            if(vocabList) {
-                vocabList.removeAttribute('contenteditable');
-                vocabList.style.outline = 'none';
-            }
-            renderPassage();
-        }
-    });
-
-    // ----------------------------------------------------
-    // CÁC HÀM XỬ LÝ HIGHLIGHT & HIỂN THỊ
-    // ----------------------------------------------------
-    window.applyAdminHighlight = function(className) {
-        const selection = window.getSelection();
-        if (!selection.rangeCount || selection.toString().trim() === "") return;
-        const span = document.createElement('span');
-        span.className = className;
-        span.textContent = selection.toString();
-        const range = selection.getRangeAt(0);
-        range.deleteContents();
-        range.insertNode(span);
-        selection.removeAllRanges();
-    };
-
-    // Hàm xóa đúng màu đã tô (không làm hỏng in đậm/in nghiêng)
-    window.removeSpecificHighlight = function() {
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
-        let node = selection.anchorNode;
-        // Lội ngược lên tìm thẻ span chứa màu
-        while (node && node.nodeName !== 'SPAN') {
-            node = node.parentNode;
-        }
-        if (node && node.className.includes('clue-highlight')) {
-            const textNode = document.createTextNode(node.textContent);
-            node.parentNode.replaceChild(textNode, node);
-        } else {
-            // Nếu bôi đen không kẹp trong span, dùng cách ép text cơ bản
-            document.execCommand('insertHTML', false, selection.toString());
-        }
-    };
-
-    // Hàm bọc Ẩn/Hiện
-    window.wrapVisibility = function(visibilityClass) {
-        const selection = window.getSelection();
-        if (!selection.rangeCount || selection.toString().trim() === "") return;
-        const span = document.createElement('span');
-        span.className = visibilityClass;
-        span.style.borderBottom = visibilityClass === 'show-after-submit' ? '2px dotted #f59e0b' : '2px dotted #64748b'; // Đánh dấu cho Admin dễ nhìn
-        span.textContent = selection.toString();
-        const range = selection.getRangeAt(0);
-        range.deleteContents();
-        range.insertNode(span);
-        selection.removeAllRanges();
-    };
-
-    // ----------------------------------------------------
-    // CÁC HÀM CHÈN HTML TÙY CHỈNH (HỎI ĐÁP SỐ LƯỢNG, MÀU SẮC)
-    // ----------------------------------------------------
-    window.insertCustomTable = function() {
-        let rows = prompt("Nhập số DÒNG (vd: 3):", "2");
-        if(!rows) return;
-        let cols = prompt("Nhập số CỘT (vd: 2):", "2");
-        if(!cols) return;
-        let bgColor = prompt("Nhập MÀU NỀN dòng Tiêu đề (vd: lightblue, #fecaca...):", "#e2e8f0");
-        
-        let tableHTML = `<br><table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem; background: rgba(255,255,255,0.7);" border="1" cellpadding="8"><tbody>`;
-        
-        // Render Header
-        tableHTML += `<tr>`;
-        for(let i = 0; i < cols; i++) {
-            tableHTML += `<td style="font-weight: bold; background: ${bgColor};">Tiêu đề ${i+1}</td>`;
-        }
-        tableHTML += `</tr>`;
-
-        // Render Body
-        for(let r = 0; r < rows - 1; r++) {
-            tableHTML += `<tr>`;
-            for(let c = 0; c < cols; c++) {
-                tableHTML += `<td>Nội dung...</td>`;
-            }
-            tableHTML += `</tr>`;
-        }
-        tableHTML += `</tbody></table><br>`;
-        document.execCommand('insertHTML', false, tableHTML);
-    };
-
-    window.insertCustomBox = function() {
-        let colorTheme = prompt("Nhập mã màu viền (vd: red, #4f46e5):", "#4f46e5");
-        if(!colorTheme) return;
-        const boxHTML = `<br><div style="border: 2px dashed ${colorTheme}; padding: 15px; border-radius: 8px; background: rgba(255, 255, 255, 0.8); margin: 10px 0; color: #1e1b4b;"><b>Tiêu đề khung:</b><br>Gõ nội dung...</div><br>`;
-        document.execCommand('insertHTML', false, boxHTML);
-    };
-
-    // Bật thuộc tính edit cho các khối
-    function enableEditingForCurrentPassage() {
-        const currentData = quizData[currentPassageIndex];
-
-       function makeEditable(element, dataObject, propertyName, outlineColor) {
-            if(!element) return;
-            element.setAttribute('contenteditable', 'true');
-            element.style.outline = `2px dashed ${outlineColor}`;
-            element.style.padding = '5px';
-            element.style.borderRadius = '4px';
-            if(window.getComputedStyle(element).display === 'none') element.style.display = 'block';
-
-            element.onblur = function() {
-                let cleanedHTML = element.innerHTML.replace(/border-bottom: 2px dotted (.*?);/g, '');
-                dataObject[propertyName] = cleanedHTML.trim();
-                
-                // THÊM 2 DÒNG NÀY ĐỂ TỰ ĐỘNG LƯU NHÁP VÀ BÁO HIỆU
-                localStorage.setItem('admin_draft_quizData', JSON.stringify(quizData));
-                if (typeof showInGameToast === "function") showInGameToast("💾 Đã lưu nháp tự động!");
-            };
-        }
-
-        makeEditable(document.getElementById('passage-container'), currentData, 'passage', '#4f46e5');
-        makeEditable(document.getElementById('translation-container'), currentData, 'translation', '#f43f5e');
-
-        const qBlocks = document.querySelectorAll('.question-block');
-        qBlocks.forEach((block, idx) => {
-            const qData = currentData.questions[idx];
-            makeEditable(block.querySelector('.question-title'), qData, 'text', '#eab308');
-            const options = block.querySelectorAll('.option-text-en');
-            options.forEach((optEl, optIdx) => {
-                makeEditable(optEl, qData.options[optIdx], 'text', '#22c55e');
-                const viText = block.querySelectorAll('.option-text-vi')[optIdx];
-                if(viText) viText.style.display = 'none'; 
-            });
-            makeEditable(block.querySelector('.explanation-box'), qData, 'explanation', '#a855f7');
-        });
-    }
-
-    // Xuất code Đề bài
-    document.getElementById('adminSaveBtn').addEventListener('click', () => {
-        if(document.activeElement && document.activeElement.getAttribute('contenteditable') === 'true') document.activeElement.blur(); 
-        const jsonString = JSON.stringify(quizData, null, 4);
-        const finalCode = `const quizData = ${jsonString};`;
-        navigator.clipboard.writeText(finalCode).then(() => {
-            showCustomAlert("✅ Đã copy Code MẢNG ĐỀ BÀI!\n\nMở file HTML, bôi đen mảng `const quizData = [...]` cũ rồi dán đè lên.");
-        }).catch(() => alert("Lỗi copy, hãy xem tab Console (F12)"));
-    });
-// Chức năng: Chỉ copy một đoạn duy nhất đang sửa
-    document.getElementById('adminCopyCurrentBtn').addEventListener('click', () => {
-        if(document.activeElement && document.activeElement.getAttribute('contenteditable') === 'true') document.activeElement.blur(); 
-        const currentData = quizData[currentPassageIndex];
-        const jsonString = JSON.stringify(currentData, null, 4);
-        navigator.clipboard.writeText(jsonString).then(() => {
-            showCustomAlert(`✅ Đã copy Code riêng của ĐOẠN SỐ ${currentPassageIndex + 1}!\n\nCậu có thể tìm đến đúng Object của đoạn này trong file HTML và dán đè lên cho lẹ.`);
-        }).catch(() => alert("Lỗi copy!"));
-    });
-
-    // Chức năng: Khôi phục bản nháp
-    document.getElementById('adminLoadDraftBtn').addEventListener('click', () => {
-        const draft = localStorage.getItem('admin_draft_quizData');
-        if(draft) {
-            if(confirm("Phát hiện bản nháp đã lưu gần đây! Cậu có muốn khôi phục không? (Nó sẽ ghi đè lên dữ liệu hiện đang hiện trên màn hình)")) {
-                const parsedDraft = JSON.parse(draft);
-                // Dùng mẹo này để thay đổi toàn bộ mảng quizData (vì nó được khai báo là const)
-                quizData.length = 0; 
-                parsedDraft.forEach(item => quizData.push(item));
-                
-                renderPassage();
-                renderNavDots();
-                showCustomAlert("🔄 Đã khôi phục bản nháp thành công! Cậu có thể tiếp tục sửa.");
-            }
-        } else {
-            showCustomAlert("📭 Hiện tại không có bản nháp nào được lưu trong máy.");
-        }
-    });
-    // Xuất code Từ vựng
-    document.getElementById('adminSaveVocabBtn').addEventListener('click', () => {
-        const vocabList = document.querySelector('.vocab-list');
-        if(vocabList) {
-            // Xóa rác outline
-            const cloned = vocabList.cloneNode(true);
-            cloned.removeAttribute('contenteditable');
-            cloned.style.outline = '';
-            cloned.style.padding = '0';
-            
-            const htmlString = `<ul class="vocab-list">\n${cloned.innerHTML}\n</ul>`;
-            navigator.clipboard.writeText(htmlString).then(() => {
-                showCustomAlert("✅ Đã copy Code TỪ VỰNG!\n\nMở file HTML, tìm đến đoạn `<ul class=\"vocab-list\">...</ul>` cũ và dán đè lên.");
-            });
-        }
-    });
-
 </script>
 </body>
 </html>
