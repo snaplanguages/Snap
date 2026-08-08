@@ -735,7 +735,7 @@
             ]
         }
     ];
-
+ const LOCAL_HISTORY_KEY = 'toeic_part3_test5_history';
     let currentPassageIndex = 0; let userAnswers = {}; let currentMode = ''; let startTime = 0;
     const audio = document.getElementById('q-audio');
     let autoNextTimeout;
@@ -835,7 +835,7 @@
     function cancelSubmit() { document.getElementById('modal-submit-confirm').style.display = 'none'; }
     function confirmSubmit() { document.getElementById('modal-submit-confirm').style.display = 'none'; finishTest(); }
 
-    function finishTest() {
+   function finishTest() {
         clearTimeout(autoNextTimeout); showScreen('screen-result');
         let totalQs = 0; let totalCorrect = 0;
         passagesData.forEach(p => p.questions.forEach(q => totalQs++));
@@ -849,7 +849,11 @@
         const listDiv = document.getElementById('result-list'); listDiv.innerHTML = '';
         passagesData.forEach((p, idx) => {
             let pCorrect = 0;
-            p.questions.forEach(q => { if(userAnswers[q.id] === q.correct) { pCorrect++; totalCorrect++; } });
+            p.questions.forEach(q => {
+                // SỬA: Lấy nhãn đáp án đúng từ opts (A, B, C, D)
+                const rightOpt = q.correct || (q.opts.find(opt => opt.isCorrect) || {}).l;
+                if(userAnswers[q.id] === rightOpt) { pCorrect++; totalCorrect++; }
+            });
             const pCard = document.createElement('div'); pCard.className = 'result-passage-card';
             pCard.innerHTML = `
                 <div class="result-passage-info">
@@ -863,7 +867,8 @@
 
         saveLocalHistory(totalCorrect, totalQs, userAnswers, timeTakenStr);
         if(window.luuDiemTOEICLenFirebase) {
-            window.luuDiemTOEICLenFirebase(totalQs, totalCorrect, FIREBASE_TEST_NAME, "Listening", "Part 3", userAnswers, timeTakenStr);
+            const testName = typeof FIREBASE_TEST_NAME !== 'undefined' ? FIREBASE_TEST_NAME : "Part3_Test5";
+            window.luuDiemTOEICLenFirebase(totalQs, totalCorrect, testName, "Listening", "Part 3", userAnswers, timeTakenStr);
         }
     }
 
@@ -872,8 +877,10 @@
         document.getElementById('modal-title').innerText = `QUESTIONS ${p.id} 🕵️‍♂️`;
         document.getElementById('modal-audio').src = p.audio;
         
-        // Transcripts English - Vietnamese
-        const enLines = p.script_en.split('\n'); const viLines = p.script_vi.split('\n');
+        // SỬA: Hỗ trợ cả script_en lẫn script
+        const enScriptText = p.script_en || p.script || '';
+        const enLines = enScriptText.split('\n'); 
+        const viLines = (p.script_vi || '').split('\n');
         let scriptHTML = '';
         for(let i=0; i<enLines.length; i++) {
             scriptHTML += `<div class="script-line en">${enLines[i]}</div>`;
@@ -888,7 +895,8 @@
         }
 
         p.questions.forEach((q, index) => {
-            const rightOpt = q.correct;
+            // SỬA: Tìm đáp án đúng chính xác
+            const rightOpt = q.correct || (q.opts.find(opt => opt.isCorrect) || {}).l;
             const uAns = userAnswers[q.id] || "Trống";
             const isMatch = uAns === rightOpt;
             const userIcon = isMatch ? '✅' : '❌';
