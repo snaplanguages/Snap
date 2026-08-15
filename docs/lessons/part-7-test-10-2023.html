@@ -261,7 +261,12 @@
         .exp-clue { padding: 10px 14px; border-left: 4px solid var(--primary-btn); border-radius: 6px; margin-bottom: 8px; color: #1e1b4b;}
 
         /* HIGHLIGHT SYSTEM */
-        .highlight { background-color: #fef08a; cursor: pointer; border-radius: 4px; padding: 2px 0; transition: 0.2s; }
+        .highlight {
+    background-color: #fef08a !important;
+    color: #1e293b !important;
+    border-radius: 3px;
+    padding: 1px 2px;
+}
         .highlight:hover { background-color: #fde047; }
         #ctxMenu { z-index: 100000; }
         #ctxMenu button:hover { background: #f1f5f9; }
@@ -1788,14 +1793,57 @@ localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
     }
 
     function doHighlight() {
-        if (selectedRange) {
-            try { 
-                let span = document.createElement("span"); span.className = "highlight"; selectedRange.surroundContents(span); 
-            } catch(e) { showCustomAlert("🍀 Cậu chỉ có thể highlight trong cùng một dòng thui nhé!"); }
-            window.getSelection().removeAllRanges();
-        }
-        menu.style.display = "none";
+    const selection = window.getSelection();
+    if (!selection.rangeCount || selection.isCollapsed) return;
+
+    const range = selection.getRangeAt(0);
+    
+    // Kiểm tra nếu vùng chọn nằm trong cột đoạn văn
+    const passageCol = document.getElementById('passage-container');
+    if (!passageCol.contains(range.commonAncestorContainer)) {
+        selection.removeAllRanges();
+        hideCtxMenu();
+        return;
     }
+
+    try {
+        // Cách 1: Thử bọc đơn giản nếu vùng chọn nằm trọn trong 1 thẻ
+        const span = document.createElement('span');
+        span.className = 'highlight';
+        range.surroundContents(span);
+    } catch (e) {
+        // Cách 2: Xử lý an toàn khi bôi đen cắt qua nhiều dòng/thẻ HTML
+        const fragment = range.extractContents();
+        const span = document.createElement('span');
+        span.className = 'highlight';
+        span.appendChild(fragment);
+        range.insertNode(span);
+    }
+
+    selection.removeAllRanges();
+    hideCtxMenu();
+}
+
+// 2. KHẮC PHỤC LỖI MẤT HIGHLIGHT KHIN CHỌN ĐÁP ÁN
+// Chỉ cập nhật trạng thái UI của câu hỏi, KHÔNG render lại đoạn văn
+document.addEventListener('change', function (e) {
+    if (e.target && e.target.matches('.option-label input[type="radio"]')) {
+        const questionBlock = e.target.closest('.question-block');
+        if (questionBlock) {
+            // Xóa class selected của các option cũ trong cùng câu hỏi
+            questionBlock.querySelectorAll('.option-label').forEach(label => {
+                label.classList.remove('selected');
+            });
+            // Thêm class selected cho option vừa chọn
+            e.target.closest('.option-label').classList.add('selected');
+        }
+    }
+});
+
+function hideCtxMenu() {
+    const menu = document.getElementById('ctxMenu');
+    if (menu) menu.style.display = 'none';
+}
 
     function removeHighlight() {
         if (targetElement) {
