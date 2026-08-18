@@ -163,7 +163,23 @@
         .history-info { display: flex; flex-direction: column; gap: 3px; }
         .history-date { font-weight: 700; color: var(--text-dark); font-size: 0.9rem; }
         .history-score { color: var(--primary-dark); font-size: 0.85rem; font-weight: 600; }
+/* Đảm bảo thông báo Thi thử đẩy nội dung xuống, không đè lên câu hỏi */
+#mock-msg {
+    position: relative;
+    margin-bottom: 15px;
+    z-index: 1;
+}
 
+/* Khoảng khoảng trống phía trên cho vùng chứa câu hỏi */
+#questions-container {
+    padding-top: 10px;
+    clear: both;
+}
+
+/* Đảm bảo khung cuộn (nếu có) hiển thị trọn vẹn câu hỏi đầu tiên */
+.right-col, #questions-container {
+    scroll-margin-top: 20px;
+}
         /* Scripts & Explanation */
         .script-box { background: #FFFFFF; padding: 18px; border-radius: 16px; margin-bottom: 20px; box-shadow: 0 3px 10px rgba(0,0,0,0.02); border-top: 4px solid var(--primary); }
         .script-split-container { display: flex; gap: 15px; align-items: stretch; }
@@ -861,62 +877,66 @@
     }
 
     function renderPassage(idx) {
-        const passage = passagesData[idx];
-        document.getElementById('passage-title').innerText = `Questions ${passage.id}`;
-        
-        // Audio
-const audio = document.getElementById('q-audio');
-if (audio) {
-    audio.src = passage.audio || '';
+    const passage = passagesData[idx];
+    document.getElementById('passage-title').innerText = `Questions ${passage.id}`;
     
-    if (mode === 'mock') {
-        // Thi thử: Ẩn hoàn toàn trình phát audio và không tự phát
-        audio.style.display = 'none';
-        audio.pause();
-    } else {
-        // Luyện tập: Hiện trình phát audio để chủ động bật/tắt/tua
-        audio.style.display = 'block';
-        audio.pause();
-        audio.currentTime = 0;
+    // Audio
+    const audio = document.getElementById('q-audio');
+    if (audio) {
+        audio.src = passage.audio || '';
+        if (mode === 'mock') {
+            audio.style.display = 'none';
+            audio.pause();
+        } else {
+            audio.style.display = 'block';
+            audio.pause();
+            audio.currentTime = 0;
+        }
     }
-}
 
-        // Render câu hỏi & bố cục graphic nếu có
-        const container = document.getElementById('questions-container');
-        container.innerHTML = '';
+    // Render câu hỏi
+    const container = document.getElementById('questions-container');
+    container.innerHTML = '';
 
-        if (passage.graphic) {
-            const layout = document.createElement('div');
-            layout.className = 'two-col-layout';
-            
-            layout.innerHTML = `
-                <div class="left-col">
-                    <div class="graphic-box">
-                        <img src="${passage.graphic}" alt="Graphic">
-                    </div>
+    if (passage.graphic) {
+        const layout = document.createElement('div');
+        layout.className = 'two-col-layout';
+        
+        layout.innerHTML = `
+            <div class="left-col">
+                <div class="graphic-box">
+                    <img src="${passage.graphic}" alt="Graphic">
                 </div>
-                <div class="resizer"><div class="resizer-handle"></div></div>
-                <div class="right-col" id="right-col-questions"></div>
-            `;
-            container.appendChild(layout);
-            
-            const rightCol = layout.querySelector('#right-col-questions');
-            passage.questions.forEach(q => rightCol.appendChild(createQuestionBlock(q)));
-            setupResizer();
-        } else {
-            passage.questions.forEach(q => container.appendChild(createQuestionBlock(q)));
-        }
-
-        // Điều hướng nút bấm
-        document.getElementById('btn-prev').style.display = idx === 0 ? 'none' : 'inline-flex';
-        if (idx === passagesData.length - 1) {
-            document.getElementById('btn-next').style.display = 'none';
-            document.getElementById('btn-submit').style.display = 'inline-flex';
-        } else {
-            document.getElementById('btn-next').style.display = 'inline-flex';
-            document.getElementById('btn-submit').style.display = 'none';
-        }
+            </div>
+            <div class="resizer"><div class="resizer-handle"></div></div>
+            <div class="right-col" id="right-col-questions"></div>
+        `;
+        container.appendChild(layout);
+        
+        const rightCol = layout.querySelector('#right-col-questions');
+        passage.questions.forEach(q => rightCol.appendChild(createQuestionBlock(q)));
+        setupResizer();
+    } else {
+        passage.questions.forEach(q => container.appendChild(createQuestionBlock(q)));
     }
+
+    // Điều hướng nút bấm
+    document.getElementById('btn-prev').style.display = idx === 0 ? 'none' : 'inline-flex';
+    if (idx === passagesData.length - 1) {
+        document.getElementById('btn-next').style.display = 'none';
+        document.getElementById('btn-submit').style.display = 'inline-flex';
+    } else {
+        document.getElementById('btn-next').style.display = 'inline-flex';
+        document.getElementById('btn-submit').style.display = 'none';
+    }
+
+    // CUỘN TRANG & KHUNG CÂU HỎI LÊN ĐẦU
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    container.scrollTop = 0;
+    const rightCol = document.getElementById('right-col-questions');
+    if (rightCol) rightCol.scrollTop = 0;
+}
+    
 
     function createQuestionBlock(q) {
     const qBlock = document.createElement('div');
