@@ -456,6 +456,11 @@
     <img src="ảnh.png" alt="Logo">
     <span>SnapEnglish</span>
 </a>
+
+<!-- Hoặc trường hợp chỉ có chữ SnapEnglish -->
+<a href="index.html" class="brand">
+    <span>SnapEnglish</span>
+</a>
     <div class="tabs">
         <button class="tab-btn active" onclick="switchTab(1)">Part 1</button>
         <button class="tab-btn" onclick="switchTab(2)">Part 2</button>
@@ -1951,36 +1956,21 @@
         const main = document.getElementById('mainContent');
         main.innerHTML = '';
 
-        // Tạo nội dung các câu hỏi bằng .map()
-let p1Content = TOEIC_DATA.part1.map(q => {
-    let imgUrl = q.img || q.image; // Hỗ trợ cả 2 tên biến
-    let scriptEn = typeof q.script_en === 'string' ? q.script_en : (q.script_en || []).join('<br>');
-    let scriptVi = typeof q.script_vi === 'string' ? q.script_vi : (q.script_vi || []).join('<br>');
-    
-    // Render phần giải thích (nếu có)
-    let explains = q.explains ? q.explains.map(ex => {
-        let isAns = (ex.type === 'correct' || ex.isCorrect);
-        let tag = isAns ? "<span class='bingo-tag'>Đúng</span>" : "<span class='trap-tag'>Sai</span>";
-        
-        return `<div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px;">
-                    <div style="font-weight: 700; margin-bottom: 5px;">Option ${ex.opt}</div>
-                    <div>${tag} ${ex.text}</div>
-                </div>`;
-    }).join('') : '';
-
-    // Trả về khung HTML cho mỗi câu hỏi
-    return `
-        <div class="question-item" style="margin-bottom: 20px;">
-            ${imgUrl ? `<img src="${imgUrl}" style="max-width: 100%; border-radius: 8px;" />` : ''}
-            <div class="script-en" style="margin-top: 10px;">${scriptEn}</div>
-            <div class="script-vi" style="color: #666; margin-bottom: 10px;">${scriptVi}</div>
-            <div class="explains-box">${explains}</div>
-        </div>
-    `;
-}).join('');
-
-// Ghép vào thẻ chứa ngoài cùng
-let p1HTML = `<div id="part1" class="part-container active">${p1Content}</div>`;
+        // --- RENDER PART 1 ---
+        let p1HTML = `<div id="part1" class="part-container active">
+                        <div class="part-title">Part 1: Photographs</div>`;
+        TOEIC_DATA.part1.forEach(q => {
+            let imgUrl = q.img || q.image; // Hỗ trợ cả 2 tên biến
+            let scriptEn = typeof q.script_en === 'string' ? q.script_en : (q.script_en || []).join('<br>');
+            let scriptVi = typeof q.script_vi === 'string' ? q.script_vi : (q.script_vi || []).join('<br>');
+            let explains = q.explains ? q.explains.map(ex => {
+                let isAns = (ex.type === 'correct' || ex.isCorrect);
+                let tag = isAns ? "<span class='bingo-tag'>Đúng</span>" : "<span class='trap-tag'>Sai</span>";
+                return `<div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px;">
+                            <div style="font-weight: 700; margin-bottom: 5px;">Option ${ex.opt}</div>
+                            <div>${tag} ${ex.text}</div>
+                        </div>`;
+            }).join('') : '';
 
             p1HTML += `
             <div class="q-card" id="card-${q.id}">
@@ -2018,6 +2008,7 @@ let p1HTML = `<div id="part1" class="part-container active">${p1Content}</div>`;
 
         // --- RENDER PART 2 ---
         let p2HTML = `<div id="part2" class="part-container">
+                        <div class="part-title">Part 2: Question & Response</div>`;
         TOEIC_DATA.part2.forEach(q => {
             let scriptQEn = q.script_q_en || '';
             let scriptQVi = q.script_q_vi || '';
@@ -2067,7 +2058,7 @@ let p1HTML = `<div id="part1" class="part-container active">${p1Content}</div>`;
 
         // --- RENDER PART 3 & 4 ---
         const renderPassage = (data, title) => {
-           
+            // ĐÃ LOẠI BỎ LỜI NHẮC DÀI DÒNG
             let html = `<div id="part${title.includes('3') ? 3 : 4}" class="part-container">
                             <div class="part-title">${title}</div>`;
             data.forEach(p => {
@@ -2121,8 +2112,8 @@ let p1HTML = `<div id="part1" class="part-container active">${p1Content}</div>`;
             main.innerHTML += html;
         };
 
-        renderPassage(TOEIC_DATA.part3);
-        renderPassage(TOEIC_DATA.part4);
+        renderPassage(TOEIC_DATA.part3, "Part 3: Conversations");
+        renderPassage(TOEIC_DATA.part4, "Part 4: Short Talks");
 
         document.querySelectorAll('.resizer').forEach(resizer => {
             const container = resizer.parentElement;
