@@ -308,9 +308,13 @@
                 <div id="flashcard-back" style="background: white; padding: 40px 30px; text-align: center; border-radius: 24px; box-shadow: var(--shadow-md); border: 2px solid var(--border); display: none; margin-top: 24px;">
                     <div id="answer-feedback" style="font-size: 22px; font-weight: 800; margin-bottom: 20px;"></div>
                     
-                    <h1 id="study-word" style="font-size: 50px; color: var(--primary); margin-bottom: 5px; font-weight: 900; letter-spacing: -1px;">word</h1>
-                    <div id="study-ipa" style="color: var(--text-muted); font-family: monospace; font-size: 18px; font-weight: 600; margin-bottom: 10px;">/wɜːd/</div>
-                    <p id="study-en" style="color: var(--text-dark); font-size: 18px; font-weight: 600; margin-bottom: 20px;">definition</p>
+                    <!-- BÊN TRONG <div id="flashcard-back"> -->
+<h1 id="study-word" style="font-size: 50px; color: var(--primary); margin-bottom: 5px; font-weight: 900; letter-spacing: -1px;">word</h1>
+<div id="study-ipa" style="color: var(--text-muted); font-family: monospace; font-size: 18px; font-weight: 600; margin-bottom: 10px;">/wɜːd/</div>
+<p id="study-en" style="color: var(--text-dark); font-size: 18px; font-weight: 600; margin-bottom: 10px;">definition</p>
+
+<!-- THÊM DÒNG NÀY VÀO ĐỂ TRÁNH LỖI CRASH -->
+<p id="study-ex" style="color: var(--text-muted); font-style: italic; font-size: 16px; margin-bottom: 20px;"></p>
                     <div id="sentence-practice-box" style="background: #FFF0F5; border: 2px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 30px; text-align: left;">
   <p style="font-size: 14px; font-weight: 800; color: var(--primary); margin-bottom: 10px; text-transform: uppercase;">✍️ LUYỆN ĐẶT CÂU VỚI AI:</p>
   <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 12px;">Hãy viết một câu tiếng Anh có chứa từ "<b><span id="sentence-word-highlight">word</span></b>" để AI đánh giá nhé!</p>
@@ -1031,91 +1035,98 @@ window.deleteWordFromDeck = async function(event, deckId, wordId) {
             window.loadNextCard();
         }
 
-        window.loadNextCard = function() {
-  if(dueCards.length === 0) {
-    window.showCuteDialog({
-      type: 'alert',
-      title: 'Giỏi quá chừng!',
-      message: 'Bạn đã ôn xong tất cả các từ hôm nay rồi. Tự thưởng cho mình một ly trà sữa nha 🧋',
-      icon: '🎉'
-    }).then(() => {
-      window.endStudySession();
-    });
-    return;
-  }
-  
-  // SỬA LỖI TRIỆT ĐỂ: Lấy đúng từ vựng đầu tiên trong hàng đợi học
- currentStudyCard = dueCards;
-  document.getElementById('study-progress').innerText = `Từ còn lại: ${dueCards.length}`;
-  
-  // Reset trạng thái luyện đặt câu với AI ở mặt sau
-  document.getElementById('sentence-input').value = '';
-  document.getElementById('sentence-ai-feedback').innerText = '';
-  document.getElementById('sentence-word-highlight').innerText = currentStudyCard.word;
-  
-  // Reset trạng thái hiển thị mặt trước / mặt sau
-  document.getElementById('flashcard-front').style.display = 'block';
-  document.getElementById('flashcard-back').style.display = 'none';
-  
-  // Ẩn tất cả các container giao diện trước khi kích hoạt chế độ ngẫu nhiên
-  document.getElementById('study-input').style.display = 'none';
-  document.getElementById('btn-check-answer').style.display = 'none';
-  document.getElementById('btn-flip-card').style.display = 'none';
-  document.getElementById('mcq-options-container').style.display = 'none';
-  document.getElementById('tf-options-container').style.display = 'none';
-  document.getElementById('arrange-container').style.display = 'none';
-  document.getElementById('rewrite-container').style.display = 'none';
-  
-  // LOGIC TRỘN TỰ ĐỘNG CHUẨN LINGOLAND:
-  // Định nghĩa danh sách các chế độ học có thể kích hoạt
-  let availableModes = ['writing', 'flashcard', 'mcq', 'true_false', 'arrange'];
-  
-  // Chỉ kích hoạt chế độ "Rewrite" (điền câu) nếu từ vựng có câu ví dụ thực tế
-  if (currentStudyCard.ex && currentStudyCard.ex.trim() !== "") {
-    availableModes.push('rewrite');
-  }
-  
-  // Chọn ngẫu nhiên một chế độ học cho từ này
-  const activeMode = availableModes[Math.floor(Math.random() * availableModes.length)];
-  
-  const promptTitle = document.getElementById('study-prompt-title');
-  const viPrompt = document.getElementById('study-vi-prompt');
-  
-  if (activeMode === 'writing') {
-    promptTitle.innerText = "✍️ VIẾT TỪ NÀY SANG TIẾNG ANH:";
-    viPrompt.innerText = currentStudyCard.vi || currentStudyCard.en;
-    
-    document.getElementById('study-input').style.display = 'block';
-    document.getElementById('study-input').value = '';
-    document.getElementById('study-input').disabled = false;
-    document.getElementById('btn-check-answer').style.display = 'block';
-    setTimeout(() => document.getElementById('study-input').focus(), 100);
-    
-  } else if (activeMode === 'flashcard') {
-    promptTitle.innerText = "🗂️ LẬT THẺ ĐỂ ÔN TẬP TỪ:";
-    viPrompt.innerText = currentStudyCard.vi || currentStudyCard.en;
-    document.getElementById('btn-flip-card').style.display = 'block';
-    
-  } else if (activeMode === 'mcq') {
-    promptTitle.innerText = "🎯 TRẮC NGHIỆM: CHỌN TỪ TIẾNG ANH ĐÚNG VỚI NGHĨA:";
-    viPrompt.innerText = currentStudyCard.vi || currentStudyCard.en;
-    document.getElementById('mcq-options-container').style.display = 'flex';
-    window.generateMCQOptions();
-    
-  } else if (activeMode === 'true_false') {
-    document.getElementById('tf-options-container').style.display = 'flex';
-    window.generateTFOptions();
-    
-  } else if (activeMode === 'arrange') {
-    document.getElementById('arrange-container').style.display = 'flex';
-    window.generateArrangeOptions();
-    
-  } else if (activeMode === 'rewrite') {
-    document.getElementById('rewrite-container').style.display = 'flex';
-    window.generateRewriteOptions();
-  }
-};
-        
+       window.loadNextCard = function() {
+            if (!dueCards || dueCards.length === 0) {
+                window.showCuteDialog({
+                    type: 'alert',
+                    title: 'Giỏi quá chừng!',
+                    message: 'Bạn đã ôn xong tất cả các từ hôm nay rồi. Tự thưởng cho mình một ly trà sữa nha 🧋',
+                    icon: '🎉'
+                }).then(() => {
+                    window.endStudySession();
+                });
+                return;
+            }
+            
+            // SỬA LỖI 1: Lấy đúng phần tử đầu tiên của mảng
+            currentStudyCard = dueCards[0];
+            document.getElementById('study-progress').innerText = `Từ còn lại: ${dueCards.length}`;
+            
+            // Reset giao diện đặt câu AI
+            document.getElementById('sentence-input').value = '';
+            document.getElementById('sentence-ai-feedback').innerText = '';
+            document.getElementById('sentence-word-highlight').innerText = currentStudyCard.word;
+            
+            // Reset trạng thái mặt trước / mặt sau
+            document.getElementById('flashcard-front').style.display = 'block';
+            document.getElementById('flashcard-back').style.display = 'none';
+            
+            // Ẩn tất cả các khung chế độ học
+            document.getElementById('study-input').style.display = 'none';
+            document.getElementById('btn-check-answer').style.display = 'none';
+            document.getElementById('btn-flip-card').style.display = 'none';
+            document.getElementById('mcq-options-container').style.display = 'none';
+            document.getElementById('tf-options-container').style.display = 'none';
+            document.getElementById('arrange-container').style.display = 'none';
+            document.getElementById('rewrite-container').style.display = 'none';
+            
+            // Tự động chọn chế độ ngẫu nhiên
+            let availableModes = ['writing', 'flashcard', 'mcq', 'true_false', 'arrange'];
+            if (currentStudyCard.ex && currentStudyCard.ex.trim() !== "") {
+                availableModes.push('rewrite');
+            }
+            
+            const activeMode = availableModes[Math.floor(Math.random() * availableModes.length)];
+            const promptTitle = document.getElementById('study-prompt-title');
+            const viPrompt = document.getElementById('study-vi-prompt');
+            
+            if (activeMode === 'writing') {
+                promptTitle.innerText = "✍️ VIẾT TỪ NÀY SANG TIẾNG ANH:";
+                viPrompt.innerText = currentStudyCard.vi || currentStudyCard.en;
+                document.getElementById('study-input').style.display = 'block';
+                document.getElementById('study-input').value = '';
+                document.getElementById('study-input').disabled = false;
+                document.getElementById('btn-check-answer').style.display = 'block';
+                setTimeout(() => document.getElementById('study-input').focus(), 100);
+                
+            } else if (activeMode === 'flashcard') {
+                promptTitle.innerText = "🗂️ LẬT THẺ ĐỂ ÔN TẬP TỪ:";
+                viPrompt.innerText = currentStudyCard.vi || currentStudyCard.en;
+                document.getElementById('btn-flip-card').style.display = 'block';
+                
+            } else if (activeMode === 'mcq') {
+                promptTitle.innerText = "🎯 TRẮC NGHIỆM: CHỌN TỪ TIẾNG ANH ĐÚNG VỚI NGHĨA:";
+                viPrompt.innerText = currentStudyCard.vi || currentStudyCard.en;
+                document.getElementById('mcq-options-container').style.display = 'flex';
+                window.generateMCQOptions();
+                
+            } else if (activeMode === 'true_false') {
+                document.getElementById('tf-options-container').style.display = 'flex';
+                window.generateTFOptions();
+                
+            } else if (activeMode === 'arrange') {
+                document.getElementById('arrange-container').style.display = 'flex';
+                window.generateArrangeOptions();
+                
+            } else if (activeMode === 'rewrite') {
+                document.getElementById('rewrite-container').style.display = 'flex';
+                window.generateRewriteOptions();
+            }
+        };
+
+        // bổ sung HÀM FLIPCARD BỊ THIẾU
+        window.flipCard = function() {
+            document.getElementById('study-word').innerText = currentStudyCard.word;
+            document.getElementById('study-ipa').innerText = currentStudyCard.ipa || '';
+            document.getElementById('study-en').innerText = currentStudyCard.en || '';
+            const exEl = document.getElementById('study-ex');
+            if (exEl) exEl.innerHTML = currentStudyCard.ex || '';
+            
+            document.getElementById('answer-feedback').innerHTML = `🗂️ Lật thẻ xem đáp án`;
+            document.getElementById('flashcard-back').style.display = 'block';
+            window.playNativeAudio(currentStudyCard.word, 'en-US');
+        };
+
         window.checkAnswer = function() {
             const userInput = document.getElementById('study-input').value.trim().toLowerCase();
             const correctWord = currentStudyCard.word.toLowerCase();
@@ -1126,87 +1137,63 @@ window.deleteWordFromDeck = async function(event, deckId, wordId) {
 
             if (userInput === correctWord) {
                 feedbackEl.innerHTML = `🎉 Tuyệt vời! Chuẩn không cần chỉnh: "<span style="color: var(--primary);">${currentStudyCard.word}</span>"`;
-                feedbackEl.style.color = "var(--text-dark)";
             } else {
                 feedbackEl.innerHTML = `❌ Rất tiếc nha! Đáp án là "<span style="color: var(--primary);">${currentStudyCard.word}</span>" (Bạn gõ: <span style="color: var(--danger); text-decoration: line-through;">${userInput || 'trống'}</span>)`;
-                feedbackEl.style.color = "var(--text-dark)";
             }
 
             document.getElementById('study-word').innerText = currentStudyCard.word;
             document.getElementById('study-ipa').innerText = currentStudyCard.ipa || '';
             document.getElementById('study-en').innerText = currentStudyCard.en || '';
-            document.getElementById('study-ex').innerHTML = currentStudyCard.ex || '';
+            const exEl = document.getElementById('study-ex');
+            if (exEl) exEl.innerHTML = currentStudyCard.ex || '';
             
             document.getElementById('flashcard-back').style.display = 'block';
             window.playNativeAudio(currentStudyCard.word, 'en-US'); 
-        }
-
-        document.getElementById('study-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') window.checkAnswer();
-        });
+        };
 
         window.gradeCard = async function(grade) {
-  let card = currentStudyCard;
-  
-  // Khởi tạo Level 0 nếu là từ vựng mới tinh chưa từng ôn tập
-  if (card.repetitions === undefined) {
-    card.repetitions = 0; 
-    card.nextReview = Date.now();
-  }
-  
-  let currentLevel = card.repetitions;
-  let interval = 1; // Số ngày giãn cách mặc định
-  
-  // LOGIC ĐIỀU CHỈNH CẤP ĐỘ THEO LỰA CHỌN CỦA NGƯỜI DÙNG:
-  if (grade === 'again') {
-    // Nếu chọn "Lại": Reset từ về Level 1 [3] (hoặc giữ Level 0 nếu chưa thuộc)
-    currentLevel = 0;
-  } else if (grade === 'hard') {
-    // Nếu chọn "Khó": Giữ nguyên cấp độ hiện tại (nhưng tối thiểu phải lên Level 1)
-    if (currentLevel === 0) currentLevel = 1;
-  } else if (grade === 'good') {
-    // Nếu chọn "Tốt": Tiến thêm 1 Cấp độ (Tối đa là Level 6 - Thuộc lòng) [12]
-    currentLevel = Math.min(currentLevel + 1, 6);
-  } else if (grade === 'easy') {
-    // Nếu chọn "Dễ": Thăng cấp nhanh chóng
-    currentLevel = Math.min(currentLevel + 2, 6);
-  }
-  
-  card.repetitions = currentLevel;
-  
-  // ÁNH XẠ CẤP ĐỘ SANG KHOẢNG THỜI GIAN ÔN TẬP (INTERVAL DÀNH CHO TIẾNG ANH CHUẨN LINGOLAND):
-  if (currentLevel === 0) {
-    interval = 0;
-  } else if (currentLevel === 1) {
-    interval = 1; // Level 1: Ôn tập lại trong vòng 1 ngày [3]
-  } else if (currentLevel === 2) {
-    interval = 2; // Level 2: Ôn tập lại sau 2 ngày [3]
-  } else if (currentLevel === 3) {
-    interval = 3; // Level 3: Ôn tập sau 3 ngày [3]
-  } else if (currentLevel === 4) {
-    interval = 5; // Level 4: Ôn tập sau 5 ngày [3]
-  } else if (currentLevel === 5) {
-    interval = 8; // Level 5: Ôn tập sau 8 ngày [3]
-  } else if (currentLevel > 5) {
-    interval = 15; // Cấp độ Thuộc lòng: AI tự động giãn cách nhắc lại sau 15 ngày [3]
-  }
-  
-  // LÊN LỊCH ÔN TẬP TIẾP THEO
-  if (grade === 'again') {
-    card.nextReview = Date.now() + 60000; // Đặt học lại sau 1 phút
-    // Đẩy từ này xuống cuối hàng đợi học để gặp lại ngay trong session này
-    dueCards.push(dueCards.shift());
-  } else {
-    // Đổi ngày sang mili-giây và lên lịch
-    card.nextReview = Date.now() + (interval * 24 * 60 * 60 * 1000);
-    // Loại bỏ khỏi session hiện tại vì đã hoàn thành lượt học
-    dueCards.shift();
-  }
-  
-  window.updateStats(); // Cập nhật thống kê vòng tròn động [13]
-  await syncData();     // Tự động đồng bộ hóa lên Cloud Firestore [14]
-  window.loadNextCard();
-};
+            let card = currentStudyCard;
+            if (card.repetitions === undefined) {
+                card.repetitions = 0; 
+                card.nextReview = Date.now();
+            }
+            
+            let currentLevel = card.repetitions;
+            let interval = 1;
+            
+            if (grade === 'again') {
+                currentLevel = 0;
+            } else if (grade === 'hard') {
+                if (currentLevel === 0) currentLevel = 1;
+            } else if (grade === 'good') {
+                currentLevel = Math.min(currentLevel + 1, 6);
+            } else if (grade === 'easy') {
+                currentLevel = Math.min(currentLevel + 2, 6);
+            }
+            
+            card.repetitions = currentLevel;
+            
+            if (currentLevel === 0) interval = 0;
+            else if (currentLevel === 1) interval = 1;
+            else if (currentLevel === 2) interval = 2;
+            else if (currentLevel === 3) interval = 3;
+            else if (currentLevel === 4) interval = 5;
+            else if (currentLevel === 5) interval = 8;
+            else if (currentLevel > 5) interval = 15;
+            
+            if (grade === 'again') {
+                card.nextReview = Date.now() + 60000;
+                dueCards.push(dueCards.shift()); // Đẩy từ sai xuống cuối danh sách ôn lại
+            } else {
+                card.nextReview = Date.now() + (interval * 24 * 60 * 60 * 1000);
+                dueCards.shift(); // Bỏ từ đã thuộc khỏi hàng chờ session này
+            }
+            
+            window.updateStats();
+            await syncData();
+            // CHUYỂN SANG TỪ TIẾP THEO
+            window.loadNextCard();
+        };
 
         window.endStudySession = function() {
             document.getElementById('study-setup').style.display = 'block';
