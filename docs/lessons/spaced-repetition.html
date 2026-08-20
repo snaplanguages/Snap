@@ -1045,7 +1045,7 @@ window.deleteWordFromDeck = async function(event, deckId, wordId) {
   }
   
   // SỬA LỖI TRIỆT ĐỂ: Lấy đúng từ vựng đầu tiên trong hàng đợi học
-  currentStudyCard = dueCards; 
+ currentStudyCard = dueCards;
   document.getElementById('study-progress').innerText = `Từ còn lại: ${dueCards.length}`;
   
   // Reset trạng thái luyện đặt câu với AI ở mặt sau
@@ -1233,13 +1233,19 @@ window.deleteWordFromDeck = async function(event, deckId, wordId) {
             }
         }
 window.generateMCQOptions = function() {
-  const correctWord = currentStudyCard.word;
+  // Phòng thủ: Nếu không có thẻ học hoặc từ vựng bị trống, dừng hàm ngay lập tức
+  if (!currentStudyCard || !currentStudyCard.word) {
+    console.error("Không tìm thấy thông tin từ vựng hợp lệ để tạo trắc nghiệm!");
+    return;
+  }
   
+  const correctWord = currentStudyCard.word;
   // Gom toàn bộ từ vựng khác có trong tài khoản người dùng làm mồi nhiễu
   let distractorPool = [];
   appData.decks.forEach(deck => {
     deck.words.forEach(w => {
-      if (w.word && w.word.toLowerCase() !== correctWord.toLowerCase()) {
+      // Đảm bảo từ mồi nhiễu tồn tại, là dạng chuỗi (string) và khác từ đúng
+      if (w.word && typeof w.word === 'string' && w.word.toLowerCase() !== correctWord.toLowerCase()) {
         distractorPool.push(w.word);
       }
     });
