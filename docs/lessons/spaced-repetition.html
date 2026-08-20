@@ -260,9 +260,17 @@
 
         <section id="study-view" class="view-section">
             <div id="study-setup" style="text-align: center; margin-top: 50px;">
-                <h2 style="font-size: 32px; font-weight: 900; margin-bottom: 30px; color: var(--primary);">Chọn bộ bài để học 🧠</h2>
-                <div id="study-deck-list" style="max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px;"></div>
-            </div>
+<h2 style="font-size: 32px; font-weight: 900; margin-bottom: 20px; color: var(--primary);">Chọn chế độ & bộ bài để học 🧠</h2>
+
+<!-- Bổ sung Bộ chọn Chế độ Học chuẩn Lingoland -->
+<div style="max-width: 500px; margin: 0 auto 30px auto; display: flex; gap: 10px; background: white; padding: 6px; border-radius: 16px; border: 2px solid var(--border);">
+  <button class="btn mode-btn active" id="mode-writing" onclick="switchStudyMode('writing')" style="flex: 1; margin: 0; padding: 10px; font-size: 14px; background: var(--gradient-brand); color: white; border-radius: 10px;">Viết từ ✍️</button>
+  <button class="btn mode-btn" id="mode-flashcard" onclick="switchStudyMode('flashcard')" style="flex: 1; margin: 0; padding: 10px; font-size: 14px; background: transparent; color: var(--text-dark); border-radius: 10px;">Lật thẻ 🗂️</button>
+  <button class="btn mode-btn" id="mode-mcq" onclick="switchStudyMode('mcq')" style="flex: 1; margin: 0; padding: 10px; font-size: 14px; background: transparent; color: var(--text-dark); border-radius: 10px;">Trắc nghiệm 🎯</button>
+</div>
+
+<div id="study-deck-list" style="max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px;"></div>
+</div>
 
             <div id="study-session" style="display: none; max-width: 600px; margin: 0 auto;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
@@ -271,13 +279,19 @@
                 </div>
 
                 <div id="flashcard-front" style="background: white; padding: 50px 30px; text-align: center; border-radius: 24px; box-shadow: var(--shadow-md); border: 2px solid var(--border);">
-                    <p style="color: var(--text-muted); font-size: 16px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase;">Nghĩa của từ này là gì?</p>
-                    <h2 id="study-vi-prompt" style="font-size: 36px; color: var(--text-dark); margin-bottom: 40px; font-weight: 900;">nghĩa tiếng việt</h2>
-                    
-                    <input type="text" id="study-input" placeholder="Gõ từ tiếng Anh vào đây..." style="width: 85%; padding: 20px; font-size: 22px; border: 3px solid var(--border); border-radius: 16px; text-align: center; outline: none; margin-bottom: 24px; font-weight: 700; color: var(--primary);">
-                    
-                    <button class="btn btn-primary" id="btn-check-answer" style="width: 85%; margin: 0 auto; font-size: 18px;" onclick="checkAnswer()">Kiểm tra đáp án <i class="fa-solid fa-paper-plane"></i></button>
-                </div>
+<p id="study-prompt-title" style="color: var(--text-muted); font-size: 16px; font-weight: 700; margin-bottom: 15px; text-transform: uppercase;">Nghĩa của từ này là gì?</p>
+<h2 id="study-vi-prompt" style="font-size: 36px; color: var(--text-dark); margin-bottom: 40px; font-weight: 900;">nghĩa tiếng việt</h2>
+
+<!-- Chế độ 1: Viết từ (Mặc định) -->
+<input type="text" id="study-input" placeholder="Gõ từ tiếng Anh vào đây..." style="width: 85%; padding: 20px; font-size: 22px; border: 3px solid var(--border); border-radius: 16px; text-align: center; outline: none; margin-bottom: 24px; font-weight: 700; color: var(--primary);">
+<button class="btn btn-primary" id="btn-check-answer" style="width: 85%; margin: 0 auto; font-size: 18px;" onclick="checkAnswer()">Kiểm tra đáp án <i class="fa-solid fa-paper-plane"></i></button>
+
+<!-- Chế độ 2: Lật thẻ (Mới) -->
+<button class="btn btn-primary" id="btn-flip-card" style="width: 85%; margin: 0 auto; font-size: 18px; display: none;" onclick="flipCard()">Lật xem đáp án 🔄</button>
+
+<!-- Chế độ 3: Trắc nghiệm (Mới) -->
+<div id="mcq-options-container" style="display: none; flex-direction: column; gap: 12px; width: 85%; margin: 0 auto;"></div>
+</div>
 
                 <div id="flashcard-back" style="background: white; padding: 40px 30px; text-align: center; border-radius: 24px; box-shadow: var(--shadow-md); border: 2px solid var(--border); display: none; margin-top: 24px;">
                     <div id="answer-feedback" style="font-size: 22px; font-weight: 800; margin-bottom: 20px;"></div>
@@ -396,7 +410,7 @@
         let appData = { decks: [] };
         let currentViewingWord = null;
         let selectedDeckId = null;
-
+let currentStudyMode = 'writing'; // Các chế độ học: 'writing', 'flashcard', 'mcq'
         // --- FIREBASE SYNC LOGIC ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
@@ -532,7 +546,20 @@
                 }
             });
         }
-
+window.switchStudyMode = function(mode) {
+  currentStudyMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(btn => {
+    btn.classList.remove('active');
+    btn.style.background = 'transparent';
+    btn.style.color = 'var(--text-dark)';
+  });
+  const activeBtn = document.getElementById(`mode-${mode}`);
+  if (activeBtn) {
+    activeBtn.classList.add('active');
+    activeBtn.style.background = 'var(--gradient-brand)';
+    activeBtn.style.color = 'white';
+  }
+};
         window.switchTab = function(tabId, el) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
@@ -984,32 +1011,64 @@ window.deleteWordFromDeck = async function(event, deckId, wordId) {
         }
 
         window.loadNextCard = function() {
-            if(dueCards.length === 0) {
-                window.showCuteDialog({
-                    type: 'alert',
-                    title: 'Giỏi quá chừng!',
-                    message: 'Bạn đã ôn xong tất cả các từ hôm nay rồi. Tự thưởng cho mình một ly trà sữa nha 🧋',
-                    icon: '🎉'
-                }).then(() => {
-                    window.endStudySession();
-                });
-                return;
-            }
-            
-            currentStudyCard = dueCards[0];
-            document.getElementById('study-progress').innerText = `Từ còn lại: ${dueCards.length}`;
-            
-            document.getElementById('study-vi-prompt').innerText = currentStudyCard.vi || currentStudyCard.en;
-            document.getElementById('study-input').value = '';
-            document.getElementById('study-input').disabled = false;
-            document.getElementById('btn-check-answer').style.display = 'block';
-            
-            document.getElementById('flashcard-front').style.display = 'block';
-            document.getElementById('flashcard-back').style.display = 'none';
-
-            setTimeout(() => document.getElementById('study-input').focus(), 100);
-        }
-
+  if(dueCards.length === 0) {
+    window.showCuteDialog({
+      type: 'alert',
+      title: 'Giỏi quá chừng!',
+      message: 'Bạn đã ôn xong tất cả các từ hôm nay rồi. Tự thưởng cho mình một ly trà sữa nha 🧋',
+      icon: '🎉'
+    }).then(() => {
+      window.endStudySession();
+    });
+    return;
+  }
+  
+  currentStudyCard = dueCards;
+  document.getElementById('study-progress').innerText = `Từ còn lại: ${dueCards.length}`;
+  document.getElementById('study-vi-prompt').innerText = currentStudyCard.vi || currentStudyCard.en;
+  
+  // Reset trạng thái cơ bản của Flashcard
+  document.getElementById('flashcard-front').style.display = 'block';
+  document.getElementById('flashcard-back').style.display = 'none';
+  
+  // Hiển thị giao diện tương ứng với chế độ học được chọn
+  if (currentStudyMode === 'writing') {
+    document.getElementById('study-input').style.display = 'block';
+    document.getElementById('study-input').value = '';
+    document.getElementById('study-input').disabled = false;
+    document.getElementById('btn-check-answer').style.display = 'block';
+    document.getElementById('btn-flip-card').style.display = 'none';
+    document.getElementById('mcq-options-container').style.display = 'none';
+    setTimeout(() => document.getElementById('study-input').focus(), 100);
+  } else if (currentStudyMode === 'flashcard') {
+    document.getElementById('study-input').style.display = 'none';
+    document.getElementById('btn-check-answer').style.display = 'none';
+    document.getElementById('btn-flip-card').style.display = 'block';
+    document.getElementById('mcq-options-container').style.display = 'none';
+  } else if (currentStudyMode === 'mcq') {
+    document.getElementById('study-input').style.display = 'none';
+    document.getElementById('btn-check-answer').style.display = 'none';
+    document.getElementById('btn-flip-card').style.display = 'none';
+    document.getElementById('mcq-options-container').style.display = 'flex';
+    window.generateMCQOptions(); // Tự động sinh đề trắc nghiệm
+  }
+};
+window.flipCard = function() {
+  document.getElementById('btn-flip-card').style.display = 'none';
+  const feedbackEl = document.getElementById('answer-feedback');
+  feedbackEl.innerHTML = `🗂️ Đã lật thẻ: "<span style="color: var(--primary);">${currentStudyCard.word}</span>"`;
+  feedbackEl.style.color = "var(--text-dark)";
+  
+  // Đổ dữ liệu mặt sau của thẻ từ
+  document.getElementById('study-word').innerText = currentStudyCard.word;
+  document.getElementById('study-ipa').innerText = currentStudyCard.ipa || '';
+  document.getElementById('study-en').innerText = currentStudyCard.en || '';
+  document.getElementById('study-ex').innerHTML = currentStudyCard.ex || '';
+  
+  document.getElementById('flashcard-back').style.display = 'block';
+  window.playNativeAudio(currentStudyCard.word, 'en-US'); // Phát âm chuẩn [1, 9]
+};
+        
         window.checkAnswer = function() {
             const userInput = document.getElementById('study-input').value.trim().toLowerCase();
             const correctWord = currentStudyCard.word.toLowerCase();
@@ -1040,45 +1099,67 @@ window.deleteWordFromDeck = async function(event, deckId, wordId) {
         });
 
         window.gradeCard = async function(grade) {
-            let card = currentStudyCard;
-            
-            if (card.repetitions === undefined) {
-                card.repetitions = 0;
-                card.easeFactor = 2.5; 
-                card.interval = 0;
-            }
-
-            let quality;
-            if (grade === 'again') quality = 0;
-            else if (grade === 'hard') quality = 3;
-            else if (grade === 'good') quality = 4;
-            else if (grade === 'easy') quality = 5;
-
-            if (quality >= 3) {
-                if (card.repetitions === 0) card.interval = 1; 
-                else if (card.repetitions === 1) card.interval = 6; 
-                else card.interval = Math.round(card.interval * card.easeFactor);
-                card.repetitions += 1;
-            } else {
-                card.repetitions = 0;
-                card.interval = 1; 
-            }
-
-            card.easeFactor = card.easeFactor + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02));
-            if (card.easeFactor < 1.3) card.easeFactor = 1.3; 
-
-            if (grade === 'again') {
-                card.nextReview = Date.now() + 60000; 
-                dueCards.push(dueCards.shift()); 
-            } else {
-                card.nextReview = Date.now() + (card.interval * 24 * 60 * 60 * 1000); 
-                dueCards.shift(); 
-            }
-
-            window.updateStats(); 
-            await syncData(); // ĐỒNG BỘ LÊN CLOUD MỖI KHI HỌC XONG 1 TỪ
-            window.loadNextCard();
-        }
+  let card = currentStudyCard;
+  
+  // Khởi tạo Level 0 nếu là từ vựng mới tinh chưa từng ôn tập
+  if (card.repetitions === undefined) {
+    card.repetitions = 0; 
+    card.nextReview = Date.now();
+  }
+  
+  let currentLevel = card.repetitions;
+  let interval = 1; // Số ngày giãn cách mặc định
+  
+  // LOGIC ĐIỀU CHỈNH CẤP ĐỘ THEO LỰA CHỌN CỦA NGƯỜI DÙNG:
+  if (grade === 'again') {
+    // Nếu chọn "Lại": Reset từ về Level 1 [3] (hoặc giữ Level 0 nếu chưa thuộc)
+    currentLevel = 0;
+  } else if (grade === 'hard') {
+    // Nếu chọn "Khó": Giữ nguyên cấp độ hiện tại (nhưng tối thiểu phải lên Level 1)
+    if (currentLevel === 0) currentLevel = 1;
+  } else if (grade === 'good') {
+    // Nếu chọn "Tốt": Tiến thêm 1 Cấp độ (Tối đa là Level 6 - Thuộc lòng) [12]
+    currentLevel = Math.min(currentLevel + 1, 6);
+  } else if (grade === 'easy') {
+    // Nếu chọn "Dễ": Thăng cấp nhanh chóng
+    currentLevel = Math.min(currentLevel + 2, 6);
+  }
+  
+  card.repetitions = currentLevel;
+  
+  // ÁNH XẠ CẤP ĐỘ SANG KHOẢNG THỜI GIAN ÔN TẬP (INTERVAL DÀNH CHO TIẾNG ANH CHUẨN LINGOLAND):
+  if (currentLevel === 0) {
+    interval = 0;
+  } else if (currentLevel === 1) {
+    interval = 1; // Level 1: Ôn tập lại trong vòng 1 ngày [3]
+  } else if (currentLevel === 2) {
+    interval = 2; // Level 2: Ôn tập lại sau 2 ngày [3]
+  } else if (currentLevel === 3) {
+    interval = 3; // Level 3: Ôn tập sau 3 ngày [3]
+  } else if (currentLevel === 4) {
+    interval = 5; // Level 4: Ôn tập sau 5 ngày [3]
+  } else if (currentLevel === 5) {
+    interval = 8; // Level 5: Ôn tập sau 8 ngày [3]
+  } else if (currentLevel > 5) {
+    interval = 15; // Cấp độ Thuộc lòng: AI tự động giãn cách nhắc lại sau 15 ngày [3]
+  }
+  
+  // LÊN LỊCH ÔN TẬP TIẾP THEO
+  if (grade === 'again') {
+    card.nextReview = Date.now() + 60000; // Đặt học lại sau 1 phút
+    // Đẩy từ này xuống cuối hàng đợi học để gặp lại ngay trong session này
+    dueCards.push(dueCards.shift());
+  } else {
+    // Đổi ngày sang mili-giây và lên lịch
+    card.nextReview = Date.now() + (interval * 24 * 60 * 60 * 1000);
+    // Loại bỏ khỏi session hiện tại vì đã hoàn thành lượt học
+    dueCards.shift();
+  }
+  
+  window.updateStats(); // Cập nhật thống kê vòng tròn động [13]
+  await syncData();     // Tự động đồng bộ hóa lên Cloud Firestore [14]
+  window.loadNextCard();
+};
 
         window.endStudySession = function() {
             document.getElementById('study-setup').style.display = 'block';
@@ -1104,7 +1185,92 @@ window.deleteWordFromDeck = async function(event, deckId, wordId) {
                 showToast("Đã tạo bộ bài thành công! 💕");
             }
         }
+window.generateMCQOptions = function() {
+  const correctWord = currentStudyCard.word;
+  
+  // Gom toàn bộ từ vựng khác có trong tài khoản người dùng làm mồi nhiễu
+  let distractorPool = [];
+  appData.decks.forEach(deck => {
+    deck.words.forEach(w => {
+      if (w.word && w.word.toLowerCase() !== correctWord.toLowerCase()) {
+        distractorPool.push(w.word);
+      }
+    });
+  });
+  
+  distractorPool = [...new Set(distractorPool)]; // Loại trùng lặp
+  
+  // Kho từ dự phòng chuẩn Oxford khi tài khoản chưa lưu đủ từ
+  const fallbackWords = ["abandon", "beneficial", "challenge", "determine", "efficient", "fluctuate", "guarantee", "hazard", "illustrate", "justify"];
+  while (distractorPool.length < 3) {
+    const randomFallback = fallbackWords[Math.floor(Math.random() * fallbackWords.length)];
+    if (randomFallback.toLowerCase() !== correctWord.toLowerCase() && !distractorPool.includes(randomFallback)) {
+      distractorPool.push(randomFallback);
+    }
+  }
+  
+  // Trộn và lấy ra đúng 3 từ sai
+  distractorPool.sort(() => Math.random() - 0.5);
+  const selectedDistractors = distractorPool.slice(0, 3);
+  
+  // Gộp từ đúng + 3 từ sai và xáo trộn vị trí
+  const finalChoices = [correctWord, ...selectedDistractors];
+  finalChoices.sort(() => Math.random() - 0.5);
+  
+  // Kết xuất nút bấm trắc nghiệm ra màn hình
+  const container = document.getElementById('mcq-options-container');
+  container.innerHTML = '';
+  finalChoices.forEach(choice => {
+    const btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.style.cssText = `
+      background: white; border: 2px solid var(--border); color: var(--text-dark);
+      width: 100%; padding: 14px; border-radius: 12px; font-weight: 700;
+      text-align: center; transition: all 0.2s;
+    `;
+    btn.innerText = choice;
+    btn.onclick = () => window.selectMCQOption(choice, btn);
+    container.appendChild(btn);
+  });
+};
 
+window.selectMCQOption = function(selectedWord, selectedBtn) {
+  const correctWord = currentStudyCard.word;
+  const container = document.getElementById('mcq-options-container');
+  const buttons = container.querySelectorAll('button');
+  
+  // Khóa tất cả nút bấm tránh người dùng click nhiều lần
+  buttons.forEach(btn => btn.disabled = true);
+  
+  const feedbackEl = document.getElementById('answer-feedback');
+  
+  if (selectedWord.toLowerCase() === correctWord.toLowerCase()) {
+    selectedBtn.style.background = '#D1FAE5'; // Tô xanh nút đúng
+    selectedBtn.style.borderColor = '#10B981';
+    feedbackEl.innerHTML = `🎉 Chính xác! Đáp án đúng là: "<span style="color: var(--primary);">${correctWord}</span>"`;
+  } else {
+    selectedBtn.style.background = '#FEE2E2'; // Tô đỏ nút chọn sai
+    selectedBtn.style.borderColor = '#EF4444';
+    
+    // Tìm nút có đáp án đúng để viền xanh lá chỉ dẫn lỗi sai
+    buttons.forEach(btn => {
+      if (btn.innerText.toLowerCase() === correctWord.toLowerCase()) {
+        btn.style.borderColor = '#10B981';
+        btn.style.borderWidth = '3px';
+      }
+    });
+    feedbackEl.innerHTML = `❌ Chưa chính xác! Đáp án đúng là "<span style="color: var(--primary);">${correctWord}</span>"`;
+  }
+  
+  // Hiển thị chi tiết ngữ cảnh từ vựng ở mặt sau
+  document.getElementById('study-word').innerText = currentStudyCard.word;
+  document.getElementById('study-ipa').innerText = currentStudyCard.ipa || '';
+  document.getElementById('study-en').innerText = currentStudyCard.en || '';
+  document.getElementById('study-ex').innerHTML = currentStudyCard.ex || '';
+  
+  document.getElementById('flashcard-back').style.display = 'block';
+  window.playNativeAudio(currentStudyCard.word, 'en-US');
+};
         window.openSaveToDeckModal = function() {
             window.closeModal('word-modal');
             document.getElementById('save-target-word').innerText = currentViewingWord.word;
