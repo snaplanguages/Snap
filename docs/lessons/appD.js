@@ -215,101 +215,61 @@ window.switchStudyMode = function(mode) {
             }
         }
 
-        window.handleSearch = async function() {
-            const searchInput = document.getElementById('search-input');
-            const query = searchInput.value.toLowerCase().trim();
-            const resultsBox = document.getElementById('search-results');
-            
-            if (query.length < 2) {
-                resultsBox.style.display = 'none';
-                return;
-            }
+       window.handleSearch = async function() {
+    const searchInput = document.getElementById('search-input');
+    const query = searchInput.value.toLowerCase().trim();
+    const resultsBox = document.getElementById('search-results');
+    
+    if (query.length < 2) {
+        resultsBox.style.display = 'none';
+        return;
+    }
 
-            resultsBox.innerHTML = '<div class="result-item" style="color: var(--text-muted); justify-content: center; font-weight: 700;">Đang tra cứu từ điển máy chủ... <i class="fa-solid fa-spinner fa-spin" style="margin-left: 10px; color: var(--primary);"></i></div>';
-            resultsBox.style.display = 'block';
-try {
-                const engRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/de/${query}`);
-                if (!engRes.ok) {
-                    resultsBox.innerHTML = '<div class="result-item" style="color: var(--danger); justify-content: center;">Không tìm thấy từ này trong từ điển 🥲</div>';
-                    return;
-                }
+    resultsBox.innerHTML = '<div class="result-item" style="color: var(--text-muted); justify-content: center; font-weight: 700;">Đang tra cứu từ điển... <i class="fa-solid fa-spinner fa-spin" style="margin-left: 10px; color: var(--primary);"></i></div>';
+    resultsBox.style.display = 'block';
 
-                const engData = await engRes.json();
-                const firstEntry = engData[0];
-
-                // Lấy phiên âm
-                let ipaText = "N/A";
-                if (firstEntry.phonetic) {
-                    ipaText = firstEntry.phonetic;
-                } else if (firstEntry.phonetics && firstEntry.phonetics.length > 0) {
-                    const validPhonetic = firstEntry.phonetics.find(p => p.text);
-                    if (validPhonetic) ipaText = validPhonetic.text;
-                }
-
-                // Dịch tiếng Việt & Trung
-                const viData = await fetchTranslation(query, 'vi');
-                
-
-                const highlightRegex = new RegExp(`(${query})`, 'gi');
-
-                // CHUYÊN NGHIỆP HÓA: Gom TẤT CẢ từ loại và nghĩa
-                let allMeanings = [];
-                let primaryPos = "word"; // Dùng để lưu thẻ flashcard
-                let primaryEn = "";
-                let primaryEx = "";
-
-                firstEntry.meanings.forEach((m, index) => {
-                    let pos = m.partOfSpeech;
-                    let defs = [];
-                    
-                    m.definitions.forEach((d, dIndex) => {
-                        // Lấy tối đa 3 nghĩa cho mỗi từ loại để không bị quá dài
-                        if (dIndex < 3) {
-                            let highlightedEx = d.example ? d.example.replace(highlightRegex, `<span style="color: var(--primary); font-weight: 900;">$1</span>`) : "";
-                            defs.push({ en: d.definition, ex: highlightedEx });
-                            
-                            // Lưu lại nghĩa đầu tiên làm nghĩa chính cho chế độ Học (Flashcard)
-                            if (index === 0 && dIndex === 0) {
-                                primaryPos = pos;
-                                primaryEn = d.definition;
-                                primaryEx = highlightedEx;
-                            }
-                        }
-                    });
-
-                    allMeanings.push({ pos: pos, definitions: defs });
-                });
-
-                const realWordData = {
-                    word: firstEntry.word,
-                    ipa: ipaText,
-                    vi: viData.text,
-                    viDict: viData.dict, // Lưu mảng từ điển Tiếng Việt
-                    meanings: allMeanings,
-                    pos: primaryPos, 
-                    en: primaryEn,
-                    ex: primaryEx 
-                };
-
-                resultsBox.innerHTML = '';
-                const div = document.createElement('div');
-                div.className = 'result-item';
-                div.innerHTML = `
-                    <div>
-                        <span class="result-word">${realWordData.word}</span> 
-                        <span style="font-size: 13px; color: var(--accent); margin-left: 10px; font-weight: 800; text-transform: uppercase;">${realWordData.meanings.map(m => m.pos).join(', ')}</span>
-                    </div>
-                    <span class="result-vi">${realWordData.vi}</span>
-                `;
-                div.onclick = () => window.showWordDetail(realWordData);
-                resultsBox.appendChild(div);
-
-            }
-
-         catch (error) {
-                resultsBox.innerHTML = '<div class="result-item" style="color: var(--danger); justify-content: center;">Lỗi kết nối máy chủ. Vui lòng thử lại!</div>';
-            }
+    try {
+        // Dịch trực tiếp từ tiếng Đức (de) sang tiếng Việt (vi)
+        const viData = await fetchTranslation(query, 'vi');
+        
+        if (!viData || !viData.text || viData.text === "Không có bản dịch") {
+            resultsBox.innerHTML = '<div class="result-item" style="color: var(--danger); justify-content: center;">Không tìm thấy từ này trong từ điển 🥲</div>';
+            return;
         }
+
+        // Tạo dữ liệu từ vựng hoàn chỉnh cho Tiếng Đức
+        const realWordData = {
+            word: query,
+            ipa: "", // Tiếng Đức phát âm chuẩn theo quy tắc chữ viết
+            vi: viData.text,
+            viDict: viData.dict || [],
+            meanings: [{
+                pos: viData.dict && viData.dict.length > 0 ? viData.dict[0].pos : "Wort",
+                definitions: [{ en: viData.text, ex: "" }]
+            }],
+            pos: viData.dict && viData.dict.length > 0 ? viData.dict[0].pos : "Wort",
+            en: viData.text,
+            ex: ""
+        };
+
+        resultsBox.innerHTML = '';
+        const div = document.createElement('div');
+        div.className = 'result-item';
+        div.innerHTML = `
+            <div>
+                <span class="result-word" style="text-transform: capitalize;">${realWordData.word}</span> 
+                <span style="font-size: 13px; color: var(--accent); margin-left: 10px; font-weight: 800; text-transform: uppercase;">${realWordData.pos}</span>
+            </div>
+            <span class="result-vi">${realWordData.vi}</span>
+        `;
+        div.onclick = () => window.showWordDetail(realWordData);
+        resultsBox.appendChild(div);
+
+    } catch (error) {
+        console.error("Search error:", error);
+        resultsBox.innerHTML = '<div class="result-item" style="color: var(--danger); justify-content: center;">Lỗi kết nối máy chủ. Vui lòng thử lại!</div>';
+    }
+};
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
