@@ -191,30 +191,24 @@ window.switchStudyMode = function(mode) {
             document.getElementById(id).style.display = 'none';
         }
 
-        async function fetchTranslation(word, targetLang) {
-    // Đổi sl=en thành sl=de (German)
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=de&tl=${targetLang}&dt=t&dt=bd&q=${encodeURIComponent(word)}`;
-                try {
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                let mainText = data[0][0][0]; // Nghĩa chính phổ biến nhất
-                let dictData = [];
-                
-                // Bóc tách dữ liệu từ loại (nếu Google có cung cấp)
-                if (data[1]) {
-                    data[1].forEach(item => {
-                        let pos = item[0]; // Từ loại (noun, verb...)
-                        let meanings = item[1].slice(0, 4).join(', '); // Lấy tối đa 4 nghĩa cho gọn
-                        dictData.push({ pos: pos, meanings: meanings });
-                    });
-                }
-                return { text: mainText, dict: dictData }; 
-            } catch (error) {
-                return { text: "Không có bản dịch", dict: [] };
-            }
-        }
-
+       async function fetchTranslation(text, targetLang = 'vi') {
+    try {
+        const googleUrl = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=de&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(googleUrl)}`;
+        
+        const response = await fetch(proxyUrl);
+        if (!response.ok) return null;
+        
+        const data = await response.json();
+        return {
+            text: data[0][0][0],
+            dict: []
+        };
+    } catch (error) {
+        console.error("Lỗi fetchTranslation:", error);
+        return null;
+    }
+}
        window.handleSearch = async function() {
     const searchInput = document.getElementById('search-input');
     const query = searchInput.value.toLowerCase().trim();
