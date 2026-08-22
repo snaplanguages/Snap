@@ -413,8 +413,8 @@ try {
             `).join('');
 
             // Xử lý Audio
-            window.playNativeAudio(wordData.word, 'en-US'); 
-            document.getElementById('btn-play-audio').onclick = () => window.playNativeAudio(wordData.word, 'en-US');
+            window.playNativeAudio(wordData.word, 'de-DE'); 
+            document.getElementById('btn-play-audio').onclick = () => window.playNativeAudio(wordData.word, 'de-DE');
             document.getElementById('btn-play-zh').onclick = () => window.playNativeAudio(wordData.zh, 'zh-CN');
 
             document.getElementById('word-modal').style.display = 'flex';
@@ -432,27 +432,18 @@ try {
                 btn.innerHTML = '<i class="fa-solid fa-layer-group"></i> Xem các từ loại / nghĩa khác';
             }
         }
-       window.playNativeAudio = function(text, lang = 'en-US') {
-            if (!text) return;
-            
-            // Sử dụng Web Speech API có sẵn của trình duyệt (ổn định, không bị chặn)
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // Dừng âm thanh cũ nếu đang đọc dở
-                const utterance = new SpeechSynthesisUtterance(text);
-                
-                // Chuẩn hóa mã ngôn ngữ
-                if (lang === 'en') lang = 'en-US';
-                if (lang === 'zh') lang = 'zh-CN';
-                
-                utterance.lang = lang;
-                utterance.rate = 0.9; // Tốc độ đọc chậm lại một chút cho dễ nghe
-                utterance.pitch = 1;  // Độ cao của giọng
-                
-                window.speechSynthesis.speak(utterance);
-            } else {
-                showToast("Trình duyệt của bạn không hỗ trợ phát âm thanh 😢", "error");
-            }
-        }
+       window.playNativeAudio = function(text, lang = 'de-DE') {
+    if (!text) return;
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); 
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = lang; // Thiết lập đọc theo giọng Đức
+        utterance.rate = 0.9; 
+        window.speechSynthesis.speak(utterance);
+    } else {
+        showToast("Trình duyệt không hỗ trợ phát âm thanh", "error");
+    }
+}
         let currentDetailDeckId = null;
         let sortMode = 'time';
 
