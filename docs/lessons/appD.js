@@ -41,7 +41,7 @@ let tfCorrectAnswer = true; // Biến lưu đáp án Đúng/Sai
                 if (docSnap.exists()) {
                     appData = docSnap.data();
                 } else {
-                    appData = { decks: [{ id: "d_" + Date.now(), name: "Từ vựng IELTS Bắt Buộc", words: [] }] };
+                    appData = { decks: [{ id: "d_" + Date.now(), name: "Từ vựng bắt Buộc", words: [] }] };
                     await syncData();
                 }
                 
