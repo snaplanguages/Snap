@@ -443,12 +443,61 @@ window.endStudySession = function() {
     document.getElementById('study-session').style.display = 'none';
 }
 
-// Công nghệ AI mô phỏng đánh giá bài tập đặt câu tiếng Đức
-window.checkSentenceWithAI = function() {
+// HÀM CHẤM ĐIỂM CÂU TIẾNG ĐỨC BẰNG AI THẬT (GEMINI API)
+window.checkSentenceWithAI = async function() {
+    const sentence = document.getElementById('sentence-input').value.trim();
+    const targetWord = currentStudyCard.word;
     const feedbackEl = document.getElementById('sentence-ai-feedback');
-    feedbackEl.innerHTML = `✨ <b>AI đánh giá:</b> 9/10! Câu tiếng Đức rất chuẩn, Gut gemacht! 🎉`;
+
+    if (!sentence) {
+        feedbackEl.innerText = "⚠️ Hãy gõ một câu tiếng Đức trước khi AI chấm điểm nhé!";
+        feedbackEl.style.color = "var(--danger)";
+        return;
+    }
+
+    // Kiểm tra xem câu có chứa từ vựng đang học không
+    if (!sentence.toLowerCase().includes(targetWord.toLowerCase())) {
+        feedbackEl.innerText = `❌ Câu của bạn chưa chứa từ vựng yêu cầu "${targetWord}". Hãy thử lại nhé!`;
+        feedbackEl.style.color = "var(--danger)";
+        return;
+    }
+
+    feedbackEl.innerHTML = `✨ AI đang phân tích ngữ pháp tiếng Đức... <i class="fa-solid fa-spinner fa-spin"></i>`;
     feedbackEl.style.color = "var(--primary)";
-}
+
+    // Dán API Key của em vào đây (Thay thế chỗ 'YOUR_GEMINI_API_KEY')
+    const apiKey = "AIzaSyCE6f7OUwBMkLwBoJbOvh0h0Q0UTe9ABek"; 
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+
+    const prompt = `Bạn là một gia sư tiếng Đức chuyên nghiệp. Người học vừa viết một câu tiếng Đức có sử dụng từ vựng "${targetWord}":
+    Câu của học viên: "${sentence}"
+    
+    Hãy đánh giá câu này theo tiêu chí:
+    1. Ngữ pháp và chính tả tiếng Đức có đúng không?
+    2. Từ vựng có được dùng tự nhiên không?
+    Hãy cho điểm từ 1 đến 10 và đưa ra lời nhận xét ngắn gọn, thân thiện bằng tiếng Việt (kèm theo câu sửa nếu câu bị lỗi sai).`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }]
+            })
+        });
+
+        const data = await response.json();
+        const aiResponseText = data.candidates[0].content.parts[0].text;
+
+        // Hiển thị kết quả thật do AI phân tích lên màn hình
+        feedbackEl.innerHTML = `✨ <b>AI đánh giá:</b> ${aiResponseText}`;
+        feedbackEl.style.color = "var(--primary)";
+
+    } catch (error) {
+        feedbackEl.innerText = "❌ Lỗi kết nối tới AI. Vui lòng kiểm tra lại API Key!";
+        feedbackEl.style.color = "var(--danger)";
+    }
+};
 
 // Khởi chạy khi tải xong trang
 setTimeout(window.updateStats, 500);
