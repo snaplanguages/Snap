@@ -192,9 +192,9 @@ window.switchStudyMode = function(mode) {
         }
 
         async function fetchTranslation(word, targetLang) {
-            // Thêm dt=bd để lấy từ điển chi tiết (các nghĩa theo từ loại)
-            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&dt=bd&q=${encodeURIComponent(word)}`;
-            try {
+    // Đổi sl=en thành sl=de (German)
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=de&tl=${targetLang}&dt=t&dt=bd&q=${encodeURIComponent(word)}`;
+                try {
                 const response = await fetch(url);
                 const data = await response.json();
                 
@@ -215,34 +215,6 @@ window.switchStudyMode = function(mode) {
             }
         }
 
-        async function fetchChineseTranslation(word) {
-            // Thêm dt=bd vào đây luôn
-            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=zh-CN&dt=t&dt=rm&dt=bd&q=${encodeURIComponent(word)}`;
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                
-                let mainText = data[0][0][0];
-                let pinyin = "";
-                
-                if (data[0] && data[0].length > 1) {
-                    const rmNode = data[0].find(item => item[0] === null);
-                    if (rmNode && (rmNode[2] || rmNode[3])) { pinyin = rmNode[2] || rmNode[3]; }
-                }
-
-                let dictData = [];
-                if (data[1]) {
-                    data[1].forEach(item => {
-                        let pos = item[0];
-                        let meanings = item[1].slice(0, 3).join(', ');
-                        dictData.push({ pos: pos, meanings: meanings });
-                    });
-                }
-                return { text: mainText, pinyin: pinyin, dict: dictData };
-            } catch (error) {
-                return { text: "Không có bản dịch", pinyin: "", dict: [] };
-            }
-        }
         window.handleSearch = async function() {
             const searchInput = document.getElementById('search-input');
             const query = searchInput.value.toLowerCase().trim();
@@ -256,7 +228,7 @@ window.switchStudyMode = function(mode) {
             resultsBox.innerHTML = '<div class="result-item" style="color: var(--text-muted); justify-content: center; font-weight: 700;">Đang tra cứu từ điển máy chủ... <i class="fa-solid fa-spinner fa-spin" style="margin-left: 10px; color: var(--primary);"></i></div>';
             resultsBox.style.display = 'block';
 try {
-                const engRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${query}`);
+                const engRes = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/de/${query}`);
                 if (!engRes.ok) {
                     resultsBox.innerHTML = '<div class="result-item" style="color: var(--danger); justify-content: center;">Không tìm thấy từ này trong từ điển 🥲</div>';
                     return;
@@ -276,7 +248,7 @@ try {
 
                 // Dịch tiếng Việt & Trung
                 const viData = await fetchTranslation(query, 'vi');
-                const zhData = await fetchChineseTranslation(query);
+                
 
                 const highlightRegex = new RegExp(`(${query})`, 'gi');
 
@@ -313,9 +285,6 @@ try {
                     ipa: ipaText,
                     vi: viData.text,
                     viDict: viData.dict, // Lưu mảng từ điển Tiếng Việt
-                    zh: zhData.text,
-                    zhDict: zhData.dict, // Lưu mảng từ điển Tiếng Trung
-                    pinyin: zhData.pinyin,
                     meanings: allMeanings,
                     pos: primaryPos, 
                     en: primaryEn,
@@ -375,24 +344,7 @@ try {
                         </div>`;
                 });
             }
-            document.getElementById('md-vi-dict').innerHTML = viDictHtml;
-            document.getElementById('md-vi-dict').style.display = viDictHtml ? 'flex' : 'none';
-
-            // Xử lý hiển thị Tiếng Trung
-            document.getElementById('md-zh-main').innerText = wordData.zh;
-            document.getElementById('md-pinyin').innerText = wordData.pinyin ? `(${wordData.pinyin})` : '';
-            let zhDictHtml = "";
-            if (wordData.zhDict && wordData.zhDict.length > 0) {
-                wordData.zhDict.forEach(d => {
-                    zhDictHtml += `
-                        <div style="display: flex; align-items: flex-start; gap: 10px;">
-                            <span style="min-width: 80px; font-weight: 800; color: var(--text-muted); background: white; padding: 3px 6px; border-radius: 6px; font-size: 11px; border: 1px solid var(--border); text-transform: uppercase; text-align: center; margin-top: 2px;">${d.pos}</span>
-                            <span style="font-size: 15px; color: var(--text-dark); line-height: 1.5; flex: 1; font-weight: 600;">${d.meanings}</span>
-                        </div>`;
-                });
-            }
-            document.getElementById('md-zh-dict').innerHTML = zhDictHtml;
-            document.getElementById('md-zh-dict').style.display = zhDictHtml ? 'flex' : 'none';
+            
             // Render động TẤT CẢ các từ loại và nghĩa
             const container = document.getElementById('md-meanings-container');
             container.innerHTML = wordData.meanings.map(m => `
@@ -415,7 +367,7 @@ try {
             // Xử lý Audio
             window.playNativeAudio(wordData.word, 'de-DE'); 
             document.getElementById('btn-play-audio').onclick = () => window.playNativeAudio(wordData.word, 'de-DE');
-            document.getElementById('btn-play-zh').onclick = () => window.playNativeAudio(wordData.zh, 'zh-CN');
+
 
             document.getElementById('word-modal').style.display = 'flex';
         }
@@ -662,7 +614,7 @@ window.deleteWordFromDeck = async function(event, deckId, wordId) {
   const viPrompt = document.getElementById('study-vi-prompt');
   
   if (activeMode === 'writing') {
-    promptTitle.innerText = "✍️ VIẾT TỪ NÀY SANG TIẾNG ANH:";
+    promptTitle.innerText = "✍️ VIẾT TỪ NÀY SANG TIẾNG ĐỨC:";
     viPrompt.innerText = currentStudyCard.vi || currentStudyCard.en;
     
     document.getElementById('study-input').style.display = 'block';
@@ -677,7 +629,7 @@ window.deleteWordFromDeck = async function(event, deckId, wordId) {
     document.getElementById('btn-flip-card').style.display = 'block';
     
   } else if (activeMode === 'mcq') {
-    promptTitle.innerText = "🎯 TRẮC NGHIỆM: CHỌN TỪ TIẾNG ANH ĐÚNG VỚI NGHĨA:";
+    promptTitle.innerText = "🎯 TRẮC NGHIỆM: CHỌN TỪ TIẾNG ĐỨC ĐÚNG VỚI NGHĨA:";
     viPrompt.innerText = currentStudyCard.vi || currentStudyCard.en;
     document.getElementById('mcq-options-container').style.display = 'flex';
     window.generateMCQOptions();
@@ -718,7 +670,7 @@ window.deleteWordFromDeck = async function(event, deckId, wordId) {
             document.getElementById('study-ex').innerHTML = currentStudyCard.ex || '';
             
             document.getElementById('flashcard-back').style.display = 'block';
-            window.playNativeAudio(currentStudyCard.word, 'en-US'); 
+            window.playNativeAudio(currentStudyCard.word, 'de-DE'); 
         }
 
         document.getElementById('study-input').addEventListener('keypress', function (e) {
@@ -828,7 +780,7 @@ window.generateMCQOptions = function() {
   distractorPool = [...new Set(distractorPool)]; // Loại trùng lặp
   
   // Kho từ dự phòng chuẩn Oxford khi tài khoản chưa lưu đủ từ
-  const fallbackWords = ["abandon", "beneficial", "challenge", "determine", "efficient", "fluctuate", "guarantee", "hazard", "illustrate", "justify"];
+  const fallbackWords = ["abstrakt", "bedeutend", "chancen", "bestimmen", "effektiv", "garantie", "gefahr", "relevanz", "verstehen", "zukunft"];
   while (distractorPool.length < 3) {
     const randomFallback = fallbackWords[Math.floor(Math.random() * fallbackWords.length)];
     if (randomFallback.toLowerCase() !== correctWord.toLowerCase() && !distractorPool.includes(randomFallback)) {
@@ -896,7 +848,7 @@ window.selectMCQOption = function(selectedWord, selectedBtn) {
   document.getElementById('study-ex').innerHTML = currentStudyCard.ex || '';
   
   document.getElementById('flashcard-back').style.display = 'block';
-  window.playNativeAudio(currentStudyCard.word, 'en-US');
+  window.playNativeAudio(currentStudyCard.word, 'de-DE');
 };
         window.openSaveToDeckModal = function() {
             window.closeModal('word-modal');
@@ -1070,7 +1022,7 @@ window.selectTFOption = function(userChoice) {
   document.getElementById('study-ex').innerHTML = currentStudyCard.ex || '';
   
   document.getElementById('flashcard-back').style.display = 'block';
-  window.playNativeAudio(currentStudyCard.word, 'en-US'); // Phát âm chuẩn [3, 4]
+  window.playNativeAudio(currentStudyCard.word, 'de-DE'); // Phát âm chuẩn [3, 4]
 };
 
 // 3. Công nghệ AI mô phỏng chấm điểm và đánh giá lỗi đặt câu chuẩn Lingoland
@@ -1220,7 +1172,7 @@ window.selectArrangeLetter = function(char, btn) {
     document.getElementById('study-en').innerText = currentStudyCard.en || '';
     document.getElementById('study-ex').innerHTML = currentStudyCard.ex || '';
     document.getElementById('flashcard-back').style.display = 'block';
-    window.playNativeAudio(currentStudyCard.word, 'en-US');
+    window.playNativeAudio(currentStudyCard.word, 'de-DE');
   }
 };
 
@@ -1280,5 +1232,5 @@ window.checkRewriteAnswer = function() {
   document.getElementById('study-en').innerText = currentStudyCard.en || '';
   document.getElementById('study-ex').innerHTML = currentStudyCard.ex || '';
   document.getElementById('flashcard-back').style.display = 'block';
-  window.playNativeAudio(currentStudyCard.word, 'en-US');
+  window.playNativeAudio(currentStudyCard.word, 'de-DE');
 };
