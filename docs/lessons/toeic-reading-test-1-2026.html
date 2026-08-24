@@ -3748,52 +3748,39 @@ function removeHighlight() {
     }
     menu.style.display = "none";
 }
-        // ==========================================
-// TÍNH NĂNG ĐIỀU HƯỚNG BẰNG PHÍM MŨI TÊN
+       // ==========================================
+// TÍNH NĂNG CHUYỂN CÂU/ĐOẠN BẰNG MŨI TÊN
 // ==========================================
 document.addEventListener('keydown', function(event) {
-    // 1. Kiểm tra nếu người dùng đang gõ văn bản thì không kích hoạt chuyển trang
-    const activeElement = document.activeElement;
-    const isEditing = activeElement && (
-        activeElement.tagName === 'INPUT' || 
-        activeElement.tagName === 'TEXTAREA' || 
-        activeElement.isContentEditable
-    );
-    if (isEditing) return;
+    // 1. Nếu đang gõ văn bản (ví dụ ô nhập thời gian) thì không chuyển câu
+    const activeEl = document.activeElement;
+    if (activeEl && (
+        activeEl.tagName === 'INPUT' || 
+        activeEl.tagName === 'TEXTAREA' || 
+        activeEl.isContentEditable
+    )) {
+        return;
+    }
 
-    // 2. Lấy danh sách các nút chuyển trang/đoạn đang hiển thị trên màn hình
-    const navButtons = Array.from(document.querySelectorAll('.btn-nav, .pagination-controls button, #btnPrev, #btnNext'));
-    const visibleButtons = navButtons.filter(btn => btn.offsetWidth > 0 && btn.offsetHeight > 0 && !btn.disabled);
+    // 2. Nếu đang hiển thị bảng Cài đặt / Bảng xác nhận nộp bài thì không bấm mũi tên
+    const setupOverlay = document.getElementById('setupOverlay');
+    if (setupOverlay && window.getComputedStyle(setupOverlay).display !== 'none') {
+        return;
+    }
 
-    // 3. Xử lý phím Mũi tên Phải (->) -> Chuyển sang đoạn/câu tiếp theo
+    // 3. Bấm Mũi tên Phải (->) -> Gọi hàm changeStep(1) để qua câu/đoạn tiếp theo
     if (event.key === 'ArrowRight') {
-        const nextBtn = visibleButtons.find(btn => 
-            btn.textContent.includes('Sau') || 
-            btn.textContent.includes('Tiếp') || 
-            btn.textContent.includes('Next') ||
-            btn.id === 'btnNext' ||
-            btn.classList.contains('btn-next')
-        );
-        
-        if (nextBtn) {
-            event.preventDefault(); // Ngăn cuộn trang mặc định
-            nextBtn.click();
+        event.preventDefault(); // Ngăn cuộn trang
+        if (typeof changeStep === 'function') {
+            changeStep(1);
         }
     } 
     
-    // 4. Xử lý phím Mũi tên Trái (<-) -> Quay lại đoạn/câu trước đó
+    // 4. Bấm Mũi tên Trái (<-) -> Gọi hàm changeStep(-1) để quay lại câu/đoạn trước
     else if (event.key === 'ArrowLeft') {
-        const prevBtn = visibleButtons.find(btn => 
-            btn.textContent.includes('Trước') || 
-            btn.textContent.includes('Lùi') || 
-            btn.textContent.includes('Prev') ||
-            btn.id === 'btnPrev' ||
-            btn.classList.contains('btn-prev')
-        );
-
-        if (prevBtn) {
-            event.preventDefault(); // Ngăn cuộn trang mặc định
-            prevBtn.click();
+        event.preventDefault(); // Ngăn cuộn trang
+        if (typeof changeStep === 'function') {
+            changeStep(-1);
         }
     }
 });
