@@ -2055,15 +2055,16 @@ main { padding-bottom: 90px !important; }
   if (history.length === 0) {
     listHtml = '<p style="text-align: center; color: var(--text-muted); margin-top: 20px; font-weight: 600;">Chưa có dữ liệu làm bài nào.</p>';
   } else {
-    history.forEach(attempt => {
-      // Đọc đúng key cấu trúc mới của bạn
+    history.forEach((attempt, index) => {
+      // Đọc đúng key cấu trúc mới, nếu không có thì tự tính dựa trên thứ tự mảng
+      let attemptNum = attempt.attemptNum || (history.length - index);
       let correctAnswers = attempt.correctQ !== undefined ? attempt.correctQ : attempt.score;
       let totalQuestions = attempt.totalQ !== undefined ? attempt.totalQ : 100;
       
       listHtml += `
       <div class="history-item">
         <div class="history-info">
-          <span class="history-date">🕒 ${attempt.date} - ${attempt.time} (⏱️ ${attempt.timeTaken || '00:00'})</span>
+          <span class="history-date">🕒 <b>Lượt thi #${attemptNum}</b> - ${attempt.date} - ${attempt.time} (⏱️ ${attempt.timeTaken || '00:00'})</span>
           <span class="history-score" style="margin-top: 4px;">🏆 ${correctAnswers}/${totalQuestions} câu (${attempt.score}đ)</span>
         </div>
         <div class="history-actions">
@@ -2076,6 +2077,7 @@ main { padding-bottom: 90px !important; }
   historyListEl.innerHTML = listHtml;
   document.getElementById('historyOverlay').classList.add('show');
 }
+    
 function getScaledScore(correctCount, totalCount) {
   if (totalCount === 0) return 0;
   
@@ -2104,51 +2106,53 @@ function getScaledScore(correctCount, totalCount) {
   const now = new Date();
   const timestamp = Date.now();
   
+  // Tính số lượt thi tự động (Độ dài lịch sử hiện tại + 1)
+  const attemptNum = history.length + 1;
+  
   // 1. Quy đổi điểm theo bảng tra cứu chuẩn 495
   const scoreConverted = getScaledScore(correct, total);
-  
   // 2. Định dạng mốc thời gian làm bài
   const timeString = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-  
   // 3. Tính thời gian làm bài thực tế (timeTaken) dưới dạng MM:SS
   const initialTimeSetting = (parseInt(document.getElementById('inputTime').value) || 45) * 60;
   const timeTakenSeconds = Math.max(0, initialTimeSetting - timerDuration);
   const timeTaken = formatTime(timeTakenSeconds);
-  
   // 4. Lấy tiêu đề bài test hiện tại từ thẻ <title> của trình duyệt
   const testTitle = document.title.replace(' | SnapEnglish', '') || "TOEIC Listening Test 1 (2026)";
   
-  // Cấu trúc dữ liệu chuẩn hóa theo đúng yêu cầu của bạn
+  // Cấu trúc dữ liệu chuẩn hóa có bổ sung attemptNum
   let attempt = {
-    id: timestamp, // Sử dụng timestamp làm ID định danh cục bộ
+    id: timestamp, 
     skill: "Listening",
     testName: testTitle,
     partName: "Full",
+    attemptNum: attemptNum, // Lưu trữ lượt thi thứ mấy
     correctQ: correct,
     totalQ: total,
     score: scoreConverted,
     date: now.toLocaleDateString('vi-VN'),
-    time: timeString, 
-    Time: timeString, 
+    time: timeString,
+    Time: timeString,
     timeTaken: timeTaken,
     timestamp: timestamp,
-    answers: answersArray // Lưu trữ đáp án để hỗ trợ tính năng "Xem lại" offline
+    answers: answersArray 
   };
   
   // Lưu cục bộ (LocalStorage)
   history.unshift(attempt);
   localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
 
-  // 5. ĐỒNG BỘ LÊN ĐÁM MÂY (FIRESTORE) NẾU ĐÃ ĐĂNG NHẬP
+  // 5. ĐỒNG BỘ LÊN ĐÁM MÂY (FIRESTORE) NẾU ĐX ĐĂNG NHẬP
   if (currentUserEmail) {
     try {
-      await addDoc(collection(db, "user_test_history"), {
+      await addDoc(collection(db, "user_test_histories"), {
         email: currentUserEmail,
-        testId: "test_1_2026_listening", // ID định danh bài test trong hệ thống database
+        testId: "test_1_2026_listening", 
         localId: attempt.id,
         skill: attempt.skill,
         testName: attempt.testName,
         partName: attempt.partName,
+        attemptNum: attempt.attemptNum, // Đồng bộ lượt thi lên cloud
         correctQ: attempt.correctQ,
         totalQ: attempt.totalQ,
         score: attempt.score,
@@ -2159,7 +2163,7 @@ function getScaledScore(correctCount, totalCount) {
         timestamp: attempt.timestamp,
         answers: attempt.answers
       });
-      console.log("Đã đồng bộ kết quả lên tài khoản đám mây SnapEnglish theo cấu trúc mới! 🎉");
+      console.log("Đã đồng bộ kết quả lên tài khoản đám mây SnapEnglish! 🎉");
     } catch (e) {
       console.error("Lưu đám mây thất bại, kết quả tạm thời được lưu offline tại máy này: ", e);
     }
@@ -2190,13 +2194,13 @@ function getScaledScore(correctCount, totalCount) {
     if (currentUserEmail) {
       try {
         const qDel = query(
-          collection(db, "user_test_history"),
+          collection(db, "user_test_histories"),
           where("email", "==", currentUserEmail),
           where("localId", "==", id)
         );
         const querySnapshot = await getDocs(qDel);
         querySnapshot.forEach(async (docSnap) => {
-          await deleteDoc(doc(db, "user_test_history", docSnap.id));
+          await deleteDoc(doc(db, "user_test_histories", docSnap.id));
         });
         console.log("Đã đồng bộ xóa lượt làm bài trên đám mây thành công! 🗑️");
       } catch (e) {
@@ -2526,21 +2530,23 @@ function getScaledScore(correctCount, totalCount) {
     let cardsInCurrentPart = [];
     
     function updateCardView() {
-        let activePart = document.querySelector('.part-container.active');
-        if(!activePart) return;
-        cardsInCurrentPart = Array.from(activePart.querySelectorAll('.q-card'));
-        
-        cardsInCurrentPart.forEach((card, index) => {
-            card.style.display = (index === currentCardIndex) ? 'block' : 'none';
-        });
+  // TỰ ĐỘNG TẠM DỪNG TẤT CẢ AUDIO ĐANG PHÁT TRÊN TRANG
+  document.querySelectorAll('audio').forEach(audio => {
+    audio.pause();
+  });
 
-        let btnPrev = document.getElementById('btnPrevCard');
-        let btnNext = document.getElementById('btnNextCard');
-        if(btnPrev) btnPrev.disabled = (currentCardIndex === 0);
-        if(btnNext) btnNext.disabled = (currentCardIndex === cardsInCurrentPart.length - 1);
-        
-        document.getElementById('mainContent').scrollTop = 0;
-    }
+  let activePart = document.querySelector('.part-container.active');
+  if(!activePart) return;
+  cardsInCurrentPart = Array.from(activePart.querySelectorAll('.q-card'));
+  cardsInCurrentPart.forEach((card, index) => {
+    card.style.display = (index === currentCardIndex) ? 'block' : 'none';
+  });
+  let btnPrev = document.getElementById('btnPrevCard');
+  let btnNext = document.getElementById('btnNextCard');
+  if(btnPrev) btnPrev.disabled = (currentCardIndex === 0);
+  if(btnNext) btnNext.disabled = (currentCardIndex === cardsInCurrentPart.length - 1);
+  document.getElementById('mainContent').scrollTop = 0;
+}
 
     function nextCard() {
         if (currentCardIndex < cardsInCurrentPart.length - 1) {
@@ -2651,10 +2657,19 @@ function getScaledScore(correctCount, totalCount) {
         TOEIC_DATA.part4.forEach(p => { let ep = document.getElementById(`exp-passage-${p.id}`); if(ep) ep.classList.add('show'); });
 
         let toeicScore = getScaledScore(correctCount, totalRendered);
-        document.getElementById('scoreDisplay').innerText = `${correctCount}/${totalRendered}`;
-        document.getElementById('scoreComment').innerHTML = `Điểm TOEIC Listening dự kiến: <b>${toeicScore}</b>/495`;
-        document.getElementById('resultModal').classList.add('show');
-        document.getElementById('headerSubmitBtn').style.display = 'none';
+  
+  // Tính toán số lượt thi của bài này
+  let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+  let currentAttemptNum = history.length + (isReviewingMode ? 0 : 1);
+  let attemptText = `<div style="font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 6px;">🎉 Bạn đã hoàn thành Lượt thi #${currentAttemptNum}!</div>`;
+
+  document.getElementById('scoreDisplay').innerText = `${correctCount}/${totalRendered}`;
+  document.getElementById('scoreComment').innerHTML = `
+    ${attemptText}
+    Điểm TOEIC Listening dự kiến: <b>${toeicScore}</b>/495
+  `;
+  document.getElementById('resultModal').classList.add('show');
+  document.getElementById('headerSubmitBtn').style.display = 'none';
         
         let cardNavArea = document.getElementById('cardNavArea');
         if (cardNavArea) cardNavArea.style.display = 'flex';
@@ -2730,7 +2745,7 @@ async function syncHistoryWithCloud() {
   if (!currentUserEmail) return;
   try {
     const qCloud = query(
-      collection(db, "user_test_history"),
+      collection(db, "user_test_histories"),
       where("email", "==", currentUserEmail),
       where("testId", "==", "test_1_2026_listening")
     );
@@ -2747,13 +2762,14 @@ async function syncHistoryWithCloud() {
     cloudHistory.forEach(cItem => {
       if (!merged.some(lItem => lItem.id === cItem.localId)) {
         merged.push({
-          id: cItem.localId,
-          skill: cItem.skill || "Listening",
-          testName: cItem.testName || "TOEIC Listening Test 1",
-          partName: cItem.partName || "Full",
-          correctQ: cItem.correctQ || cItem.correct,
-          totalQ: cItem.totalQ || cItem.total,
-          score: cItem.score,
+  id: cItem.localId,
+  skill: cItem.skill || "Listening",
+  testName: cItem.testName || "TOEIC Listening Test 1",
+  partName: cItem.partName || "Full",
+  attemptNum: cItem.attemptNum || 1, // Thêm dòng này
+  correctQ: cItem.correctQ || cItem.correct,
+  totalQ: cItem.totalQ || cItem.total,
+  score: cItem.score,
           date: cItem.date,
           time: cItem.time,
           Time: cItem.Time || cItem.time,
@@ -2771,15 +2787,16 @@ async function syncHistoryWithCloud() {
     // Đẩy ngược những bài làm offline từ Local lên Cloud
     for (let localItem of localHistory) {
       if (!cloudHistory.some(cItem => cItem.localId === localItem.id)) {
-        await addDoc(collection(db, "user_test_history"), {
-          email: currentUserEmail,
-          testId: "test_1_2026_listening",
-          localId: localItem.id,
-          skill: localItem.skill,
-          testName: localItem.testName,
-          partName: localItem.partName,
-          correctQ: localItem.correctQ,
-          totalQ: localItem.totalQ,
+        await addDoc(collection(db, "user_test_histories"), {
+  email: currentUserEmail,
+  testId: "test_1_2026_listening",
+  localId: localItem.id,
+  skill: localItem.skill,
+  testName: localItem.testName,
+  partName: localItem.partName,
+  attemptNum: localItem.attemptNum || 1, // Thêm dòng này
+  correctQ: localItem.correctQ,
+  totalQ: localItem.totalQ,
           score: localItem.score,
           date: localItem.date,
           time: localItem.time,
