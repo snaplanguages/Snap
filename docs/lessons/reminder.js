@@ -28,16 +28,15 @@ function checkAndFireReminder() {
   targetDateObj.setHours(targetH, targetM, 0, 0);
 
   const lastMissedReminded = localStorage.getItem('toeic_last_missed_reminded_date');
-  if (now > targetDateObj && lastMissedReminded !== todayString && lastReminded !== todayString) {
-    // Lấy dữ liệu lịch sử từ localStorage để check xem hôm nay học bài chưa
-    const localData = localStorage.getItem('toeic_local_records');
-    const records = localData ? JSON.parse(localData) : [];
-    const studiedToday = records.some(r => r.date === todayString);
-    
-    if (!studiedToday) {
-      fireMissedNotification(targetTime);
-    }
+if (now > targetDateObj && lastMissedReminded !== todayString && lastReminded !== todayString) {
+  // Đọc cờ ngày làm bài gần nhất từ localStorage
+  const lastStudyDate = localStorage.getItem('toeic_last_study_date');
+  const studiedToday = (lastStudyDate === todayString);
+  
+  if (!studiedToday) {
+    fireMissedNotification(targetTime);
   }
+}
 }
 
 function fireNotification() {
