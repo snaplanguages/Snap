@@ -1014,33 +1014,28 @@ let attempt = {
   // Lưu cục bộ (LocalStorage)
   history.unshift(attempt);
   localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+const timeTakenMinutes = Math.round(timeTakenSeconds / 60); 
 
-  // 5. ĐỒNG BỘ LÊN ĐÁM MÂY (FIRESTORE) NẾU ĐX ĐĂNG NHẬP
-  if (currentUserEmail) {
-    try {
-await addDoc(collection(db, "user_test_histories"), {
-  email: currentUserEmail,
-  testId: testId,
-  localId: attempt.id,
-  skill: attempt.skill, // Sẽ tự động lưu "Listening" hoặc "Reading" lên đám mây
-  testName: attempt.testName,
-        partName: attempt.partName,
-        attemptNum: attempt.attemptNum, // Đồng bộ lượt thi lên cloud
-        correctQ: attempt.correctQ,
-        totalQ: attempt.totalQ,
-        score: attempt.score,
-        date: attempt.date,
-        time: attempt.time,
-        Time: attempt.Time,
-        timeTaken: attempt.timeTaken,
-        timestamp: attempt.timestamp,
-        answers: attempt.answers
-      });
-      console.log("Đã đồng bộ kết quả lên tài khoản đám mây SnapEnglish! 🎉");
-    } catch (e) {
-      console.error("Lưu đám mây thất bại, kết quả tạm thời được lưu offline tại máy này: ", e);
-    }
+// Đồng bộ lên Firestore với tên collection và cấu trúc chuẩn của tracker
+if (currentUserEmail) {
+  try {
+    await addDoc(collection(db, "user_toeic_scores"), { // Đổi từ "user_test_histories" thành "user_toeic_scores"
+      email: currentUserEmail,
+      skill: attempt.skill, // Sẽ tự động lưu "Listening"
+      testName: attempt.testName,
+      partName: attempt.partName,
+      timeTaken: timeTakenMinutes, // Đổi sang số phút thay vì chuỗi "MM:SS"
+      totalQ: attempt.totalQ,
+      correctQ: attempt.correctQ,
+      score: attempt.score, // Sử dụng điểm quy đổi chuẩn đã tính ở trang test
+      date: attempt.date,
+      timestamp: attempt.timestamp
+    });
+    console.log("Đã đồng bộ kết quả trực tiếp lên TOEIC Tracker! 🎉");
+  } catch (e) {
+    console.error("Lưu đám mây thất bại: ", e);
   }
+}
 }
 
     function showCustomConfirm(title, desc, onConfirmCallback) {
@@ -1067,13 +1062,13 @@ await addDoc(collection(db, "user_test_histories"), {
     if (currentUserEmail) {
       try {
         const qDel = query(
-          collection(db, "user_test_histories"),
+          collection(db, "user_toeic_scores"),
           where("email", "==", currentUserEmail),
           where("localId", "==", id)
         );
         const querySnapshot = await getDocs(qDel);
         querySnapshot.forEach(async (docSnap) => {
-          await deleteDoc(doc(db, "user_test_histories", docSnap.id));
+          await deleteDoc(doc(db, "user_toeic_scores", docSnap.id));
         });
         console.log("Đã đồng bộ xóa lượt làm bài trên đám mây thành công! 🗑️");
       } catch (e) {
@@ -1618,7 +1613,7 @@ async function syncHistoryWithCloud() {
   if (!currentUserEmail) return;
   try {
     const qCloud = query(
-      collection(db, "user_test_histories"),
+      collection(db, "user_toeic_scores"),
       where("email", "==", currentUserEmail),
       where("testId", "==", testId)
     );
@@ -1660,7 +1655,7 @@ async function syncHistoryWithCloud() {
     // Đẩy ngược những bài làm offline từ Local lên Cloud
     for (let localItem of localHistory) {
       if (!cloudHistory.some(cItem => cItem.localId === localItem.id)) {
-        await addDoc(collection(db, "user_test_histories"), {
+        await addDoc(collection(db, "user_toeic_scores"), {
   email: currentUserEmail,
   testId: testId,
   localId: localItem.id,
