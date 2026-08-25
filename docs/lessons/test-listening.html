@@ -707,52 +707,988 @@ main { padding-bottom: 90px !important; }
     width: 34px;
   }
 }
-       .hidden-in-mock {
-            display: none !important;
-        }
 </style>
 </head>
 <body>
+<div class="bg-watermark">SnapEnglish</div>
+<div id="setupModal" class="modal-overlay show">
+    <div class="modal-box">
+<div class="modal-title" id="setupModalTitle">Đang tải đề thi...</div>
+        <div class="modal-desc" id="setupModalDesc">Đang tải thông tin đề thi...</div>
+        
+        <button class="mode-btn" id="btnModePractice" onclick="selectMode('practice')">🌿 Luyện Tập </button>
+        <button class="mode-btn" id="btnModeMock" onclick="selectMode('mock')">🔥 Thi Thử </button>
+        
+        <div id="timeSettings" style="display: none; margin-top: 15px;">
+            <label style="font-weight: 700; color: var(--text-main);">Thời gian (phút): </label>
+            <input type="number" id="inputTime" class="input-time" value="45" min="5" max="120">
+        </div>
 
-    <div id="app-loading" style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; font-family: 'Be Vietnam Pro', sans-serif; color: #e65245; font-weight: bold; gap: 12px; background: #f9f5f2;">
-        <div style="font-size: 24px; animation: pulse 1.5s infinite;">⚡ SnapEnglish</div>
-        <div style="font-size: 14px; color: #8d7b77;">Đang tải cấu hình bài thi...</div>
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button class="btn btn-outline" style="flex: 1;" onclick="openHistoryModal()">🕒 Xem lịch sử</button>
+            <button class="btn btn-primary" style="flex: 1; display: none;" id="btnStart" onclick="startTest()">Bắt đầu</button>
+        </div>
     </div>
+</div>
 
-    <script>
-        async function bootstrapApp() {
-            try {
-           
-                const resHtml = await fetch('./tdfl.json');
-                if (!resHtml.ok) throw new Error("Không thể tải file giao diện (tdfl.json)");
-                const dataHtml = await resHtml.json();
-                
-                document.body.innerHTML = dataHtml.html_body;
+<div id="historyOverlay" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title">🕒 Lịch sử làm bài</div>
+    <div id="historyList"></div>
+    <button class="btn btn-outline" style="width: 100%;" onclick="closeModal('historyOverlay')">Quay lại</button>
+  </div>
+</div>
 
-                const resJs = await fetch('./tmfl.json');
-                if (!resJs.ok) throw new Error("Không thể tải file xử lý logic (tmfl.json)");
-                const dataJs = await resJs.json();
+<div id="confirmModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-title">Xác nhận nộp bài</div>
+        <div class="modal-desc">Bạn có chắc chắn muốn nộp bài? Các câu chưa làm sẽ bị tính là sai.</div>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeModal('confirmModal')">Quay lại làm tiếp</button>
+            <button class="btn btn-primary" onclick="executeSubmit()">Đồng ý nộp bài</button>
+        </div>
+    </div>
+</div>
 
-                const blob = new Blob([dataJs.script_module], { type: 'application/javascript' });
-                const scriptUrl = URL.createObjectURL(blob);
-                
-                await import(scriptUrl);
-                
-                URL.revokeObjectURL(scriptUrl);
+<div id="customConfirmModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-title" id="ccTitle">Xác nhận</div>
+        <div class="modal-desc" id="ccDesc">Bạn có chắc chắn muốn thực hiện hành động này?</div>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeModal('customConfirmModal')">Hủy bỏ</button>
+            <button class="btn btn-danger" id="ccConfirmBtn">Đồng ý</button>
+        </div>
+    </div>
+</div>
 
-            } catch (error) {
-                console.error("Lỗi khởi tạo ứng dụng:", error);
-                document.getElementById('app-loading').innerHTML = `
-                    <div style="color: #ff5252; text-align: center;">
-                        <div>🥺 Lỗi khởi động ứng dụng!</div>
-                        <div style="font-size: 12px; margin-top: 8px; font-weight: normal; color: #8d7b77;">${error.message}</div>
+<div id="resultModal" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-title">Kết Quả Bài Thi 🏆</div>
+        <div style="font-size: 60px; font-weight: 800; color: var(--primary); margin: 10px 0;" id="scoreDisplay">0/100</div>
+        <div class="modal-desc" id="scoreComment">Tuyệt vời! Hãy xem chi tiết giải thích ở từng câu bên dưới.</div>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="location.reload()">Làm lại bài khác</button>
+            <button class="btn btn-success" onclick="closeModal('resultModal')">Xem giải thích chi tiết</button>
+        </div>
+    </div>
+</div>
+
+<header>
+<a href="index.html" class="brand" title="Về trang chủ SnapEnglish">
+  <div class="brand-badge">SnapEnglish</div>
+  <div class="brand-subtitle">Listening Test</div>
+</a>
+
+    <div class="tabs">
+  <button class="tab-btn active" onclick="switchTab(1)">Part 1</button>
+  <button class="tab-btn" onclick="switchTab(2)">Part 2</button>
+  <button class="tab-btn" onclick="switchTab(3)">Part 3</button>
+  <button class="tab-btn" onclick="switchTab(4)">Part 4</button>
+</div>
+
+    <!-- Đồng hồ & Nút nộp bài -->
+    <div class="header-right">
+        <div class="timer" id="timer">45:00</div>
+        <button class="btn btn-primary" id="headerSubmitBtn" onclick="requestSubmit()">Nộp bài</button>
+    </div>
+</header>
+
+<main id="mainContent"></main>
+
+<div class="card-navigation" id="cardNavArea" style="padding: 10px 40px 20px 40px; margin-top: 10px;">
+    <button class="btn-nav" id="btnPrevCard" onclick="prevCard()">⬅ Câu trước</button>
+    <button class="btn-nav" id="btnNextCard" onclick="nextCard()">Câu tiếp theo ➡</button>
+</div>
+
+<button class="nav-toggle-btn" id="navToggleBtn" onclick="toggleNavPanel()">
+    🧭 <span id="answeredCount">0</span>/100
+</button>
+
+<div class="nav-overlay" id="navOverlay" onclick="toggleNavPanel()"></div>
+<div id="navPanel" class="nav-panel">
+    <div class="nav-panel-header">
+        <div class="nav-title" style="margin: 0; font-size: 18px;">Bảng điều hướng nhanh</div>
+        <button class="close-nav-btn" onclick="toggleNavPanel()">✖</button>
+    </div>
+    <div class="nav-grid" id="navGrid"></div>
+</div>
+
+<script type="module">
+let TOEIC_DATA = {}; 
+let testId = "";
+let HISTORY_KEY = ""; // Sẽ tự động gán động theo từng mã đề thi để tránh đè dữ liệu
+
+// 1. Hàm tự động trích xuất mã đề từ URL (Ví dụ: test.html?id=test-1-2026)
+function getTestIdFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('id') || 'toeic-listening-test-1-2026'; // Đã đổi sang file mặc định mới
+}
+
+
+// 2. Hàm tải dữ liệu đề thi động từ thư mục data/
+async function loadTestData() {
+  testId = getTestIdFromURL();
+  // Tự động đặt tên khóa lịch sử tương ứng cho đề thi này
+  HISTORY_KEY = `snapenglish_${testId}_history`;
+  try {
+    // Tải file dữ liệu JSON tương ứng
+    const response = await fetch(`./${testId}.json`); // Đã bỏ /data/ theo ý của bạn ở turn trước
+    if (!response.ok) throw new Error("Không thể tải file JSON.");
+    TOEIC_DATA = await response.json();
+
+   
+    const match = testId.match(/test-(\d+)-(\d{4})/i);
+let formattedTitle = "";
+if (match) {
+  // match[1] sẽ lấy ra số Test (VD: 1), match[2] sẽ lấy ra năm (VD: 2026)
+  formattedTitle = `Test ${match[1]} - ${match[2]}`; 
+} else {
+  formattedTitle = testId.toUpperCase().replace(/-/g, ' '); 
+}
+
+    const skillLabel = TOEIC_DATA.skill || "Listening"; // Lấy kỹ năng từ file JSON
+
+    // 1. Tiêu đề trình duyệt động sạch sẽ: "Test 1 - 2026 | SnapEnglish"
+    document.title = `${formattedTitle} | SnapEnglish`;
+
+    // 2. Tiêu đề trên Modal chào mừng: "Test 1 - 2026 - Listening"
+    document.getElementById('setupModalTitle').innerText = `${formattedTitle} - ${skillLabel}`;
+
+    // 3. Nội dung mô tả Modal chào mừng động:
+    const modalDesc = document.querySelector('.modal-desc');
+    if (modalDesc) {
+      modalDesc.innerText = `Chào mừng bạn đến với bài thi thử ${formattedTitle}. Vui lòng chọn chế độ làm bài. (Hỗ trợ dùng mũi tên Trái/Phải để chuyển câu khi ở Luyện Tập).`;
+    }
+
+    // Hiển thị modal chọn chế độ làm bài sau khi nạp xong dữ liệu
+    document.getElementById('setupModal').classList.add('show');
+  } catch (error) {
+    console.error("Lỗi nạp đề thi: ", error);
+    document.getElementById('setupModalTitle').innerText = "Lỗi tải đề thi!";
+    alert("Có lỗi xảy ra trong quá trình nạp dữ liệu đề thi, vui lòng thử lại sau!");
+  }
+}
+
+// Khởi động tiến trình nạp đề thi ngay khi trang được tải xong
+window.addEventListener('DOMContentLoaded', loadTestData);
+        
+    let timerInterval;
+    let timerDuration = 45 * 60;
+    let userAnswers = {};
+    let isMockMode = false;
+    let isSubmitted = false;
+    let isReviewingMode = false;
+
+    // --- BẮT SỰ KIỆN NHẤN PHÍM MŨI TÊN ---
+    document.addEventListener('keydown', function(e) {
+        const isAnyModalOpen = document.querySelectorAll('.modal-overlay.show').length > 0;
+        
+        // Chỉ hoạt động khi ĐANG THI (chứ không phải lúc xem kết quả hay mở menu) và LÀ CHẾ ĐỘ LUYỆN TẬP
+        if (!isMockMode && !isAnyModalOpen && document.getElementById('mainContent').innerHTML !== '') {
+            if (e.key === 'ArrowRight') {
+                let btnNext = document.getElementById('btnNextCard');
+                if (btnNext && !btnNext.disabled) nextCard();
+            } else if (e.key === 'ArrowLeft') {
+                let btnPrev = document.getElementById('btnPrevCard');
+                if (btnPrev && !btnPrev.disabled) prevCard();
+            }
+        }
+    });
+
+   function openHistoryModal() {
+  let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+  let historyListEl = document.getElementById('historyList');
+  let listHtml = '';
+  if (history.length === 0) {
+    listHtml = '<p style="text-align: center; color: var(--text-muted); margin-top: 20px; font-weight: 600;">Chưa có dữ liệu làm bài nào.</p>';
+  } else {
+    history.forEach((attempt, index) => {
+      // Xác định số thứ tự lượt thi
+      let attemptNum = attempt.attemptNum || (history.length - index);
+      let totalQuestions = attempt.totalQ !== undefined ? attempt.totalQ : 100;
+      
+      // SỬA LỖI ĐIỂM SỐ TẠI ĐÂY:
+      // Tách biệt rõ ràng: nếu có số câu thì hiển thị đầy đủ, nếu không chỉ hiển thị điểm quy đổi
+      let scoreText = '';
+      if (attempt.correctQ !== undefined) {
+        scoreText = `🏆 <b>${attempt.correctQ}/${totalQuestions} câu</b> — ${attempt.score} điểm`;
+      } else {
+        scoreText = `🏆 <b>${attempt.score} / 495 điểm</b>`;
+      }
+      
+      listHtml += `
+      <div class="history-item">
+        <div class="history-info">
+          <div class="history-header-row">
+            <span class="attempt-badge">Lượt thi #${attemptNum}</span>
+            <span class="history-time-taken">⏱️ ${attempt.timeTaken || '00:00'}</span>
+          </div>
+          <div class="history-date-row">
+            🕒 ${attempt.date} lúc ${attempt.time}
+          </div>
+          <div class="history-score-badge">
+            ${scoreText}
+          </div>
+        </div>
+        <div class="history-actions">
+          <button class="btn-review" onclick="restoreAttempt(${attempt.id})">Xem lại</button>
+          <button class="btn-delete-history" onclick="deleteAttempt(${attempt.id})" title="Xóa bài làm này">✖</button>
+        </div>
+      </div>`;
+    });
+  }
+  historyListEl.innerHTML = listHtml;
+  document.getElementById('historyOverlay').classList.add('show');
+}
+    
+function getScaledScore(correctCount, totalCount) {
+  if (totalCount === 0) return 0;
+  
+  // Tự động quy đổi tỷ lệ câu đúng về thang 100 câu (để hỗ trợ thi thử và luyện tập)
+  const rawScore = Math.round((correctCount / totalCount) * 100);
+  
+  // Bảng quy đổi điểm do bạn cung cấp (từ 0 đến 100 câu)
+  const scoreTable = [
+    0,   15,  20,  25,  30,  35,  40,  45,  50,  55,  // 0 - 9
+    60,  65,  70,  75,  80,  85,  90,  95,  100, 105, // 10 - 19
+    110, 115, 120, 125, 130, 135, 140, 145, 150, 155, // 20 - 29
+    160, 165, 170, 175, 180, 185, 190, 195, 200, 205, // 30 - 39
+    210, 215, 220, 225, 230, 235, 240, 245, 250, 255, // 40 - 49
+    260, 265, 270, 275, 280, 285, 290, 295, 300, 305, // 50 - 59
+    310, 315, 320, 325, 330, 335, 340, 345, 350, 355, // 60 - 69
+    360, 365, 370, 375, 380, 385, 395, 400, 405, 410, // 70 - 79
+    415, 420, 425, 430, 435, 440, 445, 450, 455, 460, // 80 - 89
+    465, 470, 475, 480, 485, 490, 495, 495, 495, 495, // 90 - 99
+    495                                                // 100
+  ];
+  
+  return scoreTable[rawScore] !== undefined ? scoreTable[rawScore] : 0;
+}
+        async function saveAttemptToHistory(correct, total, answersArray) {
+  let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+  const now = new Date();
+  const timestamp = Date.now();
+  
+  // Tính số lượt thi tự động (Độ dài lịch sử hiện tại + 1)
+  const attemptNum = history.length + 1;
+  
+  // 1. Quy đổi điểm theo bảng tra cứu chuẩn 495
+  const scoreConverted = getScaledScore(correct, total);
+  // 2. Định dạng mốc thời gian làm bài
+  const timeString = now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+  // 3. Tính thời gian làm bài thực tế (timeTaken) dưới dạng MM:SS
+  const initialTimeSetting = (parseInt(document.getElementById('inputTime').value) || 45) * 60;
+  const timeTakenSeconds = Math.max(0, initialTimeSetting - timerDuration);
+  const timeTaken = formatTime(timeTakenSeconds);
+  // 4. Lấy tiêu đề bài test hiện tại từ thẻ <title> của trình duyệt
+  const testTitle = document.title.replace(' | SnapEnglish', '') || "TOEIC Listening Test 1 (2026)";
+  
+  // Cấu trúc dữ liệu chuẩn hóa có bổ sung attemptNum
+let attempt = {
+  id: timestamp,
+  skill: TOEIC_DATA.skill || "Listening", // Tự động lấy "Listening" hoặc "Reading" từ JSON đề thi
+  testName: testTitle,
+  partName: "Full",
+  attemptNum: attemptNum,
+  correctQ: correct,
+  totalQ: total,
+  score: scoreConverted,
+  date: now.toLocaleDateString('vi-VN'),
+  time: timeString,
+  Time: timeString,
+  timeTaken: timeTaken,
+  timestamp: timestamp,
+  answers: answersArray
+};
+
+  
+  // Lưu cục bộ (LocalStorage)
+  history.unshift(attempt);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+
+  // 5. ĐỒNG BỘ LÊN ĐÁM MÂY (FIRESTORE) NẾU ĐX ĐĂNG NHẬP
+  if (currentUserEmail) {
+    try {
+await addDoc(collection(db, "user_test_histories"), {
+  email: currentUserEmail,
+  testId: testId,
+  localId: attempt.id,
+  skill: attempt.skill, // Sẽ tự động lưu "Listening" hoặc "Reading" lên đám mây
+  testName: attempt.testName,
+        partName: attempt.partName,
+        attemptNum: attempt.attemptNum, // Đồng bộ lượt thi lên cloud
+        correctQ: attempt.correctQ,
+        totalQ: attempt.totalQ,
+        score: attempt.score,
+        date: attempt.date,
+        time: attempt.time,
+        Time: attempt.Time,
+        timeTaken: attempt.timeTaken,
+        timestamp: attempt.timestamp,
+        answers: attempt.answers
+      });
+      console.log("Đã đồng bộ kết quả lên tài khoản đám mây SnapEnglish! 🎉");
+    } catch (e) {
+      console.error("Lưu đám mây thất bại, kết quả tạm thời được lưu offline tại máy này: ", e);
+    }
+  }
+}
+
+    function showCustomConfirm(title, desc, onConfirmCallback) {
+        document.getElementById('ccTitle').innerText = title;
+        document.getElementById('ccDesc').innerText = desc;
+        let confirmBtn = document.getElementById('ccConfirmBtn');
+        let newBtn = confirmBtn.cloneNode(true);
+        confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+        newBtn.addEventListener('click', function() {
+            onConfirmCallback();
+            closeModal('customConfirmModal');
+        });
+        document.getElementById('customConfirmModal').classList.add('show');
+    }
+
+    async function deleteAttempt(id) {
+  showCustomConfirm("Xác nhận xóa", "Bạn có chắc chắn muốn xóa bài làm này khỏi lịch sử không?", async function() {
+    // 1. Xóa ở Local Storage
+    let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+    history = history.filter(h => h.id !== id);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    
+    // 2. Xóa ở Cloud Firestore (nếu có đăng nhập)
+    if (currentUserEmail) {
+      try {
+        const qDel = query(
+          collection(db, "user_test_histories"),
+          where("email", "==", currentUserEmail),
+          where("localId", "==", id)
+        );
+        const querySnapshot = await getDocs(qDel);
+        querySnapshot.forEach(async (docSnap) => {
+          await deleteDoc(doc(db, "user_test_histories", docSnap.id));
+        });
+        console.log("Đã đồng bộ xóa lượt làm bài trên đám mây thành công! 🗑️");
+      } catch (e) {
+        console.error("Lỗi khi xóa dữ liệu trên đám mây: ", e);
+      }
+    }
+    
+    // Cập nhật lại giao diện modal lịch sử
+    openHistoryModal();
+  });
+}
+
+    function restoreAttempt(id) {
+  let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+  let attempt = history.find(h => h.id === id);
+  if (attempt) {
+    userAnswers = attempt.answers;
+    closeModal('historyOverlay');
+    document.getElementById('setupModal').classList.remove('show');
+    isMockMode = false;
+    isReviewingMode = true;
+    renderTest();
+    buildNavGrid();
+    switchTab(1); 
+    executeSubmit();
+  }
+}
+
+    function selectAnswer(qId, opt) {
+        if (isSubmitted) return;
+        userAnswers[qId] = opt;
+        document.querySelectorAll(`input[name="q${qId}"]`).forEach(inp => {
+            let lbl = inp.closest('.opt-label');
+            if (inp.value === opt) {
+                lbl.classList.add('selected');
+                inp.checked = true;
+            } else {
+                lbl.classList.remove('selected');
+            }
+        });
+        let navDot = document.getElementById(`nav-${qId}`);
+        if (navDot) navDot.classList.add('answered');
+        let count = Object.keys(userAnswers).length;
+        document.getElementById('answeredCount').innerText = count;
+    }
+
+    function formatTime(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+  if (isReviewingMode) return;
+  document.getElementById('timer').innerText = formatTime(timerDuration); // Đổi từ timerDisplay -> timer
+  timerInterval = setInterval(() => {
+    if (timerDuration > 0) {
+      timerDuration--;
+      document.getElementById('timer').innerText = formatTime(timerDuration); // Đổi từ timerDisplay -> timer
+    } else {
+      clearInterval(timerInterval);
+      executeSubmit();
+    }
+  }, 1000);
+}
+
+    function selectMode(mode) {
+        document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('selected'));
+        if (mode === 'practice') {
+            document.getElementById('btnModePractice').classList.add('selected');
+            document.getElementById('timeSettings').style.display = 'block';
+            isMockMode = false;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.style.pointerEvents = 'auto';
+                btn.style.opacity = '1';
+            });
+        } else {
+            document.getElementById('btnModeMock').classList.add('selected');
+            document.getElementById('timeSettings').style.display = 'none';
+            document.getElementById('inputTime').value = 45;
+            isMockMode = true;
+        }
+        document.getElementById('btnStart').style.display = 'block';
+    }
+
+    function startTest() {
+        timerDuration = parseInt(document.getElementById('inputTime').value) * 60;
+        document.getElementById('setupModal').classList.remove('show');
+        renderTest();
+        buildNavGrid();
+
+        let navArea = document.getElementById('cardNavArea');
+        if (navArea) {
+            navArea.style.display = isMockMode ? 'none' : 'flex';
+        }
+
+        updateCardView(); 
+        startTimer(); 
+
+        if (isMockMode) {
+            setupMockModeAudio();
+        }
+    }
+
+    let mockAudioList = [];
+    function setupMockModeAudio() {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.style.pointerEvents = 'none';
+            btn.style.opacity = '0.8';
+        });
+        mockAudioList = Array.from(document.querySelectorAll('audio'));
+        mockAudioList.forEach((audio, index) => {
+            audio.removeAttribute('controls');
+            audio.onended = () => {
+                let nextIndex = index + 1;
+                if (nextIndex < mockAudioList.length) {
+                    let currentPart = audio.closest('.part-container');
+                    let nextPart = mockAudioList[nextIndex].closest('.part-container');
+                    if (currentPart !== nextPart) {
+                        let partId = nextPart.id;
+                        let partNum = parseInt(partId.replace('part', ''));
+                        switchTab(partNum);
+                    } else {
+                        nextCard();
+                    }
+                    mockAudioList[nextIndex].play();
+                } else {
+                    executeSubmit();
+                }
+            };
+        });
+        if (mockAudioList.length > 0) {
+            switchTab(1);
+            mockAudioList[0].play().catch(e => console.log("Trình duyệt chặn Autoplay. Cần user tương tác trước."));
+        }
+    }
+
+    function renderTest() {
+        const main = document.getElementById('mainContent');
+        main.innerHTML = '';
+
+        // --- RENDER PART 1 ---
+        let p1HTML = `<div id="part1" class="part-container active">
+                        <div class="part-title">Part 1: Photographs</div>`;
+        TOEIC_DATA.part1.forEach(q => {
+            let imgUrl = q.img || q.image; // Hỗ trợ cả 2 tên biến
+            let scriptEn = typeof q.script_en === 'string' ? q.script_en : (q.script_en || []).join('<br>');
+            let scriptVi = typeof q.script_vi === 'string' ? q.script_vi : (q.script_vi || []).join('<br>');
+            let explains = q.explains ? q.explains.map(ex => {
+                let isAns = (ex.type === 'correct' || ex.isCorrect);
+                let tag = isAns ? "<span class='bingo-tag'>Đúng</span>" : "<span class='trap-tag'>Sai</span>";
+                return `<div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 8px;">
+                            <div style="font-weight: 700; margin-bottom: 5px;">Option ${ex.opt}</div>
+                            <div>${tag} ${ex.text}</div>
+                        </div>`;
+            }).join('') : '';
+
+            p1HTML += `
+            <div class="q-card" id="card-${q.id}">
+                <div class="split-layout">
+                    <div class="split-media">
+                        <img src="${imgUrl}" alt="Image Q${q.id}">
+                        <audio controls src="${q.audio}"></audio>
                     </div>
-                `;
+                    <div class="split-questions">
+                        <div class="q-header">
+                            <div class="q-num">${q.id}</div>
+                            </div>
+                        <div class="options-grid">
+                            ${['A', 'B', 'C', 'D'].map(opt => `
+                            <label class="opt-label" onclick="selectAnswer(${q.id}, '${opt}')">
+                                <input type="radio" name="q${q.id}" value="${opt}">
+                                <div class="custom-radio"></div><span>Option ${opt}</span>
+                            </label>`).join('')}
+                        </div>
+                        <div class="explanation-box" id="exp-${q.id}">
+                            <div class="exp-title">Phân tích chi tiết</div>
+                            <div class="script-en">${scriptEn}</div>
+                            <div class="script-vi">${scriptVi}</div>
+                            <div style="margin-top:15px; display:flex; flex-direction:column; gap:10px;">
+                                ${explains}
+                            </div>
+                            ${q.vocab ? `<div class="vocab-box"><b>📚 Từ Vựng:</b><br>${q.vocab.replace(/\n/g, '<br>')}</div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        });
+        p1HTML += `</div>`;
+        main.innerHTML += p1HTML;
+
+        // --- RENDER PART 2 ---
+        let p2HTML = `<div id="part2" class="part-container">
+                        <div class="part-title">Part 2: Question & Response</div>`;
+        TOEIC_DATA.part2.forEach(q => {
+            let scriptQEn = q.script_q_en || '';
+            let scriptQVi = q.script_q_vi || '';
+            let scriptOptEn = q.script_opt_en || [];
+            let scriptOptVi = q.script_opt_vi || [];
+
+            p2HTML += `
+            <div class="q-card" id="card-${q.id}">
+                <div class="q-header" style="justify-content: center; margin-bottom: 30px;">
+                    <div class="q-num" style="width: 50px; height: 50px; font-size: 22px;">${q.id}</div>
+                    <div class="q-text hidden-in-mock" id="text-q${q.id}">${scriptQEn || `Question ${q.id}`}</div>
+                </div>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <audio controls src="${q.audio}" style="width: 100%; max-width: 400px;"></audio>
+                </div>
+                <div class="options-grid" style="max-width: 500px; margin: 0 auto;">
+                    ${['A', 'B', 'C'].map(opt => `
+                    <label class="opt-label" onclick="selectAnswer(${q.id}, '${opt}')">
+                        <input type="radio" name="q${q.id}" value="${opt}">
+                        <div class="custom-radio"></div><span>Option ${opt}</span>
+                    </label>`).join('')}
+                </div>
+                <div class="explanation-box" id="exp-${q.id}" style="margin-top: 30px; text-align: left;">
+                    <div class="exp-title">Phân tích chi tiết</div>
+                    <div class="script-en">${scriptQEn}</div>
+                    <div class="script-vi">${scriptQVi}</div>
+                    ${q.general_explain ? `<div style="background: #FFF3CD; padding: 10px; border-radius: 8px; color: #856404; font-weight: 600; margin-bottom: 15px;">💡 ${q.general_explain}</div>` : ''}
+                    <div style="margin-top:15px; display:flex; flex-direction:column; gap:10px;">
+                        ${q.explains ? q.explains.map((exp, i) => {
+                            let isAns = (exp.type === 'correct' || exp.isCorrect);
+                            let tag = isAns ? "<span class='bingo-tag'>Đúng</span>" : "<span class='trap-tag'>Sai</span>";
+                            let enText = scriptOptEn[i] || '';
+                            let viText = scriptOptVi[i] || '';
+                            return `<div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid var(--border);">
+                                        <div style="font-weight: 700; margin-bottom: 5px;">(${exp.opt}) ${enText}</div>
+                                        <div style="color: var(--text-muted); font-size: 14px; font-style: italic; margin-bottom: 8px;">${viText}</div>
+                                        <div>${tag} ${exp.text}</div>
+                                    </div>`;
+                        }).join('') : ''}
+                    </div>
+                    ${q.vocab ? `<div class="vocab-box"><b>📚 Từ Vựng:</b><br>${q.vocab.replace(/\n/g, '<br>')}</div>` : ''}
+                </div>
+            </div>`;
+        });
+        p2HTML += `</div>`;
+        main.innerHTML += p2HTML;
+
+        // --- RENDER PART 3 & 4 ---
+        const renderPassage = (data, title) => {
+            // ĐÃ LOẠI BỎ LỜI NHẮC DÀI DÒNG
+            let html = `<div id="part${title.includes('3') ? 3 : 4}" class="part-container">
+                            <div class="part-title">${title}</div>`;
+            data.forEach(p => {
+                html += `
+                <div class="q-card" style="padding:0;">
+                    <div class="split-layout" id="layout-${p.id}" style="padding:30px;">
+                        <div class="split-media" id="media-${p.id}">
+                            <div style="font-weight:800; color:var(--primary-dark); margin-bottom:15px;">Questions ${p.id}</div>
+                            ${p.graphic ? (p.graphic.includes('<') ? `<div style="overflow-x:auto; margin-bottom:15px;">${p.graphic}</div>` : `<img src="${p.graphic}" alt="Graphic">`) : ''}
+                            <audio controls src="${p.audio}" style="width: 100%;"></audio>
+                            <div class="explanation-box" id="exp-passage-${p.id}" style="margin-top:20px; border-top:2px dashed var(--border); border-left:none; padding:20px 0 0 0; background:transparent; text-align:left;">
+                                <div class="exp-title">Transcript Song Ngữ</div>
+                                <div class="script-en">${p.script_en ? p.script_en.replace(/\n/g, '<br>') : ''}</div>
+                                <div class="script-vi">${p.script_vi ? p.script_vi.replace(/\n/g, '<br>') : ''}</div>
+                                ${p.vocab ? `<div class="vocab-box" style="margin-top:15px; background:#F8FAFC;"><b>📚 Từ vựng quan trọng:</b><br>${p.vocab.replace(/\n/g, '<br>')}</div>` : ''}
+                            </div>
+                        </div>
+                        <div class="resizer" id="resizer-${p.id}"></div>
+                        <div class="split-questions" id="qs-${p.id}">
+                            ${p.questions.map(q => `
+                            <div style="margin-bottom: 30px;" id="text-q${q.id}">
+                                <div class="q-header" style="margin-bottom: 10px;">
+                                    <div class="q-num" style="width: 35px; height: 35px; font-size: 16px;">${q.id}</div>
+                                    <div class="q-text">${q.q_en}</div>
+                                </div>
+                                <div class="options-grid">
+                                    ${q.opts.map(opt => `
+                                    <label class="opt-label" onclick="selectAnswer(${q.id}, '${opt.l}')">
+                                        <input type="radio" name="q${q.id}" value="${opt.l}">
+                                        <div class="custom-radio"></div>
+                                        <span>${opt.text}</span>
+                                    </label>`).join('')}
+                                </div>
+                                <div class="explanation-box" id="exp-${q.id}" style="margin-top: 15px; padding: 15px; font-size:15px;">
+                                    <div style="color:var(--text-muted); margin-bottom:10px; font-style:italic;">Dịch: ${q.q_vi}</div>
+                                    <div style="display:flex; flex-direction:column; gap:8px;">
+                                        ${q.opts.map(opt => `
+                                        <div style="background: white; padding: 10px; border-radius: 6px; border: 1px solid var(--border);">
+                                            <b>(${opt.l})</b> ${opt.text_vi} <br>
+                                            ${opt.isCorrect ? "<span class='bingo-tag'>Đúng</span>" : "<span class='trap-tag'>Sai</span>"} ${opt.explain || ''}
+                                        </div>`).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>`;
+            });
+            html += `</div>`;
+            main.innerHTML += html;
+        };
+
+        renderPassage(TOEIC_DATA.part3, "Part 3: Conversations");
+        renderPassage(TOEIC_DATA.part4, "Part 4: Short Talks");
+
+        document.querySelectorAll('.resizer').forEach(resizer => {
+            const container = resizer.parentElement;
+            const leftCol = resizer.previousElementSibling;
+            if (leftCol && container) {
+                initResizer(resizer, leftCol, container);
+            }
+        });
+    }
+
+    function buildNavGrid() {
+        const grid = document.getElementById('navGrid');
+        grid.innerHTML = '';
+        for(let i = 1; i <= 100; i++) {
+            grid.innerHTML += `<div class="nav-dot" id="nav-${i}" onclick="scrollToQ(${i})">${i}</div>`;
+        }
+    }
+
+    function switchTab(n) {
+        document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i+1 === n));
+        document.querySelectorAll('.part-container').forEach((p, i) => p.classList.toggle('active', i+1 === n));
+        document.getElementById('mainContent').scrollTop = 0;
+        currentCardIndex = 0;
+        updateCardView();
+    }
+
+    let currentCardIndex = 0;
+    let cardsInCurrentPart = [];
+    
+    function updateCardView() {
+  // TỰ ĐỘNG TẠM DỪNG TẤT CẢ AUDIO ĐANG PHÁT TRÊN TRANG
+  document.querySelectorAll('audio').forEach(audio => {
+    audio.pause();
+  });
+
+  let activePart = document.querySelector('.part-container.active');
+  if(!activePart) return;
+  cardsInCurrentPart = Array.from(activePart.querySelectorAll('.q-card'));
+  cardsInCurrentPart.forEach((card, index) => {
+    card.style.display = (index === currentCardIndex) ? 'block' : 'none';
+  });
+  let btnPrev = document.getElementById('btnPrevCard');
+  let btnNext = document.getElementById('btnNextCard');
+  if(btnPrev) btnPrev.disabled = (currentCardIndex === 0);
+  if(btnNext) btnNext.disabled = (currentCardIndex === cardsInCurrentPart.length - 1);
+  document.getElementById('mainContent').scrollTop = 0;
+}
+
+    function nextCard() {
+        if (currentCardIndex < cardsInCurrentPart.length - 1) {
+            currentCardIndex++;
+            updateCardView();
+        }
+    }
+
+    function prevCard() {
+        if (currentCardIndex > 0) {
+            currentCardIndex--;
+            updateCardView();
+        }
+    }
+
+    function toggleNavPanel() {
+        const panel = document.getElementById('navPanel');
+        const overlay = document.getElementById('navOverlay');
+        panel.classList.toggle('show');
+        if (panel.classList.contains('show')) overlay.classList.add('show');
+        else overlay.classList.remove('show');
+    }
+
+    function scrollToQ(qId) {
+        toggleNavPanel();
+        let targetQuestion = document.getElementById(`text-q${qId}`) || document.getElementById(`card-${qId}`);
+        if(targetQuestion) {
+            let partContainer = targetQuestion.closest('.part-container');
+            let partId = partContainer.id;
+            let tabNum = parseInt(partId.replace('part', ''));
+            
+            document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i+1 === tabNum));
+            document.querySelectorAll('.part-container').forEach((p, i) => p.classList.toggle('active', i+1 === tabNum));
+            
+            cardsInCurrentPart = Array.from(partContainer.querySelectorAll('.q-card'));
+            let targetCard = targetQuestion.closest('.q-card');
+            let index = cardsInCurrentPart.indexOf(targetCard);
+            if(index !== -1) {
+                currentCardIndex = index;
+                updateCardView();
+            }
+        }
+    }
+
+    function requestSubmit() {
+        document.getElementById('confirmModal').classList.add('show');
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('show');
+    }
+
+    function executeSubmit() {
+        isSubmitted = true;
+        clearInterval(timerInterval);
+        closeModal('confirmModal');
+
+        let correctCount = 0;
+        let totalRendered = 0;
+        const keys = {};
+
+        TOEIC_DATA.part1.forEach(q => keys[q.id] = q.answer || q.ans || q.correct);
+        TOEIC_DATA.part2.forEach(q => keys[q.id] = q.answer || q.ans || q.correct);
+        TOEIC_DATA.part3.forEach(p => p.questions.forEach(q => {
+            let corrOpt = q.opts.find(o => o.isCorrect === true);
+            keys[q.id] = q.answer || q.ans || q.correct || (corrOpt ? corrOpt.l : null);
+        }));
+        TOEIC_DATA.part4.forEach(p => p.questions.forEach(q => {
+            let corrOpt = q.opts.find(o => o.isCorrect === true);
+            keys[q.id] = q.answer || q.ans || q.correct || (corrOpt ? corrOpt.l : null);
+        }));
+
+        for(let i=1; i<=100; i++) {
+            if(keys[i]) {
+                totalRendered++;
+                let isCorr = (userAnswers[i] === keys[i]);
+                if(isCorr) correctCount++;
+
+                document.querySelectorAll(`input[name="q${i}"]`).forEach(inp => {
+                    let lbl = inp.closest('.opt-label');
+                    if(inp.value === keys[i]) {
+                        lbl.classList.add('is-correct');
+                    } else if (inp.value === userAnswers[i] && !isCorr) {
+                        lbl.classList.add('is-wrong');
+                    }
+                });
+
+                let exp = document.getElementById(`exp-${i}`);
+                if(exp) exp.classList.add('show');
+
+                let nav = document.getElementById(`nav-${i}`);
+                if(nav) {
+                    nav.classList.remove('answered');
+                    nav.classList.add(isCorr ? 'correct' : 'wrong');
+                }
+
+                let qText = document.getElementById(`text-q${i}`);
+                if(qText) qText.classList.remove('hidden-in-mock');
+                
+                document.querySelectorAll(`input[name="q${i}"]`).forEach(inp => {
+                    let span = inp.closest('.opt-label').querySelector('span');
+                    if(span) span.classList.remove('hidden-in-mock');
+                });
             }
         }
 
-        bootstrapApp();
-    </script>
+        TOEIC_DATA.part3.forEach(p => { let ep = document.getElementById(`exp-passage-${p.id}`); if(ep) ep.classList.add('show'); });
+        TOEIC_DATA.part4.forEach(p => { let ep = document.getElementById(`exp-passage-${p.id}`); if(ep) ep.classList.add('show'); });
+
+        let toeicScore = getScaledScore(correctCount, totalRendered);
+  
+  // Tính toán số lượt thi của bài này
+  let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+  let currentAttemptNum = history.length + (isReviewingMode ? 0 : 1);
+  let attemptText = `<div style="font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 6px;">🎉 Bạn đã hoàn thành Lượt thi #${currentAttemptNum}!</div>`;
+
+  document.getElementById('scoreDisplay').innerText = `${correctCount}/${totalRendered}`;
+  document.getElementById('scoreComment').innerHTML = `
+    ${attemptText}
+    Điểm TOEIC Listening dự kiến: <b>${toeicScore}</b>/495
+  `;
+  document.getElementById('resultModal').classList.add('show');
+  document.getElementById('headerSubmitBtn').style.display = 'none';
+        
+        let cardNavArea = document.getElementById('cardNavArea');
+        if (cardNavArea) cardNavArea.style.display = 'flex';
+
+        if(!isReviewingMode) {
+            saveAttemptToHistory(correctCount, totalRendered, userAnswers);
+        }
+        
+        if (mockAudioList.length > 0) {
+            mockAudioList.forEach(a => a.pause());
+            document.querySelectorAll('audio').forEach(a => a.setAttribute('controls', 'controls'));
+        }
+    }
+
+    function initResizer(resizer, leftElement, container) {
+        let isDragging = false;
+        resizer.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            resizer.classList.add('dragging');
+            document.body.style.cursor = 'col-resize';
+            document.body.style.userSelect = 'none';
+        });
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            const containerRect = container.getBoundingClientRect();
+            let newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+            if (newWidth < 25) newWidth = 25;
+            if (newWidth > 75) newWidth = 75;
+            leftElement.style.flex = `0 0 ${newWidth}%`;
+        });
+        document.addEventListener('mouseup', function() {
+            if (isDragging) {
+                isDragging = false;
+                resizer.classList.remove('dragging');
+                document.body.style.cursor = 'default';
+                document.body.style.userSelect = 'auto';
+            }
+        });
+    }
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, deleteDoc, doc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+// Cấu hình Firebase đồng bộ của SnapEnglish
+const firebaseConfig = {
+  apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+  authDomain: "snapenglish-cb6e2.firebaseapp.com",
+  projectId: "snapenglish-cb6e2",
+  storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+  messagingSenderId: "373152038413",
+  appId: "1:373152038413:web:19284622571390f8585f44"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUserEmail = null;
+
+// Lắng nghe trạng thái đăng nhập để đồng bộ lịch sử làm bài đám mây
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUserEmail = user.email;
+    console.log("Đã kết nối tài khoản SnapEnglish: " + currentUserEmail);
+    await syncHistoryWithCloud();
+  } else {
+    currentUserEmail = null;
+    console.log("Đang làm bài ở chế độ Khách (Chỉ lưu trên thiết bị này)");
+  }
+});
+
+async function syncHistoryWithCloud() {
+  if (!currentUserEmail) return;
+  try {
+    const qCloud = query(
+      collection(db, "user_test_histories"),
+      where("email", "==", currentUserEmail),
+      where("testId", "==", testId)
+    );
+    const querySnapshot = await getDocs(qCloud);
+    let cloudHistory = [];
+    querySnapshot.forEach(docSnap => {
+      cloudHistory.push({ id: docSnap.id, ...docSnap.data() });
+    });
+
+    let localHistory = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+
+    // Hợp nhất danh sách không để trùng lặp (dựa trên localId / timestamp)
+    let merged = [...localHistory];
+    cloudHistory.forEach(cItem => {
+      if (!merged.some(lItem => lItem.id === cItem.localId)) {
+        merged.push({
+  id: cItem.localId,
+  skill: cItem.skill || "Listening",
+  testName: cItem.testName || "TOEIC Listening Test 1",
+  partName: cItem.partName || "Full",
+  attemptNum: cItem.attemptNum || 1, // Thêm dòng này
+  correctQ: cItem.correctQ || cItem.correct,
+  totalQ: cItem.totalQ || cItem.total,
+  score: cItem.score,
+          date: cItem.date,
+          time: cItem.time,
+          Time: cItem.Time || cItem.time,
+          timeTaken: cItem.timeTaken || "00:00",
+          timestamp: cItem.timestamp || cItem.localId,
+          answers: cItem.answers
+        });
+      }
+    });
+
+    // Sắp xếp lượt làm mới nhất lên đầu trang
+    merged.sort((a, b) => b.id - a.id);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(merged));
+
+    // Đẩy ngược những bài làm offline từ Local lên Cloud
+    for (let localItem of localHistory) {
+      if (!cloudHistory.some(cItem => cItem.localId === localItem.id)) {
+        await addDoc(collection(db, "user_test_histories"), {
+  email: currentUserEmail,
+  testId: testId,
+  localId: localItem.id,
+  skill: localItem.skill,
+  testName: localItem.testName,
+  partName: localItem.partName,
+  attemptNum: localItem.attemptNum || 1, // Thêm dòng này
+  correctQ: localItem.correctQ,
+  totalQ: localItem.totalQ,
+          score: localItem.score,
+          date: localItem.date,
+          time: localItem.time,
+          Time: localItem.Time,
+          timeTaken: localItem.timeTaken,
+          timestamp: localItem.timestamp,
+          answers: localItem.answers
+        });
+      }
+    }
+  } catch (err) {
+    console.error("Lỗi đồng bộ đám mây: ", err);
+  }
+}
+    window.selectMode = selectMode;
+window.startTest = startTest;
+window.openHistoryModal = openHistoryModal;
+window.closeModal = closeModal;
+window.restoreAttempt = restoreAttempt;
+window.deleteAttempt = deleteAttempt;
+window.executeSubmit = executeSubmit;
+window.prevCard = prevCard;
+window.nextCard = nextCard;
+window.toggleNavPanel = toggleNavPanel;
+window.scrollToQ = scrollToQ;
+window.selectAnswer = selectAnswer;
+window.switchTab = switchTab;
+window.requestSubmit = requestSubmit;
+</script>
 </body>
 </html>
-
