@@ -269,7 +269,7 @@ window.quizData = {
         26: "NOT GIVEN"
     },
 
-    explanations = {
+    explanations: {
         14: { 
             translation: "Nhiều quốc gia có thể đánh bắt cá hợp pháp tại vùng biển Newfoundland do các hiệp ước mà Newfoundland đã ký kết trước khi gia nhập Canada.", 
             keywords: "<span class='exp-keyword-match'>Many countries = foreign fleets</span><br><span class='exp-keyword-match'>treaties = foreign policy agreements</span>", 
