@@ -516,17 +516,20 @@ const messaging = getMessaging();
 
 // Hàm kích hoạt đăng ký nhận thông báo ngầm
 async function requestNotificationPermission() {
-  const permission = await Notification.requestPermission();
-  if (permission === 'granted') {
-    // Lấy Token định danh thiết bị
-    const token = await getToken(messaging, { 
-      vapidKey: 'BGPlvWWC3Bdb9HCmGnaFWkaVFVrLUnXHwLrMCmSHJ0_ubVRCmQcNxDcln3KBfJSYL0OkVvZgtqauquQI8Y6cbbo' 
-    });
-    console.log("Device Token của bạn là:", token);
-    // Lưu token này lên Firestore của user đó để sau này gửi nhắc nhở
-  } else {
-    console.log('Người dùng từ chối nhận thông báo.');
-  }
+    const vapidKey = 'BGPlvWWC3Bdb9HCmGnaFWkaVFVrLUnXHwLrMCmSHJ0_ubVRCmQcNxDcln3KBfJSYL0OkVvZgtqauquQI8Y6cbbo';
+    
+    await window.SnapReminder.requestPermission(
+        messaging, 
+        getToken, 
+        vapidKey, 
+        async (token) => {
+            // Callback lưu token lên Firestore sau khi được người dùng đồng ý trên Popup
+            await setDoc(doc(db, "users", auth.currentUser.uid), { 
+                deviceToken: token,
+                updatedAt: new Date().toISOString()
+            }, { merge: true });
+        }
+    );
 }
     // --- BẬT / TẮT TOÀN MÀN HÌNH ---
     window.toggleFullscreen = function() {
@@ -631,16 +634,19 @@ async function requestNotificationPermission() {
       }
     };
 
-    onAuthStateChanged(auth, async (user) => {
-  const authBtn = document.getElementById('authBtn');
-  const logoutBtn = document.getElementById('logoutBtn');
-  if (user) { 
-    authBtn.classList.add('hidden'); 
-    logoutBtn.classList.remove('hidden'); 
-    // Gọi hàm xin quyền và đăng ký Token ngầm ngay tại đây!
-    await requestNotificationPermission(); 
-  }
-  else { authBtn.classList.remove('hidden'); logoutBtn.classList.add('hidden'); }
+   onAuthStateChanged(auth, async (user) => {
+    const authBtn = document.getElementById('authBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (user) {
+        authBtn.classList.add('hidden');
+        logoutBtn.classList.remove('hidden');
+        
+        // Kích hoạt chu trình xin quyền thông minh bằng Popup UI
+        await requestNotificationPermission();
+    } else { 
+        authBtn.classList.remove('hidden'); 
+        logoutBtn.classList.add('hidden'); 
+    }
 });
 
 
