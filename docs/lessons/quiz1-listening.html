@@ -1,1148 +1,470 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Part 1 - Test 1 | SnapEnglish</title>
-    <link rel="icon" type="image/png" href="ảnh.png">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&family=Lora:wght@500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #10b981;
-            --primary-dark: #059669;
-            --primary-soft: #ecfdf5;
-            --accent: #f97316;
-            --bg-main: #f8fafc;
-            --surface: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --correct: #16a34a;
-            --wrong: #dc2626;
-            --highlight: #fef08a;
-        }
+window.quizData = {
+  testId: "quiz1",
+  testName: "Test 1",
+  partName: "Part 1",
+  audioUrl: "https://raw.githubusercontent.com/snaplanguages/SnapEnglish-audioieltslistening01/1f5e120d9f5c3c2598b4ffea2baf89c6a33ba1ae/IELTS%20Listening%20Test%201.mp3",
+  startTime: 106, // 1m46s (Cắt đoạn audio bắt đầu phần thi)
+  endTime: 495,   // 8m15s (Cắt đoạn audio kết thúc phần thi)
+  hasTranscript: true, // true để bật chia đôi màn hình Split-mode
+  questionsList: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], // Đủ 10 câu hỏi của Part 1
+  
+  // Đáp án chuẩn (Viết thường, lưu mảng nếu chấp nhận nhiều cách viết)
+  answerKey: {
+    1: ["300", "three hundred"],
+    2: ["sun shade", "sunshade"],
+    3: ["balcony"],
+    4: ["forest", "forests"],
+    5: ["319"],
+    6: ["10000", "10,000", "ten thousand"],
+    7: ["relative"],
+    8: ["missed"],
+    9: ["item"],
+    10: ["ludlow"]
+  },
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Quicksand', sans-serif;
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* --- HEADER & AUDIO --- */
-        header {
-            flex-shrink: 0;
-            height: 64px;
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 10;
-            gap: 16px;
-        }
-
-        .brand {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--primary-dark);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            white-space: nowrap;
-        }
-        .brand span {
-            background: var(--primary);
-            color: white;
-            padding: 3px 8px;
-            border-radius: 8px;
-            font-size: 13px;
-            letter-spacing: 0.5px;
-        }
-
-        .audio-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: #f1f5f9;
-            padding: 6px 16px;
-            border-radius: 99px;
-            border: 1px solid var(--border);
-        }
-
-        .play-pause-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 12px;
-            transition: 0.2s;
-        }
-        .play-pause-btn:hover { background: var(--primary-dark); transform: scale(1.05); }
-
-        .skip-btn {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 50%;
-            width: 28px;
-            height: 28px;
-            cursor: pointer;
-            font-weight: 700;
-            color: var(--text-muted);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: 0.2s;
-            font-size: 11px;
-        }
-        .skip-btn:hover { border-color: var(--primary); color: var(--primary-dark); }
-
-        .progress-bar {
-            -webkit-appearance: none;
-            width: 140px;
-            height: 5px;
-            background: #cbd5e1;
-            border-radius: 5px;
-            outline: none;
-            cursor: pointer;
-        }
-        .progress-bar::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--primary-dark);
-            cursor: pointer;
-        }
-
-        .time-display {
-            font-weight: 700;
-            color: var(--text-muted);
-            font-size: 13px;
-            min-width: 35px;
-            text-align: center;
-        }
-        .hidden { display: none !important; }
-
-        .btn-submit {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 14px;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
-            white-space: nowrap;
-        }
-        .btn-submit:hover { background: var(--primary-dark); }
-
-        /* --- MAIN LAYOUT CONTAINER --- */
-        .container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 24px;
-            max-width: 1000px;
-            width: 100%;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .container.split-mode {
-            max-width: 100%;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            overflow: hidden;
-            padding: 20px 24px;
-        }
-
-        .transcript-pane, .question-pane {
-            background: var(--surface);
-            border-radius: 16px;
-            padding: 24px;
-            border: 1px solid var(--border);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
-            overflow-y: auto;
-        }
-
-        .transcript-pane {
-            height: 100%;
-            line-height: 1.7;
-        }
-
-        .question-pane {
-            height: 100%;
-        }
-
-        /* --- CONTENT STYLES --- */
-        h2 { color: var(--text-main); font-size: 20px; font-family: 'Lora', serif; margin-bottom: 16px; }
-        h3 { color: var(--text-muted); border-bottom: 1px solid var(--border); padding-bottom: 6px; margin: 24px 0 16px 0; font-size: 16px; }
-        p { margin-bottom: 12px; font-size: 15px; }
-
-        .instruction {
-            background: var(--primary-soft);
-            color: var(--primary-dark);
-            padding: 12px 16px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 20px;
-            border: 1px dashed #a7f3d0;
-        }
-
-        /* --- TABLE & INPUT STYLES --- */
-        .custom-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-        .custom-table th {
-            background: #f1f5f9;
-            color: var(--text-main);
-            padding: 10px 14px;
-            text-align: left;
-            font-size: 14px;
-            font-weight: 700;
-            border-bottom: 1px solid var(--border);
-        }
-        .custom-table td {
-            border-bottom: 1px solid var(--border);
-            padding: 12px 14px;
-            font-size: 14px;
-            vertical-align: middle;
-            line-height: 1.6;
-        }
-        .custom-table tr:last-child td { border-bottom: none; }
-
-        input[type="text"] {
-            border: 1.5px solid #cbd5e1;
-            border-radius: 6px;
-            padding: 4px 8px;
-            font-family: inherit;
-            font-size: 14px;
-            color: var(--text-main);
-            outline: none;
-            background: #f8fafc;
-            transition: all 0.2s ease;
-            font-weight: 600;
-            width: 120px;
-            display: inline-block;
-            margin: 2px 0;
-        }
-        input[type="text"]:focus {
-            border-color: var(--primary);
-            background: white;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
-        }
-        input[type="text"].correct-input { border-color: var(--correct); color: var(--correct); background: #f0fdf4; }
-        input[type="text"].wrong-input { border-color: var(--wrong); color: var(--wrong); background: #fef2f2; }
-
-        /* HIGHLIGHT IN SCRIPT */
-        mark.hl {
-            background-color: var(--highlight);
-            color: #000;
-            padding: 2px 4px;
-            border-radius: 4px;
-            font-weight: 700;
-        }
-        .time-tag {
-            display: inline-block;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--primary-dark);
-            background: var(--primary-soft);
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-right: 6px;
-        }
-
-        /* EXPLANATION CARDS */
-        .explanations-wrapper {
-            margin-top: 24px;
-            border-top: 1px dashed var(--border);
-            padding-top: 20px;
-        }
-        .exp-card {
-            background: #f8fafc;
-            border: 1px solid var(--border);
-            border-left: 4px solid var(--primary);
-            border-radius: 10px;
-            padding: 14px 16px;
-            margin-bottom: 14px;
-        }
-        .exp-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 6px;
-        }
-        .exp-title { font-weight: 700; font-size: 15px; color: var(--primary-dark); }
-        .exp-badge {
-            background: var(--primary-soft);
-            color: var(--primary-dark);
-            font-size: 11px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 99px;
-        }
-        .exp-row { margin-bottom: 6px; font-size: 13.5px; line-height: 1.5; }
-        .exp-label { font-weight: 700; color: var(--text-main); }
-
-        /* --- FOOTER --- */
-        footer {
-            flex-shrink: 0;
-            background: var(--surface);
-            border-top: 1px solid var(--border);
-            padding: 10px 24px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            z-index: 10;
-        }
-        .footer-title {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
-        }
-        .nav-scroller { display: flex; gap: 8px; overflow-x: auto; max-width: 100%; padding: 2px 0; }
-        .nav-dot {
-            width: 32px;
-            height: 32px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            color: var(--text-muted);
-            background: white;
-            transition: 0.2s;
-            flex-shrink: 0;
-        }
-        .nav-dot:hover { border-color: var(--primary); color: var(--primary); }
-        .nav-dot.done { background: #f1f5f9; color: var(--text-main); border-color: #cbd5e1; }
-        .nav-dot.correct { background: var(--correct); color: white; border-color: var(--correct); }
-        .nav-dot.incorrect { background: var(--wrong); color: white; border-color: var(--wrong); }
-
-        /* --- OVERLAYS & MODALS --- */
-        #setupOverlay, .custom-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 9999;
-        }
-        .custom-overlay { display: none; z-index: 99999; }
-
-        .setup-modal, .custom-modal {
-            background: white; padding: 30px; border-radius: 20px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            width: 90%; max-width: 440px; text-align: center;
-        }
-        .setup-modal h2, .custom-modal h2 {
-            font-family: 'Lora', serif; color: var(--text-main); font-size: 22px; margin-bottom: 8px;
-        }
-
-        .mode-btn {
-            display: block; width: 100%; padding: 12px; margin: 10px 0;
-            border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer;
-            transition: 0.2s; font-family: inherit; border: 2px solid transparent;
-        }
-        .mode-practice { background: #fff7ed; color: #c2410c; border-color: #ffedd5; }
-        .mode-practice:hover, .mode-practice.selected { background: var(--accent); color: white; }
-        .mode-mock { background: var(--primary-soft); color: var(--primary-dark); border-color: #a7f3d0; }
-        .mode-mock:hover, .mode-mock.selected { background: var(--primary); color: white; }
-
-        .start-btn {
-            background: var(--primary); color: white; border: none; padding: 10px 30px;
-            border-radius: 99px; font-size: 15px; font-weight: 700; cursor: pointer;
-            margin-top: 15px; transition: 0.2s; display: none;
-        }
-        .start-btn:hover { background: var(--primary-dark); }
-
-        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-cancel { background: #f1f5f9; color: var(--text-muted); border: none; padding: 10px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; flex: 1; }
-        .btn-confirm { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer; flex: 1; }
-
-        @media (max-width: 768px) {
-            header { height: auto; padding: 12px 16px; flex-direction: column; gap: 10px; }
-            .audio-controls { width: 100%; justify-content: space-between; }
-            .progress-bar { flex: 1; width: auto; }
-            .container { padding: 16px; }
-            .container.split-mode { grid-template-columns: 1fr; overflow-y: auto; }
-            input[type="text"] { width: 100%; margin-top: 4px; }
-        }
-    </style>
-</head>
-<body>
-
-    <div id="setupOverlay">
-        <div class="setup-modal">
-            <h2>Listening Library ✨</h2>
-            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">Vui lòng chọn chế độ làm bài:</p>
-            
-            <button class="mode-btn mode-practice" onclick="selectMode('practice')">🎯 Luyện tập</button>
-            <button class="mode-btn mode-mock" onclick="selectMode('mock')">🏆 Thi thử</button>
-            
-            <button class="start-btn" id="startBtn" onclick="askReady()">Sẵn sàng</button>
-        </div>
+  // Transcript dạng HTML hiển thị ở pane bên trái
+  transcriptHtml: `
+    <h2 style="font-family: 'Lora', serif; color: var(--text-title); border-bottom: 2px solid var(--brand-primary); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">📜 Full Audio Transcript</h2>
+    <div style="font-size: 13.5px; line-height: 1.6; color: var(--text-body);">
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> Greek Island Holidays. Can I help you?</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">01:46</span>Yes, I hope so. I have a friend who's just come back from Corfu, and she's recommended some apartments in Arillas. She thought they might be on your list.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">01:57</span>Arillas, Arillas. Let me see. Uh, can you give me the names?</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">02:02</span>Yes. The first, Rose Garden Apartments. I'd like to go with another friend in the last week of October.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">02:10</span>Well, we've got a lovely studio flat available at that time. I'm sure you'd enjoy the entertainment program there too, with Greek dancing in the restaurant.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">02:21</span>And the cost for each of us?</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">02:23</span>Two hundred and nineteen pounds.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">02:25</span>That sounds very reasonable. I'm just jotting down some notes. Now, the second one she mentioned was called Blue Bay.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">02:34</span>Blue Bay. Yes. In fact, that's very popular, and it has some special features.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">02:41</span>Really?</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">02:42</span>The main attraction is the large swimming pool with saltwater.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">02:46</span>Mm, much healthier, I understand.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">02:48</span>That's right. And it isn't far from the beach either, <mark class="hl">[Q1] only three hundred meters</mark>. And only around half a kilometer to some shops, so you don't have to be too energetic.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">03:01</span>Is it much more expensive than the first one?</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">03:03</span>Let me just check. I think at the time you want to go, it's around two hundred and sixty pounds. Uh, no, two hundred and seventy-five pounds to be exact.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">03:14</span>Right. I've got that. Now, there are just two more apartments to ask you about. Um, I can't read my own writing. Something to do with sun, sunshine, is it?</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">03:26</span>I think you meant the <mark class="hl">[Q2] Sun Shade</mark> Apartments. They're on a mountainside.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">03:30</span>Any special features?</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">03:32</span>Yes. Each room has its own sun terrace, and there are shared barbecue facilities.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">03:37</span>Ooh, sounds lovely.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">03:39</span>Yes. It is rather well-equipped. It also provides water sports. It has its own beach. There are facilities for water-skiing.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">03:49</span>Any kitesurfing? My friend's quite keen.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">03:52</span>Not at the hotel, but I'm sure you'll find some in Arillas. There's also satellite TV in the apartments.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">03:59</span>And how much is that one?</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">04:02</span>Four hundred and ninety pounds with two sharing.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">04:05</span>You mean two hundred and forty-five pounds each?</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">04:08</span>I'm afraid not. Each person has to pay that amount, and there must be at least two in an apartment.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">04:15</span>Ooh, I don't think that would be within our budget, unfortunately. And the last one sounds a bit expensive too. The Grand?</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">04:23</span>Actually, it's quite reasonable. It's an older style house with Greek paintings in every room and a <mark class="hl">[Q3] balcony</mark> outside.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">04:31</span>Sounds nice. What are the views like?</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">04:33</span>Well, there are <mark class="hl">[Q4] forests</mark> all around, and they hide a supermarket just down the road, so that's very useful for all your shopping needs. Uh, there's a disco in the area too.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">04:43</span>And the price?</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">04:45</span><mark class="hl">[Q5] Three hundred and nineteen</mark> pounds at that time. But if you leave it till November, it goes down by forty percent.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">04:53</span>Mm, too late, I'm afraid.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">04:55</span>Well, why don't I send you a brochure with full details? Miss...?</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">04:59</span>Nash. But don't worry about that. I'm coming to Upminster soon, and I'll call and get one. I just wanted to get an idea first.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">05:07</span>Well, that's fine. Uh, we've got plenty here when you come.</p>
+      <p style="margin-bottom: 12px; border-bottom: 1px dashed var(--card-border); padding-bottom: 8px; font-style: italic; color: var(--text-muted);">[Đoạn hội thoại chuyển tiếp giữa Part 1 - Phần 1 và Phần 2]</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">05:58</span>If you've got a minute, could I just check a couple of points about insurance? I got one policy through the post, but I'd like to see if yours is better.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">06:07</span>Fine. Uh, what would you like to know?</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">06:10</span>Well, the one I've got has benefits and then the maximum amount you can claim. Is that like yours?</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">06:17</span>Yes. That's how most of them are.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">06:20</span>Well, the first thing is cancellation. If the holiday's canceled, on the policy I've got, you can claim eight thousand pounds.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">06:27</span>We can improve on that, Miss Nash. Uh, for Greek island holidays, our maximum is <mark class="hl">[Q6] ten thousand</mark> pounds.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">06:34</span>That's good. Of course, our holiday won't even cost one thousand pounds together.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">06:39</span>It's still sensible to have good cover. Now, if you go to hospital, we allow six hundred pounds.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">06:45</span>Yes, mine's similar.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">06:47</span>And we also allow a <mark class="hl">[Q7] relative</mark> to travel to your holiday resort.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">06:51</span>My policy just says their representative will help you.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">06:55</span>You can see there's another difference there. And what happens if you don't get on the plane?</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">07:00</span>Uh, nothing, as far as I can see on this form.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">07:03</span>Don't you have, uh, <mark class="hl">[Q8] missed</mark> departure?</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">07:10</span>No. I'll just jot that down.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">07:10</span>We pay up to a thousand pounds for that, depending on the reason, and we're particularly generous about loss of personal belongings, up to three thousand pounds, but not more than five hundred pounds for a single <mark class="hl">[Q9] item</mark>.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">07:23</span>Then I'd better not take my laptop.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">07:26</span>Not unless you insure it separately.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">07:28</span>Okay. Thanks very much for your time. You've really been helpful. Can I get back to you? Your name is...</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">07:34</span>Ben <mark class="hl">[Q10] Ludlow</mark>. That's L-U-D-L-O-W. I'm the assistant manager here. I'll give you my number. It's oh eight one two six oh five four three two one six.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">07:53</span>But didn't I phone oh eight one two six oh five six seven two nine four? That's what I've got on the paper.</p>
+      <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Agent:</b> <span class="time-tag">08:01</span>That's the main switchboard. I've given you my direct line.</p>
+      <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Miss Nash:</b> <span class="time-tag">08:05</span>Right. Thank you very much for your time.</p>
     </div>
+  `,
 
-    <div id="startConfirmOverlay" class="custom-overlay">
-        <div class="custom-modal">
-            <h2>Xác nhận bắt đầu</h2>
-            <p id="startConfirmMsg" style="font-size: 14px; color: var(--text-muted); margin-bottom: 16px; white-space: pre-line;"></p>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal('startConfirmOverlay')">Hủy</button>
-                <button class="btn-confirm" onclick="startTestActual()">Bắt đầu</button>
+  // Nội dung đề thi hiển thị ở pane bên phải
+  questionsHtml: `
+    <h2 style="font-family: 'Lora', serif; color: var(--text-title); margin-bottom: 12px;">Part 1: Questions 1-10</h2>
+    
+    <!-- SECTION 1: QUESTIONS 1-5 -->
+    <div class="instruction">🎧 Questions 1-5: Complete the table below. Write <strong>ONE WORD OR A NUMBER</strong> for each answer.</div>
+    
+    <table class="custom-table" style="box-shadow: var(--shadow-sm);">
+      <thead>
+        <tr>
+          <th style="width: 25%;">Apartments</th>
+          <th style="width: 25%;">Facilities</th>
+          <th style="width: 35%;">Other Information</th>
+          <th style="width: 15%;">Cost</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-weight: 700; color: var(--text-title);">Rose Garden Apartments</td>
+          <td>Studio flat<br><span style="font-size: 11px; color: var(--text-muted);">Entertainment programme: Greek dancing</span></td>
+          <td>
+            Just <strong>(1)</strong> 
+            <input type="text" id="q1" oninput="markAnswered(1)" placeholder="1..."> 
+            meters from beach<br>
+            Near shops
+          </td>
+          <td style="font-weight: 700; color: var(--brand-primary);">£ 219</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 700; color: var(--text-title);">Blue Bay Apartments</td>
+          <td>Large saltwater swimming pool</td>
+          <td>
+            Water sports<br>
+            Overlooking <strong>(4)</strong> 
+            <input type="text" id="q4" oninput="markAnswered(4)" placeholder="4...">
+          </td>
+          <td style="font-weight: 700; color: var(--brand-primary);">£ 275</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 700; color: var(--text-title);">
+            <strong>(2)</strong> 
+            <input type="text" id="q2" oninput="markAnswered(2)" placeholder="2..." style="width: 100px;"> 
+            Apartments
+          </td>
+          <td>Terrace</td>
+          <td>Near a supermarket and a disco</td>
+          <td style="font-weight: 700; color: var(--brand-primary);">£ 490</td>
+        </tr>
+        <tr>
+          <td style="font-weight: 700; color: var(--text-title);">The Grand</td>
+          <td>Greek paintings and <strong>(3)</strong> <input type="text" id="q3" oninput="markAnswered(3)" placeholder="3..."></td>
+          <td>(No extra info)</td>
+          <td style="font-weight: 700; color: var(--brand-primary);">
+            <strong>(5)</strong> £ <input type="text" id="q5" oninput="markAnswered(5)" placeholder="5..." style="width: 70px;">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- SECTION 2: QUESTIONS 6-10 -->
+    <div class="instruction" style="margin-top: 18px;">🎧 Questions 6-10: Complete the table below. Write <strong>ONE WORD OR A NUMBER</strong> for each answer.</div>
+    
+    <h3 style="margin-bottom: 8px;">🏝️ GREEK ISLAND HOLIDAYS</h3>
+    <table class="custom-table" style="box-shadow: var(--shadow-sm);">
+      <thead>
+        <tr>
+          <th style="width: 50%;">Insurance Benefits</th>
+          <th style="width: 50%;">Maximum Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Cancellation</td>
+          <td>
+            <strong>(6)</strong> £ <input type="text" id="q6" oninput="markAnswered(6)" placeholder="6..." style="width: 110px;">
+          </td>
+        </tr>
+        <tr>
+          <td>Hospital</td>
+          <td>
+            £ 600 additional benefit allows a <strong>(7)</strong> 
+            <input type="text" id="q7" oninput="markAnswered(7)" placeholder="7..." style="width: 110px;"> 
+            to travel to resort
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <strong>(8)</strong> <input type="text" id="q8" oninput="markAnswered(8)" placeholder="8..." style="width: 100px;"> 
+            departure
+          </td>
+          <td>Up to £ 1000 depends on reason</td>
+        </tr>
+        <tr>
+          <td>Personal belongings</td>
+          <td>
+            Up to £ 3000<br>
+            £ 500 for one <strong>(9)</strong> 
+            <input type="text" id="q9" oninput="markAnswered(9)" placeholder="9..." style="width: 110px;">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" style="background: var(--brand-peach-soft); border-top: 1.5px solid var(--card-border);">
+            <div style="font-weight: 700; color: var(--text-title); display: flex; align-items: center; justify-content: center; gap: 8px; padding: 4px 0;">
+              👤 Name of assistant manager: Ben <strong>(10)</strong> 
+              <input type="text" id="q10" oninput="markAnswered(10)" placeholder="10..." style="width: 120px; border-color: var(--brand-peach);">
             </div>
-        </div>
-    </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  `,
 
-    <div id="submitModal" class="custom-overlay">
-        <div class="custom-modal">
-            <h2>Xác nhận nộp bài?</h2>
-            <p style="font-size: 14px; color: var(--text-muted);">Bạn có chắc chắn muốn kết thúc bài làm?</p>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal('submitModal')">Quay lại</button>
-                <button class="btn-confirm" onclick="evaluateTest()">Nộp bài</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="resultOverlay" class="custom-overlay">
-        <div class="custom-modal">
-            <h2>🎉 Hoàn thành!</h2>
-            <div id="resultMessage" style="margin: 16px 0;"></div>
-            <button class="btn-confirm" style="width: 100%;" onclick="closeModal('resultOverlay')">Xem chi tiết đáp án</button>
-        </div>
-    </div>
-
-    <header>
-        <div class="brand">
-            <span>SnapEnglish</span> Part 1 - Test 1
-        </div>
+  // Phần giải thích hiện ra khi bấm nộp bài - thiết kế cực kỳ màu sắc, rực rỡ và chuyên nghiệp
+  explanationsHtml: `
+    <!-- EXPLANATION Q1 -->
+    <div class="exp-card" style="border-left: 5px solid #2ed573; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #2ed573;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">
+        <span style="font-weight: 800; font-size: 14.5px; color: #2ed573;">🎯 Câu 1: 300 / three hundred</span>
+        <span style="background: rgba(46, 213, 115, 0.1); color: #2e86de; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">📊 Number (Con số)</span>
+      </div>
+      <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">
+        <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #2ed573;">300</strong> hoặc <strong style="font-size: 14px; color: #2ed573;">three hundred</strong></p>
         
-        <div class="audio-controls" id="audioContainer">
-            <button class="skip-btn" id="btn-backward" onclick="skipAudio(-10)">-10</button>
-            <button class="play-pause-btn" id="playPauseBtn" onclick="togglePlay()">▶</button>
-            <span class="time-display" id="currentTimeDisplay">0:00</span>
-            <input type="range" class="progress-bar" id="audioProgress" value="0" min="0" max="495" step="1" onchange="seekAudio(this.value)">
-            <span class="time-display">/ 8:15</span>
-            <button class="skip-btn" id="btn-forward" onclick="skipAudio(10)">+10</button>
-            
-            <audio id="testAudio" class="hidden" preload="auto">
-                <source src="https://raw.githubusercontent.com/snaplanguages/SnapEnglish-audioieltslistening01/1f5e120d9f5c3c2598b4ffea2baf89c6a33ba1ae/IELTS%20Listening%20Test%201.mp3" type="audio/mpeg">
-            </audio>
-        </div>
-
-        <button class="btn-submit" id="topSubmitBtn" onclick="requestSubmit()">NỘP BÀI</button>
-    </header>
-
-    <main class="container" id="mainContainer">
+        <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>
+        <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">
+          "...And it isn't far from the beach either, <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">only three hundred meters</mark>."
+        </blockquote>
         
-        <!-- TRÁI: TRANSCRIPT -->
-        <div class="transcript-pane hidden" id="transcriptPane">
-            <h2>📜 Full Audio Transcript</h2>
-            <p>Greek Island Holidays. Can I help you?</p>
-            <p><span class="time-tag">01:46</span>Yes, I hope so. I have a friend who's just come back from Corfu, and she's recommended some apartments in Arillas. She thought they might be on your list.</p>
-            <p><span class="time-tag">01:57</span>Arillas, Arillas. Let me see. Uh, can you give me the names?</p>
-            <p><span class="time-tag">02:02</span>Yes. The first, Rose Garden Apartments. I'd like to go with another friend in the last week of October.</p>
-            <p><span class="time-tag">02:10</span>Well, we've got a lovely studio flat available at that time. I'm sure you'd enjoy the entertainment program there too, with Greek dancing in the restaurant.</p>
-            <p><span class="time-tag">02:21</span>And the cost for each of us?</p>
-            <p><span class="time-tag">02:23</span>Two hundred and nineteen pounds.</p>
-            <p><span class="time-tag">02:25</span>That sounds very reasonable. I'm just jotting down some notes. Now, the second one she mentioned was called Blue Bay.</p>
-            <p><span class="time-tag">02:34</span>Blue Bay. Yes. In fact, that's very popular, and it has some special features.</p>
-            <p><span class="time-tag">02:41</span>Really?</p>
-            <p><span class="time-tag">02:42</span>The main attraction is the large swimming pool with saltwater.</p>
-            <p><span class="time-tag">02:46</span>Mm, much healthier, I understand.</p>
-            <p><span class="time-tag">02:48</span>That's right. And it isn't far from the beach either, <mark class="hl">[Q1] only three hundred meters</mark>. And only around half a kilometer to some shops, so you don't have to be too energetic.</p>
-            <p><span class="time-tag">03:01</span>Is it much more expensive than the first one?</p>
-            <p><span class="time-tag">03:03</span>Let me just check. I think at the time you want to go, it's around two hundred and sixty pounds. Uh, no, two hundred and seventy-five pounds to be exact.</p>
-            <p><span class="time-tag">03:14</span>Right. I've got that. Now, there are just two more apartments to ask you about. Um, I can't read my own writing. Something to do with sun, sunshine, is it?</p>
-            <p><span class="time-tag">03:26</span>I think you meant the <mark class="hl">[Q2] Sun Shade</mark> Apartments. They're on a mountainside.</p>
-            <p><span class="time-tag">03:30</span>Any special features?</p>
-            <p><span class="time-tag">03:32</span>Yes. Each room has its own sun terrace, and there are shared barbecue facilities.</p>
-            <p><span class="time-tag">03:37</span>Ooh, sounds lovely.</p>
-            <p><span class="time-tag">03:39</span>Yes. It is rather well-equipped. It also provides water sports. It has its own beach. There are facilities for water-skiing.</p>
-            <p><span class="time-tag">03:49</span>Any kitesurfing? My friend's quite keen.</p>
-            <p><span class="time-tag">03:52</span>Not at the hotel, but I'm sure you'll find some in Arillas. There's also satellite TV in the apartments.</p>
-            <p><span class="time-tag">03:59</span>And how much is that one?</p>
-            <p><span class="time-tag">04:02</span>Four hundred and ninety pounds with two sharing.</p>
-            <p><span class="time-tag">04:05</span>You mean two hundred and forty-five pounds each?</p>
-            <p><span class="time-tag">04:08</span>I'm afraid not. Each person has to pay that amount, and there must be at least two in an apartment.</p>
-            <p><span class="time-tag">04:15</span>Ooh, I don't think that would be within our budget, unfortunately. And the last one sounds a bit expensive too. The Grand?</p>
-            <p><span class="time-tag">04:23</span>Actually, it's quite reasonable. It's an older style house with Greek paintings in every room and a <mark class="hl">[Q3] balcony</mark> outside.</p>
-            <p><span class="time-tag">04:31</span>Sounds nice. What are the views like?</p>
-            <p><span class="time-tag">04:33</span>Well, there are <mark class="hl">[Q4] forests</mark> all around, and they hide a supermarket just down the road, so that's very useful for all your shopping needs. Uh, there's a disco in the area too.</p>
-            <p><span class="time-tag">04:43</span>And the price?</p>
-            <p><span class="time-tag">04:45</span><mark class="hl">[Q5] Three hundred and nineteen</mark> pounds at that time. But if you leave it till November, it goes down by forty percent.</p>
-            <p><span class="time-tag">04:53</span>Mm, too late, I'm afraid.</p>
-            <p><span class="time-tag">04:55</span>Well, why don't I send you a brochure with full details? Miss...?</p>
-            <p><span class="time-tag">04:59</span>Nash. But don't worry about that. I'm coming to Upminster soon, and I'll call and get one. I just wanted to get an idea first.</p>
-            <p><span class="time-tag">05:07</span>Well, that's fine. Uh, we've got plenty here when you come.</p>
-            <p><span class="time-tag">05:14</span>Before you hear the rest of the conversation, you have some time to look at questions six to ten. Now listen and answer questions six to ten.</p>
-            <p><span class="time-tag">05:58</span>If you've got a minute, could I just check a couple of points about insurance? I got one policy through the post, but I'd like to see if yours is better.</p>
-            <p><span class="time-tag">06:07</span>Fine. Uh, what would you like to know?</p>
-            <p><span class="time-tag">06:10</span>Well, the one I've got has benefits and then the maximum amount you can claim. Is that like yours?</p>
-            <p><span class="time-tag">06:17</span>Yes. That's how most of them are.</p>
-            <p><span class="time-tag">06:20</span>Well, the first thing is cancellation. If the holiday's canceled, on the policy I've got, you can claim eight thousand pounds.</p>
-            <p><span class="time-tag">06:27</span>We can improve on that, Miss Nash. Uh, for Greek island holidays, our maximum is <mark class="hl">[Q6] ten thousand</mark> pounds.</p>
-            <p><span class="time-tag">06:34</span>That's good. Of course, our holiday won't even cost one thousand pounds together.</p>
-            <p><span class="time-tag">06:39</span>It's still sensible to have good cover. Now, if you go to hospital, we allow six hundred pounds.</p>
-            <p><span class="time-tag">06:45</span>Yes, mine's similar.</p>
-            <p><span class="time-tag">06:47</span>And we also allow a <mark class="hl">[Q7] relative</mark> to travel to your holiday resort.</p>
-            <p><span class="time-tag">06:51</span>My policy just says their representative will help you.</p>
-            <p><span class="time-tag">06:55</span>You can see there's another difference there. And what happens if you don't get on the plane?</p>
-            <p><span class="time-tag">07:00</span>Uh, nothing, as far as I can see on this form.</p>
-            <p><span class="time-tag">07:03</span>Don't you have, uh, <mark class="hl">[Q8] missed</mark> departure?</p>
-            <p><span class="time-tag">07:10</span>No. I'll just jot that down.</p>
-            <p><span class="time-tag">07:10</span>We pay up to a thousand pounds for that, depending on the reason, and we're particularly generous about loss of personal belongings, up to three thousand pounds, but not more than five hundred pounds for a single <mark class="hl">[Q9] item</mark>.</p>
-            <p><span class="time-tag">07:23</span>Then I'd better not take my laptop.</p>
-            <p><span class="time-tag">07:26</span>Not unless you insure it separately.</p>
-            <p><span class="time-tag">07:28</span>Okay. Thanks very much for your time. You've really been helpful. Can I get back to you? Your name is...</p>
-            <p><span class="time-tag">07:34</span>Ben <mark class="hl">[Q10] Ludlow</mark>. That's L-U-D-L-O-W. I'm the assistant manager here. I'll give you my number. It's oh eight one two six oh five four three two one six.</p>
-            <p><span class="time-tag">07:53</span>But didn't I phone oh eight one two six oh five six seven two nine four? That's what I've got on the paper.</p>
-            <p><span class="time-tag">08:01</span>That's the main switchboard. I've given you my direct line.</p>
-            <p><span class="time-tag">08:05</span>Right. Thank you very much for your time.</p>
-        </div>
-
-        <!-- PHẢI: QUESTIONS -->
-        <div class="question-pane" id="questionPane">
-            <div id="part1">
-                <h2>Part 1: Questions 1-10</h2>
-                <div class="instruction">Questions 1-5: Complete the table below. Write <strong>ONE WORD OR A NUMBER</strong>.</div>
-                
-                <table class="custom-table">
-                    <thead><tr><th>Apartments</th><th>Facilities</th><th>Other Information</th><th>Cost</th></tr></thead>
-                    <tbody>
-                        <tr>
-                            <td>Rose Garden Apartments</td>
-                            <td>Studio Flat<br>Entertainment programme: Greek dancing</td>
-                            <td>Just <strong>(1)</strong> <input type="text" id="q1" oninput="markAnswered(1)"> meters from beach<br>Near shops</td>
-                            <td>£ 219</td>
-                        </tr>
-                        <tr>
-                            <td>Blue Bay Apartments</td>
-                            <td>Large salt water swimming pool</td>
-                            <td>Watersports<br>Overlooking <strong>(4)</strong> <input type="text" id="q4" oninput="markAnswered(4)"></td>
-                            <td>£ 275</td>
-                        </tr>
-                        <tr>
-                            <td><strong>(2)</strong> <input type="text" id="q2" oninput="markAnswered(2)"> Apartments</td>
-                            <td>Terrace</td>
-                            <td>Near a supermarket and a disco</td>
-                            <td>£ 490</td>
-                        </tr>
-                        <tr>
-                            <td>The Grand</td>
-                            <td>Greek paintings and <strong>(3)</strong> <input type="text" id="q3" oninput="markAnswered(3)"></td>
-                            <td></td>
-                            <td><strong>(5)</strong> £ <input type="text" id="q5" oninput="markAnswered(5)"></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <div class="instruction" style="margin-top: 30px;">Questions 6-10: Complete the table below. Write <strong>ONE WORD OR A NUMBER</strong>.</div>
-                <h3>GREEK ISLAND HOLIDAYS</h3>
-                
-                <table class="custom-table">
-                    <thead><tr><th>Insurance Benefits</th><th>Maximum Amount</th></tr></thead>
-                    <tbody>
-                        <tr><td>Cancellation</td><td><strong>(6)</strong> £ <input type="text" id="q6" oninput="markAnswered(6)"></td></tr>
-                        <tr><td>Hospital</td><td>£ 600 additional benefit allows a <strong>(7)</strong> <input type="text" id="q7" oninput="markAnswered(7)"> to travel to resort</td></tr>
-                        <tr><td><strong>(8)</strong> <input type="text" id="q8" oninput="markAnswered(8)"> departure</td><td>Up to £ 1000 depends on reason</td></tr>
-                        <tr><td>Personal belongings</td><td>Up to £ 3000<br>£ 500 for one <strong>(9)</strong> <input type="text" id="q9" oninput="markAnswered(9)"></td></tr>
-                        <tr><td></td><td><span style="font-weight:700; display:block; margin-top: 8px;">Name of assistant manager: Ben <strong>(10)</strong> <input type="text" id="q10" oninput="markAnswered(10)"></span></td></tr>
-                    </tbody>
-                </table>
-
-                <!-- EXPLANATIONS -->
-                <div class="explanations-wrapper hidden" id="explanationsWrapper">
-                    <h3>💡 Giải thích chi tiết đáp án</h3>
-
-                    <!-- ==================== CÂU 1 ==================== -->
-<div class="exp-card">
-    <div class="exp-header">
-        <span class="exp-title">Câu 1: 300</span>
-        <span class="exp-badge">Number</span>
+        <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Đứng trước danh từ đo lường "meters" và sau từ hạn định "Just", vị trí này cần một con số chỉ khoảng cách từ căn hộ Blue Bay tới bãi biển. Người Agent xác nhận rõ con số là 300 mét.</p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #9c27b0; font-weight: 700;">🔄 Diễn đạt tương đương (Paraphrase):</span> 
+          <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">isn't far from the beach... only three hundred meters</code> ➔ 
+          <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">Just 300 meters from beach</code>
+        </p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: var(--danger); font-weight: 700;">⚠️ Phân tích bẫy (Distractor):</span> Người nói nhắc tới chi phí <b>£219</b> (Rose Garden) và khoảng cách <b>"half a kilometer" (500m)</b> tới một vài cửa hàng nhằm gây phân tâm cho người học không tập trung bám sát từ khóa bãi biển ("beach").</p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #ff9f43; font-weight: 700;">🗣️ Phát âm cần chú ý:</span> 
+          <ul>
+            <li><b>Nối âm:</b> <i style="color: var(--text-title);">isn't far from</i> /ˌɪznt ˈfɑːr frəm/ - Âm /r/ lướt nhẹ sang phụ âm sau.</li>
+            <li><b>Nuốt âm:</b> Từ <i style="color: var(--text-title);">hundred</i> /ˈhʌndrəd/ đọc lướt nhanh, trọng âm rơi cực mạnh vào từ <i style="color: var(--text-title);">three</i>.</li>
+          </ul>
+        </p>
+        
+        <p style="margin-bottom: 0;"><span style="color: #10ac84; font-weight: 700;">📚 Từ vựng hữu ích:</span> 
+          <span style="background: var(--brand-peach-soft); padding: 1px 6px; border-radius: 4px; font-weight: 600;">studio flat</span> /ˈstjuːdiəʊ flæt/ (n): căn hộ khép kín nhỏ (gồm 1 phòng chính diện tích tối giản).
+        </p>
+      </div>
     </div>
 
-    <div class="exp-detail-box">
-        <div class="exp-row"><span class="exp-label">✅ Đáp án đúng:</span> <span class="correct-ans">300</span></div>
-        <div class="exp-row"><span class="exp-label">📜 Transcript chứa đáp án:</span> <blockquote class="transcript-quote">"...and it isn't far from the beach – only <b>three hundred meters</b>."</blockquote></div>
-        <div class="exp-row"><span class="exp-label">🔑 Từ/cụm từ quyết định:</span> <mark>only three hundred meters</mark></div>
-        <div class="exp-row"><span class="exp-label">💡 Giải thích vì sao đáp án đúng:</span> Đứng trước danh từ "meters" và sau trạng từ "Just", vị trí này bắt buộc điền một <b>Con số (Number)</b> chỉ khoảng cách từ căn hộ đến bãi biển. Người nói xác nhận rõ khoảng cách là 300m.</div>
-        <div class="exp-row"><span class="exp-label">🔄 Paraphrase:</span> "isn't far from the beach ... only three hundred meters" ➔ "Just 300 meters from beach".</div>
-        <div class="exp-row"><span class="exp-label">⚠️ Bẫy (Self-correction, distractor...):</span> Người nói có nhắc tới con số <b>£219</b> (mức giá) và khoảng cách <b>"half a kilometer" (500m)</b> tới cửa hàng ở câu sau nhằm làm nhiễu người nghe không tập trung vào từ khóa "beach".</div>
-        <div class="exp-row"><span class="exp-label">📚 Từ vựng cần học (IPA + nghĩa):</span> 
-            <ul>
-                <li><b>studio flat</b> /ˈstjuːdiəʊ flæt/ (n): căn hộ nhỏ khép kín (1 phòng)</li>
-                <li><b>entertainment programme</b> /ˌentəˈteɪnmənt ˈprəʊɡræm/ (n): chương trình giải trí</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🗣️ Phát âm cần chú ý:</span> 
-            <ul>
-                <li><b>Linking (Nối âm):</b> <i>isn't far from</i> /ˈɪznt fɑːr frəm/ - âm /r/ được nối nhẹ sang nguyên âm sau.</li>
-                <li><b>Weak form:</b> Từ <i>hundred</i> /ˈhʌndrəd/ phát âm lướt nhanh, trọng âm rơi mạnh vào từ <i>three</i>.</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🎯 Keyword cần bắt:</span> Rose Garden, meters, beach.</div>
-        <div class="exp-row"><span class="exp-label">💡 Mẹo nhận ra đáp án lần sau:</span> Trước các đơn vị đo lường như <i>meters, km, miles</i> luôn là con số. Cần bắt đúng từ chỉ địa điểm "beach" trước khi chốt số.</div>
-    </div>
-</div>
-
-<!-- ==================== CÂU 2 ==================== -->
-<div class="exp-card">
-    <div class="exp-header">
-        <span class="exp-title">Câu 2: Sunshade (hoặc Sun Shade)</span>
-        <span class="exp-badge">Proper Noun</span>
-    </div>
-
-    <div class="exp-detail-box">
-        <div class="exp-row"><span class="exp-label">✅ Đáp án đúng:</span> <span class="correct-ans">Sunshade / Sun Shade</span></div>
-        <div class="exp-row"><span class="exp-label">📜 Transcript chứa đáp án:</span> <blockquote class="transcript-quote">Woman: "Something to do with sun, sunshine, is it?" <br>Man: "I think you meant the <b>Sun Shade Apartments</b>."</blockquote></div>
-        <div class="exp-row"><span class="exp-label">🔑 Từ/cụm từ quyết định:</span> <mark>I think you meant the Sun Shade Apartments</mark></div>
-        <div class="exp-row"><span class="exp-label">💡 Giải thích vì sao đáp án đúng:</span> Đứng trước danh từ "Apartments", chỗ trống cần một <b>Danh từ / Tên riêng (Proper Noun)</b> đóng vai trò làm bổ ngữ tên cho khu căn hộ.</div>
-        <div class="exp-row"><span class="exp-label">🔄 Paraphrase:</span> "Something to do with sun..." ➔ "Sun Shade Apartments".</div>
-        <div class="exp-row"><span class="exp-label">⚠️ Bẫy (Self-correction, distractor...):</span> <b>Bẫy tự đoán (Guessing trap):</b> Người hỏi tự đoán tên là <i>"sunshine"</i> nhưng người tư vấn ngay lập tức sửa lại thành <i>"Sun Shade"</i>. Nếu vội vàng sẽ dễ viết nhầm "Sunshine".</div>
-        <div class="exp-row"><span class="exp-label">📚 Từ vựng cần học (IPA + nghĩa):</span> 
-            <ul>
-                <li><b>mountainside</b> /ˈmaʊntɪnsaɪd/ (n): sườn núi</li>
-                <li><b>sun terrace</b> /sʌn ˈterəs/ (n): sân hiên tắm nắng</li>
-                <li><b>barbecue facilities</b> /ˈbɑːrbɪkjuː fəˈsɪlətiz/ (n): dụng cụ/khu vực nướng BBQ</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🗣️ Phát âm cần chú ý:</span> 
-            <ul>
-                <li><b>Phân biệt âm:</b> <i>Sun Shade</i> /sʌn ʃeɪd/ - Chú ý âm /s/ trong "Sun" và âm /ʃ/ uốn lưỡi trong "Shade".</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🎯 Keyword cần bắt:</span> Apartments, mountainside, sun...</div>
-        <div class="exp-row"><span class="exp-label">💡 Mẹo nhận ra đáp án lần sau:</span> Khi một nhân vật đưa ra câu hỏi đoán tên (Guessing), hãy kiên nhẫn chờ nhân vật thứ hai xác nhận hoặc đính chính (Correction) mới chốt đáp án.</div>
-    </div>
-</div>
-
-<!-- ==================== CÂU 3 ==================== -->
-<div class="exp-card">
-    <div class="exp-header">
-        <span class="exp-title">Câu 3: balcony</span>
-        <span class="exp-badge">Noun (Danh từ)</span>
+    <!-- EXPLANATION Q2 -->
+    <div class="exp-card" style="border-left: 5px solid #ff9f43; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #ff9f43;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">
+        <span style="font-weight: 800; font-size: 14.5px; color: #ff9f43;">🎯 Câu 2: Sunshade / Sun shade</span>
+        <span style="background: rgba(255, 159, 67, 0.1); color: #ff9f43; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">🏷️ Proper Noun (Tên riêng)</span>
+      </div>
+      <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">
+        <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #ff9f43;">Sunshade</strong> hoặc <strong style="font-size: 14px; color: #ff9f43;">Sun shade</strong></p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>
+        <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">
+          Miss Nash: "Something to do with sun, sunshine, is it?"<br>
+          Agent: "I think you meant the <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">Sun Shade Apartments</mark>. They're on a mountainside."
+        </blockquote>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Trước danh từ "Apartments", vị trí này cần điền một Danh từ riêng đóng vai trò làm tên gọi của khu căn hộ. Người tư vấn đính chính lại thông tin dự đoán sai của người khách.</p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: var(--danger); font-weight: 700;">⚠️ Phân tích bẫy (Distractor):</span> <b>Bẫy tự đoán (Guessing trap):</b> Khách hàng đoán tên là <i>"sunshine"</i> nhưng Agent ngay lập tức đính chính chính xác là <i>"Sun Shade"</i>. Nếu vội vàng chốt ngay từ đầu sẽ ghi sai đáp án.</p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #ff9f43; font-weight: 700;">🗣️ Phát âm cần chú ý:</span> 
+          Phân biệt âm đuôi: <i style="color: var(--text-title);">Sun Shade</i> /sʌn ʃeɪd/ - Chú ý âm /s/ trong "Sun" và âm uốn lưỡi /ʃ/ cực mạnh trong "Shade".
+        </p>
+        
+        <p style="margin-bottom: 0;"><span style="color: #10ac84; font-weight: 700;">📚 Từ vựng hữu ích:</span> 
+          <span style="background: var(--brand-peach-soft); padding: 1px 6px; border-radius: 4px; font-weight: 600;">mountainside</span> /ˈmaʊntɪnsaɪd/ (n): sườn núi; 
+          <span style="background: var(--brand-peach-soft); padding: 1px 6px; border-radius: 4px; font-weight: 600;">sun terrace</span> /sʌn ˈterəs/ (n): hiên tắm nắng.
+        </p>
+      </div>
     </div>
 
-    <div class="exp-detail-box">
-        <div class="exp-row"><span class="exp-label">✅ Đáp án đúng:</span> <span class="correct-ans">balcony</span></div>
-        <div class="exp-row"><span class="exp-label">📜 Transcript chứa đáp án:</span> <blockquote class="transcript-quote">"They're in an older style house... with Greek paintings in every room and a <b>balcony</b> outside."</blockquote></div>
-        <div class="exp-row"><span class="exp-label">🔑 Từ/cụm từ quyết định:</span> <mark>Greek paintings in every room and a balcony outside</mark></div>
-        <div class="exp-row"><span class="exp-label">💡 Giải thích vì sao đáp án đúng:</span> Liên từ "and" nối hai danh từ song song ("Greek paintings" và "..."). Sau mạo từ "a", bắt buộc là một <b>Danh từ số ít đếm được (Noun)</b> chỉ đặc điểm căn hộ.</div>
-        <div class="exp-row"><span class="exp-label">🔄 Paraphrase:</span> "Greek paintings in every room and a balcony outside" ➔ "Greek paintings and balcony".</div>
-        <div class="exp-row"><span class="exp-label">⚠️ Bẫy (Self-correction, distractor...):</span> <b>Lỗi chính tả (Spelling):</b> Rất dễ bị viết sai chính tả từ này thành <i>"balcone"</i> hoặc <i>"balconey"</i>.</div>
-        <div class="exp-row"><span class="exp-label">📚 Từ vựng cần học (IPA + nghĩa):</span> 
-            <ul>
-                <li><b>balcony</b> /ˈbælkəni/ (n): ban công</li>
-                <li><b>older style house</b> /ˈəʊldər staɪl haʊs/ (n phr): nhà theo kiểu cổ</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🗣️ Phát âm cần chú ý:</span> 
-            <ul>
-                <li><b>Trọng âm:</b> /ˈbælkəni/ trọng âm rơi vào âm tiết đầu tiên.</li>
-                <li><b>Nối âm:</b> <i>and a</i> /ən ə/ được đọc lướt rất nhẹ.</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🎯 Keyword cần bắt:</span> The Grand, Greek paintings, and...</div>
-        <div class="exp-row"><span class="exp-label">💡 Mẹo nhận ra đáp án lần sau:</span> Cấu trúc song song "A and B". Ngay sau cụm "and a", hãy chuẩn bị bắt một danh từ số ít chỉ tiện ích/thiết kế.</div>
-    </div>
-</div>
-
-<!-- ==================== CÂU 4 ==================== -->
-<div class="exp-card">
-    <div class="exp-header">
-        <span class="exp-title">Câu 4: forest / forests</span>
-        <span class="exp-badge">Noun (Danh từ)</span>
+    <!-- EXPLANATION Q3 -->
+    <div class="exp-card" style="border-left: 5px solid #10ac84; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #10ac84;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">
+        <span style="font-weight: 800; font-size: 14.5px; color: #10ac84;">🎯 Câu 3: balcony</span>
+        <span style="background: rgba(16, 172, 132, 0.1); color: #10ac84; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">📝 Noun (Danh từ số ít)</span>
+      </div>
+      <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">
+        <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #10ac84;">balcony</strong></p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>
+        <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">
+          "...It's an older style house with Greek paintings in every room and a <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">balcony outside</mark>."
+        </blockquote>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Liên từ song hành "and" nối cấu trúc danh từ song song ("Greek paintings and..."). Theo sau mạo từ số ít "a", chỗ trống bắt buộc phải là một danh từ số ít đếm được chỉ một đặc điểm thiết kế ngoại thất.</p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: var(--danger); font-weight: 700;">⚠️ Lỗi thường gặp:</span> Viết sai chính tả từ này thành <i>"balcone"</i> hoặc <i>"balconey"</i>. Lưu ý đuôi chính xác là <b>-ny</b>.</p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #ff9f43; font-weight: 700;">🗣️ Phát âm cần chú ý:</span> 
+          Trọng âm rơi vào âm tiết thứ nhất: /ˈbælkəni/. Cụm từ nối nhẹ <i style="color: var(--text-title);">and a</i> được phát âm lướt thành /ən ə/.
+        </p>
+      </div>
     </div>
 
-    <div class="exp-detail-box">
-        <div class="exp-row"><span class="exp-label">✅ Đáp án đúng:</span> <span class="correct-ans">forest / forests</span></div>
-        <div class="exp-row"><span class="exp-label">📜 Transcript chứa đáp án:</span> <blockquote class="transcript-quote">Woman: "What are the views like?" <br>Man: "Well, there are <b>forests</b> all around..."</blockquote></div>
-        <div class="exp-row"><span class="exp-label">🔑 Từ/cụm từ quyết định:</span> <mark>there are forests all around</mark></div>
-        <div class="exp-row"><span class="exp-label">💡 Giải thích vì sao đáp án đúng:</span> Động từ "Overlooking" (nhìn ra) đồng nghĩa với cụm "views like / all around". Chỗ trống cần một <b>Danh từ (Noun)</b> chỉ cảnh quan thiên nhiên bao quanh.</div>
-        <div class="exp-row"><span class="exp-label">🔄 Paraphrase:</span> "What are the views like? ... there are forests all around" ➔ "Overlooking forests".</div>
-        <div class="exp-row"><span class="exp-label">⚠️ Bẫy (Self-correction, distractor...):</span> Người nói nhắc tới các địa điểm dịch vụ ngay sau đó như <b>"supermarket"</b> hay <b>"disco"</b> làm đệm thông tin, nhưng đó là tiện ích mua sắm/giải trí chứ không phải quang cảnh (view).</div>
-        <div class="exp-row"><span class="exp-label">📚 Từ vựng cần học (IPA + nghĩa):</span> 
-            <ul>
-                <li><b>overlook</b> /ˌəʊvəˈlʊk/ (v): nhìn ra, hướng ra (quang cảnh)</li>
-                <li><b>shopping needs</b> /ˈʃɒpɪŋ niːdz/ (n phr): nhu cầu mua sắm</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🗣️ Phát âm cần chú ý:</span> 
-            <ul>
-                <li><b>Âm đuôi (Ending sound):</b> <i>forests</i> /ˈfɒrɪsts/ có đuôi /sts/ cần chú ý nghe âm số nhiều (chấp nhận cả "forest" hoặc "forests").</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🎯 Keyword cần bắt:</span> Overlooking, views, around.</div>
-        <div class="exp-row"><span class="exp-label">💡 Mẹo nhận ra đáp án lần sau:</span> Từ "overlook" thường đi kèm với các danh từ chỉ phong cảnh tự nhiên (sea, mountains, forest, lake, garden).</div>
-    </div>
-</div>
-
-<!-- ==================== CÂU 5 ==================== -->
-<div class="exp-card">
-    <div class="exp-header">
-        <span class="exp-title">Câu 5: 319</span>
-        <span class="exp-badge">Number</span>
+    <!-- EXPLANATION Q4 -->
+    <div class="exp-card" style="border-left: 5px solid #8854d0; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #8854d0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">
+        <span style="font-weight: 800; font-size: 14.5px; color: #8854d0;">🎯 Câu 4: forest / forests</span>
+        <span style="background: rgba(136, 84, 208, 0.1); color: #8854d0; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">🌳 Noun (Danh từ phong cảnh)</span>
+      </div>
+      <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">
+        <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #8854d0;">forest</strong> hoặc <strong style="font-size: 14px; color: #8854d0;">forests</strong></p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>
+        <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">
+          Miss Nash: "What are the views like?"<br>
+          Agent: "Well, there are <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">forests all around</mark>..."
+        </blockquote>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Từ "Overlooking" trong bảng câu hỏi mang nghĩa "nhìn ra, hướng ra". Khi người nghe hỏi "What are the views like?", người Agent trả lời là có rừng cây bao quanh ("forests all around"). Do đó từ cần điền là "forest / forests".</p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: var(--danger); font-weight: 700;">⚠️ Phân tích bẫy (Distractor):</span> Người nói đề cập thêm các từ chỉ vị trí như <i>"supermarket"</i> hay <i>"disco"</i> nhưng đó là tiện ích mua sắm và giải trí ở khu vực lân cận, không phải quang cảnh trực diện của căn hộ.</p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #ff9f43; font-weight: 700;">🗣️ Phát âm cần chú ý:</span> 
+          Âm đuôi số nhiều của <i style="color: var(--text-title);">forests</i> phát âm là /ˈfɒrɪsts/ (phụ âm cụm /sts/ khá gió, cần chú ý lắng nghe).
+        </p>
+      </div>
     </div>
 
-    <div class="exp-detail-box">
-        <div class="exp-row"><span class="exp-label">✅ Đáp án đúng:</span> <span class="correct-ans">319</span></div>
-        <div class="exp-row"><span class="exp-label">📜 Transcript chứa đáp án:</span> <blockquote class="transcript-quote">"And the price? <b>Three hundred and nineteen</b> pounds at that time."</blockquote></div>
-        <div class="exp-row"><span class="exp-label">🔑 Từ/cụm từ quyết định:</span> <mark>Three hundred and nineteen pounds</mark></div>
-        <div class="exp-row"><span class="exp-label">💡 Giải thích vì sao đáp án đúng:</span> Đứng sau ký hiệu tiền tệ £, vị trí yêu cầu điền một <b>Con số (Number)</b> thể hiện mức giá trị £319.</div>
-        <div class="exp-row"><span class="exp-label">🔄 Paraphrase:</span> "And the price? Three hundred and nineteen pounds" ➔ "£ 319".</div>
-        <div class="exp-row"><span class="exp-label">⚠️ Bẫy (Self-correction, distractor...):</span> Con số giảm giá <b>"forty percent" (40%)</b> nếu đi vào tháng 11 được đưa ra để làm nhiễu, nhưng đề bài yêu cầu mức giá thời điểm hiện tại.</div>
-        <div class="exp-row"><span class="exp-label">📚 Từ vựng cần học (IPA + nghĩa):</span> 
-            <ul>
-                <li><b>reasonable</b> /ˈriːznəbl/ (adj): hợp lý (giá cả)</li>
-                <li><b>brochure</b> /ˈbrəʊʃə(r)/ (n): cuốn sách nhỏ quảng cáo/hướng dẫn du lịch</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🗣️ Phát âm cần chú ý:</span> 
-            <ul>
-                <li><b>Trọng âm số đếm:</b> <i>nineteen</i> /ˌnaɪnˈtiːn/ (nhấn âm 2) phân biệt rõ với <i>ninety</i> /ˈnaɪnti/ (nhấn âm 1).</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🎯 Keyword cần bắt:</span> Price, cost, pounds, The Grand.</div>
-        <div class="exp-row"><span class="exp-label">💡 Mẹo nhận ra đáp án lần sau:</span> Khi nghe câu hỏi "And the price?", hãy tập trung bắt ngay con số đứng trước từ "pounds".</div>
-    </div>
-</div>
-
-<!-- ==================== CÂU 6 ==================== -->
-<div class="exp-card">
-    <div class="exp-header">
-        <span class="exp-title">Câu 6: 10,000 / 10000</span>
-        <span class="exp-badge">Number</span>
+    <!-- EXPLANATION Q5 -->
+    <div class="exp-card" style="border-left: 5px solid #ee5253; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #ee5253;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">
+        <span style="font-weight: 800; font-size: 14.5px; color: #ee5253;">🎯 Câu 5: 319</span>
+        <span style="background: rgba(238, 82, 83, 0.1); color: #ee5253; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">💰 Number (Chi phí)</span>
+      </div>
+      <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">
+        <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #ee5253;">319</strong></p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>
+        <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">
+          Agent: "And the price? <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">Three hundred and nineteen</mark> pounds at that time."
+        </blockquote>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Theo sau ký tự tiền tệ £ ở hàng The Grand, ô trống cần điền một con số chỉ mức giá cụ thể của gói căn hộ này. Người tư vấn đọc rõ con số 319.</p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: var(--danger); font-weight: 700;">⚠️ Phân tích bẫy (Distractor):</span> Người nói đưa ra thông tin giảm giá <b>"forty percent" (40%)</b> nếu khách hàng lựa chọn đi du lịch vào tháng 11, nhưng người nghe cần bắt mức giá cho kỳ nghỉ dự định vào tháng 10 của người hỏi.</p>
+        
+        <p style="margin-bottom: 0;"><span style="color: #ff9f43; font-weight: 700;">🗣️ Phát âm cần chú ý:</span> 
+          Trọng âm số đếm: Phân biệt rõ âm nhấn đuôi của <i style="color: var(--text-title);">nineteen</i> /ˌnaɪnˈtiːn/ (nhấn âm 2, kéo dài) so với <i style="color: var(--text-title);">ninety</i> /ˈnaɪnti/ (nhấn âm đầu, ngắn dứt khoát).
+        </p>
+      </div>
     </div>
 
-    <div class="exp-detail-box">
-        <div class="exp-row"><span class="exp-label">✅ Đáp án đúng:</span> <span class="correct-ans">10,000 / 10000</span></div>
-        <div class="exp-row"><span class="exp-label">📜 Transcript chứa đáp án:</span> <blockquote class="transcript-quote">"...for Greek island holidays, our maximum is <b>ten thousand</b> pounds."</blockquote></div>
-        <div class="exp-row"><span class="exp-label">🔑 Từ/cụm từ quyết định:</span> <mark>maximum is ten thousand pounds</mark></div>
-        <div class="exp-row"><span class="exp-label">💡 Giải thích vì sao đáp án đúng:</span> Đứng sau ký hiệu tiền tệ £ và mục "Cancellation", vị trí này cần điền một <b>Con số (Number)</b> chỉ hạn mức bồi thường tối đa.</div>
-        <div class="exp-row"><span class="exp-label">🔄 Paraphrase:</span> "maximum is ten thousand pounds" ➔ "Cancellation: £ 10,000".</div>
-        <div class="exp-row"><span class="exp-label">⚠️ Bẫy (Self-correction, distractor...):</span> <b>Bẫy thông tin cũ (Old policy trap):</b> Con số <b>8,000</b> (mức bảo hiểm cũ của khách) hoặc số <b>1,000</b> (tổng chi phí thực tế) được nhắc tới trước đó để làm nhiễu.</div>
-        <div class="exp-row"><span class="exp-label">📚 Từ vựng cần học (IPA + nghĩa):</span> 
-            <ul>
-                <li><b>cancellation</b> /ˌkænsəˈleɪʃn/ (n): sự hủy chuyến/hủy hợp đồng</li>
-                <li><b>claim</b> /kleɪm/ (v, n): yêu cầu bồi thường tiền bảo hiểm</li>
-                <li><b>policy</b> /ˈpɒləsi/ (n): hợp đồng / điều khoản bảo hiểm</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🗣️ Phát âm cần chú ý:</span> 
-            <ul>
-                <li><b>Nuốt âm (Elision):</b> <i>ten thousand</i> /ten ˈθaʊznd/ - Âm /d/ ở cuối "thousand" thường bị nuốt nhẹ khi nói nhanh.</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🎯 Keyword cần bắt:</span> Cancellation, maximum, claim, pounds.</div>
-        <div class="exp-row"><span class="exp-label">💡 Mẹo nhận ra đáp án lần sau:</span> Khi gặp từ "maximum", chỉ lấy con số cao nhất gắn liền với gói bảo hiểm mới đang được tư vấn.</div>
-    </div>
-</div>
-
-<!-- ==================== CÂU 7 ==================== -->
-<div class="exp-card">
-    <div class="exp-header">
-        <span class="exp-title">Câu 7: relative</span>
-        <span class="exp-badge">Noun (Danh từ)</span>
+    <!-- EXPLANATION Q6 -->
+    <div class="exp-card" style="border-left: 5px solid #2ed573; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #2ed573;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">
+        <span style="font-weight: 800; font-size: 14.5px; color: #2ed573;">🎯 Câu 6: 10,000 / 10000 / ten thousand</span>
+        <span style="background: rgba(46, 213, 115, 0.1); color: #2ed573; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">📊 Number (Hạn mức bảo hiểm)</span>
+      </div>
+      <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">
+        <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #2ed573;">10,000</strong> hoặc <strong style="font-size: 14px; color: #2ed573;">10000</strong> hoặc <strong style="font-size: 14px; color: #2ed573;">ten thousand</strong></p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>
+        <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">
+          Agent: "...for Greek island holidays, our maximum is <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">ten thousand</mark> pounds."
+        </blockquote>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Ở mục "Cancellation" (Hủy chuyến), ô trống yêu cầu điền một số tiền bảo hiểm đền bù tối đa. Người tư vấn công bố hạn mức là 10,000 bảng.</p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: var(--danger); font-weight: 700;">⚠️ Phân tích bẫy (Old Policy Trap):</span> Người khách nhắc tới hạn mức bồi thường của bảo hiểm cũ cô đang có là <b>8,000</b> bảng và chi phí du lịch thực tế là dưới <b>1,000</b> bảng. Cần chú ý bỏ qua các số nhiễu này để lấy đúng số tối đa của bên đại lý du lịch đưa ra.</p>
+        
+        <p style="margin-bottom: 0;"><span style="color: #ff9f43; font-weight: 700;">🗣️ Phát âm cần chú ý:</span> 
+          Nuốt âm đuôi: Từ <i style="color: var(--text-title);">ten thousand</i> /ten ˈθaʊznd/, âm /d/ ở cuối thường bị nuốt nhẹ khi phát âm nhanh.
+        </p>
+      </div>
     </div>
 
-    <div class="exp-detail-box">
-        <div class="exp-row"><span class="exp-label">✅ Đáp án đúng:</span> <span class="correct-ans">relative</span></div>
-        <div class="exp-row"><span class="exp-label">📜 Transcript chứa đáp án:</span> <blockquote class="transcript-quote">"...it allows a <b>relative</b> to travel to your holiday resort if you're in hospital..."</blockquote></div>
-        <div class="exp-row"><span class="exp-label">🔑 Từ/cụm từ quyết định:</span> <mark>allows a relative to travel to resort</mark></div>
-        <div class="exp-row"><span class="exp-label">💡 Giải thích vì sao đáp án đúng:</span> Đứng sau mạo từ "a" và trước động từ "to travel", vị trí này cần điền một <b>Danh từ số ít đếm được chỉ người (Noun)</b>.</div>
-        <div class="exp-row"><span class="exp-label">🔄 Paraphrase:</span> "allow a relative to travel to your holiday resort" ➔ "allows a relative to travel to resort".</div>
-        <div class="exp-row"><span class="exp-label">⚠️ Bẫy (Self-correction, distractor...):</span> Từ <b>"representative"</b> (người đại diện) xuất hiện khi người khách đề cập đến hợp đồng cũ, nhưng người tư vấn đính chính điều khoản mới đổi thành "relative".</div>
-        <div class="exp-row"><span class="exp-label">📚 Từ vựng cần học (IPA + nghĩa):</span> 
-            <ul>
-                <li><b>relative</b> /ˈrelətɪv/ (n): người thân, họ hàng</li>
-                <li><b>representative</b> /ˌreprɪˈzentətɪv/ (n): người đại diện</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🗣️ Phát âm cần chú ý:</span> 
-            <ul>
-                <li><b>Trọng âm & Nguyên âm yếu:</b> /ˈrelətɪv/ trọng âm rơi vào âm tiết 1, hai âm sau đọc lướt rất nhanh /ətɪv/.</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🎯 Keyword cần bắt:</span> Hospital, allow, travel, resort.</div>
-        <div class="exp-row"><span class="exp-label">💡 Mẹo nhận ra đáp án lần sau:</span> Cảnh báo bẫy so sánh giữa chính sách cũ (In my old policy...) và chính sách mới (With our company...). Đáp án luôn nằm ở chính sách mới.</div>
-    </div>
-</div>
-
-<!-- ==================== CÂU 8 ==================== -->
-<div class="exp-card">
-    <div class="exp-header">
-        <span class="exp-title">Câu 8: missed</span>
-        <span class="exp-badge">Adjective / Participle</span>
+    <!-- EXPLANATION Q7 -->
+    <div class="exp-card" style="border-left: 5px solid #ff9f43; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #ff9f43;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">
+        <span style="font-weight: 800; font-size: 14.5px; color: #ff9f43;">🎯 Câu 7: relative</span>
+        <span style="background: rgba(255, 159, 67, 0.1); color: #ff9f43; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">👤 Noun (Danh từ chỉ người)</span>
+      </div>
+      <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">
+        <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #ff9f43;">relative</strong></p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>
+        <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">
+          Agent: "And we also allow a <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">relative to travel</mark> to your holiday resort."
+        </blockquote>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Theo sau mạo từ "a" và đứng trước cấu trúc động từ nguyên mẫu chỉ mục đích "to travel", vị trí này bắt buộc phải điền một danh từ số ít chỉ người được phép đi cùng người bệnh.</p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: var(--danger); font-weight: 700;">⚠️ Phân tích bẫy (Distractor):</span> Người khách nhắc lại điều khoản bảo hiểm cũ là <b>"representative"</b> (người đại diện của hãng bảo hiểm) sẽ hỗ trợ, nhưng chính sách mới của đại lý du lịch là cho phép <b>"relative"</b> (họ hàng / người thân) bay sang hỗ trợ.</p>
+        
+        <p style="margin-bottom: 0;"><span style="color: #ff9f43; font-weight: 700;">🗣️ Phát âm cần chú ý:</span> 
+          Từ <i style="color: var(--text-title);">relative</i> /ˈrelətɪv/ có trọng âm rơi vào âm tiết đầu tiên. Âm cuối đọc lướt lẹ dứt khoát.
+        </p>
+      </div>
     </div>
 
-    <div class="exp-detail-box">
-        <div class="exp-row"><span class="exp-label">✅ Đáp án đúng:</span> <span class="correct-ans">missed</span></div>
-        <div class="exp-row"><span class="exp-label">📜 Transcript chứa đáp án:</span> <blockquote class="transcript-quote">"And what happens if you don't get on the plane?... That's under '<b>missed</b> departure'."</blockquote></div>
-        <div class="exp-row"><span class="exp-label">🔑 Từ/cụm từ quyết định:</span> <mark>under 'missed departure'</mark></div>
-        <div class="exp-row"><span class="exp-label">💡 Giải thích vì sao đáp án đúng:</span> Đứng trước danh từ "departure", vị trí này cần một <b>Tính từ / Quá khứ phân từ (V-ed)</b> bổ nghĩa cho danh từ chỉ thuật ngữ "lỡ chuyến bay/khởi hành".</div>
-        <div class="exp-row"><span class="exp-label">🔄 Paraphrase:</span> "don't get on the plane" ➔ "missed departure".</div>
-        <div class="exp-row"><span class="exp-label">⚠️ Bẫy (Self-correction, distractor...):</span> Học viên rất hay <b>thiếu đuôi "-ed"</b> (viết thành "miss departure" là sai ngữ pháp).</div>
-        <div class="exp-row"><span class="exp-label">📚 Từ vựng cần học (IPA + nghĩa):</span> 
-            <ul>
-                <li><b>missed departure</b> /mɪst dɪˈpɑːtʃə(r)/ (n phr): sự lỡ chuyến bay / lỡ khởi hành</li>
-                <li><b>jot down</b> /dʒɒt daʊn/ (v): ghi chép vắn tắt</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🗣️ Phát âm cần chú ý:</span> 
-            <ul>
-                <li><b>Bật âm đuôi (-ed):</b> <i>missed</i> /mɪst/ - Đuôi '-ed' được phát âm là /t/. Cần lắng nghe kỹ âm bật nhẹ ở cuối từ.</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🎯 Keyword cần bắt:</span> Departure, plane, get on.</div>
-        <div class="exp-row"><span class="exp-label">💡 Mẹo nhận ra đáp án lần sau:</span> Cụm diễn đạt "don't get on the plane" chính là dấu hiệu paraphrase của thuật ngữ "missed departure".</div>
-    </div>
-</div>
-
-<!-- ==================== CÂU 9 ==================== -->
-<div class="exp-card">
-    <div class="exp-header">
-        <span class="exp-title">Câu 9: item</span>
-        <span class="exp-badge">Noun (Danh từ)</span>
+    <!-- EXPLANATION Q8 -->
+    <div class="exp-card" style="border-left: 5px solid #10ac84; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #10ac84;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">
+        <span style="font-weight: 800; font-size: 14.5px; color: #10ac84;">🎯 Câu 8: missed</span>
+        <span style="background: rgba(16, 172, 132, 0.1); color: #10ac84; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">✏️ Adjective / Past Participle</span>
+      </div>
+      <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">
+        <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #10ac84;">missed</strong></p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>
+        <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">
+          Agent: "Don't you have, uh, <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">missed departure</mark>?"
+        </blockquote>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Chỗ trống đứng trước danh từ "departure" (khởi hành/chuyến đi), cần một tính từ / phân từ quá khứ mang tính chất bổ nghĩa tạo thành danh từ ghép mang thuật ngữ bảo hiểm: "missed departure" (bảo hiểm khi trễ giờ bay/trễ chuyến).</p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #9c27b0; font-weight: 700;">🔄 Diễn đạt tương đương (Paraphrase):</span> 
+          Cụm diễn giải <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">What happens if you don't get on the plane?</code> chính là định nghĩa của cụm từ <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">missed departure</code>.
+        </p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: var(--danger); font-weight: 700;">⚠️ Lỗi thường gặp:</span> Viết thiếu đuôi <b>"-ed"</b> thành "miss departure" là sai ngữ pháp học thuật bắt buộc.</p>
+        
+        <p style="margin-bottom: 0;"><span style="color: #ff9f43; font-weight: 700;">🗣️ Phát âm cần chú ý:</span> 
+          Bật hơi âm đuôi: Từ <i style="color: var(--text-title);">missed</i> phát âm kết thúc là âm /t/ nhẹ (/mɪst/).
+        </p>
+      </div>
     </div>
 
-    <div class="exp-detail-box">
-        <div class="exp-row"><span class="exp-label">✅ Đáp án đúng:</span> <span class="correct-ans">item</span></div>
-        <div class="exp-row"><span class="exp-label">📜 Transcript chứa đáp án:</span> <blockquote class="transcript-quote">"...and not more than five hundred pounds for a single <b>item</b>."</blockquote></div>
-        <div class="exp-row"><span class="exp-label">🔑 Từ/cụm từ quyết định:</span> <mark>for a single item</mark></div>
-        <div class="exp-row"><span class="exp-label">💡 Giải thích vì sao đáp án đúng:</span> Đứng sau số từ "one" (được paraphrase từ "a single"), chỗ trống cần điền một <b>Danh từ số ít đếm được (Noun)</b>.</div>
-        <div class="exp-row"><span class="exp-label">🔄 Paraphrase:</span> "not more than five hundred pounds for a single item" ➔ "£500 for one item".</div>
-        <div class="exp-row"><span class="exp-label">⚠️ Bẫy (Self-correction, distractor...):</span> Từ <b>"laptop"</b> được người nói dùng làm ví dụ minh họa ngay sau đó ("...like a laptop"), dễ làm lầm tưởng "laptop" là đáp án chính.</div>
-        <div class="exp-row"><span class="exp-label">📚 Từ vựng cần học (IPA + nghĩa):</span> 
-            <ul>
-                <li><b>personal belongings</b> /ˈpɜːsənl bɪˈlɒŋɪŋz/ (n): đồ dùng cá nhân</li>
-                <li><b>single item</b> /ˈsɪŋɡl ˈaɪtəm/ (n phr): một món đồ đơn lẻ</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🗣️ Phát âm cần chú ý:</span> 
-            <ul>
-                <li><b>Nối âm (Linking):</b> <i>single item</i> /ˈsɪŋɡl ˈaɪtəm/ - âm /l/ ở cuối "single" nối mượt sang nguyên âm /aɪ/.</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🎯 Keyword cần bắt:</span> Personal belongings, £500, one, single.</div>
-        <div class="exp-row"><span class="exp-label">💡 Mẹo nhận ra đáp án lần sau:</span> Ví dụ cụ thể (laptop, camera, phone) xuất hiện sau câu thường là bẫy. Hãy ưu tiên chọn từ mang tính khái quát chung ("item").</div>
-    </div>
-</div>
-
-<!-- ==================== CÂU 10 ==================== -->
-<div class="exp-card">
-    <div class="exp-header">
-        <span class="exp-title">Câu 10: Ludlow</span>
-        <span class="exp-badge">Proper Noun (Tên riêng)</span>
+    <!-- EXPLANATION Q9 -->
+    <div class="exp-card" style="border-left: 5px solid #8854d0; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #8854d0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">
+        <span style="font-weight: 800; font-size: 14.5px; color: #8854d0;">🎯 Câu 9: item</span>
+        <span style="background: rgba(136, 84, 208, 0.1); color: #8854d0; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">🎒 Noun (Danh từ vật dụng)</span>
+      </div>
+      <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">
+        <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #8854d0;">item</strong></p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>
+        <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">
+          Agent: "...but not more than five hundred pounds for a <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">single item</mark>."
+        </blockquote>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Đứng trước từ chỉ số lượng "one" (đã được Agent paraphrase thành "a single"), ô trống cần điền một danh từ số ít chỉ chung một đơn vị món đồ vật dụng cá nhân.</p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: var(--danger); font-weight: 700;">⚠️ Phân tích bẫy (Distractor):</span> Người nói nhắc tới ví dụ minh họa là cái máy tính xách tay <b>"laptop"</b> ngay sau đó ("Then I'd better not take my laptop"), rất dễ khiến người học lầm tưởng "laptop" là đáp án chính xác cần điền.</p>
+        
+        <p style="margin-bottom: 0;"><span style="color: #ff9f43; font-weight: 700;">🗣️ Phát âm cần chú ý:</span> 
+          Nối âm: Cụm <i style="color: var(--text-title);">single item</i> đọc mượt mà nối âm /l/ ở cuối từ thứ nhất sang nguyên âm /aɪ/ thành /ˌsɪŋɡl ˈaɪtəm/.
+        </p>
+      </div>
     </div>
 
-    <div class="exp-detail-box">
-        <div class="exp-row"><span class="exp-label">✅ Đáp án đúng:</span> <span class="correct-ans">Ludlow</span></div>
-        <div class="exp-row"><span class="exp-label">📜 Transcript chứa đáp án:</span> <blockquote class="transcript-quote">"Ben Ludlow. That's <b>L - U - D - L - O - W</b>."</blockquote></div>
-        <div class="exp-row"><span class="exp-label">🔑 Từ/cụm từ quyết định:</span> <mark>That's L-U-D-L-O-W</mark></div>
-        <div class="exp-row"><span class="exp-label">💡 Giải thích vì sao đáp án đúng:</span> Đi sau tên "Ben", đây là một <b>Họ / Tên riêng (Proper Noun)</b> được người nói đánh vần trực tiếp. Cần viết hoa chữ cái đầu tiên.</div>
-        <div class="exp-row"><span class="exp-label">🔄 Paraphrase:</span> Không có (Đánh vần tên riêng).</div>
-        <div class="exp-row"><span class="exp-label">⚠️ Bẫy (Self-correction, distractor...):</span> Nghe nhầm chữ cái đánh vần do phát âm tương tự (như nghe <b>L</b> thành <b>R</b>, hoặc <b>U</b> thành <b>O</b>).</div>
-        <div class="exp-row"><span class="exp-label">📚 Từ vựng cần học (IPA + nghĩa):</span> 
-            <ul>
-                <li><b>assistant manager</b> /əˈsɪstənt ˈmænɪdʒə(r)/ (n): trợ lý quản lý / phó phòng</li>
-                <li><b>switchboard</b> /ˈswɪtʃbɔːd/ (n): tổng đài chính</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🗣️ Phát âm cần chú ý:</span> 
-            <ul>
-                <li><b>Đánh vần từng chữ (Spelling):</b> L (/el/), U (/juː/), D (/diː/), L (/el/), O (/əʊ/), W (/ˈdʌbljuː/).</li>
-            </ul>
-        </div>
-        <div class="exp-row"><span class="exp-label">🎯 Keyword cần bắt:</span> Name, assistant manager, Ben, spell.</div>
-        <div class="exp-row"><span class="exp-label">💡 Mẹo nhận ra đáp án lần sau:</span> Luôn luôn viết hoa chữ cái đầu tiên khi điền Tên riêng. Bắt nhịp ngay lập tức khi nghe "That's...".</div>
+    <!-- EXPLANATION Q10 -->
+    <div class="exp-card" style="border-left: 5px solid #ee5253; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #ee5253;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">
+        <span style="font-weight: 800; font-size: 14.5px; color: #ee5253;">🎯 Câu 10: Ludlow</span>
+        <span style="background: rgba(238, 82, 83, 0.1); color: #ee5253; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">👤 Proper Noun (Tên riêng/Họ)</span>
+      </div>
+      <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">
+        <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #ee5253;">Ludlow</strong></p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>
+        <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">
+          Agent: "Ben Ludlow. <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">That's L - U - D - L - O - W</mark>."
+        </blockquote>
+        
+        <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Người nói trực tiếp đánh vần từng ký tự tên của mình sau khi xướng lên họ "Ludlow". Cần ghi đúng chính tả và viết hoa chữ cái đầu tiên của Họ người.</p>
+        
+        <p style="margin-bottom: 6px;"><span style="color: var(--danger); font-weight: 700;">⚠️ Phân tích bẫy:</span> Nghe nhầm ký tự đánh vần do phát âm gần giống nhau (Ví dụ nghe nhầm "L" thành "R", "U" thành "O", "D" thành "T"). Cần lắng nghe thật kỹ chuỗi âm tiết.</p>
+        
+        <p style="margin-bottom: 0;"><span style="color: #ff9f43; font-weight: 700;">🗣️ Phát âm của các chữ cái:</span> 
+          L (/el/), U (/juː/), D (/diː/), L (/el/), O (/əʊ/), W (/ˈdʌbljuː/).
+        </p>
+      </div>
     </div>
-</div>
- 
-                </div>
-            </div>
-        </div>
-
-    </main>
-
-    <footer>
-        <div class="footer-title">Danh sách câu hỏi</div>
-        <div class="nav-scroller" id="navPalette"></div>
-    </footer>
-
-    <script>
-        const answerKey = {
-            1: ["300"], 2: ["sunshade", "sun shade"], 3: ["balcony"], 4: ["forest", "forests"], 5: ["319"],
-            6: ["10,000", "10000"], 7: ["relative"], 8: ["missed"], 9: ["item"], 10: ["ludlow"]
-        };
-
-        let mode = '';
-        const audio = document.getElementById('testAudio');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const audioProgress = document.getElementById('audioProgress');
-        const currentTimeDisplay = document.getElementById('currentTimeDisplay');
-        let isSubmitted = false;
-        const END_TIME = 495;
-
-        function togglePlay() {
-            if(audio.paused) {
-                audio.play();
-                playPauseBtn.innerHTML = "⏸";
-            } else {
-                audio.pause();
-                playPauseBtn.innerHTML = "▶";
-            }
-        }
-
-        function seekAudio(value) { audio.currentTime = value; }
-
-        function skipAudio(seconds) {
-            let newTime = audio.currentTime + seconds;
-            if (newTime < 0) newTime = 0;
-            if (newTime > END_TIME) newTime = END_TIME;
-            audio.currentTime = newTime;
-        }
-
-        audio.addEventListener('timeupdate', function() {
-            if (audio.currentTime >= END_TIME && !isSubmitted) {
-                audio.pause();
-                playPauseBtn.innerHTML = "▶";
-                audioProgress.value = END_TIME;
-                if (mode === 'mock') evaluateTest();
-            } else {
-                audioProgress.value = audio.currentTime;
-            }
-            
-            let curTime = Math.min(audio.currentTime, END_TIME);
-            let mins = Math.floor(curTime / 60);
-            let secs = Math.floor(curTime % 60);
-            currentTimeDisplay.innerText = mins + ":" + (secs < 10 ? "0" : "") + secs;
-        });
-
-        const navPalette = document.getElementById('navPalette');
-        for (let i = 1; i <= 10; i++) {
-            let dot = document.createElement("div");
-            dot.className = "nav-dot"; dot.id = `nav-${i}`; dot.innerText = i;
-            dot.onclick = () => {
-                let el = document.getElementById('q'+i);
-                if(el) {
-                    el.scrollIntoView({behavior: "smooth", block: "center"});
-                    el.focus();
-                }
-            };
-            navPalette.appendChild(dot);
-        }
-
-        function selectMode(selectedMode) {
-            mode = selectedMode;
-            document.querySelector('.mode-practice').classList.toggle('selected', mode === 'practice');
-            document.querySelector('.mode-mock').classList.toggle('selected', mode === 'mock');
-            document.getElementById('startBtn').style.display = 'inline-block';
-        }
-
-        function askReady() {
-            let msg = mode === 'mock' 
-                ? "Chế độ Thi Thử:\nAudio sẽ tự phát và tự nộp khi hết bài." 
-                : "Chế độ Luyện Tập:\nBạn có thể tự do chỉnh Audio.";
-            document.getElementById('startConfirmMsg').innerText = msg;
-            document.getElementById('startConfirmOverlay').style.display = 'flex';
-        }
-
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        function startTestActual() {
-            closeModal('startConfirmOverlay');
-            document.getElementById('setupOverlay').style.display = 'none';
-            audio.currentTime = 0; 
-
-            if(mode === 'mock') {
-                document.getElementById('btn-backward').classList.add('hidden');
-                document.getElementById('btn-forward').classList.add('hidden');
-                audioProgress.disabled = true;
-                audio.play();
-                playPauseBtn.innerHTML = "⏸";
-                playPauseBtn.disabled = true; 
-            }
-        }
-
-        function markAnswered(qNum) {
-            if(isSubmitted) return;
-            const navCircle = document.getElementById('nav-' + qNum);
-            const textInput = document.getElementById('q' + qNum);
-            if(textInput && textInput.value.trim() !== '') {
-                navCircle.classList.add('done');
-            } else {
-                navCircle.classList.remove('done');
-            }
-        }
-
-        function requestSubmit() {
-            if (mode === 'practice') {
-                document.getElementById('submitModal').style.display = 'flex';
-            } else {
-                evaluateTest();
-            }
-        }
-
-        function calculateBandPartial(correct, total) {
-            let normalizedCorrect = (correct / total) * 40;
-            if (normalizedCorrect >= 39) return 9.0;
-            if (normalizedCorrect >= 37) return 8.5;
-            if (normalizedCorrect >= 35) return 8.0;
-            if (normalizedCorrect >= 32) return 7.5;
-            if (normalizedCorrect >= 30) return 7.0;
-            if (normalizedCorrect >= 26) return 6.5;
-            if (normalizedCorrect >= 23) return 6.0;
-            if (normalizedCorrect >= 20) return 5.5;
-            if (normalizedCorrect >= 16) return 5.0;
-            if (normalizedCorrect >= 13) return 4.5;
-            if (normalizedCorrect >= 10) return 4.0;
-            if (normalizedCorrect >= 8) return 3.5;
-            if (normalizedCorrect >= 6) return 3.0;
-            return 2.5;
-        }
-
-        function evaluateTest() {
-            isSubmitted = true;
-            closeModal('submitModal');
-            document.getElementById('topSubmitBtn').classList.add('hidden');
-            audio.pause();
-            playPauseBtn.innerHTML = "▶";
-            
-            document.querySelectorAll('input').forEach(el => el.disabled = true);
-            
-            let score = 0;
-
-            for(let i = 1; i <= 10; i++) {
-                let userAnswer = '';
-                const textInput = document.getElementById('q' + i);
-                if(textInput) userAnswer = textInput.value.trim().toLowerCase();
-                
-                const navCircle = document.getElementById('nav-' + i);
-                navCircle.classList.remove('done');
-
-                const correctAnswers = answerKey[i].map(a => a.toLowerCase());
-                
-                if(correctAnswers.includes(userAnswer)) {
-                    score++;
-                    navCircle.classList.add('correct');
-                    if(textInput) textInput.classList.add('correct-input');
-                } else {
-                    navCircle.classList.add('incorrect');
-                    if(textInput) {
-                        textInput.classList.add('wrong-input');
-                        textInput.value = (userAnswer ? userAnswer + " " : "") + "✓ " + answerKey[i][0];
-                    }
-                }
-            }
-
-            let calculatedBand = calculateBandPartial(score, 10);
-
-            document.getElementById('resultMessage').innerHTML = `
-                <strong style="font-size: 24px; color: var(--primary-dark); display: block;">Kết quả: ${score}/10</strong>
-            `;
-            
-            if(window.luuDiemIELTSFullTest) {
-                window.luuDiemIELTSFullTest(score, calculatedBand, "Test 1");
-            }
-            
-            document.getElementById('mainContainer').classList.add('split-mode');
-            document.getElementById('transcriptPane').classList.remove('hidden');
-            document.getElementById('explanationsWrapper').classList.remove('hidden');
-
-            setTimeout(() => {
-                document.getElementById('resultOverlay').style.display = 'flex';
-            }, 300);
-        }
-    </script>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
-            authDomain: "snapenglish-cb6e2.firebaseapp.com",
-            projectId: "snapenglish-cb6e2",
-            storageBucket: "snapenglish-cb6e2.firebasestorage.app",
-            messagingSenderId: "373152038413",
-            appId: "1:373152038413:web:19284622571390f8585f44"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        function showSyncToast(msg) {
-            let toast = document.createElement("div");
-            toast.innerText = msg;
-            toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:#10b981; color:white; padding:10px 20px; border-radius:99px; font-weight:bold; font-family:'Quicksand',sans-serif; z-index:99999; box-shadow:0 10px 15px -3px rgba(0,0,0,0.1); transform:translateY(100px); opacity:0; transition:all 0.4s ease;";
-            document.body.appendChild(toast);
-            setTimeout(() => { toast.style.transform = "translateY(0)"; toast.style.opacity = "1"; }, 100);
-            setTimeout(() => { toast.style.transform = "translateY(100px)"; toast.style.opacity = "0"; }, 3500);
-            setTimeout(() => { document.body.removeChild(toast); }, 4000); 
-        }
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                window.currentUserUid = user.uid;
-                window.currentUserEmail = user.email;
-            }
-        });
-
-        window.luuDiemIELTSFullTest = async function(diemSo, bandScore, tenBai) {
-            if (!window.currentUserUid) return;
-            let timestamp = Date.now();
-            let docId = window.currentUserUid + "_ielts_" + timestamp; 
-
-            await setDoc(doc(db, "user_ielts_scores", docId), {
-                email: window.currentUserEmail,
-                skill: "Listening",
-                testName: tenBai,
-                partName: "Part 1",
-                correctQ: diemSo,
-                totalQ: 10,
-                bandScore: parseFloat(bandScore),
-                date: new Date().toLocaleDateString("vi-VN"),
-                timeTaken: "", 
-                timestamp: timestamp
-            });
-            showSyncToast("☁️ Đã đồng bộ điểm (" + diemSo + "/10) lên Tracker!");
-        }
-    </script>
-</body>
-</html>
+  `
+};
