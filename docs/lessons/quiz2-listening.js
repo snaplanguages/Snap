@@ -1,5 +1,4 @@
-// Tệp dữ liệu câu hỏi và giải thích cho IELTS Listening Part 2
-// Đồng bộ hoàn hảo với hệ thống SnapEnglish Player
+
 window.quizData = {
   testId: "quiz2",
   testName: "Test 1",
