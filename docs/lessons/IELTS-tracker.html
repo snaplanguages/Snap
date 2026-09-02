@@ -6,190 +6,318 @@
     <title>IELTS Tracker | SnapEnglish</title>
     <link rel="icon" type="image/png" href="ảnh.png">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #ff477e; 
-            --primary-light: #ff709b;
-            --primary-gradient: linear-gradient(135deg, #ff477e 0%, #ff709b 100%);
-            --secondary: #2a9d8f;
-            --listening: #3b82f6;  
-            --reading: #10b981;    
-            --speaking: #8b5cf6;   
-            --writing: #f59e0b;    
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --correct: #10b981;
-            --incorrect: #f43f5e;
+            /* Tông màu thương hiệu SnapEnglish đồng bộ */
+            --brand-primary: #e65245;       /* Đỏ cam đào ấm áp */
+            --brand-gradient: linear-gradient(135deg, #f05a4b 0%, #e0483a 50%, #c83729 100%);
+            --brand-peach: #ff8e72;          /* Cam đào tươi tắn */
+            --brand-peach-soft: #fff1ed;     /* Nền hồng đào mỏng nhẹ */
+            --brand-peach-hover: #fcdbd0;    /* Hover hồng đào */
+            --bg-canvas: #f9f5f2;            /* Nền tổng thể đầm dịu mắt */
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: #f0e2dc;
+            --text-title: #2d1f1d;          /* Chữ chính nâu đen đậm */
+            --text-body: #5a4b48;           /* Chữ nội dung nâu trầm */
+            --text-muted: #8d7b77;          /* Chữ phụ */
+            --danger: #ff5252;
+            --success: #2ed573;
+            /* Hệ thống bóng đổ mịn màng */
+            --shadow-sm: 0 4px 12px rgba(230, 82, 69, 0.05);
+            --shadow-md: 0 8px 20px rgba(218, 70, 56, 0.08);
+            --shadow-hover: 0 12px 28px rgba(200, 55, 41, 0.14);
+            --topbar-height: 60px;
+            --radius-xl: 16px;
+            --radius-md: 10px;
             --modal-bg: rgba(255, 255, 255, 0.4);
-            --card-bg: rgba(255, 255, 255, 0.85);
-        }
-        
-        * { box-sizing: border-box; }
 
+            /* Giữ nguyên các biến mapping cũ và đồng bộ màu sắc kỹ năng với TOEIC */
+            --primary: var(--brand-primary);
+            --secondary: var(--success);
+            --listening: #EE5253;           /* Đỏ san hô */
+            --reading: #10AC84;             /* Xanh ngọc */
+            --speaking: #8854D0;            /* Tím Lavender */
+            --writing: #FF9F43;             /* Cam Amber */
+            --bg-color: var(--bg-canvas);
+            --text-main: var(--text-title);
+            --correct: var(--success);
+            --incorrect: var(--danger);
+        }
+
+        /* THIẾT LẬP BODY & HÌNH NỀN GENTLE CHUYÊN NGHIỆP */
         body {
-            font-family: 'Nunito', sans-serif;
-            background: linear-gradient(-45deg, #a18cd1, #fbc2eb, #a1c4fd, #c2e9fb);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            color: var(--text-main);
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background-color: var(--bg-canvas);
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(255, 142, 114, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(230, 82, 69, 0.06) 0%, transparent 45%);
+            background-attachment: fixed; /* Giữ nền cố định khi cuộn trang */
+            color: var(--text-body);
             margin: 0;
-            padding: 25px;
+            padding: 0;
+            padding-top: calc(var(--topbar-height) + 24px); /* Nhường chỗ cho topbar cố định */
+            padding-bottom: 50px;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
-            min-height: 100vh;
-            overflow-x: hidden; /* THÊM DÒNG NÀY (Chống tràn màn hình điện thoại) */
+            align-items: flex-start;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        /* WATERMARK CHẠY CHÌM DƯỚI NỀN */
+        .bg-watermark {
+            position: fixed;
+            bottom: 15px;
+            right: 25px;
+            font-size: 8vw;
+            font-weight: 800;
+            color: rgba(230, 82, 69, 0.035);
+            z-index: -1;
+            pointer-events: none;
+            user-select: none;
+            letter-spacing: -2px;
         }
 
-        /* Phóng to full màn hình, loại bỏ giới hạn width */
-        .container {
-            width: 100%;
-            max-width: 100%; 
-            padding: 0 15px;
-        }
-
-        .header { 
-            text-align: center; 
-            margin-bottom: 35px; 
-            padding: 20px;
-            background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.05);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-        }
-        .header h1 {
-            font-family: 'Be Vietnam Pro', sans-serif;
-            font-size: 2.8em;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent;
-            margin: 0 0 10px 0;
-            text-shadow: 2px 2px 4px rgba(255, 71, 126, 0.1);
-        }
-        .header p { 
-            color: var(--text-muted); 
-            font-weight: 700; 
-            font-size: 1.1em; 
-            margin: 0;
-            letter-spacing: 0.5px;
-        }
-
-        /* Bố cục khoa học */
-        .top-layout { 
-            display: grid; 
-            grid-template-columns: 400px 1fr; 
-            gap: 30px; 
-            margin-bottom: 30px;
-        }
-        
-       .bottom-layout {
+        /* TOP NAVBAR */
+        .top-navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: var(--topbar-height);
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(230, 82, 69, 0.12);
+            z-index: 1000;
             display: flex;
-            flex-direction: column; /* Xếp dọc giống TOEIC */
-            gap: 30px;
-            min-width: 0; /* Khóa lỗi tràn chiều rộng */
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+        }
+        .brand-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+        .brand-link:hover { transform: translateY(-1px); }
+        .brand-badge {
+            background: var(--brand-gradient);
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 800;
+            padding: 6px 14px;
+            border-radius: 10px;
+            letter-spacing: -0.2px;
+            box-shadow: 0 3px 10px rgba(230, 82, 69, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .brand-badge::before { content: '⚡'; font-size: 13px; }
+        .brand-subtitle {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-title);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .brand-subtitle::before {
+            content: '/';
+            color: var(--brand-peach);
+            font-weight: 300;
+        }
+        .btn-topbar-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            background: var(--brand-peach-soft);
+            color: var(--brand-primary);
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            border: 1px solid rgba(230, 82, 69, 0.15);
+            transition: all 0.25s ease;
+        }
+        .btn-topbar-nav:hover {
+            background: var(--brand-primary);
+            color: #ffffff;
+            box-shadow: 0 3px 10px rgba(230, 82, 69, 0.2);
+        }
+        .btn-aim-navbar {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
+            color: #ffffff;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 800;
+            text-decoration: none;
+            box-shadow: 0 3px 10px rgba(232, 67, 147, 0.25);
+            transition: all 0.25s ease;
+        }
+        .btn-aim-navbar:hover {
+            transform: translateY(-1.5px);
+            box-shadow: 0 5px 15px rgba(232, 67, 147, 0.4);
         }
 
-        /* Thẻ Glassmorphism sắc nét */
-        .card {
+        /* CONTAINER CHÍNH */
+        .container {
+            width: 95%;
+            max-width: 1200px;
             background: var(--card-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 30px; 
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.8); 
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            min-width: 0; /* THÊM DÒNG NÀY (Ép khung card bám theo màn hình) */
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+            padding: 30px;
+            border: 1px solid var(--card-border);
+            margin: 0 auto;
+        }
+        .header { text-align: center; margin-bottom: 25px; position: relative; }
+        
+        /* TICKER MARQUEE */
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            background: var(--brand-peach-soft);
+            border: 1px dashed rgba(230, 82, 69, 0.25);
+            border-radius: var(--radius-md);
+            padding: 10px 0;
+            margin-bottom: 24px;
+            box-shadow: inset 0 2px 5px rgba(230, 82, 69, 0.02);
+        }
+        .ticker-move {
+            display: flex;
+            width: max-content;
+            animation: marquee-scroll 25s linear infinite;
+        }
+        .ticker-item {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--brand-primary);
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        @keyframes marquee-scroll {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
+        }
+
+        /* BỐ CỤC TOP & BOTTOM TRÌNH BÀY */
+        .top-layout {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        .bottom-layout {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            min-width: 0;
+        }
+
+        /* CARD GLASSMORPHISM & SHADOW */
+        .card {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--card-border);
+            margin-bottom: 20px;
+            transition: all 0.25s ease;
         }
         .card:hover {
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(230, 82, 69, 0.2);
         }
-        
-        .card h3 { 
-            margin-top: 0; 
-            margin-bottom: 20px; 
-            font-size: 1.3em; 
-            color: var(--primary); 
-            font-family: 'Be Vietnam Pro', sans-serif;
+        .card h3 {
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-size: 1.25em;
+            color: var(--brand-primary);
+            font-weight: 800;
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        /* Form Controls Chuyên Nghiệp */
-        .form-group { margin-bottom: 18px; }
-        .form-group label { 
-            display: block; 
-            margin-bottom: 8px; 
-            font-weight: 800; 
-            color: #334155; 
-            font-size: 0.95em; 
-        }
+        /* FORM CONTROLS */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 800; color: #57606f; font-size: 0.9em; }
+        
         input, select {
-            width: 100%; 
-            padding: 14px; 
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid #e2e8f0; 
-            border-radius: 12px; 
-            font-family: 'Nunito', sans-serif;
-            font-size: 15px; 
-            transition: all 0.3s ease; 
-            font-weight: 700; 
-            color: #1e293b; 
+            width: 100%;
+            padding: 11px 14px;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 13.5px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            background: var(--brand-peach-soft);
+            color: var(--text-title);
+            outline: none;
+            box-sizing: border-box;
         }
-        input:focus, select:focus { 
-            border-color: var(--primary-light); 
-            outline: none; 
-            box-shadow: 0 0 0 4px rgba(255, 71, 126, 0.15); 
+        input:focus, select:focus {
+            border-color: var(--brand-primary);
             background: #ffffff;
+            box-shadow: 0 0 0 3.5px rgba(230, 82, 69, 0.12);
         }
+        .flex-inputs { display: flex; gap: 15px; }
+        .flex-inputs .form-group { flex: 1; margin-bottom: 0; }
 
         .btn {
-            padding: 16px 20px; 
-            border: none; 
+            padding: 14px 20px;
+            border: none;
             border-radius: 12px;
-            font-weight: 800; 
+            font-weight: 800;
+            font-size: 15px;
             cursor: pointer;
-            transition: all 0.3s ease; 
+            transition: all 0.3s;
+            font-family: 'Be Vietnam Pro', sans-serif;
+            box-sizing: border-box;
         }
-        .btn-submit { 
-            background: var(--primary-gradient);
-            color: #ffffff !important; 
-            width: 100%; 
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary), var(--writing));
+            color: white;
+            width: 100%;
             margin-top: 10px;
-            font-size: 17px;
-            font-family: 'Be Vietnam Pro', sans-serif; 
             text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 8px 20px rgba(255, 71, 126, 0.3);
+            letter-spacing: 0.5px;
+            box-shadow: 0 5px 15px rgba(230, 82, 69, 0.3);
         }
-        .btn-submit:hover { 
-            transform: translateY(-3px); 
-            box-shadow: 0 12px 25px rgba(255, 71, 126, 0.4); 
-        }
-
-        /* Dashboard & Totals */
-        .dashboard-header { 
-            display: flex; justify-content: center; margin-bottom: 25px; 
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(230, 82, 69, 0.4);
         }
 
+        /* DASHBOARD & TOTAL BOX */
+        .dashboard-header {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
         .total-box {
-            width: 100%; 
+            width: 100%;
             max-width: 500px;
-            background: linear-gradient(135deg, #fff0f5 0%, #ffe6ee 100%);
-            padding: 30px; 
-            border-radius: 24px; 
-            text-align: center; 
-            border: 2px solid #ffb6c1; 
-            box-shadow: 0 15px 35px rgba(255, 71, 126, 0.15);
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.6) 100%);
+            padding: 24px;
+            border-radius: 20px;
+            text-align: center;
+            border: 2px solid white;
+            box-shadow: 0 8px 25px rgba(230, 82, 69, 0.06);
             position: relative;
             overflow: hidden;
         }
@@ -200,153 +328,140 @@
             background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 60%);
             pointer-events: none;
         }
-        .total-box h3 { 
-            margin: 0 0 10px 0; 
-            color: #475569; 
-            font-size: 1.1em; 
-            text-transform: uppercase; 
-            letter-spacing: 1.5px;
-            font-weight: 800;
-        }
-        .total-box .score { 
-            font-size: 4.5em; 
-            font-weight: 800; 
-            color: var(--primary); 
-            font-family: 'Be Vietnam Pro', sans-serif;
-            text-shadow: 2px 2px 0px #fff;
-        }
-        .total-box .max-score { font-size: 1.4em; color: #94a3b8; font-weight: 700; }
+        .total-box h3 { margin: 0 0 8px 0; color: #747d8c; font-size: 0.95em; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .total-box .score { font-size: 3.5em; font-weight: 800; color: var(--brand-primary); text-shadow: 1px 1px 2px rgba(0,0,0,0.05); }
+        .total-box .max-score { font-size: 1.2em; color: #a4b0be; font-weight: bold; }
 
-        /* Multi-Circles Khoa học & Ấn tượng */
-        .circles-container { 
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; justify-items: center; margin-top: 20px;
+        /* CIRCLE DIAGRAMS TỪNG KỸ NĂNG */
+        .circles-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            justify-items: center;
+            margin-top: 10px;
         }
         .skill-circle-box { display: flex; flex-direction: column; align-items: center; width: 100%; }
-        .skill-name { margin-top: 18px; font-weight: 800; color: var(--text-main); font-size: 1.2em; letter-spacing: 0.5px;} 
-        
-        .circle-wrap { 
-            width: 140px; height: 140px; 
-            background: #f1f5f9; 
-            border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            position: relative; 
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.05), 0 10px 20px rgba(0,0,0,0.08);
+        .circle-wrap {
+            width: 120px;
+            height: 120px;
+            background: rgba(240, 226, 220, 0.4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.03);
         }
-        .circle-wrap:hover { transform: scale(1.1); }
-        .circle-inner { 
-            width: 110px; height: 110px; 
-            background: white; 
-            border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            font-size: 32px; font-weight: 800; z-index: 10; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        .circle-wrap:hover { transform: scale(1.08); }
+        .circle-inner {
+            width: 94px;
+            height: 94px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 800;
+            z-index: 10;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-
-       /* =========================================
-           RESPONSIVE - TỐI ƯU HÓA MỌI THIẾT BỊ
-           ========================================= */
-        
-        /* Desktop vừa & Tablet ngang */
-        @media(max-width: 1200px) {
-            .top-layout { 
-                grid-template-columns: minmax(320px, 380px) 1fr; 
-            }
-            .bottom-layout { grid-template-columns: 1fr; }
-            /* Thu nhỏ nhẹ vòng tròn điểm để không bị chèn ép */
-            .circle-wrap { width: 120px; height: 120px; }
-            .circle-inner { width: 90px; height: 90px; font-size: 26px; }
+        .skill-name {
+            margin-top: 10px;
+            font-weight: 700;
+            color: var(--text-body);
+            font-size: 1.05em;
         }
 
-        /* Tablet dọc & Mobile lớn */
-        @media(max-width: 950px) { 
-            /* Chuyển form nhập và dashboard thành 1 cột */
-            .top-layout { grid-template-columns: 1fr; } 
-            .circles-container { grid-template-columns: repeat(2, 1fr); gap: 25px;}
-            .card { padding: 25px; }
+        /* TABLES & FILTERS */
+        .filter-container { display: flex; gap: 8px; flex-wrap: wrap; }
+        .filter-input {
+            padding: 8px 14px;
+            border: 1.5px solid var(--card-border);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: 13px;
+            outline: none;
+            font-weight: 600;
+            color: var(--text-body);
+            background: var(--brand-peach-soft);
+            transition: all 0.2s ease;
+        }
+        .filter-input:focus {
+            border-color: var(--brand-primary);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(230, 82, 69, 0.1);
         }
 
-        /* Mobile nhỏ (Điện thoại) */
-        @media(max-width: 600px) {
-            body { padding: 10px; }
-            .header { padding: 15px; margin-bottom: 20px; }
-            .header h1 { font-size: 2.2em; }
-            .header p { font-size: 0.95em; }
-            
-            /* Chuyển các input nằm ngang thành dọc để dễ chạm/nhập liệu */
-            .flex-inputs { flex-direction: column; gap: 15px; }
-            .total-box { padding: 20px; }
-            .total-box .score { font-size: 3.5em; }
-            
-            /* Thu nhỏ vòng tròn điểm để vừa màn hình điện thoại */
-            .circles-container { gap: 15px; }
-            .circle-wrap { width: 110px; height: 110px; }
-            .circle-inner { width: 85px; height: 85px; font-size: 24px; }
-            .skill-name { font-size: 1.05em; margin-top: 12px; }
-
-            /* Mở rộng thanh tìm kiếm và bộ lọc tràn viền */
-            .filter-container { flex-direction: column; width: 100%; }
-            .filter-input { width: 100%; }
-
-            /* Tinh chỉnh bảng hiển thị */
-            th, td { padding: 12px 15px; font-size: 0.95em; }
-            
-            /* Căn giữa Popup thông báo (Toast) trên điện thoại */
-            #toast { 
-                left: 50%; transform: translateX(-50%); right: auto; 
-                width: 90%; bottom: -150px; text-align: center;
-            }
-            #toast.show { bottom: 20px; }
-            
-            /* Tối ưu Modal xác nhận xóa */
-            .modal-box { padding: 25px; margin: 15px; }
-            .modal-actions { flex-direction: column; }
-            .btn-modal-cancel, .btn-modal-confirm { width: 100%; }
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--card-border);
+            background: #ffffff;
+            box-shadow: var(--shadow-sm);
         }
-
-        /* Table & Bộ lọc tinh tế */
-        .filter-container { display: flex; gap: 12px; flex-wrap: wrap; }
-        .filter-input { 
-            padding: 12px 18px; 
-            border: 2px solid #e2e8f0; 
-            border-radius: 10px; 
-            background: rgba(255,255,255,0.8);
-        }
-        
-        .table-container { 
-    width: 100%; overflow-x: auto; max-height: 400px; overflow-y: auto; /* Sửa ở đây */
-    border-radius: 16px; 
-    border: 1px solid #e2e8f0; 
-    background: rgba(255,255,255,0.5);
-}
-        
-        /* Chỉnh thanh cuộn cho table đẹp hơn */
+        /* Scrollbar */
         .table-container::-webkit-scrollbar { width: 8px; height: 8px; }
-        .table-container::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
+        .table-container::-webkit-scrollbar-track { background: #f9f5f2; border-radius: 8px; }
         .table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
-        .table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .table-container::-webkit-scrollbar-thumb:hover { background: var(--brand-peach); }
 
-        table { width: 100%; border-collapse: collapse; text-align: left; white-space: nowrap; font-size: 1.05em; }
-        thead { position: sticky; top: 0; background: #f8fafc; z-index: 20; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        th, td { padding: 18px 22px; border-bottom: 1px solid #f1f5f9; }
-        th { font-weight: 800; color: var(--text-main); font-family: 'Be Vietnam Pro', sans-serif; text-transform: uppercase; font-size: 0.9em; letter-spacing: 0.5px;}
-        tbody tr { transition: background 0.2s; }
-        tbody tr:hover { background: #ffffff; box-shadow: inset 4px 0 0 var(--primary); }
-        
-        .badge { padding: 8px 14px; border-radius: 10px; font-size: 13px; font-weight: 800; color: white; letter-spacing: 0.5px; }
-        .badge-listening { background: var(--listening); }
-        .badge-reading { background: var(--reading); }
-        .badge-speaking { background: var(--speaking); }
-        .badge-writing { background: var(--writing); }
-        
-        .btn-delete { 
-            background: #ffe4e6; 
-            color: #e11d48; 
-            border: none; 
-            padding: 10px 18px; 
-            border-radius: 10px; 
-            cursor: pointer; 
-            font-weight: 800; 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            white-space: nowrap;
+            font-size: 13.5px;
+        }
+        thead {
+            position: sticky;
+            top: 0;
+            background: #fff8f6;
+            z-index: 20;
+            border-bottom: 2px solid var(--card-border);
+        }
+        th, td {
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(230, 82, 69, 0.08);
+        }
+        th {
+            font-weight: 800;
+            color: var(--text-title);
+            font-family: 'Be Vietnam Pro', sans-serif;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+        tbody tr { transition: background 0.2s ease; }
+        tbody tr:hover { background: var(--brand-peach-soft); }
+
+        /* BADGES */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 11.5px;
+            font-weight: 800;
+            color: white;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+        .badge-listening { background: linear-gradient(135deg, #FF6B6B 0%, #EE5253 100%); }
+        .badge-reading { background: linear-gradient(135deg, #1DD1A1 0%, #10AC84 100%); }
+        .badge-speaking { background: linear-gradient(135deg, #A55EEA 0%, #8854D0 100%); }
+        .badge-writing { background: linear-gradient(135deg, #FF9F43 0%, #F15412 100%); }
+
+        .btn-delete {
+            background: #ffe4e6;
+            color: #e11d48;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 800;
             font-size: 13px;
             transition: all 0.2s;
         }
@@ -355,42 +470,214 @@
         #progressChart { max-height: 400px; width: 100%; }
 
         /* UI Popups */
-        #authOverlay { position: fixed; top:0; left:0; width: 100%; height: 100%; background: var(--modal-bg); backdrop-filter: blur(15px); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
-        #authOverlay h2 { color: var(--text-main); font-size: 32px; margin-bottom: 25px; text-align: center; padding: 0 20px; font-family: 'Be Vietnam Pro', sans-serif; text-shadow: 0 2px 10px rgba(255,255,255,0.8);}
-        .btn-auth { background: var(--primary-gradient); color: white; padding: 18px 40px; border-radius: 16px; text-decoration: none; font-weight: 800; font-size: 18px; box-shadow: 0 10px 25px rgba(255, 71, 126, 0.3); transition: transform 0.3s;}
+        #authOverlay { position: fixed; top:0; left:0; width: 100%; height: 100%; background: var(--modal-bg); backdrop-filter: blur(12px); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
+        #authOverlay h2 { color: var(--brand-primary); font-size: 28px; margin-bottom: 25px; text-align: center; padding: 0 20px; font-weight: 800; }
+        .btn-auth { background: var(--brand-gradient); color: white; padding: 15px 35px; border-radius: 25px; text-decoration: none; font-weight: 800; font-size: 18px; box-shadow: 0 8px 20px rgba(230, 82, 69, 0.3); transition: transform 0.3s;}
         .btn-auth:hover { transform: translateY(-3px); }
 
-        #customModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;}
-        .modal-box { background: white; padding: 40px; border-radius: 24px; width: 100%; max-width: 480px; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.25); animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        @keyframes popIn { 0% { transform: scale(0.8) translateY(20px); opacity: 0; } 100% { transform: scale(1) translateY(0); opacity: 1; } }
-        .modal-title { font-size: 26px; color: var(--text-main); font-weight: 800; margin-bottom: 15px; font-family: 'Be Vietnam Pro', sans-serif;}
-        .modal-message { color: var(--text-muted); margin-bottom: 35px; line-height: 1.6; font-size: 1.15em;}
+        #customModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px;}
+        .modal-box { background: white; padding: 35px; border-radius: 24px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.15); animation: popIn 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); border: 2px solid rgba(255,255,255,0.8);}
+        @keyframes popIn { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .modal-title { font-size: 22px; color: var(--brand-primary); font-weight: 800; margin-bottom: 15px; }
+        .modal-message { color: #57606f; margin-bottom: 30px; line-height: 1.6; font-size: 16px;}
         .modal-actions { display: flex; gap: 15px; justify-content: center; }
-        .btn-modal-cancel { background: #f1f5f9; color: #475569; padding: 14px 25px; border: none; border-radius: 12px; cursor: pointer; font-weight: 800; flex: 1; font-size: 16px; transition: background 0.2s;}
-        .btn-modal-cancel:hover { background: #e2e8f0; }
-        .btn-modal-confirm { background: var(--incorrect); color: white; padding: 14px 25px; border: none; border-radius: 12px; cursor: pointer; font-weight: 800; flex: 1; font-size: 16px; transition: background 0.2s; box-shadow: 0 8px 15px rgba(244, 63, 94, 0.2);}
+        .btn-modal-cancel { background: #f1f2f6; color: #57606f; padding: 12px 25px; border: none; border-radius: 12px; cursor: pointer; font-weight: 800; flex: 1; transition: background 0.2s;}
+        .btn-modal-cancel:hover { background: #dfe4ea; }
+        .btn-modal-confirm { background: var(--primary); color: white; padding: 12px 25px; border: none; border-radius: 12px; cursor: pointer; font-weight: 800; flex: 1; box-shadow: 0 5px 15px rgba(230, 82, 69, 0.3);}
         .btn-modal-confirm:hover { background: #be123c; }
 
-        #toast { position: fixed; bottom: -120px; right: 30px; background: white; border-left: 8px solid var(--secondary); padding: 20px 30px; border-radius: 16px; box-shadow: 0 15px 40px rgba(0,0,0,0.15); transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 3000; max-width: 400px; font-size: 1.05em; }
-        #toast.show { bottom: 40px; }
+        #toast { position: fixed; bottom: -100px; right: 20px; background: white; border-left: 6px solid var(--secondary); padding: 18px 25px; border-radius: 16px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); transition: bottom 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 3000; max-width: 320px; font-size: 1em; border-right: 1px solid #eee; border-top: 1px solid #eee; border-bottom: 1px solid #eee;}
+        #toast.show { bottom: 30px; }
         #toast.error-toast { border-left-color: var(--incorrect); }
-        #toast .title { font-weight: 800; margin-bottom: 8px; color: var(--text-main); font-size: 1.25em;}
-        #toast .message { color: var(--text-muted); line-height: 1.5; font-weight: 600;}
+        #toast .title { font-weight: 800; margin-bottom: 5px; color: var(--brand-primary); font-size: 1.15em;}
+        #toast .message { color: #57606f; line-height: 1.5; font-weight: 600;}
+
+        /* HƯỚNG DẪN OVERLAY (GUIDE) */
+        #guideOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(245, 223, 230, 0.7); backdrop-filter: blur(15px);
+            display: none; justify-content: center; align-items: center; z-index: 2600; padding: 20px;
+        }
+        .guide-box {
+            background: white; border-radius: 30px; padding: 30px 40px; width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto; box-shadow: 0 25px 50px rgba(255, 107, 129, 0.15); border: 3px solid #ffeaa7; animation: popIn 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); position: relative;
+        }
+        .guide-box::-webkit-scrollbar { width: 8px; }
+        .guide-box::-webkit-scrollbar-track { background: transparent; }
+        .guide-box::-webkit-scrollbar-thumb { background: #ffb8b8; border-radius: 10px; }
+        .guide-box::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+        .guide-title { font-size: 30px; color: var(--primary); font-weight: 800; text-align: center; margin-bottom: 25px; }
+        .guide-step { display: flex; gap: 15px; margin-bottom: 20px; align-items: flex-start; background: #f8f9fa; padding: 15px; border-radius: 16px; border-left: 5px solid var(--secondary); box-shadow: 0 4px 10px rgba(0,0,0,0.03); }
+        .guide-icon { font-size: 30px; }
+        .guide-text h4 { margin: 0 0 5px 0; color: var(--speaking); font-size: 18px; font-weight: 800; }
+        .guide-text p { margin: 0; color: #57606f; font-size: 15px; line-height: 1.5; }
+        .btn-guide-close { display: block; width: 100%; background: linear-gradient(135deg, var(--secondary), #00b894); color: white; padding: 15px; border: none; border-radius: 15px; font-size: 18px; font-weight: 800; cursor: pointer; margin-top: 30px; font-family: inherit; box-shadow: 0 8px 20px rgba(29, 209, 161, 0.3); transition: transform 0.2s; }
+        .btn-guide-close:hover { transform: translateY(-3px); }
+
+        /* FIXED ICONS AT RIGHT */
+        .fixed-guide-icon { position: fixed; bottom: 190px; right: 30px; z-index: 1500; font-size: 24px; cursor: pointer; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 50%; box-shadow: var(--shadow-md); border: 1.5px solid var(--card-border); transition: transform 0.2s; }
+        .fixed-guide-icon:hover { transform: scale(1.15) rotate(15deg); }
         
-        input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        input[type="number"] { -moz-appearance: textfield; }
-        
-        .flex-inputs { display: flex; gap: 20px; }
-        .flex-inputs .form-group { flex: 1; margin-bottom: 0; }
+        .fixed-bulb { position: fixed; bottom: 30px; right: 30px; z-index: 1500; font-size: 24px; cursor: pointer; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 50%; box-shadow: var(--shadow-md); border: 1.5px solid var(--card-border); transition: transform 0.2s; }
+        .fixed-bulb:hover { transform: scale(1.1) rotate(-10deg); }
+        .fixed-bulb.hidden { opacity: 0; transform: translateY(40px) scale(0.5); pointer-events: none; }
+        .bulb-badge { position: absolute; top: -5px; right: -5px; background: var(--incorrect); color: white; font-size: 12px; font-weight: 800; padding: 4px 8px; border-radius: 12px; border: 2px solid white; }
+
+        .fixed-reminder-icon { position: fixed; bottom: 110px; right: 30px; z-index: 1500; font-size: 24px; cursor: pointer; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 50%; box-shadow: var(--shadow-md); border: 1.5px solid var(--card-border); transition: transform 0.2s; }
+        .fixed-reminder-icon:hover { transform: scale(1.1) rotate(15deg); }
+
+        /* MODAL REMINDER & SR */
+        #reminderModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+        #srOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(161, 140, 209, 0.5); backdrop-filter: blur(18px); display: none; justify-content: center; align-items: center; z-index: 2500; padding: 20px; opacity: 0; transition: opacity 0.4s ease; }
+        #srOverlay.active { display: flex; opacity: 1; }
+        .sr-box { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(25px); padding: 40px 35px; border-radius: 30px; width: 100%; max-width: 500px; text-align: center; box-shadow: 0 30px 60px rgba(95, 39, 205, 0.2); border: 2px solid white; animation: floatUp 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        @keyframes floatUp { 0% { transform: translateY(60px) scale(0.9); opacity: 0; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+        .sr-icon { font-size: 55px; margin-bottom: 15px; display: inline-block; animation: heartbeat 1.5s infinite; text-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        @keyframes heartbeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1) rotate(5deg); } }
+        .sr-title { font-size: 26px; color: var(--primary); font-weight: 800; margin-bottom: 12px; letter-spacing: -0.5px; }
+        .sr-desc { color: #57606f; font-size: 15px; line-height: 1.6; margin-bottom: 20px; font-weight: 600; }
+        .sr-list { list-style: none; padding: 0; margin: 0 0 25px 0; max-height: 200px; overflow-y: auto; text-align: left; background: rgba(241, 242, 246, 0.7); border-radius: 18px; padding: 12px; border: 1px solid white; }
+        .sr-list::-webkit-scrollbar { width: 6px; }
+        .sr-list::-webkit-scrollbar-thumb { background: #ced6e0; border-radius: 10px; }
+        .sr-list li { background: white; border-left: 5px solid var(--secondary); padding: 15px; margin-bottom: 10px; border-radius: 14px; font-size: 14.5px; color: #2f3542; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: transform 0.2s; }
+        .sr-list li:hover { transform: translateX(5px); }
+        .sr-list li:last-child { margin-bottom: 0; }
+        .sr-list li strong { color: var(--speaking); font-size: 16px; font-weight: 800; }
+        .sr-days { font-size: 12px; background: rgba(29, 209, 161, 0.15); color: #10ac84; padding: 6px 12px; border-radius: 15px; font-weight: 800; white-space: nowrap; margin-left: 10px; }
+        .sr-actions { display: flex; gap: 15px; justify-content: center; }
+        .btn-sr-later { background: #f1f2f6; color: #57606f; padding: 14px 20px; border: none; border-radius: 16px; cursor: pointer; font-weight: 800; flex: 1; transition: all 0.3s; font-family: inherit; font-size: 15px; }
+        .btn-sr-later:hover { background: #dfe4ea; transform: scale(0.98); }
+        .btn-sr-now { background: linear-gradient(135deg, var(--speaking), var(--primary)); color: white; padding: 14px 20px; border: none; border-radius: 16px; cursor: pointer; font-weight: 800; flex: 1.5; box-shadow: 0 8px 25px rgba(95, 39, 205, 0.35); transition: all 0.3s; font-family: inherit; font-size: 15.5px; }
+        .btn-sr-now:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(95, 39, 205, 0.45); }
+
+        /* RESPONSIVE */
+        @media(max-width: 1200px) {
+            .top-layout { grid-template-columns: minmax(320px, 380px) 1fr; }
+            .circle-wrap { width: 120px; height: 120px; }
+            .circle-inner { width: 90px; height: 90px; font-size: 26px; }
+        }
+        @media(max-width: 950px) {
+            .top-layout { grid-template-columns: 1fr; }
+            .circles-container { grid-template-columns: repeat(2, 1fr); gap: 25px; }
+            .card { padding: 25px; }
+        }
+        @media(max-width: 768px) {
+            .brand-subtitle { display: none !important; }
+            .btn-aim-navbar { padding: 6px 10px; font-size: 11.5px; }
+            .btn-topbar-nav { padding: 6px 10px; font-size: 11.5px; }
+        }
+        @media(max-width: 600px) {
+            body { padding: 10px; padding-top: calc(var(--topbar-height) + 15px); }
+            .container { width: 100%; padding: 15px 10px; border-radius: 15px; }
+            .header h1 { font-size: 2em; }
+            .flex-inputs { flex-direction: column; gap: 15px; }
+            .circle-wrap { width: 110px; height: 110px; }
+            .circle-inner { width: 85px; height: 85px; font-size: 24px; }
+            .skill-name { font-size: 1.05em; margin-top: 12px; }
+            .filter-container { flex-direction: column; width: 100%; }
+            .filter-input { width: 100%; }
+            th, td { padding: 12px 15px; font-size: 0.95em; }
+            #toast { left: 50%; transform: translateX(-50%); right: auto; width: 90%; bottom: -150px; text-align: center; }
+            #toast.show { bottom: 20px; }
+            .modal-box { padding: 25px; margin: 15px; }
+            .modal-actions { flex-direction: column; }
+            .btn-modal-cancel, .btn-modal-confirm { width: 100%; }
+        }
     </style>
 </head>
 <body>
+    <div class="bg-watermark">SnapEnglish</div>
 
+    <!-- FIXED TOP NAVBAR -->
+    <nav class="top-navbar">
+        <a href="index.html" class="brand-link" title="Về trang chủ SnapEnglish">
+            <div class="brand-badge">SnapEnglish</div>
+            <div class="brand-subtitle">IELTS Tracker</div>
+        </a>
+        <div class="topbar-right" style="display: flex; gap: 8px; align-items: center;">
+            <a href="ielts-aim.html" class="btn-aim-navbar">🎯 Mục tiêu IELTS</a>
+            <a href="index.html" class="btn-topbar-nav">🏠 Về trang chủ</a>
+        </div>
+    </nav>
+
+    <!-- AUTH OVERLAY -->
     <div id="authOverlay">
         <h2>Bạn cần đăng nhập để theo dõi tiến độ IELTS!</h2>
         <a href="index.html" class="btn-auth">Quay về Trang chủ</a>
     </div>
 
+    <!-- GUIDE OVERLAY -->
+    <div id="guideOverlay">
+        <div class="guide-box">
+            <div class="guide-title">Chào mừng bạn đến với IELTS Tracker! 🌸🐰</div>
+            <div class="guide-step">
+                <div class="guide-icon">✍️</div>
+                <div class="guide-text">
+                    <h4>1. Nhập điểm luyện tập</h4>
+                    <p>- Có 2 cách nhập điểm:</p>
+                    <p><b>+ Cách 1:</b> Điểm số được tự động lưu sau khi làm test thực tế.</p>
+                    <p><b>+ Cách 2:</b> Nhập trực tiếp vào Form bên trái. Với kỹ năng Listening / Reading, hệ thống tự động quy đổi số câu đúng sang điểm Band tương ứng dựa trên thang điểm 40 câu.</p>
+                </div>
+            </div>
+            <div class="guide-step">
+                <div class="guide-icon" style="border-left-color: #ffeaa7;">💡</div>
+                <div class="guide-text">
+                    <h4>2. Bóng đèn nhắc nhở (Spaced Repetition)</h4>
+                    <p>Hệ thống tự động theo dõi lịch sử làm đề của bạn. Nếu có bất kỳ bộ đề nào quá 7 ngày chưa được luyện tập lại, một chiếc <b>Bóng đèn 💡</b> sẽ phát sáng ở góc phải để cảnh báo. Nhấn vào đó để xem danh sách cần ôn.</p>
+                </div>
+            </div>
+            <div class="guide-step">
+                <div class="guide-icon" style="border-left-color: #FF6B81;">🎯</div>
+                <div class="guide-text">
+                    <h4>3. Theo dõi Mục tiêu</h4>
+                    <p>Sử dụng nút <b>"Mục tiêu IELTS"</b> ở trên cùng để thiết lập và đo lường khoảng cách đến mục tiêu của bạn.</p>
+                </div>
+            </div>
+            <button class="btn-guide-close" onclick="closeGuide()">Đã hiểu, bắt đầu thôi! 🚀</button>
+        </div>
+    </div>
+
+    <!-- FLOATING ACTIONS -->
+    <div class="fixed-guide-icon" onclick="openGuide()" title="Xem hướng dẫn">❓</div>
+    <div id="fixedBulb" class="fixed-bulb hidden" onclick="openSRPopupManually()" title="Đề cần ôn lại">
+        💡 <span class="bulb-badge" id="bulbCount">0</span>
+    </div>
+    <div class="fixed-reminder-icon" onclick="openReminderModal()" title="Cài đặt nhắc nhở">⏰</div>
+
+    <!-- SPACED REPETITION OVERLAY -->
+    <div id="srOverlay">
+        <div class="sr-box">
+            <div class="sr-icon">🧠✨</div>
+            <div class="sr-title">Báo động quên lãng!</div>
+            <div class="sr-desc">Những bộ đề dưới đây đã bị bạn bỏ quên khá lâu. Hãy ôn lại và <b style="color: var(--primary);">nhập điểm mới</b> để xóa chúng khỏi danh sách nhé:</div>
+            <div id="srListContainer"></div>
+            <div class="sr-actions">
+                <button class="btn-sr-later" onclick="closeSRPopup()">Để sau nhé</button>
+                <button class="btn-sr-now" onclick="closeSRPopup(); showToast('Tuyệt vời! 🎉', 'Nhớ nhập lại điểm sau khi ôn xong nha!')">Đã hiểu, mình sẽ ôn ngay! 🚀</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- REMINDER MODAL -->
+    <div id="reminderModal">
+        <div class="modal-box">
+            <div class="modal-title">Cài đặt Nhắc học ⏰</div>
+            <div class="modal-message">SnapEnglish sẽ nhắc nhở bạn rèn luyện IELTS vào giờ này mỗi ngày!</div>
+            <div style="margin-bottom: 20px; text-align: left;">
+                <label style="font-weight: 800; color: #57606f; display: block; margin-bottom: 5px;">Chọn giờ học:</label>
+                <input type="time" id="reminderTime" style="width: 100%; padding: 12px; border-radius: 12px; border: 2px solid #dfe4ea; font-size: 16px; font-family: inherit;">
+            </div>
+            <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px; justify-content: center;">
+                <input type="checkbox" id="reminderToggle" style="width: 20px; height: 20px; cursor: pointer;">
+                <label for="reminderToggle" style="font-weight: 800; color: #57606f; cursor: pointer;">Bật nhắc nhở mỗi ngày</label>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" onclick="closeReminderModal()">Đóng</button>
+                <button class="btn-modal-confirm" onclick="saveReminderSettings()">Lưu cài đặt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONFIRMATION MODAL -->
     <div id="customModal">
         <div class="modal-box">
             <div class="modal-title" id="modalTitle">Xác nhận</div>
@@ -402,18 +689,29 @@
         </div>
     </div>
 
+    <!-- TOAST NOTIFICATION -->
     <div id="toast">
         <div class="title" id="toastTitle">Thông báo</div>
         <div class="message" id="toastMessage"></div>
     </div>
 
+    <!-- MAIN BODY -->
     <div class="container">
         <div class="header">
-            <h1>Tiến trình luyện IELTS 🎯</h1>
-            <p>Hành trình chinh phục Band 9.0 bắt đầu từ sự kiên trì</p>
+            <h1>Tiến trình luyện IELTS 🎯🚀</h1>
+            <div class="ticker-wrap">
+                <div class="ticker-move">
+                    <div class="ticker-item">🌟 Hành trình chinh phục IELTS Band 9.0 bắt đầu từ sự kiên trì! Hãy giữ lửa kỷ luật mỗi ngày bạn nhé! 🌸</div>
+                    <div class="ticker-item">📚 Mỗi ngày làm thêm một bộ đề là bạn đã tiến gần hơn đến mục tiêu ước mơ! 💪</div>
+                    <!-- Lặp lại nội dung để chạy mượt liên tục -->
+                    <div class="ticker-item">🌟 Hành trình chinh phục IELTS Band 9.0 bắt đầu từ sự kiên trì! Hãy giữ lửa kỷ luật mỗi ngày bạn nhé! 🌸</div>
+                    <div class="ticker-item">📚 Mỗi ngày làm thêm một bộ đề là bạn đã tiến gần hơn đến mục tiêu ước mơ! 💪</div>
+                </div>
+            </div>
         </div>
 
         <div class="top-layout">
+            <!-- INPUT FORM CARD -->
             <div>
                 <div class="card" style="height: 100%; box-sizing: border-box;">
                     <h3>✍️ Nhập Điểm Luyện Tập</h3>
@@ -439,38 +737,35 @@
                             <label>Phần thi (Part / Task / Full)</label>
                             <input type="text" id="partName" placeholder="VD: Part 1, Passage 2, Task 1, Full..." required>
                         </div>
-                        
                         <div class="form-group">
                             <label>Thời gian làm (Phút)</label>
                             <input type="number" id="timeTaken" placeholder="VD: 60">
                         </div>
-                        
                         <div id="group-correct" style="margin-bottom: 18px;">
                             <div class="flex-inputs">
                                 <div class="form-group">
                                     <label>Số câu ĐÚNG</label>
-                                    <input type="number" id="correctQ" placeholder="VD: 8" min="0">
+                                    <input type="number" id="correctQ" placeholder="VD: 32" min="0">
                                 </div>
                                 <div class="form-group">
                                     <label>Tổng số câu</label>
                                     <input type="number" id="totalQ" value="40" min="1">
                                 </div>
                             </div>
-                            <small style="color: #64748b; font-size: 0.85em; font-weight: 700; display: block; margin-top: 10px;">
+                            <small style="color: var(--text-muted); font-size: 0.82em; font-weight: 700; display: block; margin-top: 10px;">
                                 *Hệ thống sẽ tự quy đổi điểm nếu tổng số câu khác 40.
                             </small>
                         </div>
-                        
                         <div class="form-group" id="group-band" style="display: none;">
                             <label>Điểm Band (0 - 9.0)</label>
                             <input type="number" id="bandScoreDirect" placeholder="VD: 6.5" step="0.5" min="0" max="9">
                         </div>
-
                         <button type="submit" class="btn btn-submit">Lưu Điểm Lên Mây ☁️</button>
                     </form>
                 </div>
             </div>
 
+            <!-- DASHBOARD GRAPH & SCORES -->
             <div style="display: flex; flex-direction: column;">
                 <div class="dashboard-header">
                     <div class="total-box">
@@ -478,32 +773,40 @@
                         <span class="score" id="totalOverall">0.0</span> <span class="max-score">/ 9.0</span>
                     </div>
                 </div>
-
                 <div class="card" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
                     <h3 style="text-align: center; justify-content: center;">Điểm Trung Bình Từng Kỹ Năng</h3>
                     <div class="circles-container">
                         <div class="skill-circle-box">
-                            <div class="circle-wrap" id="circle-Listening"><div class="circle-inner" style="color: var(--listening);" id="avg-Listening">0.0</div></div>
+                            <div class="circle-wrap" id="circle-Listening">
+                                <div class="circle-inner" style="color: var(--listening);" id="avg-Listening">0.0</div>
+                            </div>
                             <div class="skill-name">Listening</div>
                         </div>
                         <div class="skill-circle-box">
-                            <div class="circle-wrap" id="circle-Reading"><div class="circle-inner" style="color: var(--reading);" id="avg-Reading">0.0</div></div>
+                            <div class="circle-wrap" id="circle-Reading">
+                                <div class="circle-inner" style="color: var(--reading);" id="avg-Reading">0.0</div>
+                            </div>
                             <div class="skill-name">Reading</div>
                         </div>
                         <div class="skill-circle-box">
-                            <div class="circle-wrap" id="circle-Speaking"><div class="circle-inner" style="color: var(--speaking);" id="avg-Speaking">0.0</div></div>
+                            <div class="circle-wrap" id="circle-Speaking">
+                                <div class="circle-inner" style="color: var(--speaking);" id="avg-Speaking">0.0</div>
+                            </div>
                             <div class="skill-name">Speaking</div>
                         </div>
                         <div class="skill-circle-box">
-                            <div class="circle-wrap" id="circle-Writing"><div class="circle-inner" style="color: var(--writing);" id="avg-Writing">0.0</div></div>
+                            <div class="circle-wrap" id="circle-Writing">
+                                <div class="circle-inner" style="color: var(--writing);" id="avg-Writing">0.0</div>
+                            </div>
                             <div class="skill-name">Writing</div>
                         </div>
                     </div>
                 </div>
-            </div> 
+            </div>
         </div>
 
         <div class="bottom-layout">
+            <!-- HISTORY CARD -->
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
                     <h3 style="margin: 0;">Lịch Sử Luyện Tập</h3>
@@ -537,6 +840,7 @@
                 </div>
             </div>
 
+            <!-- PROGRESS CHART CARD -->
             <div class="card">
                 <h3 style="text-align: center; justify-content: center;">📈 Biểu đồ tiến độ Band Score</h3>
                 <div style="position: relative; width: 100%; height: 400px; padding-top: 15px;">
@@ -545,7 +849,8 @@
             </div>
         </div>
     </div>
-            
+
+    <!-- FIREBASE & JS LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
@@ -567,9 +872,31 @@
         let records = [];
         let chartInstance = null;
         let userContext = {};
-        const colors = { 'Listening': '#3b82f6', 'Reading': '#10b981', 'Speaking': '#8b5cf6', 'Writing': '#f59e0b' };
+        let currentSRList = [];
+
+        const colors = {
+            'Listening': '#EE5253', // Đỏ san hô đồng bộ
+            'Reading': '#10AC84',   // Xanh ngọc đồng bộ
+            'Speaking': '#8854D0',  // Tím Lavender đồng bộ
+            'Writing': '#FF9F43'    // Cam Amber đồng bộ
+        };
 
         // --- HỆ THỐNG POPUP & TOAST ---
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!localStorage.getItem('hasSeenIeltsGuide_v2')) {
+                document.getElementById('guideOverlay').style.display = 'flex';
+            }
+        });
+
+        window.openGuide = function() {
+            document.getElementById('guideOverlay').style.display = 'flex';
+        }
+
+        window.closeGuide = function() {
+            document.getElementById('guideOverlay').style.display = 'none';
+            localStorage.setItem('hasSeenIeltsGuide_v2', 'true');
+        }
+
         window.showToast = function(title, message, isError = false) {
             const toast = document.getElementById('toast');
             document.getElementById('toastTitle').innerText = title;
@@ -587,7 +914,101 @@
         }
 
         window.closeModal = function() { document.getElementById('customModal').style.display = 'none'; }
-        
+
+        window.closeSRPopup = function() {
+            const popup = document.getElementById('srOverlay');
+            popup.classList.remove('active');
+            setTimeout(() => popup.style.display = 'none', 400);
+        }
+
+        window.openSRPopupManually = function() {
+            if (currentSRList.length > 0) {
+                renderSRList(currentSRList);
+                const popup = document.getElementById('srOverlay');
+                popup.style.display = 'flex';
+                setTimeout(() => popup.classList.add('active'), 10);
+            }
+        }
+
+        function renderSRList(testsToReview) {
+            const now = Date.now();
+            let listHTML = '<ul class="sr-list">';
+            testsToReview.forEach(r => {
+                const daysAgo = Math.floor((now - r.timestamp) / (24 * 60 * 60 * 1000));
+                listHTML += `
+                <li>
+                    <span><strong>${r.testName}</strong> <br><small style="color: #747d8c; font-weight: 600;">${r.partName}</small></span>
+                    <span class="sr-days">${daysAgo} ngày trước</span>
+                </li>
+                `;
+            });
+            listHTML += '</ul>';
+            document.getElementById('srListContainer').innerHTML = listHTML;
+        }
+
+        function updateSpacedRepetitionState() {
+            if (!records || records.length === 0) {
+                document.getElementById('fixedBulb').classList.add('hidden');
+                return;
+            }
+            const testStats = {};
+            records.forEach(r => {
+                const testName = r.testName || "Cambridge Test";
+                const partName = r.partName || "Full";
+                const key = testName.toLowerCase().trim() + "|" + partName.toLowerCase().trim();
+                if (!testStats[key]) {
+                    testStats[key] = { latestRecord: r, count: 1 };
+                } else {
+                    testStats[key].count++;
+                    if (r.timestamp > testStats[key].latestRecord.timestamp) {
+                        testStats[key].latestRecord = r;
+                    }
+                }
+            });
+
+            const getIntervalDays = (count) => {
+                if (count === 1) return 7;
+                if (count === 2) return 14;
+                if (count === 3) return 30;
+                return 60;
+            };
+
+            const now = Date.now();
+            currentSRList = Object.values(testStats)
+                .map(stat => {
+                    const intervalDays = getIntervalDays(stat.count);
+                    const thresholdMs = intervalDays * 24 * 60 * 60 * 1000;
+                    return {
+                        ...stat.latestRecord,
+                        isDue: (now - stat.latestRecord.timestamp) > thresholdMs
+                    };
+                })
+                .filter(r => r.isDue)
+                .sort((a, b) => a.timestamp - b.timestamp);
+
+            const bulb = document.getElementById('fixedBulb');
+            const bulbCount = document.getElementById('bulbCount');
+
+            if (currentSRList.length > 0) {
+                bulb.classList.remove('hidden');
+                bulbCount.innerText = currentSRList.length;
+            } else {
+                bulb.classList.add('hidden');
+            }
+
+            const today = new Date().toDateString();
+            const lastShown = localStorage.getItem('ielts_lastSRPopupDate');
+            if (lastShown !== today && currentSRList.length > 0) {
+                renderSRList(currentSRList);
+                setTimeout(() => {
+                    const popup = document.getElementById('srOverlay');
+                    popup.style.display = 'flex';
+                    setTimeout(() => popup.classList.add('active'), 10);
+                    localStorage.setItem('ielts_lastSRPopupDate', today);
+                }, 2000);
+            }
+        }
+
         // --- CHUYỂN ĐỔI FORM NHẬP THEO KỸ NĂNG ---
         window.toggleFormInputs = function() {
             const skill = document.getElementById('skill').value;
@@ -595,7 +1016,7 @@
             const grpBand = document.getElementById('group-band');
             const correctInput = document.getElementById('correctQ');
             const bandInput = document.getElementById('bandScoreDirect');
-            
+
             if (skill === 'Listening' || skill === 'Reading') {
                 grpCorrect.style.display = 'block';
                 grpBand.style.display = 'none';
@@ -610,12 +1031,10 @@
         }
         window.toggleFormInputs();
 
-        // --- CÁC HÀM TÍNH ĐIỂM IELTS CHUẨN (CÓ QUY ĐỔI NẾU LÀM TỪNG PART) ---
+        // --- CÁC HÀM TÍNH ĐIỂM IELTS CHUẨN ---
         function calculateIeltsBand(skill, correct, total) {
-            // Quy đổi số câu đúng ra hệ 40 câu
             let normalizedCorrect = (correct / total) * 40;
             let score = 0;
-
             if (skill === 'Listening') {
                 if (normalizedCorrect >= 39) score = 9.0;
                 else if (normalizedCorrect >= 37) score = 8.5;
@@ -631,7 +1050,7 @@
                 else if (normalizedCorrect >= 8) score = 3.5;
                 else if (normalizedCorrect >= 6) score = 3.0;
                 else score = 2.5;
-            } else if (skill === 'Reading') { 
+            } else if (skill === 'Reading') {
                 if (normalizedCorrect >= 39) score = 9.0;
                 else if (normalizedCorrect >= 37) score = 8.5;
                 else if (normalizedCorrect >= 35) score = 8.0;
@@ -662,11 +1081,11 @@
         window.renderTable = function(data) {
             const tbody = document.getElementById('historyTableBody');
             tbody.innerHTML = data.length === 0 ? `<tr><td colspan="8" style="text-align:center; color: #94a3b8; font-weight: bold; padding: 30px;">Chưa có dữ liệu. Hãy luyện tập và ghi điểm nhé! 🕵️‍♂️</td></tr>` : "";
+            
             data.forEach(record => {
                 const tr = document.createElement('tr');
                 let totalDisplay = record.totalQ || 40;
                 let detailTxt = (record.skill === 'Listening' || record.skill === 'Reading') ? `<span style="color: var(--correct); font-weight: 800; font-size: 1.1em;">${record.correctQ}</span> / ${totalDisplay}` : `<span style="color: #cbd5e1; font-weight: bold;">--</span>`;
-                
                 tr.innerHTML = `
                     <td style="font-weight: 700;">${record.date}</td>
                     <td><span class="badge badge-${record.skill.toLowerCase()}">${record.skill}</span></td>
@@ -688,7 +1107,7 @@
             window.renderTable(filteredData);
         };
 
-        const setTodayDefault = () => { document.getElementById('testDate').value = new Date().toISOString().split('T')[0]; };
+        const setTodayDefault = () => { document.getElementById('testDate').value = new Date().toISOString().split('T'); };
         setTodayDefault();
 
         // --- FIREBASE LOGIC ---
@@ -715,7 +1134,6 @@
             const timeTaken = document.getElementById('timeTaken').value;
             const partName = document.getElementById('partName').value;
             const dateObj = new Date(document.getElementById('testDate').value);
-            
             let bandScore = 0;
             let correctQ = null;
             let totalQ = null;
@@ -732,15 +1150,16 @@
 
             try {
                 await setDoc(doc(db, "user_ielts_scores", userContext.uid + "_ielts_" + Date.now()), {
-                    email: userContext.email, skill, 
+                    email: userContext.email, skill,
                     testName: document.getElementById('testName').value,
                     partName: partName,
                     timeTaken: timeTaken, correctQ: correctQ, totalQ: totalQ, bandScore: bandScore,
                     date: dateObj.toLocaleDateString('vi-VN'), timestamp: dateObj.getTime()
                 });
                 showToast("Thành công! 🎉", `Đã lưu điểm ${skill} (${bandScore.toFixed(1)}).`);
-                this.reset(); setTodayDefault(); 
-                document.getElementById('totalQ').value = 40; 
+                localStorage.setItem('ielts_last_study_date', dateObj.toLocaleDateString('vi-VN'));
+                this.reset(); setTodayDefault();
+                document.getElementById('totalQ').value = 40;
                 toggleFormInputs(); fetchData();
             } catch (error) { showToast("Lỗi", error.message, true); }
         });
@@ -750,7 +1169,7 @@
                 const sRecs = records.filter(r => r.skill === skill);
                 if (sRecs.length === 0) return 0.0;
                 const sum = sRecs.reduce((acc, r) => acc + r.bandScore, 0);
-                return (sum / sRecs.length); 
+                return (sum / sRecs.length);
             };
 
             let totalAverages = 0;
@@ -759,42 +1178,39 @@
             ['Listening', 'Reading', 'Speaking', 'Writing'].forEach(s => {
                 const avg = getAverageBand(s);
                 document.getElementById(`avg-${s}`).innerText = avg > 0 ? avg.toFixed(1) : "0.0";
-                document.getElementById(`circle-${s}`).style.background = `conic-gradient(${colors[s]} ${(avg/9.0)*100}%, #f1f5f9 0)`;
-                
+                document.getElementById(`circle-${s}`).style.background = `conic-gradient(${colors[s]} ${(avg/9.0)*100}%, rgba(223, 228, 234, 0.5) 0)`;
                 if (avg > 0) {
                     totalAverages += avg;
                     skillsWithData++;
                 }
             });
 
-            let rawOverall = skillsWithData > 0 ? (totalAverages / 4) : 0; 
+            let rawOverall = skillsWithData > 0 ? (totalAverages / 4) : 0;
             if (skillsWithData > 0 && skillsWithData < 4) {
-                 rawOverall = totalAverages / skillsWithData; 
+                rawOverall = totalAverages / skillsWithData;
             }
-            
             document.getElementById('totalOverall').innerText = rawOverall > 0 ? roundOverallIelts(rawOverall).toFixed(1) : "0.0";
             
             window.renderTable(records);
 
-            // VẼ BIỂU ĐỒ TƯƠNG PHẢN CAO
+            // VẼ BIỂU ĐỒ ĐỒNG BỘ MÀU SẮC
             const ctx = document.getElementById('progressChart').getContext('2d');
-            const labels = [...new Set(records.map(r => r.date))].reverse(); 
+            const labels = [...new Set(records.map(r => r.date))].reverse();
             if (chartInstance) chartInstance.destroy();
-            
             chartInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels,
                     datasets: ['Listening', 'Reading', 'Speaking', 'Writing'].map(s => ({
-                        label: s, 
+                        label: s,
                         data: labels.map(d => {
                             const dr = records.filter(r => r.date === d && r.skill === s);
                             return dr.length ? (dr.reduce((a,c)=>a+c.bandScore,0)/dr.length).toFixed(1) : null;
-                        }), 
-                        borderColor: colors[s], 
-                        backgroundColor: colors[s] + '33',
-                        tension: 0.4, 
-                        spanGaps: true, 
+                        }),
+                        borderColor: colors[s],
+                        backgroundColor: colors[s] + '22',
+                        tension: 0.4,
+                        spanGaps: true,
                         pointRadius: 6,
                         pointHoverRadius: 10,
                         borderWidth: 4,
@@ -803,30 +1219,132 @@
                         pointBorderWidth: 3
                     }))
                 },
-                options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false, 
-                    plugins: { 
-                        legend: { position: 'top', labels: { font: { family: 'Nunito', size: 14, weight: 'bold' }, color: '#1e293b' } } 
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top', labels: { font: { family: 'Be Vietnam Pro', size: 14, weight: 'bold' }, color: '#57606f' } }
                     },
-                    scales: { 
-                        y: { 
+                    scales: {
+                        y: {
                             min: 0, max: 9, ticks: { stepSize: 0.5, font: { weight: 'bold', size: 13 } },
-                            grid: { color: 'rgba(0,0,0,0.05)' }
+                            grid: { color: 'rgba(230, 82, 69, 0.05)' }
                         },
                         x: {
                             ticks: { font: { weight: 'bold', size: 13 } },
                             grid: { display: false }
                         }
-                    } 
+                    }
                 }
             });
+            updateSpacedRepetitionState();
         }
 
         window.deleteRecord = id => openModal("Xóa kết quả", "Bạn có chắc chắn muốn xóa bản ghi điểm này không? Dữ liệu biểu đồ cũng sẽ cập nhật lại!", async () => {
-            try { await deleteDoc(doc(db, "user_ielts_scores", id)); showToast("Xong", "Đã xóa kết quả."); fetchData(); } 
+            try { await deleteDoc(doc(db, "user_ielts_scores", id)); showToast("Xong", "Đã xóa kết quả."); fetchData(); }
             catch (e) { showToast("Lỗi", e.message, true); }
         });
+
+        // ==========================================
+        // TÍNH NĂNG NHẮC NHỞ HỌC BÀI (NOTIFICATION API)
+        // ==========================================
+        window.openReminderModal = function() {
+            const savedTime = localStorage.getItem('ielts_reminder_time') || '20:00';
+            const isEnabled = localStorage.getItem('ielts_reminder_enabled') === 'true';
+            document.getElementById('reminderTime').value = savedTime;
+            document.getElementById('reminderToggle').checked = isEnabled;
+            document.getElementById('reminderModal').style.display = 'flex';
+        }
+
+        window.closeReminderModal = function() {
+            document.getElementById('reminderModal').style.display = 'none';
+        }
+
+        window.saveReminderSettings = async function() {
+            const time = document.getElementById('reminderTime').value;
+            const isEnabled = document.getElementById('reminderToggle').checked;
+            if (isEnabled) {
+                if ("Notification" in window) {
+                    let permission = Notification.permission;
+                    if (permission !== "granted") {
+                        permission = await Notification.requestPermission();
+                    }
+                    if (permission !== "granted") {
+                        showToast("Lỗi", "Bạn chưa cấp quyền thông báo cho trình duyệt!", true);
+                        document.getElementById('reminderToggle').checked = false;
+                        return;
+                    }
+                } else {
+                    showToast("Lỗi", "Trình duyệt của bạn không hỗ trợ thông báo.", true);
+                    return;
+                }
+            }
+            localStorage.setItem('ielts_reminder_time', time);
+            localStorage.setItem('ielts_reminder_enabled', isEnabled);
+            closeReminderModal();
+            showToast("Thành công! 🎉", isEnabled ? `Đã đặt lịch nhắc học vào ${time} mỗi ngày.` : "Đã tắt nhắc nhở học bài.");
+        }
+
+        function checkAndFireReminder() {
+            const isEnabled = localStorage.getItem('ielts_reminder_enabled') === 'true';
+            const targetTime = localStorage.getItem('ielts_reminder_time');
+            if (!isEnabled || !targetTime) return;
+
+            const now = new Date();
+            const currentHour = now.getHours().toString().padStart(2, '0');
+            const currentMinute = now.getMinutes().toString().padStart(2, '0');
+            const currentTimeString = `${currentHour}:${currentMinute}`;
+            const todayString = now.toLocaleDateString('vi-VN');
+            const lastReminded = localStorage.getItem('ielts_last_reminded_date');
+
+            if (currentTimeString === targetTime && lastReminded !== todayString) {
+                fireNotification();
+            }
+
+            const [targetH, targetM] = targetTime.split(':').map(Number);
+            const targetDateObj = new Date();
+            targetDateObj.setHours(targetH, targetM, 0, 0);
+            const lastMissedReminded = localStorage.getItem('ielts_last_missed_reminded_date');
+
+            if (now > targetDateObj && lastMissedReminded !== todayString && lastReminded !== todayString) {
+                const studiedToday = records.some(r => r.date === now.toLocaleDateString('vi-VN'));
+                if (!studiedToday) {
+                    fireMissedNotification(targetTime);
+                }
+            }
+        }
+
+        function fireNotification() {
+            const todayString = new Date().toLocaleDateString('vi-VN');
+            localStorage.setItem('ielts_last_reminded_date', todayString);
+            playReminderSound();
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification("SnapEnglish - Đến giờ học rồi! 🚀", {
+                    body: "Vào làm một bài Test IELTS để duy trì phong độ giữ lửa kỷ luật nào bạn ơi!",
+                    icon: "ảnh.png"
+                });
+            } else {
+                window.showToast("⏰ Đến giờ học rồi!", "Vào luyện một đề IELTS ngay thôi bạn ơi! 🔥", false);
+            }
+        }
+
+        function fireMissedNotification(targetTime) {
+            const todayString = new Date().toLocaleDateString('vi-VN');
+            localStorage.setItem('ielts_last_missed_reminded_date', todayString);
+            playReminderSound();
+            window.showToast(
+                "⏰ Bạn ơi, đến giờ học rồi!",
+                `Lịch nhắc học lúc ${targetTime} hôm nay đã trôi qua mà bạn chưa ôn luyện. Vào làm bài ngay nhé! 🌸`,
+                false
+            );
+        }
+
+        function playReminderSound() {
+            const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3');
+            audio.play().catch(e => console.log("Trình duyệt chặn phát âm thanh tự động:", e));
+        }
+
+        setInterval(checkAndFireReminder, 30000);
     </script>
 </body>
 </html>
