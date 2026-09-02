@@ -503,8 +503,11 @@ footer {
 <!-- --- SHELL DYNAMIC VIEWPANE --- -->
 <main>
   <div class="content-container" id="mainContainer">
-    <!-- TRÁI: TRANSCRIPT PANE (Sẽ tự mở/chia đôi nếu đề có hasTranscript) -->
-    <div class="pane hidden" id="transcriptPane"></div>
+    <!-- TRÁI: KHUNG HIỂN THỊ TRỰC QUAN (ẢNH MAP LÚC LÀM BÀI HOẶC TRANSCRIPT SAU KHI NỘP BÀI) -->
+    <div class="pane hidden" id="leftPane">
+      <div id="imageContainer" class="hidden" style="text-align: center; margin-bottom: 16px;"></div>
+      <div id="transcriptPane" class="hidden"></div>
+    </div>
     
     <!-- PHẢI: QUESTIONS & EXPLANATIONS PANE -->
     <div class="pane" id="questionPane">
@@ -601,16 +604,31 @@ function initQuiz() {
     audio.currentTime = START_TIME;
   });
 
-  // Tái thiết lập layout xem đôi (Split mode) nếu có Transcript
+  // Tái thiết lập layout lúc làm bài: Ẩn Transcript nhưng HIỂN THỊ ẢNH/BẢN ĐỒ nếu có
   const mainContainer = document.getElementById('mainContainer');
+  const leftPane = document.getElementById('leftPane');
+  const imageContainer = document.getElementById('imageContainer');
   const transcriptPane = document.getElementById('transcriptPane');
-  if (quizConfig.hasTranscript) {
+
+  // Reset trạng thái ban đầu
+  mainContainer.classList.remove('split-mode');
+  leftPane.classList.add('hidden');
+  imageContainer.classList.add('hidden');
+  imageContainer.innerHTML = '';
+  transcriptPane.classList.add('hidden');
+  transcriptPane.innerHTML = '';
+
+  // 1. Hiển thị ẢNH/BẢN ĐỒ ngay lúc làm bài/thi thử (NẾU CÓ)
+  if (quizConfig.hasImage && quizConfig.imageHtml) {
     mainContainer.classList.add('split-mode');
-    transcriptPane.classList.remove('hidden');
+    leftPane.classList.remove('hidden');
+    imageContainer.classList.remove('hidden');
+    imageContainer.innerHTML = quizConfig.imageHtml;
+  }
+
+  // 2. Tải sẵn nội dung Transcript vào khung ẩn (Chỉ mở ra sau khi nộp bài)
+  if (quizConfig.hasTranscript && quizConfig.transcriptHtml) {
     transcriptPane.innerHTML = quizConfig.transcriptHtml;
-  } else {
-    mainContainer.classList.remove('split-mode');
-    transcriptPane.classList.add('hidden');
   }
 
   // Nạp câu hỏi và hộp giải thích ẩn vào questionPane
@@ -863,12 +881,29 @@ function evaluateTest(isReviewMode = false) {
     }
   }
 
-  // Reveal Transcript Highlight và Khối giải thích chi tiết
-  document.getElementById('mainContainer').classList.add('split-mode');
+  // Reveal Transcript Highlight và Khối giải thích chi tiết CHỈ sau khi nộp bài
+  const mainContainer = document.getElementById('mainContainer');
+  const leftPane = document.getElementById('leftPane');
+  const imageContainer = document.getElementById('imageContainer');
   const transcriptPane = document.getElementById('transcriptPane');
-  transcriptPane.classList.remove('hidden');
-  if (!transcriptPane.innerHTML.trim()) {
-    transcriptPane.innerHTML = quizConfig.transcriptHtml || "<p style='color: var(--text-muted); padding: 12px;'>Bài làm không đính kèm Audio Transcript.</p>";
+
+  if (quizConfig.hasTranscript) {
+    mainContainer.classList.add('split-mode');
+    leftPane.classList.remove('hidden');
+    transcriptPane.classList.remove('hidden');
+    if (!transcriptPane.innerHTML.trim()) {
+      transcriptPane.innerHTML = quizConfig.transcriptHtml || "<p style='color: var(--text-muted); padding: 12px;'>Bài làm không đính kèm Audio Transcript.</p>";
+    }
+  } else {
+    // Nếu đề không có Transcript nhưng ban đầu có ẢNH, ta vẫn giữ split-mode để học viên xem lại ảnh và đáp án
+    if (quizConfig.hasImage) {
+      mainContainer.classList.add('split-mode');
+      leftPane.classList.remove('hidden');
+    } else {
+      mainContainer.classList.remove('split-mode');
+      leftPane.classList.add('hidden');
+    }
+    transcriptPane.classList.add('hidden');
   }
   
   document.getElementById('explanationsWrapper').classList.remove('hidden');
