@@ -1245,6 +1245,84 @@ body.fullscreen-active .container { height: calc(100vh - 60px); }
     .q-text, .mc-option { font-size: 16px; }
     .pane-left, .pane-middle { font-size: 16px; }
 }
+    body, button, input, select, textarea, div, p, span, h1, h2, h3, h4, h5, h6 {
+    font-family: 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+}
+
+/* Cố định Font & Cột Bài đọc Part 6 */
+.passage-col {
+    font-family: 'Be Vietnam Pro', sans-serif !important;
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #334155;
+}
+.passage-col p {
+    margin-bottom: 1.2rem;
+    text-align: justify;
+}
+.passage-col strong {
+    color: #1e3a8a;
+    font-weight: 700;
+}
+
+/* Cố định Font & Cột Dịch Part 6 */
+.translation-col {
+    font-family: 'Be Vietnam Pro', sans-serif !important;
+    font-size: 0.98rem;
+    line-height: 1.8;
+    color: #1e293b;
+}
+.translation-col p {
+    margin-bottom: 1.2rem;
+    text-align: justify;
+}
+
+/* Định dạng khối câu hỏi & Lựa chọn đáp án */
+.question-block {
+    font-family: 'Be Vietnam Pro', sans-serif !important;
+}
+.question-title {
+    font-family: 'Be Vietnam Pro', sans-serif !important;
+    font-weight: 700;
+    color: #1d4ed8;
+}
+.option-label {
+    font-family: 'Be Vietnam Pro', sans-serif !important;
+    font-size: 0.95rem;
+}
+.option-text-en {
+    font-family: 'Be Vietnam Pro', sans-serif !important;
+    font-weight: 600;
+}
+.option-text-vi {
+    font-family: 'Be Vietnam Pro', sans-serif !important;
+    font-style: italic;
+    color: #64748b;
+    font-size: 0.9em;
+}
+
+/* Định dạng hộp giải thích chi tiết trong Part 6 */
+.explanation-box {
+    font-family: 'Be Vietnam Pro', sans-serif !important;
+    font-size: 0.93rem;
+    line-height: 1.6;
+}
+.explanation-box h4 {
+    font-family: 'Be Vietnam Pro', sans-serif !important;
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+.explanation-box table {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+.explanation-box table th,
+.explanation-box table td {
+    padding: 8px 10px;
+    font-family: 'Be Vietnam Pro', sans-serif !important;
+}
 </style>
 </head>
 <body>
@@ -1868,6 +1946,7 @@ function executeSubmit() {
         }
     } else {
         showToastNotification("Đã khôi phục bài làm từ lịch sử!");
+        applyEvidenceColors();
     }
 }
 
@@ -2133,6 +2212,56 @@ document.addEventListener('keydown', function(event) {
         }
     }
 });
+    function applyEvidenceColors() {
+    const pastelColors = [
+        { bg: '#ffadad', text: '#5a1c1c' }, // Đỏ pastel
+        { bg: '#ffd6a5', text: '#663d14' }, // Cam pastel
+        { bg: '#caffbf', text: '#1f4d1f' }, // Xanh lá pastel
+        { bg: '#9bf6ff', text: '#16565c' }, // Xanh dương pastel
+        { bg: '#a0c4ff', text: '#1c3666' }, // Xanh biển pastel
+        { bg: '#bdb2ff', text: '#352666' }, // Tím pastel
+        { bg: '#ffc6ff', text: '#661a66' }, // Hồng pastel
+        { bg: '#e2f0cb', text: '#3e5222' }  // Xanh rêu pastel
+    ];
+    let colorIndex = 0;
+    let usedColors = {};
+    let evElements = document.querySelectorAll('.ev-box');
+    evElements.forEach(el => {
+        let idString = el.id;
+        if (!idString) return;
+        let match = idString.match(/ev-(\d+)/);
+        if (match) {
+            let qId = match[9];
+            if (!usedColors[qId]) {
+                usedColors[qId] = pastelColors[colorIndex % pastelColors.length];
+                colorIndex++;
+            }
+            el.style.backgroundColor = usedColors[qId].bg;
+            el.style.color = usedColors[qId].text;
+            el.style.padding = "2px 5px";
+            el.style.borderRadius = "6px";
+            el.style.fontWeight = "600";
+            el.style.transition = "all 0.3s ease";
+        }
+    });
+}
+
+// --- HÀM CUỘN TRANG VÀ NHẤY SÁNG KHU VỰC DẪN CHỨNG ---
+function scrollToEvidence(evId) {
+    const evElement = document.getElementById(evId);
+    if (evElement) {
+        // Cuộn đoạn văn chứa dẫn chứng vào giữa màn hình bên cột trái
+        evElement.scrollIntoView({behavior: "smooth", block: "center"});
+        // Thêm class 'focus-blink' để bật chế độ nháy vàng in đậm
+        evElement.classList.add("focus-blink");
+        // Tắt nổi bật sau 1.5 giây để trả văn bản về trạng thái bình thường
+        setTimeout(() => {
+            evElement.classList.remove("focus-blink");
+        }, 1500);
+    } else {
+        showCustomAlert("Chưa được gắn ID dẫn chứng trong bài đọc!");
+    }
+}
 </script>
 
 <!-- Firebase SDKs and Real-time syncing scripts -->
