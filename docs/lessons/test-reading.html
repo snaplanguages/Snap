@@ -1,0 +1,2232 @@
+📝 Toàn bộ mã nguồn hoàn chỉnh của test-reading.html:
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOEIC Reading Test | SnapEnglish</title>
+<link rel="icon" type="image/png" href="ảnh.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Nunito:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+    /* Tông màu chủ đạo SnapEnglish đồng bộ từ test-listening và toeic-tracker */
+    --primary: #e65245;             /* Đỏ cam đào ấm áp */
+    --primary-dark: #c83729;        /* Đỏ sẫm */
+    --primary-light: #fff1ed;       /* Nền hồng đào dịu nhẹ */
+    --primary-gradient: linear-gradient(135deg, #f05a4b 0%, #e0483a 50%, #c83729 100%);
+    --accent: #ff8e72;              /* Cam đào tươi */
+    --accent-btn: #ff8e72;
+    --accent-btn-hover: #e0483a;
+    --accent-soft: #fff1ed;         /* Nền hồng đào dịu nhẹ */
+    --accent-hover: #fcdbd0;        /* Hover hồng đào */
+    --bg-body: #f9f5f2;             /* Nền tổng thể đầm dịu mắt */
+    --bg-card: #ffffff;
+    --bg-gradient-2: linear-gradient(135deg, #fff1ed 0%, #fcdbd0 100%);
+    --border: #f0e2dc;
+    --radius: 16px;
+    --header-h: 70px;
+    --text-main: #2d1f1d;           /* Chữ chính nâu đen đậm */
+    --text-dark: #2d1f1d;
+    --text-light: #5a4b48;          /* Chữ nội dung nâu trầm */
+    --text-muted: #8d7b77;          /* Chữ phụ */
+    --wrong: #ff5252;               /* Đỏ nguy hiểm / câu sai */
+    --success: #2ed573;             /* Xanh lá câu đúng */
+    --highlight: #ffe082;           /* Bút nhớ vàng cam */
+    --exp-bg: #fff1ed;              /* Khung giải thích hồng đào */
+    --shadow: 0 4px 12px rgba(230, 82, 69, 0.05);
+    --shadow-hover: 0 12px 28px rgba(200, 55, 41, 0.14);
+}
+
+* { 
+    box-sizing: border-box; 
+    margin: 0;
+    padding: 0;
+    font-family: 'Be Vietnam Pro', 'Nunito', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+body {
+    background: var(--bg-body);
+    color: var(--text-main);
+    height: 100vh;
+    display: flex; 
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    background-image:
+        radial-gradient(circle at 10% 20%, rgba(255, 142, 114, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(230, 82, 69, 0.06) 0%, transparent 45%);
+    background-attachment: fixed;
+}
+
+/* WATERMARK NỀN CHẠY CHÌM DƯỚI NỀN */
+.bg-watermark {
+    position: fixed;
+    bottom: 15px;
+    right: 25px;
+    font-size: 8vw;
+    font-weight: 800;
+    color: rgba(230, 82, 69, 0.035);
+    z-index: -1;
+    pointer-events: none;
+    user-select: none;
+    letter-spacing: -2px;
+}
+
+/* --- HEADER FIX CỐ ĐỊNH --- */
+header {
+    height: var(--header-h);
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(230, 82, 69, 0.12);
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between;
+    padding: 0 30px; 
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+    user-select: none;
+}
+
+.brand:hover { 
+    transform: translateY(-1px); 
+}
+
+.brand-badge {
+    background: var(--primary-gradient);
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 800;
+    padding: 6px 14px;
+    border-radius: 10px;
+    letter-spacing: -0.2px;
+    box-shadow: 0 3px 10px rgba(230, 82, 69, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.brand-badge::before { 
+    content: '⚡'; 
+    font-size: 13px; 
+}
+
+.brand-subtitle {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.brand-subtitle::before {
+    content: '/';
+    color: var(--accent);
+    font-weight: 300;
+}
+
+/* --- TABS BÀI THI --- */
+.tab-container {
+    display: flex;
+    background: #f2e6e1;
+    padding: 4px;
+    border-radius: 25px;
+    gap: 5px;
+    border: 1px solid var(--border);
+}
+
+.tab-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 22px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active {
+    background: #ffffff;
+    color: var(--primary-dark);
+    box-shadow: 0 2px 8px rgba(230, 82, 69, 0.12);
+}
+
+/* --- ĐIỀU KHIỂN & TIMER --- */
+.controls { 
+    display: flex; 
+    gap: 15px; 
+    align-items: center; 
+}
+
+.timer-box {
+    font-weight: 800;
+    color: var(--primary-dark);
+    background: var(--accent-soft);
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 16px;
+    border: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
+}
+
+.btn-submit {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(230, 82, 69, 0.25);
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(230, 82, 69, 0.35);
+}
+
+.btn-submit:active { 
+    transform: translateY(2px); 
+    box-shadow: none; 
+}
+
+.btn-toggle-nav {
+    background: var(--accent-soft);
+    color: var(--primary);
+    border: 1px solid rgba(230, 82, 69, 0.2);
+    padding: 9px 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-toggle-nav:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+}
+
+/* --- HIGHLIGHT SYSTEM --- */
+.highlight {
+    background-color: var(--highlight);
+    cursor: pointer;
+    border-radius: 4px;
+    padding: 2px 0;
+    transition: 0.2s;
+}
+
+.highlight:hover { 
+    background-color: #fdd835; 
+}
+
+#ctxMenu { 
+    z-index: 100000; 
+}
+
+#ctxMenu button {
+    display: block; 
+    width: 100%; 
+    padding: 12px 20px; 
+    border: none; 
+    background: none; 
+    cursor: pointer; 
+    text-align: left; 
+    font-weight: 600; 
+    font-family: inherit;
+    transition: 0.2s;
+}
+
+#ctxMenu button:hover { 
+    background: var(--accent-soft); 
+    color: var(--primary); 
+}
+
+.pane-left span[class^="clue-highlight-"],
+.pane-middle span[class^="clue-highlight-"] {
+    background-color: transparent;
+    transition: background-color 0.5s ease;
+    border-radius: 4px;
+}
+
+/* HIỂN THỊ MÀU DẪN CHỨNG SAU KHI NỘP BÀI */
+.container.show-translation .clue-highlight-1 { background-color: #ffcdd2; padding: 2px 5px; color: #b71c1c; font-weight: 700; border-radius: 4px; }
+.container.show-translation .clue-highlight-2 { background-color: #ffe0b2; padding: 2px 5px; color: #e65100; font-weight: 700; border-radius: 4px; }
+.container.show-translation .clue-highlight-3 { background-color: #f8bbd0; padding: 2px 5px; color: #880e4f; font-weight: 700; border-radius: 4px; }
+.container.show-translation .clue-highlight-4 { background-color: #e1bee7; padding: 2px 5px; color: #4a148c; font-weight: 700; border-radius: 4px; }
+.container.show-translation .clue-highlight-5 { background-color: #c8e6c9; padding: 2px 5px; color: #1b5e20; font-weight: 700; border-radius: 4px; }
+
+/* --- KHUNG CHIA CỘT CHÍNH --- */
+.container {
+    display: flex;
+    height: calc(100vh - var(--header-h));
+    width: 100%;
+}
+
+.pane {
+    flex: 1; 
+    padding: 35px 45px; 
+    overflow-y: auto;
+    position: relative; 
+    scroll-behavior: smooth;
+    transition: all 0.3s ease;
+}
+
+.pane::-webkit-scrollbar { width: 8px; height: 8px; }
+.pane::-webkit-scrollbar-thumb { background: #f2b3a8; border-radius: 6px; }
+.pane::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+.pane-left { 
+    flex: 1.2; 
+    background: #ffffff; 
+    border-right: 1.5px solid var(--border); 
+    display: block; 
+}
+
+.pane-middle { 
+    display: none; 
+    background: #fffcfb; 
+    border-right: 1.5px solid var(--border); 
+}
+
+.pane-right { 
+    flex: 1; 
+    background: var(--bg-body); 
+}
+
+/* Chế độ Part 5 */
+.container.part5-mode .pane-left,
+.container.part5-mode .pane-middle { 
+    display: none; 
+}
+
+.container.part5-mode .pane-right { 
+    flex: 1; 
+    max-width: 950px; 
+    margin: 0 auto; 
+}
+
+.container.part5-mode.show-translation .pane-right {
+    max-width: none; 
+    margin: 0; 
+    padding: 20px 40px;
+}
+
+/* Chế độ Sau khi nộp bài cho Part 6, 7 (Hiển thị 3 cột song song) */
+.container.show-translation:not(.part5-mode) .pane-left { flex: 1; display: block; }
+.container.show-translation:not(.part5-mode) .pane-middle { flex: 1; display: block; }
+.container.show-translation:not(.part5-mode) .pane-right { flex: 1.2; display: block; }
+
+/* --- PAGINATION & QUESTIONS --- */
+.questions-block, .q-row { display: none; }
+.questions-block.active-step, .q-row.active-step { display: block; }
+
+.pagination-controls {
+    display: flex; 
+    justify-content: space-between; 
+    margin-top: 25px; 
+    padding: 20px 0;
+    border-top: 1px dashed var(--border);
+}
+
+.btn-nav {
+    padding: 10px 24px; 
+    border-radius: 12px; 
+    border: none;
+    background: var(--primary-gradient); 
+    color: white; 
+    cursor: pointer; 
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(230, 82, 69, 0.2); 
+    transition: all 0.2s;
+}
+
+.btn-nav:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 14px rgba(230, 82, 69, 0.3); 
+}
+
+.btn-nav:disabled { 
+    background: #e2d8d5; 
+    color: #a3938f; 
+    cursor: not-allowed; 
+    box-shadow: none; 
+    transform: none; 
+}
+
+/* --- QUESTION CARDS --- */
+.q-row {
+    margin-bottom: 30px; 
+    display: flex; 
+    background: white; 
+    padding: 25px; 
+    border-radius: var(--radius); 
+    box-shadow: var(--shadow); 
+    border: 1px solid var(--border);
+}
+
+.q-num {
+    min-width: 42px; 
+    height: 42px; 
+    background: var(--primary-gradient); 
+    color: white; 
+    border-radius: 10px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-weight: 800; 
+    margin-right: 20px; 
+    flex-shrink: 0; 
+    box-shadow: 0 4px 10px rgba(230,82,69,0.2);
+}
+
+.q-text {
+    flex: 1; 
+    font-size: 18px; 
+    line-height: 1.8;
+}
+
+.mc-option {
+    display: block; 
+    margin: 10px 0; 
+    padding: 12px 18px; 
+    border-radius: var(--radius); 
+    cursor: pointer; 
+    border: 2px solid #f1f5f9; 
+    background: #f8fafc; 
+    transition: all 0.2s ease; 
+    font-size: 17px;
+}
+
+.mc-option:hover {
+    background: var(--exp-bg) !important;
+}
+
+/* --- EXPLANATION BOX & DỊCH --- */
+.exp-box {
+    display: none;
+    background: var(--exp-bg);
+    border-left: 5px solid var(--primary);
+    padding: 22px; 
+    margin: 18px 0;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    width: 100% !important; 
+    margin-left: 0 !important;
+    font-size: 15px; 
+    color: var(--text-light);
+    box-shadow: 0 4px 15px rgba(230, 82, 69, 0.05);
+    border: 1px solid var(--border); 
+    border-left-width: 5px;
+}
+
+.exp-title {
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 12px;
+    font-size: 17px;
+    display: flex; 
+    align-items: center; 
+    gap: 10px;
+    text-transform: uppercase;
+    letter-spacing: -0.3px;
+}
+
+.exp-box.show { 
+    display: block !important; 
+}
+
+.exp-quote { 
+    font-style: italic; 
+    background: #ffffff; 
+    padding: 12px 16px; 
+    border-radius: 10px; 
+    color: var(--text-light); 
+    margin-bottom: 12px; 
+    border: 1px dashed #f2cdc4; 
+}
+
+.exp-text { 
+    margin-bottom: 10px; 
+    line-height: 1.6; 
+}
+
+.exp-vocab { 
+    font-size: 15px; 
+    color: #c83729; 
+    background: #fff5f2; 
+    padding: 12px; 
+    border-radius: 10px; 
+    border: 1px solid #fcdbd0; 
+}
+
+.exp-vocab b { 
+    color: var(--primary-dark); 
+}
+
+.show-translation #q-group-1 .q-text { display: flex; gap: 30px; align-items: flex-start; }
+.show-translation #q-group-1 .q-content-wrapper { flex: 1; position: sticky; top: 0; }
+.show-translation #q-group-1 .exp-container { flex: 1.4; }
+.show-translation #q-group-1 .exp-box { max-height: none; border-radius: var(--radius); box-shadow: var(--shadow); }
+
+.focus-blink {
+    background-color: #ffeb3b !important; 
+    color: #000 !important; 
+    font-weight: 700;
+    padding: 2px 5px; 
+    border-radius: 4px; 
+    box-shadow: 0 0 15px rgba(255, 235, 59, 1); 
+    transition: all 0.3s ease;
+}
+
+.show-translation .ev-box { 
+    border-bottom: 2px dotted #ff8e72; 
+}
+
+/* --- BẢN DỊCH TIẾNG VIỆT TRONG CÂU HỎI --- */
+.vi-trans { display: none; }
+.show-translation .vi-trans {
+    display: inline; 
+    color: var(--primary-dark); 
+    font-style: italic; 
+    font-weight: normal; 
+    margin-left: 5px;
+}
+
+/* --- CÁC ĐỊNH DẠNG BÀI ĐỌC ĐẶC THÙ --- */
+.press-release-header {
+    font-weight: 900; 
+    font-size: 1.3rem; 
+    text-align: center; 
+    text-transform: uppercase;
+    letter-spacing: 1px; 
+    margin-bottom: 1.5rem; 
+    color: var(--primary-dark);
+}
+
+.info-card {
+    border: 2px solid var(--primary); 
+    padding: 20px; 
+    background: #fff; 
+    margin-bottom: 1.5rem;
+    box-shadow: 4px 4px 0px rgba(230, 82, 69, 0.15); 
+    position: relative; 
+    border-radius: 8px;
+}
+
+.info-card-header {
+    text-align: center; 
+    font-size: 1.4rem; 
+    font-weight: 800; 
+    font-family: 'Be Vietnam Pro', serif;
+    margin-bottom: 15px; 
+    line-height: 1.3; 
+    color: var(--primary);
+}
+
+.info-card-grid {
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 15px;
+    border: 1.5px solid var(--border); 
+    padding: 15px; 
+    margin-top: 20px; 
+    background: var(--accent-soft);
+}
+
+.info-card-grid div { 
+    font-weight: 600; 
+    color: var(--text-dark); 
+}
+
+.ad-container {
+    border: 2px dashed var(--primary); 
+    padding: 25px; 
+    background: #fff;
+    text-align: center; 
+    margin-bottom: 1.5rem; 
+    border-radius: 12px;
+}
+
+.ad-title { 
+    font-size: 1.6rem; 
+    font-weight: 900; 
+    color: var(--primary); 
+    margin-bottom: 15px; 
+}
+
+.ad-list { 
+    text-align: left; 
+    display: inline-block; 
+    margin: 15px 0; 
+}
+
+.ad-list li { 
+    margin-bottom: 8px; 
+    font-weight: 500; 
+}
+
+.coupon-box {
+    border: 2px dashed var(--accent); 
+    background: var(--accent-soft); 
+    padding: 20px;
+    text-align: center; 
+    border-radius: 10px; 
+    margin-bottom: 1.5rem;
+}
+
+.coupon-code { 
+    font-size: 1.4rem; 
+    font-weight: 800; 
+    color: var(--primary-dark); 
+    letter-spacing: 2px; 
+    margin: 10px 0; 
+}
+
+.process-chart {
+    display: flex; 
+    gap: 10px; 
+    align-items: stretch; 
+    margin-bottom: 1.5rem; 
+    overflow-x: auto; 
+    padding-bottom: 10px;
+}
+
+.process-step {
+    flex: 1; 
+    min-width: 120px; 
+    border: 1.5px solid var(--border); 
+    padding: 15px;
+    background: #fff; 
+    border-radius: 10px; 
+    text-align: center; 
+    font-size: 0.95rem;
+    position: relative; 
+    box-shadow: var(--shadow);
+}
+
+.process-step strong { 
+    display: block; 
+    margin-bottom: 8px; 
+    color: var(--primary); 
+    font-size: 1.1rem; 
+}
+
+.process-arrow { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 1.5rem; 
+    color: var(--accent); 
+    font-weight: bold; 
+}
+
+.survey-container { 
+    background: #fff; 
+    border: 1px solid var(--border); 
+    padding: 20px; 
+    border-radius: 12px; 
+    margin-bottom: 1.5rem; 
+}
+
+.survey-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-top: 15px; 
+}
+
+.survey-table th { 
+    background: var(--bg-gradient-2); 
+    text-align: center; 
+    padding: 10px; 
+    font-size: 0.85rem; 
+    border-bottom: 2px solid var(--border); 
+    color: var(--primary-dark); 
+}
+
+.survey-table td { 
+    text-align: center; 
+    padding: 12px 10px; 
+    border-bottom: 1px solid var(--border); 
+}
+
+.survey-table td:first-child { 
+    text-align: left; 
+    font-weight: 600; 
+}
+
+.receipt-box {
+    background: #fff; 
+    font-family: 'Be Vietnam Pro', monospace; 
+    padding: 20px;
+    border: 1px dashed var(--primary); 
+    border-radius: 10px; 
+    margin-bottom: 1.5rem; 
+    font-size: 1.05rem;
+}
+
+.receipt-line { 
+    display: flex; 
+    justify-content: space-between; 
+    margin-bottom: 8px; 
+}
+
+.receipt-line.total { 
+    font-weight: 800; 
+    border-top: 2px dashed var(--primary); 
+    padding-top: 10px; 
+    margin-top: 10px; 
+    color: var(--primary-dark); 
+}
+
+.email-container {
+    border: 1px solid var(--border);
+    border-top: 5px solid var(--primary);
+    border-radius: 14px; 
+    padding: 25px;
+    background: #ffffff; 
+    box-shadow: var(--shadow); 
+    margin-bottom: 1.5rem;
+}
+
+.email-header { 
+    border-bottom: 1px dashed var(--border); 
+    margin-bottom: 16px; 
+    padding-bottom: 12px; 
+    color: var(--text-muted); 
+    font-size: 14px; 
+}
+
+.email-header div { 
+    margin-bottom: 4px; 
+    display: flex; 
+    gap: 10px; 
+}
+
+.email-header strong { 
+    color: var(--primary-dark); 
+    min-width: 60px; 
+}
+
+.email-body { 
+    font-size: 1.05rem; 
+    color: var(--text-light); 
+    line-height: 1.6; 
+}
+
+.chat-container {
+    background: var(--accent-soft); 
+    padding: 20px; 
+    border-radius: 16px;
+    border: 1px solid var(--border); 
+    margin-bottom: 1.5rem; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px;
+}
+
+.chat-message { 
+    display: flex; 
+    flex-direction: column; 
+    max-width: 85%; 
+}
+
+.chat-message.left { 
+    align-self: flex-start; 
+}
+
+.chat-message.right { 
+    align-self: flex-end; 
+    align-items: flex-end; 
+}
+
+.chat-sender { 
+    font-weight: 700; 
+    font-size: 12px; 
+    margin-bottom: 4px; 
+    color: var(--text-muted); 
+    padding-left: 8px; 
+}
+
+.chat-bubble {
+    background: #ffffff; 
+    padding: 12px 16px; 
+    border-radius: 16px;
+    border-bottom-left-radius: 4px; 
+    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    border: 1px solid var(--border); 
+    color: var(--text-main); 
+    line-height: 1.5;
+}
+
+.chat-message.right .chat-bubble {
+    background: var(--primary-gradient); 
+    color: white; 
+    border: none; 
+    border-bottom-left-radius: 16px; 
+    border-bottom-right-radius: 4px;
+}
+
+.memo-container {
+    border-left: 5px solid var(--accent); 
+    background: #ffffff;
+    padding: 30px; 
+    border-radius: 12px; 
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow); 
+    margin-bottom: 1.5rem;
+}
+
+.memo-header { 
+    border-bottom: 2px solid var(--border); 
+    padding-bottom: 12px; 
+    margin-bottom: 18px; 
+    text-transform: uppercase; 
+}
+
+.memo-header div { 
+    margin-bottom: 5px; 
+    font-size: 15px; 
+}
+
+.memo-header strong { 
+    width: 85px; 
+    display: inline-block; 
+    color: var(--primary-dark); 
+}
+
+.webpage-container { 
+    border: 1px solid var(--border); 
+    border-radius: 12px; 
+    overflow: hidden; 
+    margin-bottom: 1.5rem; 
+    box-shadow: var(--shadow); 
+}
+
+.web-browser-header { 
+    background: var(--accent-soft); 
+    padding: 10px 15px; 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    border-bottom: 1px solid var(--border); 
+}
+
+.web-browser-dots span { 
+    display: inline-block; 
+    width: 10px; 
+    height: 10px; 
+    border-radius: 50%; 
+}
+
+.web-browser-dots span:nth-child(1) { background: #ff5252; }
+.web-browser-dots span:nth-child(2) { background: #ffb142; }
+.web-browser-dots span:nth-child(3) { background: #2ed573; }
+
+.web-url { 
+    background: white; 
+    padding: 5px 14px; 
+    border-radius: 20px; 
+    font-family: monospace; 
+    font-size: 0.85rem; 
+    color: var(--text-muted); 
+    flex: 1; 
+    border: 1px solid var(--border); 
+}
+
+.web-nav { 
+    background: var(--primary-dark); 
+    color: white; 
+    padding: 10px 20px; 
+    display: flex; 
+    gap: 20px; 
+    font-size: 0.9rem; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+}
+
+.web-content { 
+    padding: 20px; 
+    background: white; 
+}
+
+.table-custom { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-bottom: 1.5rem; 
+    border-radius: 10px; 
+    overflow: hidden; 
+    box-shadow: var(--shadow); 
+}
+
+.table-custom th { 
+    background: var(--primary-gradient); 
+    color: white; 
+    padding: 12px; 
+    text-align: left; 
+    font-weight: 700; 
+}
+
+.table-custom td { 
+    padding: 12px; 
+    border-bottom: 1px solid var(--border); 
+    background: #ffffff; 
+}
+
+.table-custom tr:hover td { 
+    background: var(--accent-soft); 
+}
+
+.letter-container { 
+    background: #fff; 
+    padding: 30px; 
+    border: 1px solid var(--border); 
+    box-shadow: var(--shadow); 
+    margin-bottom: 1.5rem; 
+    font-size: 1.05rem; 
+    line-height: 1.6; 
+    border-radius: 10px; 
+}
+
+.article-container {
+    background: #ffffff; 
+    padding: 35px; 
+    line-height: 1.8;
+    border-radius: 14px; 
+    border: 1px solid var(--border); 
+    box-shadow: var(--shadow);
+}
+
+.article-container h2, .article-title {
+    font-weight: 800; 
+    font-size: 24px; 
+    color: var(--primary-dark);
+    text-align: center; 
+    margin-bottom: 20px; 
+    line-height: 1.3;
+}
+
+/* --- QUICK NAVIGATION PANEL --- */
+.nav-panel {
+    position: fixed; 
+    top: 80px; 
+    right: 30px; 
+    width: 340px;
+    background: rgba(255, 255, 255, 0.98); 
+    border: 1.5px solid var(--border); 
+    border-radius: 18px;
+    box-shadow: var(--shadow-hover); 
+    z-index: 999;
+    opacity: 0; 
+    visibility: hidden; 
+    transform: translateY(-15px);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    display: flex; 
+    flex-direction: column;
+}
+
+.nav-panel.show { 
+    opacity: 1; 
+    visibility: visible; 
+    transform: translateY(0); 
+}
+
+.nav-panel-header {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    padding: 16px 20px; 
+    border-bottom: 1px solid var(--border); 
+    background: var(--accent-soft);
+    border-radius: 16px 16px 0 0;
+}
+
+.nav-panel-header h3 { 
+    margin: 0; 
+    font-size: 16px; 
+    color: var(--primary-dark); 
+    font-weight: 800; 
+}
+
+.nav-panel-header button { 
+    background: none; 
+    border: none; 
+    font-size: 20px; 
+    cursor: pointer; 
+    color: var(--text-muted); 
+    padding: 0; 
+    transition: 0.2s;
+}
+
+.nav-panel-header button:hover { 
+    color: var(--wrong); 
+    transform: scale(1.1);
+}
+
+.nav-scroller {
+    padding: 16px; 
+    display: grid; 
+    grid-template-columns: repeat(5, 1fr); 
+    gap: 10px;
+    max-height: 60vh; 
+    overflow-y: auto;
+}
+
+.nav-scroller::-webkit-scrollbar { width: 6px; }
+.nav-scroller::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }
+
+.nav-dot {
+    width: 100%; 
+    aspect-ratio: 1; 
+    border: 1.5px solid var(--border); 
+    border-radius: 10px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    font-size: 14px; 
+    font-weight: 700;
+    cursor: pointer; 
+    color: var(--text-muted); 
+    background: white; 
+    transition: 0.2s;
+}
+
+.nav-dot:hover { 
+    border-color: var(--primary); 
+    color: var(--primary); 
+    transform: translateY(-2px); 
+    background: var(--accent-soft); 
+}
+
+.nav-dot.done { 
+    background: var(--accent-soft); 
+    color: var(--primary-dark); 
+    border-color: var(--primary); 
+}
+
+/* --- OVERLAYS & MODALS --- */
+.custom-overlay {
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100vw; 
+    height: 100vh;
+    background: rgba(45, 31, 29, 0.5); 
+    backdrop-filter: blur(6px);
+    display: none; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 9999;
+}
+
+.custom-modal {
+    background: #ffffff; 
+    padding: 32px 28px; 
+    border-radius: 20px;
+    width: 90%; 
+    max-width: 450px; 
+    text-align: center;
+    box-shadow: var(--shadow-hover); 
+    border: 1px solid var(--border);
+}
+
+.mode-btn {
+    display: block; 
+    width: 100%; 
+    margin: 12px 0; 
+    padding: 14px;
+    border: 2px solid var(--border); 
+    border-radius: 14px;
+    background: transparent; 
+    font-size: 16px; 
+    font-weight: 700;
+    color: var(--text-light); 
+    cursor: pointer; 
+    transition: 0.2s; 
+    font-family: inherit;
+}
+
+.mode-btn:hover { 
+    border-color: var(--primary); 
+    background: var(--accent-soft); 
+    color: var(--primary); 
+}
+
+.mode-btn.selected { 
+    border-color: var(--primary); 
+    background: var(--accent-soft); 
+    color: var(--primary-dark); 
+}
+
+.start-btn, .btn-confirm {
+    background: var(--primary-gradient); 
+    color: white; 
+    border: none;
+    padding: 12px 26px; 
+    border-radius: 12px; 
+    font-size: 15px; 
+    font-weight: 800;
+    cursor: pointer; 
+    transition: 0.2s; 
+    font-family: inherit;
+    box-shadow: 0 4px 12px rgba(230, 82, 69, 0.25);
+}
+
+.start-btn:hover, .btn-confirm:hover { 
+    transform: translateY(-1px); 
+    box-shadow: 0 6px 16px rgba(230, 82, 69, 0.35); 
+}
+
+.btn-cancel {
+    background: #f2e8e5; 
+    color: var(--text-light); 
+    border: none;
+    padding: 12px 26px; 
+    border-radius: 12px; 
+    font-size: 15px; 
+    font-weight: 700;
+    cursor: pointer; 
+    font-family: inherit; 
+    transition: 0.2s;
+}
+
+.btn-cancel:hover { 
+    background: #e5d8d4; 
+}
+
+.modal-actions { 
+    display: flex; 
+    justify-content: space-around; 
+    margin-top: 25px; 
+    gap: 12px; 
+}
+
+/* --- LỊCH SỬ BÀI LÀM --- */
+.history-item {
+    background: var(--accent-soft); 
+    border: 1px solid var(--border);
+    padding: 12px 15px; 
+    border-radius: 12px; 
+    margin-bottom: 10px;
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    transition: 0.2s;
+}
+
+.history-item:hover { 
+    border-color: var(--primary); 
+    background: #ffffff; 
+    box-shadow: var(--shadow); 
+}
+
+.history-info { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 5px; 
+}
+
+.history-date { 
+    font-weight: bold; 
+    color: var(--text-main); 
+    font-size: 15px; 
+}
+
+.history-score { 
+    color: var(--primary-dark); 
+    font-size: 14px; 
+    font-weight: 600; 
+}
+
+.btn-review { 
+    background: var(--exp-bg); 
+    color: var(--primary-dark); 
+    border: none; 
+    padding: 8px 12px; 
+    border-radius: 8px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: 0.2s; 
+}
+
+.btn-review:hover { 
+    background: var(--primary); 
+    color: white; 
+}
+
+.btn-delete-history {
+    background: #ffebee; 
+    color: var(--wrong); 
+    border: none; 
+    padding: 4px 10px;
+    border-radius: 8px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: 0.2s; 
+    font-size: 20px;
+}
+
+.btn-delete-history:hover { 
+    background: var(--wrong); 
+    color: white; 
+}
+
+/* --- FULLSCREEN ADJUSTMENTS --- */
+body.fullscreen-active { --header-h: 60px; }
+body.fullscreen-active .nav-panel { z-index: 2000; top: 60px; height: calc(100vh - 60px); }
+body.fullscreen-active header { height: 60px; padding: 0 20px; }
+body.fullscreen-active .brand { font-size: 18px; }
+body.fullscreen-active .brand-badge { font-size: 13px; padding: 4px 10px; }
+body.fullscreen-active .tab-btn { padding: 6px 16px; font-size: 14px; }
+body.fullscreen-active .controls { gap: 10px; }
+body.fullscreen-active .timer-box { font-size: 15px; padding: 6px 14px; }
+body.fullscreen-active .btn-toggle-nav,
+body.fullscreen-active .btn-submit { font-size: 14px; padding: 6px 16px; border-radius: 10px; }
+body.fullscreen-active .container { height: calc(100vh - 60px); }
+
+/* --- RESPONSIVE MOBILE & TABLET --- */
+@media (max-width: 1024px) {
+    body { overflow: hidden; height: 100vh; }
+    .container, .container.show-translation { flex-direction: column; height: auto; flex: 1; overflow: hidden; }
+    header { height: auto; flex-direction: column; padding: 10px 15px; gap: 10px; flex-shrink: 0; }
+    .brand { font-size: 18px; }
+    .tab-container { flex-wrap: wrap; justify-content: center; width: 100%; gap: 5px; }
+    .controls { width: 100%; justify-content: space-between; flex-wrap: nowrap; }
+    .timer-box { font-size: 15px; padding: 6px 12px; }
+    .btn-submit, .btn-toggle-nav { font-size: 13px; padding: 6px 12px; }
+    
+    .pane-left { 
+        flex: 1; 
+        width: 100%; 
+        border-right: none; 
+        border-bottom: 3px solid var(--primary); 
+        padding: 15px; 
+        overflow-y: auto; 
+    }
+    
+    .container.show-translation .pane-left,
+    .container.show-translation .pane-middle { 
+        flex: 1; 
+        width: 100%; 
+        border-right: none; 
+        border-bottom: 2px solid var(--border); 
+        padding: 15px; 
+        overflow-y: auto; 
+    }
+    
+    .pane-right { 
+        flex: 1.5; 
+        width: 100%; 
+        padding: 15px; 
+        overflow-y: auto; 
+    }
+    
+    .exp-box, .show-translation #q-group-1 .exp-box { 
+        width: 100%; 
+        margin-left: 0; 
+        border-radius: 12px; 
+        padding: 15px; 
+    }
+    
+    .show-translation #q-group-1 .q-text { flex-direction: column; gap: 15px; }
+    .q-text, .mc-option { font-size: 16px; }
+    .pane-left, .pane-middle { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="bg-watermark">SnapEnglish</div>
+
+<!-- Setup / Welcome Modal -->
+<div id="setupOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2 style="color: var(--primary-dark); font-family: 'Lora', serif; font-size:28px; margin-bottom: 10px;" id="setupModalTitle">Cài đặt bài làm ✨</h2>
+        <p class="modal-desc" style="font-size: 14.5px; color: var(--text-light); margin-bottom: 20px; line-height: 1.6;" id="setupModalDesc">Đang tải thông tin đề thi...</p>
+        <button class="mode-btn mode-practice" id="btnModePractice" onclick="selectMode('practice')">🎯 Luyện Tập</button>
+        <button class="mode-btn mode-mock" id="btnModeMock" onclick="selectMode('mock')">🏆 Thi Thử (75 phút)</button>
+        <div id="timeInputBox" style="display: none; margin: 20px 0;">
+            <label style="font-weight: bold; color: var(--text-main); font-size:18px;">Thời gian (phút): </label>
+            <input type="number" id="timeInput" value="75" min="5" max="180" style="width: 90px; padding: 8px; font-size: 16px; text-align: center; font-weight: 700; border: 2px solid var(--border); border-radius: 8px; color: var(--primary-dark); outline: none;">
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+            <button class="btn-cancel" style="flex: 1;" onclick="openHistoryModal()">🕒 Xem lịch sử</button>
+            <button class="start-btn" id="startBtn" style="display: none; flex: 1;" onclick="askReady()">Bắt đầu</button>
+        </div>
+    </div>
+</div>
+
+<!-- History Modal -->
+<div id="historyOverlay" class="custom-overlay">
+    <div class="custom-modal" style="max-width: 500px;">
+        <h2 style="color: var(--primary-dark); font-family: 'Lora', serif; margin-bottom: 15px;">🕒 Lịch sử làm bài</h2>
+        <div id="historyList" style="max-height: 300px; overflow-y: auto; text-align: left; margin-bottom: 15px; padding-right: 5px;">
+            <!-- Rendered by JS -->
+        </div>
+        <button class="btn-cancel" style="width: 100%;" onclick="closeHistoryModal()">Quay lại</button>
+    </div>
+</div>
+
+<!-- Start Confirm Modal -->
+<div id="startConfirmOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2 style="color: var(--primary-dark); font-family: 'Lora', serif; font-size: 24px;">Xác nhận</h2>
+        <p id="startConfirmMsg" style="font-size: 18px; line-height: 1.6; color:#555; margin: 20px 0;"></p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeStartConfirmModal()">Huỷ</button>
+            <button class="btn-confirm" onclick="startTestActual()">OK</button>
+        </div>
+    </div>
+</div>
+
+<!-- Submit Confirm Modal -->
+<div id="confirmOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2 style="color: var(--primary-dark); font-family: 'Lora', serif; font-size: 24px;">Nộp bài</h2>
+        <p style="font-size: 18px; color:#555; margin: 20px 0;">Bạn có chắc chắn muốn nộp bài? Các câu chưa làm sẽ bị tính là sai.</p>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeConfirmModal()">Quay lại làm tiếp</button>
+            <button class="btn-confirm" onclick="executeSubmit()">Nộp bài</button>
+        </div>
+    </div>
+</div>
+
+<!-- Custom Dialog Alert / Confirm Modals -->
+<div id="genericAlertOverlay" class="custom-overlay">
+    <div class="custom-modal" style="border-top: 6px solid var(--primary);">
+        <h2 style="color: var(--primary-dark); font-family: 'Lora', serif; font-size: 24px;">🌸 Thông báo</h2>
+        <p id="genericAlertMsg" style="font-size: 17px; line-height: 1.6; color:#5a4a4d; margin: 20px 0;"></p>
+        <div class="modal-actions">
+            <button class="btn-confirm" style="width: 100%; border-radius: 20px;" onclick="closeGenericAlert()">Đã hiểu</button>
+        </div>
+    </div>
+</div>
+
+<div id="genericConfirmOverlay" class="custom-overlay" style="z-index: 10000;">
+    <div class="custom-modal" style="border-top: 6px solid var(--wrong);">
+        <h2 style="color: var(--primary-dark); font-family: 'Lora', serif; font-size: 24px;">🐾 Xác nhận</h2>
+        <p id="genericConfirmMsg" style="font-size: 17px; line-height: 1.6; color:#5a4a4d; margin: 20px 0;"></p>
+        <div class="modal-actions">
+            <button class="btn-cancel" style="border-radius: 20px; width: 45%;" onclick="closeGenericConfirm()">Hủy</button>
+            <button class="btn-confirm" id="genericConfirmBtn" style="border-radius: 20px; width: 45%; background: var(--wrong);">Đồng ý</button>
+        </div>
+    </div>
+</div>
+
+<!-- Results Modal -->
+<div id="resultOverlay" class="custom-overlay">
+    <div class="custom-modal">
+        <h2 style="color: var(--primary-dark); font-family: 'Lora', serif; font-size: 26px;">🏆 Hoàn thành!</h2>
+        <div id="resultMessage" style="margin: 20px 0; line-height:1.6; font-size: 16px;"></div>
+        <button class="btn-confirm" style="width: 100%;" onclick="closeResultModal()">Xem đáp án & Giải thích</button>
+    </div>
+</div>
+
+<!-- Context Right Click Menu -->
+<div id="ctxMenu" style="position: absolute; display: none; background: white; box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-radius: 12px; z-index: 99999; overflow:hidden;">
+    <button onclick="doHighlight()">🖍 Highlight (Vàng)</button>
+    <button onclick="removeHighlight()" style="color:#e06666;">🗑 Xóa Highlight</button>
+</div>
+
+<!-- Main Interactive Content Panels -->
+<div class="container" id="mainContainer">
+    <!-- Left Column: English Reading Passages -->
+    <div class="pane pane-left" id="passagePane">
+        <div id="passage-content-container">
+            <h2 style="color: var(--primary-dark); text-align: center; margin-bottom: 20px;" id="left-title"></h2>
+        </div>
+    </div>
+    
+    <!-- Middle Column: Vietnamese Translations -->
+    <div class="pane pane-middle" id="vietnamesePane">
+        <div id="vietnamese-content-container">
+            <h2 style="color: var(--primary-dark); text-align: center; margin-bottom: 20px;">Bản dịch tiếng Việt 🇻🇳</h2>
+        </div>
+    </div>
+    
+    <!-- Right Column: Interactive Multiple Choice Questions -->
+    <div class="pane pane-right" id="questionPane">
+        <!-- Part 5 Questions Group -->
+        <div id="q-group-1" class="question-group">
+            <div id="render-part5"></div>
+            <div class="pagination-controls" id="paginationBox1">
+                <button class="btn-nav" id="btnPrev1" onclick="changeStep(-1)">← Câu trước</button>
+                <button class="btn-nav" id="btnNext1" onclick="changeStep(1)">Câu tiếp theo →</button>
+            </div>
+        </div>
+        
+        <!-- Part 6 Questions Group -->
+        <div id="q-group-2" class="question-group" style="display: none;">
+            <div id="render-part6"></div>
+            <div class="pagination-controls" id="paginationBox2">
+                <button class="btn-nav" id="btnPrev2" onclick="changeStep(-1)">← Câu trước</button>
+                <button class="btn-nav" id="btnNext2" onclick="changeStep(1)">Câu tiếp theo →</button>
+            </div>
+        </div>
+        
+        <!-- Part 7 Questions Group -->
+        <div id="q-group-3" class="question-group" style="display: none;">
+            <div id="render-part7"></div>
+            <div class="pagination-controls" id="paginationBox3">
+                <button class="btn-nav" id="btnPrev3" onclick="changeStep(-1)">← Câu trước</button>
+                <button class="btn-nav" id="btnNext3" onclick="changeStep(1)">Câu tiếp theo →</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Navigation Drop-down Panel -->
+<div class="nav-panel" id="navPanel">
+    <div class="nav-panel-header">
+        <h3>Bảng điều hướng nhanh</h3>
+        <button onclick="toggleNav()">✖</button>
+    </div>
+    <div class="nav-scroller" id="navPalette"></div>
+</div>
+
+<script>
+let toeicData = {}; // Global variable to store test data
+let testId = "";
+let HISTORY_KEY = "";
+let isSubmitted = false;
+let isReviewingMode = false;
+let testDuration = 75 * 60; // default 75 mins in seconds
+let timerInterval = null;
+const answerKey = {};
+const explanations = {};
+let allQuestionIds = [];
+let currentStep = 0;
+let userAnswersMap = {};
+
+// 1. Get testId dynamically from URL query parameters
+function getTestIdFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('id') || 'toeic-reading-test-1-2026'; // fallback to test 1
+}
+
+// 2. Load the external JS file containing the specific test data
+function loadTestScript() {
+    return new Promise((resolve, reject) => {
+        testId = getTestIdFromURL();
+        HISTORY_KEY = `snapenglish_${testId}_history`;
+        
+        const script = document.createElement('script');
+        script.src = `./${testId}.js`;
+        script.onload = () => {
+            let data = null;
+            try {
+                // Hỗ trợ tự động nhận diện cả 2 kiểu khai báo biến cũ và mới của bạn
+                data = window.TOEIC_DATA || window.toeicData || toeicData || TOEIC_DATA;
+            } catch (e) {
+                try {
+                    data = window.TOEIC_DATA || window.toeicData;
+                } catch (err) {}
+            }
+            if (data) {
+                resolve(data);
+            } else {
+                reject(new Error("Không tìm thấy biến dữ liệu TOEIC_DATA hoặc toeicData trong file JS."));
+            }
+        };
+        script.onerror = () => {
+            reject(new Error(`Không thể tải file dữ liệu: ${testId}.js`));
+        };
+        document.head.appendChild(script);
+    });
+}
+
+// Initialize on page load
+window.onload = async function() {
+    try {
+        const data = await loadTestScript();
+        toeicData = data;
+        
+        // Dynamic title formatting
+        const match = testId.match(/test-(\d+)-(\d{4})/i);
+        let formattedTitle = "";
+        if (match) {
+            formattedTitle = `Test ${match[1]} - ${match[12]}`;
+        } else {
+            formattedTitle = testId.toUpperCase().replace(/-/g, ' ');
+        }
+        
+        document.title = `${formattedTitle} - Reading | SnapEnglish`;
+        document.getElementById('headerSubtitle').innerText = `${formattedTitle} - Reading`;
+        document.getElementById('setupModalTitle').innerText = `${formattedTitle} - Reading ✨`;
+        document.getElementById('setupModalDesc').innerText = `Chào mừng bạn đến với bài thi thử ${formattedTitle}. Vui lòng lựa chọn chế độ làm bài để bắt đầu luyện tập hoặc thi thử.`;
+        
+        renderDynamicContent();
+        switchTab(1);
+        document.getElementById('setupOverlay').style.display = 'flex';
+    } catch (err) {
+        console.error("Lỗi khởi tạo bài thi: ", err);
+        showCustomAlert("Có lỗi xảy ra trong quá trình nạp dữ liệu đề thi, vui lòng thử lại sau!");
+    }
+}
+
+// 3. Dynamic content rendering engine
+function renderDynamicContent() {
+    let part5Html = '';
+    let part6Html = '';
+    let part7Html = '';
+    let leftPaneHtml = '';
+    let middlePaneHtml = '';
+    allQuestionIds = [];
+
+    // Process Part 5 (Incomplete Sentences)
+    if (toeicData.part5) {
+        part5Html += `<div class="instruction" style="background:var(--exp-bg); color:var(--primary-dark); padding:15px; border-radius:12px; margin-bottom:25px; font-weight:bold;"> <u>Part 5: Incomplete Sentences</u><br>Choose the word or phrase that best completes the sentence.</div>`;
+        toeicData.part5.forEach(q => {
+            part5Html += createTOEICQuestion(q);
+            allQuestionIds.push(q.id);
+            answerKey[q.id] = formatAnswer(q.options, q.a || q.correct);
+            explanations[q.id] = {
+                exp: (q.exp && q.exp.correct ? q.exp.correct : "") + (q.exp && q.exp.wrong ? q.exp.wrong : ""),
+                vocab: q.exp && q.exp.vocab ? q.exp.vocab : "",
+                tip: q.exp && q.exp.grammar ? q.exp.grammar : ""
+            };
+        });
+        document.getElementById('render-part5').innerHTML = part5Html;
+    }
+
+    // Process Part 6 (Text Completion)
+    if (toeicData.part6) {
+        part6Html += `<div class="instruction" style="background:var(--exp-bg); color:var(--primary-dark); padding:15px; border-radius:12px; margin-bottom:25px; font-weight:bold;"> <u>Part 6: Text Completion</u><br>Choose the best word or phrase for each blank.</div>`;
+        toeicData.part6.forEach((passageObj, index) => {
+            const pId = "p6-" + index;
+            passageObj.passageId = pId;
+            leftPaneHtml += `<div id="passage-${pId}" class="passage-text-content" style="display:none; margin-bottom: 30px;">${passageObj.passage}</div>`;
+            let translationContent = passageObj.translation || "<i>(Đoạn này chưa cập nhật bản dịch)</i>";
+            middlePaneHtml += `<div id="vie-passage-${pId}" class="passage-text-content" style="display:none; margin-bottom: 30px;">${translationContent}</div>`;
+            part6Html += createQuestionsBlock(passageObj);
+        });
+        document.getElementById('render-part6').innerHTML = part6Html;
+    }
+
+    // Process Part 7 (Reading Comprehension)
+    if (toeicData.part7) {
+        part7Html += `<div class="instruction" style="background:var(--exp-bg); color:var(--primary-dark); padding:15px; border-radius:12px; margin-bottom:25px; font-weight:bold;"> <u>Part 7: Reading Comprehension</u><br>Read the passages and answer the questions.</div>`;
+        toeicData.part7.forEach((passageObj, index) => {
+            const pId = "p7-" + index;
+            passageObj.passageId = pId;
+            leftPaneHtml += `<div id="passage-${pId}" class="passage-text-content" style="display:none; margin-bottom: 30px;">${passageObj.passage}</div>`;
+            let translationContent = passageObj.translation || "<i>(Đoạn này chưa cập nhật bản dịch)</i>";
+            middlePaneHtml += `<div id="vie-passage-${pId}" class="passage-text-content" style="display:none; margin-bottom: 30px;">${translationContent}</div>`;
+            part7Html += createQuestionsBlock(passageObj);
+        });
+        document.getElementById('render-part7').innerHTML = part7Html;
+    }
+
+    // Append to left and middle columns
+    document.getElementById('passage-content-container').innerHTML += leftPaneHtml;
+    document.getElementById('vietnamese-content-container').innerHTML += middlePaneHtml;
+
+    // Render quick navigation dot matrix
+    const nav = document.getElementById("navPalette");
+    allQuestionIds = allQuestionIds.filter(id => id);
+    allQuestionIds.sort((a, b) => a - b);
+    nav.innerHTML = '';
+    allQuestionIds.forEach(id => {
+        let dot = document.createElement("div");
+        dot.className = "nav-dot";
+        dot.id = `nav-${id}`;
+        dot.innerText = id;
+        dot.onclick = () => scrollToQuestion(id);
+        nav.appendChild(dot);
+    });
+}
+
+function formatAnswer(options, answer) {
+    if (!options) return answer;
+    if (Array.isArray(options)) {
+        if (typeof options === 'object') return answer;
+        let labels = ["A", "B", "C", "D"];
+        let idx = options.indexOf(answer);
+        return idx !== -1 ? labels[idx] : answer;
+    }
+    return answer;
+}
+
+function createTOEICQuestion(qObj) {
+    if (!qObj || !qObj.id) return "";
+    let text = qObj.q || qObj.text || qObj.qEng || "";
+    if (typeof text === 'string') {
+        text = text.replace(/^\d+\.\s*/, ""); // strip duplicate question numbers
+        text = text.replace(/(\\([^)]+\\))/g, '<span class="vi-trans">$1</span>'); // wrap bracketed Vietnamese translations
+    }
+    
+    let opts = qObj.options;
+    let optsHTML = "";
+    let inputStyle = `margin-right:12px; transform:scale(1.3); cursor:pointer;`;
+    let labelStyle = `display:block; margin:10px 0; padding:12px 18px; border-radius:var(--radius); cursor:pointer; border:2px solid #f1f5f9; background:#f8fafc; transition:all 0.2s ease; font-size:17px;`;
+    
+    if (Array.isArray(opts)) {
+        let labels = ["A", "B", "C", "D"];
+        opts.forEach((opt, i) => {
+            let optText = typeof opt === 'object' ? (opt.text || opt.en || "") : opt;
+            if (typeof optText === 'string') {
+                optText = optText.replace(/^[A-D]\.\s*/, "");
+                optText = optText.replace(/(\\([^)]+\\))/g, '<span class="vi-trans">$1</span>');
+            }
+            let optValue = typeof opt === 'object' ? (opt.key || labels[i]) : labels[i];
+            optsHTML += `
+            <label class="mc-option" style="${labelStyle}">
+                <input type="radio" name="q${qObj.id}" value="${optValue}" style="${inputStyle}" onclick="checkNav(${qObj.id})">
+                <b>${labels[i]}.</b> ${optText}
+            </label>`;
+        });
+    } else {
+        for (let key in opts) {
+            let optText = opts[key];
+            if (typeof optText === 'string') {
+                optText = optText.replace(/^[A-D]\.\s*/, "");
+                optText = optText.replace(/(\\([^)]+\\))/g, '<span class="vi-trans">$1</span>');
+            }
+            optsHTML += `
+            <label class="mc-option" style="${labelStyle}">
+                <input type="radio" name="q${qObj.id}" value="${key}" style="${inputStyle}" onclick="checkNav(${qObj.id})">
+                <b>${key}.</b> ${optText}
+            </label>`;
+        }
+    }
+    
+    return `
+    <div class="q-row" id="q-row-${qObj.id}">
+        <div class="q-num">${qObj.id}</div>
+        <div class="q-text">
+            <div class="q-content-wrapper">
+                <b>${text}</b><br>${optsHTML}
+                <span id="fb-${qObj.id}" class="feedback" style="font-weight:bold; margin-left:10px;"></span>
+            </div>
+            <div id="exp-${qObj.id}" class="exp-container"></div>
+        </div>
+    </div>`;
+}
+
+function createQuestionsBlock(passageObj) {
+    let html = `<div class="questions-block" style="margin-bottom: 40px; background: transparent; padding: 0;" onmouseenter="showPassage('${passageObj.passageId}')">`;
+    html += `<div style="color:var(--primary-dark); font-weight:bold; margin-bottom:15px; border-bottom: 2px solid var(--border); padding-bottom:10px; font-size: 18px;">📝 Questions for Passage: ${passageObj.passageId}</div>`;
+    let validQuestions = passageObj.questions.filter(q => q && q.id);
+    
+    validQuestions.forEach(q => {
+        html += createTOEICQuestion(q);
+        allQuestionIds.push(q.id);
+        
+        let correctAns = q.a || q.correct;
+        if (!correctAns && Array.isArray(q.options)) {
+            const foundIdx = q.options.findIndex(o => typeof o === 'object' && o.correct === true);
+            if (foundIdx !== -1) {
+                const labels = ["A", "B", "C", "D"];
+                correctAns = labels[foundIdx];
+            }
+        }
+        answerKey[q.id] = correctAns;
+        explanations[q.id] = { exp: q.explanation || "" };
+    });
+    html += `</div>`;
+    return html;
+}
+
+// --- SETUP MODAL & WORK MODES ---
+function selectMode(mode) {
+    currentMode = mode;
+    document.querySelector('.mode-practice').classList.toggle('selected', mode === 'practice');
+    document.querySelector('.mode-mock').classList.toggle('selected', mode === 'mock');
+    document.getElementById('timeInputBox').style.display = (mode === 'practice') ? 'block' : 'none';
+    document.getElementById('startBtn').style.display = 'block';
+}
+
+// --- TAB SWITCHER LOGIC ---
+function switchTab(n) {
+    const mainContainer = document.getElementById('mainContainer');
+    document.querySelectorAll('.tab-btn').forEach((b, i) => { b.classList.toggle('active', i + 1 === n); });
+    document.querySelectorAll('.question-group').forEach((q, i) => { q.style.display = (i + 1 === n) ? 'block' : 'none'; });
+    
+    if (n === 1) {
+        mainContainer.classList.add('part5-mode');
+    } else {
+        mainContainer.classList.remove('part5-mode');
+    }
+    
+    currentStep = 0;
+    updatePagination();
+    document.querySelector('.pane-right').scrollTop = 0;
+}
+
+function showPassage(passageId) {
+    document.querySelectorAll('.passage-text-content').forEach(p => p.style.display = 'none');
+    
+    let pEng = document.getElementById(`passage-${passageId}`);
+    if (pEng) pEng.style.display = 'block';
+    
+    let pVie = document.getElementById(`vie-passage-${passageId}`);
+    if (pVie) pVie.style.display = 'block';
+}
+
+// --- PAGINATION ---
+function changeStep(n) {
+    currentStep += n;
+    updatePagination();
+}
+
+function updatePagination() {
+    const activeGroup = document.querySelector('.question-group[style*="display: block"]');
+    if (!activeGroup) return;
+    const partSuffix = activeGroup.id.split('-').pop();
+    const isPart5 = activeGroup.id === 'q-group-1';
+    
+    if (isSubmitted) {
+        activeGroup.querySelectorAll('.questions-block, .q-row').forEach(el => el.style.display = isPart5 ? 'flex' : 'block');
+        document.getElementById(`paginationBox${partSuffix}`).style.display = 'none';
+        return;
+    }
+    
+    const steps = isPart5 ? activeGroup.querySelectorAll('.q-row') : activeGroup.querySelectorAll('.questions-block');
+    steps.forEach((step, index) => {
+        if (index === currentStep) {
+            step.style.display = isPart5 ? 'flex' : 'block';
+            if (!isPart5) {
+                // FIXED THE match[12] BUG to match[1]
+                const match = step.getAttribute('onmouseenter').match(/'([^']+)'/);
+                if (match && match[1]) showPassage(match[1]);
+            }
+        } else {
+            step.style.display = 'none';
+        }
+    });
+    
+    document.getElementById(`btnPrev${partSuffix}`).disabled = (currentStep === 0);
+    document.getElementById(`btnNext${partSuffix}`).disabled = (currentStep === steps.length - 1);
+}
+
+// --- NAVIGATION DOT MATRIX ---
+function checkNav(qId) {
+    let dot = document.getElementById(`nav-${qId}`);
+    if (dot) dot.classList.add('done');
+}
+
+function scrollToQuestion(id) {
+    document.getElementById('navPanel').classList.remove('show');
+    let group = 1;
+    if (toeicData.part6.some(p => p.questions.some(q => q.id == id))) group = 2;
+    if (toeicData.part7.some(p => p.questions.some(q => q.id == id))) group = 3;
+    
+    switchTab(group);
+    const activeGroup = document.getElementById(`q-group-${group}`);
+    const steps = group === 1 ? activeGroup.querySelectorAll('.q-row') : activeGroup.querySelectorAll('.questions-block');
+    
+    steps.forEach((step, index) => {
+        if (step.id === `q-row-${id}` || step.querySelector(`#q-row-${id}`)) {
+            currentStep = index;
+        }
+    });
+    updatePagination();
+    
+    setTimeout(() => {
+        let el = document.getElementById(`q-row-${id}`);
+        if (el) {
+            el.scrollIntoView({behavior: "smooth", block: "center"});
+            el.style.transition = "background 0.5s";
+            el.style.background = "#fff9c4";
+            setTimeout(() => el.style.background = "transparent", 1000);
+            
+            let parentBlock = el.closest('.questions-block');
+            if (parentBlock) {
+                let mouseEvent = new MouseEvent('mouseenter');
+                parentBlock.dispatchEvent(mouseEvent);
+            }
+        }
+    }, 150);
+}
+
+// --- TIMER SYSTEM ---
+function startTimer() {
+    let display = document.getElementById("timer");
+    timerInterval = setInterval(function () {
+        let m = Math.floor(testDuration / 60);
+        let s = testDuration % 60;
+        display.textContent = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+        if (--testDuration < 0) {
+            clearInterval(timerInterval);
+            submitTest(false);
+        }
+    }, 1000);
+}
+
+// --- SCORING & GRADING SYSTEM ---
+function submitTest(manual) {
+    if (isSubmitted) return;
+    if (manual) document.getElementById('confirmOverlay').style.display = 'flex';
+    else executeSubmit();
+}
+
+function closeConfirmModal() { document.getElementById('confirmOverlay').style.display = 'none'; }
+function closeResultModal() { document.getElementById('resultOverlay').style.display = 'none'; }
+
+function executeSubmit() {
+    document.getElementById('confirmOverlay').style.display = 'none';
+    isSubmitted = true;
+    updatePagination();
+    clearInterval(timerInterval);
+    document.querySelectorAll('input, select').forEach(el => el.disabled = true);
+    document.getElementById('mainContainer').classList.add('show-translation');
+    
+    let activeTabIndex = 1;
+    document.querySelectorAll('.tab-btn').forEach((b, i) => {
+        if (b.classList.contains('active')) activeTabIndex = i + 1;
+    });
+    switchTab(activeTabIndex);
+    
+    let score = 0;
+    let totalQuestions = allQuestionIds.length;
+    userAnswersMap = {};
+    
+    allQuestionIds.forEach(id => {
+        let userAns = "";
+        let radios = document.getElementsByName(`q${id}`);
+        for (let r of radios) if (r.checked) userAns = r.value;
+        userAnswersMap[id] = userAns;
+        
+        let correctAns = answerKey[id];
+        let isCorrect = (userAns === correctAns);
+        if (isCorrect && userAns !== "") score++;
+        
+        let feedbackEl = document.getElementById(`fb-${id}`);
+        if (feedbackEl) {
+            if (isCorrect && userAns !== "") {
+                feedbackEl.innerHTML = `<span style="color:var(--success);">✓ Đúng</span>`;
+            } else if (userAns === "") {
+                feedbackEl.innerHTML = `<span style="color:#888;">Trống (Đáp án: <span style="background:#dce775; color:#333; padding:2px 5px; border-radius:4px;">${correctAns}</span>)</span>`;
+            } else {
+                feedbackEl.innerHTML = `<span style="color:var(--wrong);">✗ Sai (Đáp án: <span style="background:#dce775; color:#333; padding:2px 5px; border-radius:4px;">${correctAns}</span>)</span>`;
+            }
+        }
+        
+        let nav = document.getElementById(`nav-${id}`);
+        if (nav) {
+            if (isCorrect && userAns !== "") {
+                nav.style.background = "#c8e6c9"; nav.style.color = "#2e7d32"; nav.style.borderColor = "#81c784";
+            } else {
+                nav.style.background = "#ffcdd2"; nav.style.color = "#c62828"; nav.style.borderColor = "#ef9a9a";
+            }
+        }
+        
+        let expContainer = document.getElementById(`exp-${id}`);
+        if (expContainer && explanations[id]) {
+            let expData = explanations[id];
+            let contentHtml = "";
+            if (expData.exp) contentHtml += `<div class="exp-text">${expData.exp}</div>`;
+            if (expData.vocab) contentHtml += `<div class="exp-vocab">${expData.vocab}</div>`;
+            if (expData.tip) contentHtml += `<div style="margin-top:8px; color:var(--primary-dark); font-weight:600;">📌 Ghi chú: ${expData.tip}</div>`;
+            
+            expContainer.innerHTML = `
+            <div class="exp-box show">
+                <div class="exp-title">💡 Giải thích chi tiết Câu ${id}</div>
+                ${contentHtml}
+            </div>`;
+        }
+    });
+    
+    if (!isReviewingMode) {
+        saveAttemptToHistory(score, totalQuestions, userAnswersMap);
+        
+        const match = testId.match(/test-(\d+)-(\d{4})/i);
+        let testTitleFormatted = match ? `ETS ${match[12]} - Test ${match[1]}` : testId.toUpperCase().replace(/-/g, ' ');
+        
+        document.getElementById('resultMessage').innerHTML = `Bạn đã làm đúng <b style="color: var(--primary); font-size: 22px;">${score}/${totalQuestions}</b> câu.<br>Điểm TOEIC Reading quy đổi: <b>${calculateToeicReading(score, totalQuestions)}</b>`;
+        document.getElementById('resultOverlay').style.display = 'flex';
+        
+        if (window.luuDiemTOEICReadingFull) {
+            let minutesAssigned = (currentMode === 'mock') ? 75 : parseInt(document.getElementById('timeInput').value);
+            if (isNaN(minutesAssigned) || minutesAssigned < 1) minutesAssigned = 75;
+            let timeTaken = Math.round(minutesAssigned - (testDuration / 60));
+            window.luuDiemTOEICReadingFull(score, totalQuestions, testTitleFormatted, timeTaken);
+        }
+    } else {
+        showToastNotification("Đã khôi phục bài làm từ lịch sử!");
+    }
+}
+
+function calculateToeicReading(raw, total) {
+    if (raw === 0) return 5;
+    let percent = raw / total;
+    let score = Math.round((percent * 495) / 5) * 5;
+    return score > 495 ? 495 : (score < 5 ? 5 : score);
+}
+
+// --- LOCAL STORAGE HISTORY MANAGEMENT (DYNAMIC BY TEST ID) ---
+function saveAttemptToHistory(score, total, userAnswersMap) {
+    let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+    let now = new Date();
+    let attempt = {
+        id: Date.now(),
+        date: now.toLocaleDateString('vi-VN'),
+        time: now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+        score: score,
+        total: total,
+        toeicScore: calculateToeicReading(score, total),
+        answers: userAnswersMap
+    };
+    history.unshift(attempt);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    
+    if (window.syncHistoryToCloud) {
+        window.syncHistoryToCloud(history);
+    }
+}
+
+function openHistoryModal() {
+    let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+    let historyListEl = document.getElementById('historyList');
+    let listHtml = '';
+    
+    if (history.length === 0) {
+        listHtml = '<p style="text-align: center; color: #888; margin-top: 20px; font-weight: 600;">Chưa có dữ liệu làm bài.</p>';
+    } else {
+        history.forEach(attempt => {
+            listHtml += `
+            <div class="history-item">
+                <div class="history-info">
+                    <span class="history-date">📅 ${attempt.date} - ⏰ ${attempt.time}</span>
+                    <span class="history-score">🏆 Điểm: ${attempt.score}/${attempt.total} (${attempt.toeicScore} điểm)</span>
+                </div>
+                <div style="display: flex; gap: 5px;">
+                    <button class="btn-review" onclick="restoreAttempt(${attempt.id})">Xem lại</button>
+                    <button class="btn-delete-history" onclick="deleteAttempt(${attempt.id})" title="Xóa bài làm này">✖</button>
+                </div>
+            </div>`;
+        });
+    }
+    historyListEl.innerHTML = listHtml;
+    document.getElementById('historyOverlay').style.display = 'flex';
+}
+
+function closeHistoryModal() {
+    document.getElementById('historyOverlay').style.display = 'none';
+}
+
+function deleteAttempt(attemptId) {
+    showCustomConfirm("Bạn có chắc chắn muốn xóa bài làm này khỏi lịch sử không?", function() {
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        history = history.filter(h => h.id !== attemptId);
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        
+        if (window.syncHistoryToCloud) {
+            window.syncHistoryToCloud(history);
+        }
+        openHistoryModal();
+    });
+}
+
+function restoreAttempt(attemptId) {
+    let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+    let attempt = history.find(h => h.id === attemptId);
+    if (!attempt) return;
+    
+    isReviewingMode = true;
+    document.getElementById('historyOverlay').style.display = 'none';
+    document.getElementById('setupOverlay').style.display = 'none';
+    
+    document.querySelectorAll('input[type="radio"]').forEach(el => {
+        el.disabled = false;
+        el.checked = false;
+    });
+    
+    for (let qId in attempt.answers) {
+        let val = attempt.answers[qId];
+        if (val) {
+            let radio = document.querySelector(`input[name="q${qId}"][value="${val}"]`);
+            if (radio) radio.checked = true;
+        }
+    }
+    
+    let btnSubmit = document.querySelector('.btn-submit');
+    if (btnSubmit) {
+        btnSubmit.innerText = "ĐANG XEM LẠI";
+        btnSubmit.style.background = "#888";
+        btnSubmit.style.boxShadow = "none";
+    }
+    
+    isSubmitted = false;
+    executeSubmit();
+}
+
+function showToastNotification(msg) {
+    let toastMsg = document.createElement("div");
+    toastMsg.innerText = msg;
+    toastMsg.style.cssText = "position:fixed; top:20px; right:20px; background:var(--primary); color:white; padding:15px 20px; border-radius:12px; font-weight:bold; font-family:'Be Vietnam Pro',sans-serif; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,0.2);";
+    document.body.appendChild(toastMsg);
+    setTimeout(() => toastMsg.remove(), 3000);
+}
+
+// --- CUSTOM POPUP DIALOGS ---
+function showCustomAlert(msg) {
+    document.getElementById('genericAlertMsg').innerText = msg;
+    document.getElementById('genericAlertOverlay').style.display = 'flex';
+}
+
+function closeGenericAlert() {
+    document.getElementById('genericAlertOverlay').style.display = 'none';
+}
+
+function showCustomConfirm(msg, onConfirmCallback) {
+    document.getElementById('genericConfirmMsg').innerText = msg;
+    let confirmBtn = document.getElementById('genericConfirmBtn');
+    let newBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+    newBtn.addEventListener('click', function() {
+        document.getElementById('genericConfirmOverlay').style.display = 'none';
+        if (typeof onConfirmCallback === 'function') {
+            onConfirmCallback();
+        }
+    });
+    document.getElementById('genericConfirmOverlay').style.display = 'flex';
+}
+
+function closeGenericConfirm() {
+    document.getElementById('genericConfirmOverlay').style.display = 'none';
+}
+
+// --- FULLSCREEN SYSTEM ---
+function toggleFullScreen() {
+    const btn = document.getElementById('fsBtn');
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().then(() => {
+            document.body.classList.add('fullscreen-active');
+            btn.innerHTML = "✖ Thoát toàn màn hình";
+            btn.style.background = "#fff1f2";
+            btn.style.color = "#e11d48";
+        }).catch(err => {
+            showCustomAlert(`Lỗi: ${err.message}`);
+        });
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
+}
+
+document.addEventListener('fullscreenchange', () => {
+    const btn = document.getElementById('fsBtn');
+    if (!document.fullscreenElement) {
+        document.body.classList.remove('fullscreen-active');
+        btn.innerHTML = "🖥️";
+        btn.style.background = "#f0f9ff";
+        btn.style.color = "#0369a1";
+    }
+});
+
+// --- TEXT HIGHLIGHT SYSTEM ---
+const mainContainer = document.getElementById("mainContainer");
+const menu = document.getElementById("ctxMenu");
+let targetElement = null;
+let selectedRange = null;
+
+menu.style.position = "fixed";
+
+mainContainer.addEventListener("contextmenu", (e) => {
+    e.preventDefault();
+    targetElement = null; 
+    selectedRange = null;
+    
+    if (e.target.classList.contains("highlight")) {
+        targetElement = e.target;
+        showMenu(e.clientX, e.clientY, "remove");
+        return;
+    }
+    
+    let sel = window.getSelection();
+    if (sel.toString().trim().length > 0 && mainContainer.contains(sel.anchorNode)) {
+        selectedRange = sel.getRangeAt(0);
+        showMenu(e.clientX, e.clientY, "add");
+    } else {
+        menu.style.display = "none";
+    }
+});
+
+document.addEventListener("click", (e) => {
+    if (menu && !menu.contains(e.target)) menu.style.display = "none";
+});
+
+function showMenu(x, y, mode) {
+    menu.style.display = "block";
+    let mw = menu.offsetWidth;
+    let mh = menu.offsetHeight;
+    let left = x + mw > window.innerWidth ? window.innerWidth - mw - 10 : x;
+    let top = y + mh > window.innerHeight ? window.innerHeight - mh - 10 : y;
+    menu.style.left = left + "px";
+    menu.style.top = top + "px";
+    menu.children.style.display = (mode === "add") ? "block" : "none";
+    menu.children[1].style.display = (mode === "remove") ? "block" : "none";
+}
+
+function doHighlight() {
+    if (selectedRange) {
+        try {
+            let span = document.createElement("span");
+            span.className = "highlight";
+            selectedRange.surroundContents(span);
+        } catch(e) {
+            showCustomAlert("Lưu ý: Chỉ có thể bôi vàng các cụm từ nằm trong cùng một đoạn văn. Vui lòng không bôi đen vắt ngang qua các khoảng ngắt dòng nhé!");
+        }
+        window.getSelection().removeAllRanges();
+    }
+    menu.style.display = "none";
+}
+
+function removeHighlight() {
+    if (targetElement) {
+        let text = document.createTextNode(targetElement.textContent);
+        targetElement.parentNode.replaceChild(text, targetElement);
+        mainContainer.normalize();
+    }
+    menu.style.display = "none";
+}
+
+// --- KEYBOARD ARROW KEY NAVIGATION ---
+document.addEventListener('keydown', function(event) {
+    const activeEl = document.activeElement;
+    if (activeEl && (
+        activeEl.tagName === 'INPUT' ||
+        activeEl.tagName === 'TEXTAREA' ||
+        activeEl.isContentEditable
+    )) {
+        return;
+    }
+    const setupOverlay = document.getElementById('setupOverlay');
+    if (setupOverlay && window.getComputedStyle(setupOverlay).display !== 'none') {
+        return;
+    }
+    if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        if (typeof changeStep === 'function') {
+            changeStep(1);
+        }
+    } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        if (typeof changeStep === 'function') {
+            changeStep(-1);
+        }
+    }
+});
+</script>
+
+<!-- Firebase SDKs and Real-time syncing scripts -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBlTU4B563sSsTVbLai_je29l6eC8T-cm0",
+    authDomain: "snapenglish-cb6e2.firebaseapp.com",
+    projectId: "snapenglish-cb6e2",
+    storageBucket: "snapenglish-cb6e2.firebasestorage.app",
+    messagingSenderId: "373152038413",
+    appId: "1:373152038413:web:19284622571390f8585f44"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+function showInGameToast(msg) {
+    let toast = document.createElement("div");
+    toast.innerText = msg;
+    toast.style.cssText = "position:fixed; bottom:20px; right:20px; background:#ff8fab; color:white; padding:15px 20px; border-radius:12px; font-weight:bold; font-family:'Nunito', sans-serif; z-index:99999; box-shadow:0 10px 30px rgba(0,0,0,0.15); transform:translateY(100px); opacity:0; transition:all 0.4s ease;";
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.transform = "translateY(0)"; toast.style.opacity = "1"; }, 100);
+    setTimeout(() => { toast.style.transform = "translateY(100px)"; toast.style.opacity = "0"; }, 3500);
+    setTimeout(() => { toast.remove(); }, 4000);
+}
+
+// 1. Dynamic cloud synchronization of history based on the active testId
+window.syncHistoryToCloud = async function(historyData) {
+    if (!window.currentUserUid) return;
+    try {
+        let docId = window.currentUserUid + "_history_" + testId;
+        await setDoc(doc(db, "user_test_histories", docId), {
+            savedHistory: historyData,
+            lastUpdated: Date.now()
+        }, { merge: true });
+    } catch (error) {
+        console.error("Lỗi đồng bộ lịch sử lên Cloud: ", error);
+    }
+}
+
+// 2. Real-time auth listener with dynamic history pulling from Firestore
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        window.currentUserUid = user.uid;
+        window.currentUserEmail = user.email;
+        
+        let localKey = `snapenglish_${testId}_history`;
+        let docId = user.uid + "_history_" + testId;
+        const docRef = doc(db, "user_test_histories", docId);
+        
+        onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists()) {
+                let cloudData = docSnap.data().savedHistory;
+                if (cloudData) {
+                    localStorage.setItem(localKey, JSON.stringify(cloudData));
+                    let historyModal = document.getElementById('historyOverlay');
+                    if (historyModal && window.getComputedStyle(historyModal).display === 'flex') {
+                        openHistoryModal();
+                    }
+                }
+            }
+        }, (error) => {
+            console.error("Lỗi đồng bộ Realtime: ", error);
+        });
+    } else {
+        showInGameToast("⚠️ Chưa đăng nhập! Lịch sử và Điểm sẽ không được đồng bộ.");
+    }
+});
+
+// 3. Dynamic score saving to 'user_toeic_scores' (Bảng vàng SnapEnglish)
+window.luuDiemTOEICReadingFull = async function(correct, total, testTitle, timeTaken) {
+    if (!window.currentUserUid) return;
+    let scoreConverted = Math.round(((correct / total) * 495) / 5) * 5;
+    let timestamp = Date.now();
+    let docId = window.currentUserUid + "_toeic_" + timestamp;
+    let now = new Date();
+    let hours = now.getHours().toString().padStart(2, '0');
+    let minutes = now.getMinutes().toString().padStart(2, '0');
+    let timeString = hours + ":" + minutes;
+    
+    try {
+        await setDoc(doc(db, "user_toeic_scores", docId), {
+            email: window.currentUserEmail,
+            skill: "Reading",
+            testName: testTitle,
+            partName: "Full",
+            correctQ: correct,
+            totalQ: total,
+            score: scoreConverted,
+            date: now.toLocaleDateString('vi-VN'),
+            time: timeString,
+            Time: timeString,
+            timeTaken: timeTaken,
+            timestamp: timestamp
+        });
+        showInGameToast("☁️ Đã nộp điểm lên bảng vàng SnapEnglish!");
+    } catch (e) {
+        console.error("Lỗi nộp điểm lên Firestore: ", e);
+    }
+}
+</script>
+</body>
+</html>
