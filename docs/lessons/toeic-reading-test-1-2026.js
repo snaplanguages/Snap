@@ -838,7 +838,6 @@ window.TOEIC_DATA = {
       "explanation": "<h4><b>Phân tích chi tiết (Dạng bài: Từ vựng theo ngữ cảnh Ngành Y tế)</b></h4><div style=\"background-color: #fff0f0; padding: 10px; border-left: 4px solid #d9534f; margin-bottom: 12px;\"><b style=\"color: #d9534f;\">🔍 TÌM MANH MỐI NGỮ CẢNH (Contextual Clues)</b></div><p><b>1. Phân tích ngữ cảnh &amp; Mạch logic:</b></p><ul><li><b>Từ khóa trước chỗ trống:</b> <i>\"consultation\"</i> (Buổi tư vấn/khám bệnh với bác sĩ).</li><li><b>Từ khóa sau chỗ trống:</b> <i>\"go through it\"</i> (Xem qua/đọc qua nó).</li><li><b>Logic thực tế:</b> Sau khi bệnh nhân kết thúc buổi khám bệnh, hệ thống phòng khám sẽ đăng một <b style=\"color: #008000;\">summary (bản tóm tắt hồ sơ/kết luận khám)</b> lên cổng thông tin để bệnh nhân tiện tra cứu.</li></ul><p><b>2. Loại trừ đáp án sai:</b></p><ul><li><span style=\"color: #cc0000;\">❌ <b>photo:</b></span> Bức ảnh (Bác sĩ tư vấn không đăng \"bức ảnh\" lên portal để đọc).</li><li><span style=\"color: #cc0000;\">❌ <b>lecture:</b></span> Bài giảng (Thuộc bối cảnh giáo dục/trường học).</li><li><span style=\"color: #cc0000;\">❌ <b>schedule:</b></span> Lịch trình (Sai chức năng, đây là buổi khám đã xong chứ không phải sắp diễn ra).</li></ul>"
     },
     {
-      "id": 138,
       "id": 145,
       "text": "145.",
       "options": [
