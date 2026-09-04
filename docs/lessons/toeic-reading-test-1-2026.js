@@ -1,5 +1,4 @@
-
-  window.toeicData = {
+window.toeicData = {
     part5: [
     {
   id: 101, q: "The lecture will take place at 6:00 P.M., ______ which attendees may ask questions.",
