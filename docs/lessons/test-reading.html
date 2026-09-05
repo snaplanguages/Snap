@@ -1981,74 +1981,75 @@ function executeSubmit() {
     let totalQuestions = allQuestionIds.length;
     userAnswersMap = {};
     
-    allQuestionIds.forEach(id => {
-        let userAns = "";
-        let radios = document.getElementsByName(`q${id}`);
-        for (let r of radios) if (r.checked) userAns = r.value;
-        userAnswersMap[id] = userAns;
-        
-        let correctAns = answerKey[id];
-        let isCorrect = (userAns === correctAns);
-        if (isCorrect && userAns !== "") score++;
-        
-        let feedbackEl = document.getElementById(`fb-${id}`);
-        if (feedbackEl) {
-            if (isCorrect && userAns !== "") {
-                feedbackEl.innerHTML = `<span style="color:var(--success);">✓ Đúng</span>`;
-            } else if (userAns === "") {
-                feedbackEl.innerHTML = `<span style="color:#888;">Trống (Đáp án: <span style="background:#dce775; color:#333; padding:2px 5px; border-radius:4px;">${correctAns}</span>)</span>`;
-            } else {
-                feedbackEl.innerHTML = `<span style="color:var(--wrong);">✗ Sai (Đáp án: <span style="background:#dce775; color:#333; padding:2px 5px; border-radius:4px;">${correctAns}</span>)</span>`;
-            }
-        }
-        
-        let nav = document.getElementById(`nav-${id}`);
-        if (nav) {
-            if (isCorrect && userAns !== "") {
-                nav.style.background = "#c8e6c9"; nav.style.color = "#2e7d32"; nav.style.borderColor = "#81c784";
-            } else {
-                nav.style.background = "#ffcdd2"; nav.style.color = "#c62828"; nav.style.borderColor = "#ef9a9a";
-            }
-        }
-        
-        let expContainer = document.getElementById(`exp-${id}`);
-if (expContainer && explanations[id]) {
-    let expData = explanations[id];
-    let contentHtml = "";
-    if (expData.exp) contentHtml += `<div class="exp-text">${expData.exp}</div>`;
-    if (expData.vocab) contentHtml += `<div class="exp-vocab">${expData.vocab}</div>`;
-    if (expData.tip) contentHtml += `<div style="margin-top:8px; color:var(--primary-dark); font-weight:600;">📌 Ghi chú: ${expData.tip}</div>`;
+allQuestionIds.forEach(id => {
+    let userAns = "";
+    let radios = document.getElementsByName(`q${id}`);
+    for (let r of radios) if (r.checked) userAns = r.value;
+    userAnswersMap[id] = userAns;
+    let correctAns = answerKey[id];
+    let isCorrect = (userAns === correctAns);
+    if (isCorrect && userAns !== "") score++;
     
-    // TỰ ĐỘNG NHẬN DIỆN TRẠNG THÁI ĐỂ GÁN CLASS MÀU SẮC PHÙ HỢP
-    let expClass = (isCorrect && userAns !== "") ? "correct-exp" : "wrong-exp";
-    
-    expContainer.innerHTML = `
-    <div class="exp-box show ${expClass}">
-        <div class="exp-title">💡 Giải thích chi tiết Câu ${id}</div>
-        ${contentHtml}
-    </div>`;
-}
-    
-    if (!isReviewingMode) {
-        saveAttemptToHistory(score, totalQuestions, userAnswersMap);
-        
-        const match = testId.match(/test-(\d+)-(\d{4})/i);
-        let testTitleFormatted = match ? `ETS ${match[2]} - Test ${match[1]}` : testId.toUpperCase().replace(/-/g, ' ');
-        
-        document.getElementById('resultMessage').innerHTML = `Bạn đã làm đúng <b style="color: var(--primary); font-size: 22px;">${score}/${totalQuestions}</b> câu.<br>Điểm TOEIC Reading quy đổi: <b>${calculateToeicReading(score, totalQuestions)}</b>`;
-        document.getElementById('resultOverlay').style.display = 'flex';
-        
-        if (window.luuDiemTOEICReadingFull) {
-            let minutesAssigned = (currentMode === 'mock') ? 75 : parseInt(document.getElementById('timeInput').value);
-            if (isNaN(minutesAssigned) || minutesAssigned < 1) minutesAssigned = 75;
-            let timeTaken = Math.round(minutesAssigned - (testDuration / 60));
-            window.luuDiemTOEICReadingFull(score, totalQuestions, testTitleFormatted, timeTaken);
+    // Giao diện feedback Đúng/Sai
+    let feedbackEl = document.getElementById(`fb-${id}`);
+    if (feedbackEl) {
+        if (isCorrect && userAns !== "") {
+            feedbackEl.innerHTML = `<span style="color:var(--success);">✓ Đúng</span>`;
+        } else if (userAns === "") {
+            feedbackEl.innerHTML = `<span style="color:#888;">Trống (Đáp án: <span style="background:#dce775; color:#333; padding:2px 5px; border-radius:4px;">${correctAns}</span>)</span>`;
+        } else {
+            feedbackEl.innerHTML = `<span style="color:var(--wrong);">✗ Sai (Đáp án: <span style="background:#dce775; color:#333; padding:2px 5px; border-radius:4px;">${correctAns}</span>)</span>`;
         }
-    } else {
-        showToastNotification("Đã khôi phục bài làm từ lịch sử!");
     }
-    applyEvidenceColors();
-        });
+    
+    // Màu sắc thanh điều hướng nhanh
+    let nav = document.getElementById(`nav-${id}`);
+    if (nav) {
+        if (isCorrect && userAns !== "") {
+            nav.style.background = "#c8e6c9"; nav.style.color = "#2e7d32"; nav.style.borderColor = "#81c784";
+        } else {
+            nav.style.background = "#ffcdd2"; nav.style.color = "#c62828"; nav.style.borderColor = "#ef9a9a";
+        }
+    }
+    
+    // Hiển thị hộp giải thích chi tiết
+    let expContainer = document.getElementById(`exp-${id}`);
+    if (expContainer && explanations[id]) {
+        let expData = explanations[id];
+        let contentHtml = "";
+        if (expData.exp) contentHtml += `<div class="exp-text">${expData.exp}</div>`;
+        if (expData.vocab) contentHtml += `<div class="exp-vocab">${expData.vocab}</div>`;
+        if (expData.tip) contentHtml += `<div style="margin-top:8px; color:var(--primary-dark); font-weight:600;">📌 Ghi chú: ${expData.tip}</div>`;
+        let expClass = (isCorrect && userAns !== "") ? "correct-exp" : "wrong-exp";
+        expContainer.innerHTML = `
+            <div class="exp-box show ${expClass}">
+                <div class="exp-title">💡 Giải thích chi tiết Câu ${id}</div>
+                ${contentHtml}
+            </div>`;
+    }
+}); // <--- CHÍNH XÁC: ĐÓNG VÒNG LẶP FOREACH Ở ĐÂY!
+
+// --- 2. XỬ LÝ LƯU TRỮ VÀ HIỂN THỊ KẾT QUẢ CHUNG (CHỈ CHẠY DUY NHẤT 1 LẦN) ---
+if (!isReviewingMode) {
+    // Chỉ lưu lịch sử và nộp điểm một lần duy nhất sau khi đã chấm toàn bộ các câu
+    saveAttemptToHistory(score, totalQuestions, userAnswersMap);
+    
+    const match = testId.match(/test-(\d+)-(\d{4})/i);
+    let testTitleFormatted = match ? `ETS ${match[10]} - Test ${match[11]}` : testId.toUpperCase().replace(/-/g, ' ');
+    
+    document.getElementById('resultMessage').innerHTML = `Bạn đã làm đúng <b style="color: var(--primary); font-size: 22px;">${score}/${totalQuestions}</b> câu.<br>Điểm TOEIC Reading quy đổi: <b>${calculateToeicReading(score, totalQuestions)}</b>`;
+    document.getElementById('resultOverlay').style.display = 'flex';
+    
+    if (window.luuDiemTOEICReadingFull) {
+        let minutesAssigned = (currentMode === 'mock') ? 75 : parseInt(document.getElementById('timeInput').value);
+        if (isNaN(minutesAssigned) || minutesAssigned < 1) minutesAssigned = 75;
+        let timeTaken = Math.round(minutesAssigned - (testDuration / 60));
+        window.luuDiemTOEICReadingFull(score, totalQuestions, testTitleFormatted, timeTaken);
+    }
+} else {
+    showToastNotification("Đã khôi phục bài làm từ lịch sử!");
+}
+applyEvidenceColors();
 }
 
 function calculateToeicReading(raw, total) {
