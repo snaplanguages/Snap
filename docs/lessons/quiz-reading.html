@@ -517,7 +517,12 @@ footer {
     border-bottom: 2px solid var(--border-color);
   }
 }
-
+body.submitted .highlight, 
+body.review-mode .highlight {
+    background-color: #ffeb3b !important; /* Màu vàng tươi chuyên nghiệp */
+    border-bottom: 2px dashed #f59e0b;
+    color: #000000 !important;
+}
 </style>
 </head>
 <body>
@@ -779,18 +784,6 @@ function trimRange(range) {
     console.error("Lỗi trim range: ", e);
   }
 }
-
-// Cập nhật sự kiện contextmenu [3, 4]
-container.addEventListener("contextmenu", (e) => {
-  if (!e.target.closest('.pane')) return;
-  e.preventDefault();
-  targetEl = null; selectedRange = null; menu.style.display = "none";
-  
-  if (e.target.classList.contains("highlight")) {
-    targetEl = e.target;
-    showMenu(e.pageX, e.pageY, "remove"); 
-    return;
-  }
   
   let sel = window.getSelection();
   if (sel.toString().trim().length > 0 && container.contains(sel.anchorNode)) {
@@ -834,8 +827,16 @@ container.addEventListener("contextmenu", (e) => {
     if(isNaN(minutes) || minutes < 1) minutes = 20;
     testDuration = minutes * 60;
     document.getElementById('setupOverlay').style.display = 'none';
+    
+    // RESET TRẠNG THÁI HIGHLIGHT VÀ BIẾN SỐ
+    isSubmitted = false;
+    document.body.classList.remove("submitted", "review-mode");
+    if (quizData) {
+        initializeQuizTemplate(quizData); // Vẽ lại giao diện sạch tinh tươm
+    }
+    
     startTimer();
-  }
+}
 
   function startTimer() {
     let display = document.getElementById("timer");
@@ -963,12 +964,18 @@ window.deleteSelectedHistory = async function() {
     window.updateSelectAllState();
   }
 }
-  // Hàm xử lý nộp bài động linh hoạt cho mọi loại quiz
   function executeSubmit(isReviewMode = false) {
     document.getElementById('confirmOverlay').style.display = 'none';
     isSubmitted = true;
     clearInterval(timerInterval);
     document.querySelectorAll('input, select').forEach(el => el.disabled = true);
+    
+    // Thêm class để chuyển toàn bộ màu highlight hiện tại sang màu vàng
+    if (isReviewMode) {
+        document.body.classList.add("review-mode");
+    } else {
+        document.body.classList.add("submitted");
+    }
     
     let score = 0;
     let userAnswersDict = {};
@@ -1082,12 +1089,14 @@ window.deleteSelectedHistory = async function() {
   
   function showMenu(x, y, mode) {
     menu.style.display = "block";
-    let mw = menu.offsetWidth; let mh = menu.offsetHeight;
+    let mw = menu.offsetWidth; 
+    let mh = menu.offsetHeight;
     menu.style.left = (x + mw > window.innerWidth ? window.innerWidth - mw - 10 : x) + "px";
     menu.style.top = (y + mh > window.innerHeight ? window.innerHeight - mh - 10 : y) + "px";
+    
     menu.children.style.display = (mode === "add") ? "block" : "none";
-    menu.children[5].style.display = (mode === "remove") ? "block" : "none";
-  }
+    menu.children[8].style.display = (mode === "remove") ? "block" : "none";
+}
   
   function doHighlight() {
     if (selectedRange && !selectedRange.collapsed) {
@@ -1140,32 +1149,36 @@ window.deleteSelectedHistory = async function() {
     }
   });
 
-  // Ghi nhận điểm số lên Firebase tự động đồng bộ theo từng bài học
   window.luuDiemLenFirebase = async function(diemSo, timeTakenMinutes, userAnswersDict) {
     if (!window.currentUserUid || !quizData) return;
     const qData = quizData;
     let bandScore = window.calculateIeltsBand ? window.calculateIeltsBand(diemSo, qData.totalQuestions) : 0;
     let timestamp = Date.now();
     let idLuotThi = window.currentUserUid + "_" + qData.dbPrefix + "_" + timestamp;
-    try {
-      await setDoc(doc(db, "user_ielts_scores", idLuotThi), {
-        email: window.currentUserEmail,
-        skill: "Reading",
-        testName: qData.testName,
-        partName: qData.partName,
-        timeTaken: timeTakenMinutes.toString(),
-        correctQ: diemSo,
-        totalQ: qData.totalQuestions,
-        bandScore: bandScore,
-        userAnswers: userAnswersDict,
-        date: new Date().toLocaleDateString("vi-VN"),
-        timestamp: timestamp
-      });
-    } catch(e) {
-      console.error("Lỗi khi lưu điểm: ", e);
-    }
-  }
+    
+    // Lấy nội dung HTML hiện tại của bài đọc (đã có chứa các thẻ span.highlight do người dùng bôi)
+    const passageContainer = document.getElementById("text-passage");
+    let currentPassageHtml = passageContainer ? passageContainer.innerHTML : "";
 
+    try {
+        await setDoc(doc(db, "user_ielts_scores", idLuotThi), {
+            email: window.currentUserEmail,
+            skill: "Reading",
+            testName: qData.testName,
+            partName: qData.partName,
+            timeTaken: timeTakenMinutes.toString(),
+            correctQ: diemSo,
+            totalQ: qData.totalQuestions,
+            bandScore: bandScore,
+            userAnswers: userAnswersDict,
+            userHighlights: currentPassageHtml, // Cột mới lưu trữ highlight
+            date: new Date().toLocaleDateString("vi-VN"),
+            timestamp: timestamp
+        });
+    } catch(e) {
+        console.error("Lỗi khi lưu điểm và highlight: ", e);
+    }
+}
   import { onSnapshot } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js"; // Bổ sung onSnapshot vào import dòng [10]
 
 let unsubscribeHistory = null;
@@ -1235,28 +1248,41 @@ window.taiLichSuIELTS = function() {
   });
 }
 
-  // Xem lại bài làm cũ trong lịch sử
-  window.xemLaiLichSu = function(docId) {
+ window.xemLaiLichSu = function(docId) {
     let attempt = window.historyDataList.find(d => d.id === docId);
     if(!attempt || !quizData) return;
     document.getElementById('setupOverlay').style.display = 'none';
+    
+    // Khôi phục văn bản bài đọc kèm theo highlight cũ
+    const passageContainer = document.getElementById("text-passage");
+    if (passageContainer && attempt.userHighlights) {
+        passageContainer.innerHTML = attempt.userHighlights;
+    } else if (passageContainer) {
+        // Fallback nếu bài làm cũ trong lịch sử chưa có highlight lưu trữ
+        passageContainer.innerHTML = `
+            <h2 class="passage-title">${quizData.passageTitle}</h2>
+            ${quizData.passageContent}
+        `;
+    }
+    
     let ans = attempt.userAnswers || {};
     const qData = quizData;
     for(let i = qData.startQ; i <= qData.endQ; i++) {
-      let val = ans['ans-'+i] || '';
-      let isRadio = document.querySelector(`input[name="mcq-${i}"]`);
-      if (isRadio) {
-        let radios = document.querySelectorAll(`input[name="mcq-${i}"]`);
-        radios.forEach(r => {
-          if(r.value.toUpperCase() === val.toUpperCase()) r.checked = true;
-        });
-      } else {
-        let el = document.getElementById(`ans-${i}`);
-        if (el) el.value = val;
-      }
+        let val = ans['ans-'+i] || '';
+        let isRadio = document.querySelector(`input[name="mcq-${i}"]`);
+        if (isRadio) {
+            let radios = document.querySelectorAll(`input[name="mcq-${i}"]`);
+            radios.forEach(r => {
+                if(r.value.toUpperCase() === val.toUpperCase()) r.checked = true;
+            });
+        } else {
+            let el = document.getElementById(`ans-${i}`);
+            if (el) el.value = val;
+        }
     }
-    executeSubmit(true);
-  }
+    
+    executeSubmit(true); // Truyền true để kích hoạt review-mode
+}
 
   // Xóa bản ghi lịch sử bài làm
   let itemToDeleteId = null;
