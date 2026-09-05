@@ -1544,9 +1544,10 @@ function getTestIdFromURL() {
 
 // 2. Load the external JS file containing the specific test data
 function loadTestScript() {
-    return new Promise((resolve, reject) => {
-        testId = getTestIdFromURL();
-        HISTORY_KEY = `snapenglish_${testId}_history`;
+  return new Promise((resolve, reject) => {
+    testId = getTestIdFromURL();
+    window.testId = testId; // <-- THÊM DÒNG NÀY ĐỂ ĐƯA LÊN WINDOW TOÀN CỤC
+    HISTORY_KEY = `snapenglish_${testId}_history`;
         
         const script = document.createElement('script');
         script.src = `./${testId}.js`;
@@ -2047,6 +2048,7 @@ if (expContainer && explanations[id]) {
         showToastNotification("Đã khôi phục bài làm từ lịch sử!");
     }
     applyEvidenceColors();
+        });
 }
 
 function calculateToeicReading(raw, total) {
@@ -2443,15 +2445,17 @@ window.syncHistoryToCloud = async function(historyData) {
     }
 }
 
-// 2. Real-time auth listener with dynamic history pulling from Firestore
 onAuthStateChanged(auth, (user) => {
-    if (user) {
-        window.currentUserUid = user.uid;
-        window.currentUserEmail = user.email;
-        
-        let localKey = `snapenglish_${testId}_history`;
-        let docId = user.uid + "_history_" + testId;
-        const docRef = doc(db, "user_test_histories", docId);
+  if (user) {
+    window.currentUserUid = user.uid;
+    window.currentUserEmail = user.email;
+    
+    // Sửa testId thành window.testId ở các dòng dưới:
+    let activeTestId = window.testId || "toeic-reading-test-1-2026"; 
+    let localKey = `snapenglish_${activeTestId}_history`;
+    let docId = user.uid + "_history_" + activeTestId;
+    
+    const docRef = doc(db, "user_test_histories", docId);
         
         onSnapshot(docRef, (docSnap) => {
             if (docSnap.exists()) {
