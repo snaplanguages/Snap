@@ -1395,9 +1395,15 @@ body.fullscreen-active .container { height: calc(100vh - 60px); }
 
 <!-- History Modal -->
 <div id="historyOverlay" class="custom-overlay">
-    <div class="custom-modal" style="max-width: 500px;">
-        <h2 style="color: var(--primary-dark); font-family: 'Lora', serif; margin-bottom: 15px;">🕒 Lịch sử làm bài</h2>
-        <div id="historyList" style="max-height: 300px; overflow-y: auto; text-align: left; margin-bottom: 15px; padding-right: 5px;">
+<div class="custom-modal" style="max-width: 500px;">
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+    <h2 style="color: var(--primary-dark); font-family: 'Lora', serif; margin: 0; font-size: 24px;">🕒 Lịch sử làm bài</h2>
+    <div id="batchActionGroup" style="display: flex; gap: 8px;">
+        <button id="btnBatchDeleteToggle" class="btn-review" style="padding: 6px 12px; font-size: 13px;" onclick="toggleBatchMode()">Xóa nhiều</button>
+        <button id="btnExecuteBatchDelete" class="btn-confirm" style="padding: 6px 12px; font-size: 13px; background: var(--wrong); display: none;" onclick="executeBatchDelete()">Xóa đã chọn (0)</button>
+    </div>
+</div>
+    <div id="historyList" style="max-height: 300px; overflow-y: auto; text-align: left; margin-bottom: 15px; padding-right: 5px;">
             <!-- Rendered by JS -->
         </div>
         <button class="btn-cancel" style="width: 100%;" onclick="closeHistoryModal()">Quay lại</button>
@@ -1527,6 +1533,8 @@ let toeicData = {};
 let testId = "";
 let HISTORY_KEY = "";
 let isSubmitted = false;
+    let isBatchMode = false;         // Trạng thái bật/tắt chế độ chọn xóa nhiều
+let selectedAttempts = [];  
 let isReviewingMode = false;
 let testDuration = 75 * 60; // default 75 mins in seconds
 let timerInterval = null;
@@ -2085,20 +2093,58 @@ function openHistoryModal() {
     let historyListEl = document.getElementById('historyList');
     let listHtml = '';
     
+    // Kiểm tra cấu hình giao diện nút bấm dựa vào trạng thái isBatchMode
+    const btnToggle = document.getElementById('btnBatchDeleteToggle');
+    const btnExecute = document.getElementById('btnExecuteBatchDelete');
+    
+    if (btnToggle && btnExecute) {
+        if (!isBatchMode) {
+            selectedAttempts = []; // Reset danh sách chọn
+            btnToggle.innerText = "Xóa nhiều";
+            btnToggle.style.background = "";
+            btnToggle.style.color = "";
+            btnExecute.style.display = "none";
+        } else {
+            btnToggle.innerText = "Hủy";
+            btnToggle.style.background = "#f2e8e5";
+            btnToggle.style.color = "var(--text-light)";
+            btnExecute.style.display = "block";
+            updateBatchDeleteButtonText();
+        }
+    }
+
     if (history.length === 0) {
         listHtml = '<p style="text-align: center; color: #888; margin-top: 20px; font-weight: 600;">Chưa có dữ liệu làm bài.</p>';
+        if (document.getElementById('batchActionGroup')) {
+            document.getElementById('batchActionGroup').style.display = "none";
+        }
     } else {
+        if (document.getElementById('batchActionGroup')) {
+            document.getElementById('batchActionGroup').style.display = "flex";
+        }
         history.forEach(attempt => {
+            const isChecked = selectedAttempts.includes(attempt.id) ? 'checked' : '';
+            
+            // Nếu ở chế độ xóa nhiều, hiển thị checkbox. Ngược lại, ẩn checkbox đi.
+            const checkboxHtml = isBatchMode 
+                ? `<input type="checkbox" class="batch-checkbox" style="transform: scale(1.3); margin-right: 15px; cursor: pointer;" onchange="toggleSelectAttempt(${attempt.id}, this)" ${isChecked}>`
+                : '';
+            
             listHtml += `
-            <div class="history-item">
-                <div class="history-info">
-                    <span class="history-date">📅 ${attempt.date} - ⏰ ${attempt.time}</span>
-                    <span class="history-score">🏆 Điểm: ${attempt.score}/${attempt.total} (${attempt.toeicScore} điểm)</span>
+            <div class="history-item" style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; flex: 1;">
+                    ${checkboxHtml}
+                    <div class="history-info">
+                        <span class="history-date">📅 ${attempt.date} - ⏰ ${attempt.time}</span>
+                        <span class="history-score">🏆 Điểm: ${attempt.score}/${attempt.total} (${attempt.toeicScore} điểm)</span>
+                    </div>
                 </div>
+                ${!isBatchMode ? `
                 <div style="display: flex; gap: 5px;">
                     <button class="btn-review" onclick="restoreAttempt(${attempt.id})">Xem lại</button>
                     <button class="btn-delete-history" onclick="deleteAttempt(${attempt.id})" title="Xóa bài làm này">✖</button>
                 </div>
+                ` : ''}
             </div>`;
         });
     }
@@ -2107,9 +2153,11 @@ function openHistoryModal() {
 }
 
 function closeHistoryModal() {
+    // Trả lại trạng thái bình thường khi đóng modal lịch sử
+    isBatchMode = false;
+    selectedAttempts = [];
     document.getElementById('historyOverlay').style.display = 'none';
 }
-
 function deleteAttempt(attemptId) {
     showCustomConfirm("Bạn có chắc chắn muốn xóa bài làm này khỏi lịch sử không?", function() {
         let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
@@ -2122,7 +2170,61 @@ function deleteAttempt(attemptId) {
         openHistoryModal();
     });
 }
+function toggleBatchMode() {
+    isBatchMode = !isBatchMode;
+    if (!isBatchMode) {
+        selectedAttempts = [];
+    }
+    openHistoryModal();
+}
+function toggleSelectAttempt(attemptId, checkbox) {
+    if (checkbox.checked) {
+        if (!selectedAttempts.includes(attemptId)) {
+            selectedAttempts.push(attemptId);
+        }
+    } else {
+        selectedAttempts = selectedAttempts.filter(id => id !== attemptId);
+    }
+    updateBatchDeleteButtonText();
+}
 
+// Cập nhật số lượng bài làm đã chọn lên nút bấm thực thi
+function updateBatchDeleteButtonText() {
+    const btn = document.getElementById('btnExecuteBatchDelete');
+    if (btn) {
+        btn.innerText = `Xóa đã chọn (${selectedAttempts.length})`;
+        // Vô hiệu hóa nút nếu không chọn mục nào
+        btn.disabled = selectedAttempts.length === 0;
+        btn.style.opacity = selectedAttempts.length === 0 ? "0.6" : "1";
+        btn.style.cursor = selectedAttempts.length === 0 ? "not-allowed" : "pointer";
+    }
+}
+
+// Thực hiện xóa toàn bộ các mục đã tích chọn
+function executeBatchDelete() {
+    if (selectedAttempts.length === 0) return;
+    
+    showCustomConfirm(`Bạn có chắc chắn muốn xóa ${selectedAttempts.length} bài làm đã chọn khỏi lịch sử không?`, function() {
+        let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+        
+        // Lọc bỏ tất cả các bài làm có ID nằm trong danh sách chọn xóa
+        history = history.filter(h => !selectedAttempts.includes(h.id));
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+        
+        // Đồng bộ dữ liệu lên Firebase Cloud (nếu người dùng đã đăng nhập)
+        if (window.syncHistoryToCloud) {
+            window.syncHistoryToCloud(history);
+        }
+        
+        // Reset trạng thái sau khi xóa thành công
+        isBatchMode = false;
+        selectedAttempts = [];
+        
+        // Render lại giao diện danh sách lịch sử mới
+        openHistoryModal();
+        showToastNotification("Đã xóa các bài làm được chọn thành công! ✨");
+    });
+}
 function restoreAttempt(attemptId) {
     let history = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
     let attempt = history.find(h => h.id === attemptId);
