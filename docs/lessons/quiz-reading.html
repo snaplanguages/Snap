@@ -313,6 +313,37 @@ justify-content: center;
 box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* Style cho Textarea ghi chú */
+#noteTextarea {
+width: 100%;
+height: 100px;
+padding: 12px;
+border: 2px solid var(--border-color);
+border-radius: 10px;
+font-family: inherit;
+font-size: 14px;
+outline: none;
+resize: none;
+color: var(--text-main);
+margin-bottom: 15px;
+transition: 0.2s;
+background: white;
+}
+#noteTextarea:focus {
+border-color: var(--primary);
+box-shadow: 0 0 0 3px rgba(230, 82, 69, 0.15);
+}
+body.dark-theme #noteTextarea {
+background: #334155;
+color: #e2e8f0;
+border-color: #475569;
+}
+body.sepia-theme #noteTextarea {
+background: #fdf6e3;
+color: #5b4636;
+border-color: #e6dbb8;
+}
+
 /* --- OVERLAY & MODAL --- */
 #setupOverlay, .custom-overlay {
 position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -327,6 +358,15 @@ width: 90%; max-width: 500px; text-align: center;
 border: 2px solid var(--border-color);
 animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 max-height: 90vh; overflow-y: auto;
+}
+body.dark-theme .setup-modal, body.dark-theme .custom-modal {
+background: #1e1e1e;
+border-color: #334155;
+box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+}
+body.sepia-theme .setup-modal, body.sepia-theme .custom-modal {
+background: #fdf6e3;
+border-color: #e6dbb8;
 }
 @keyframes popIn {
 0% { transform: scale(0.8); opacity: 0; }
@@ -838,6 +878,20 @@ max-width: 100% !important;
 </div>
 </div>
 
+<!-- Modal Nhập Ghi Chú Custom UI (Thay thế hoàn toàn window.prompt mặc định) -->
+<div id="noteModalOverlay" class="custom-overlay" style="display: none; z-index: 100000;">
+<div class="custom-modal" style="max-width: 400px; padding: 25px;">
+<h3 style="color: var(--primary-dark); margin-top: 0; font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; justify-content: center; margin-bottom: 15px;">
+📝 Thêm Ghi Chú Mới
+</h3>
+<textarea id="noteTextarea" placeholder="Nhập nội dung ghi chú ở đây..."></textarea>
+<div class="modal-actions" style="margin-top: 0;">
+<button class="btn-cancel" onclick="closeNoteModal()">Hủy</button>
+<button class="btn-confirm" onclick="saveCustomNote()">Lưu lại</button>
+</div>
+</div>
+</div>
+
 <header>
 <div class="brand">
 <span id="brandBadge">SnapEnglish</span> <div id="quizHeaderTitle">IELTS Reading Portal</div>
@@ -1169,12 +1223,12 @@ menu.style.top = (y + mh > window.innerHeight ? window.innerHeight - mh - 10 : y
 
 if (mode === "add") {
 menu.children.style.display = "block"; // Nút Highlight
-menu.children[13].style.display = "block"; // Nút Thêm Ghi chú
-menu.children[14].style.display = "none";  // Nút Xóa Highlight
+menu.children[10].style.display = "block"; // Nút Thêm Ghi chú
+menu.children[1].style.display = "none";  // Nút Xóa Highlight
 } else {
 menu.children.style.display = "none";
-menu.children[13].style.display = "none";
-menu.children[14].style.display = "block";
+menu.children[10].style.display = "none";
+menu.children[1].style.display = "block";
 }
 }
 
@@ -1193,11 +1247,30 @@ window.getSelection().removeAllRanges();
 menu.style.display = "none";
 }
 
-// CHỨC NĂNG THÊM GHI CHÚ ĐI KÈM TOOLTIP CHUYÊN NGHIỆP
+// HIỂN THỊ MODAL GHI CHÚ CUSTOM (THAY THẾ WINDOW.PROMPT MẶC ĐỊNH)
 function addNotePrompt() {
 if (selectedRange && !selectedRange.collapsed) {
-let noteText = prompt("Nhập ghi chú của bạn:");
-if (noteText && noteText.trim() !== "") {
+// Dọn dẹp nội dung cũ trong textarea
+document.getElementById("noteTextarea").value = "";
+// Hiển thị custom overlay ghi chú
+document.getElementById("noteModalOverlay").style.display = "flex";
+// Tự động focus mượt mà vào khung nhập
+setTimeout(() => {
+document.getElementById("noteTextarea").focus();
+}, 50);
+}
+menu.style.display = "none";
+}
+
+// Đóng modal ghi chú
+function closeNoteModal() {
+document.getElementById("noteModalOverlay").style.display = "none";
+}
+
+// Xử lý lưu ghi chú từ Custom UI
+function saveCustomNote() {
+let noteText = document.getElementById("noteTextarea").value;
+if (noteText && noteText.trim() !== "" && selectedRange && !selectedRange.collapsed) {
 let span = document.createElement("span");
 span.className = "highlight highlight-with-note";
 span.setAttribute("data-note", noteText);
@@ -1220,8 +1293,7 @@ selectedRange.insertNode(span);
 }
 window.getSelection().removeAllRanges();
 }
-}
-menu.style.display = "none";
+closeNoteModal();
 }
 
 function removeHighlight() {
