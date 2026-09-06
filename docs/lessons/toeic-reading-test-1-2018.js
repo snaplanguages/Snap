@@ -1815,274 +1815,1219 @@
     ]
 },
     {
-        passage: `
-                <div class="doc-box">
-                    <div class="email-header">
-                        <strong>To:</strong> j.wickler@seed-delight.net<br>
-                        <strong>From:</strong> bartosz@ashersfarmingdigest.com<br>
-                        <strong>Date:</strong> September 22<br>
-                        <strong>Subject:</strong> Asher's Farming Digest
-                    </div>
-                    <p>Dear Mr. Wickler,</p><br>
-                    <p><span id="ev-176" class="ev-box">For a limited time, Asher's Farming Digest is offering discounted pricing on advertisements to companies that have not yet advertised in our magazine.</span> When you advertise with Asher's Farming Digest, you can reach a targeted audience of over 30,000 agriculture professionals in print and online. Take advantage of this unique opportunity to help expand your customer base!</p><br>
-                    <p>Our current offers for first-time advertisers, valid until October 15, are outlined below. To reserve any of these full-color advertisements, <span id="ev-178" class="ev-box">have one of our designers create a custom advertisement for you, or request more information</span>, please reply to this e-mail or call me at 603-555-0103, ext. 27. Specifications for advertisements are available at www.ashersfarmingdigest.com/ads.</p><br>
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                        <tr style="background: #f1f5f9;">
-                            <th style="border: 1px solid #cbd5e1; padding: 8px;">Package</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 8px;">Format</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 8px;">Price (Per Month)</th>
-                        </tr>
-                        <tr><td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">1</td><td style="border: 1px solid #cbd5e1; padding: 8px;">One full-page print ad plus 6" x 1" Web site ad</td><td style="border: 1px solid #cbd5e1; padding: 8px;">$675</td></tr>
-                        <tr><td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">2</td><td style="border: 1px solid #cbd5e1; padding: 8px;">One half-page print ad plus <span id="ev-180" class="ev-box">4" x 5"</span> Web site ad</td><td style="border: 1px solid #cbd5e1; padding: 8px;">$525</td></tr>
-                        <tr><td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">3</td><td style="border: 1px solid #cbd5e1; padding: 8px;">One half-page print ad plus 3" x 3" Web site ad</td><td style="border: 1px solid #cbd5e1; padding: 8px;">$475</td></tr>
-                        <tr><td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">4</td><td style="border: 1px solid #cbd5e1; padding: 8px;">One quarter-page print ad plus 3" x 3" Web site ad</td><td style="border: 1px solid #cbd5e1; padding: 8px;">$400</td></tr>
-                    </table>
-                    <p>Sincerely,</p>
-                    <p>Gosia Bartosz<br>Marketing Coordinator<br><span id="ev-177" class="ev-box">Asher's Farming Digest</span></p>
-                    
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #cbd5e1;">
-                    
-                    <div class="email-header">
-                        <strong>To:</strong> bartosz@ashersfarmingdigest.com<br>
-                        <strong>From:</strong> j.wickler@seed-delight.net<br>
-                        <strong>Date:</strong> September 29<br>
-                        <strong>Subject:</strong> Re: Asher's Farming Digest
-                    </div>
-                    <p>Hello Ms. Bartosz,</p><br>
-                    <p>I received your e-mail and am interested in <span id="ev-179" class="ev-box">placing</span> an advertisement in Asher's Farming Digest. First, though, I would like some clarification about the online advertisement. I reviewed the specifications on your Web site but am still uncertain about the location of the advertisement. Where exactly would the <span id="ev-180" class="ev-box">4" x 5"</span> advertisement appear on your Web site?</p><br>
-                    <p>As soon as I hear from you, I can provide an electronic file of the advertisement together with payment details.</p><br>
-                    <p>Thanks,</p>
-                    <p>James Wickler<br>Owner, Seed Delight Company</p>
-                </div>
-            `,
-        questions: [
-            { id: 176, text: "Why did Ms. Bartosz email Mr. Wickler?", options: { A: "Launch publication", B: "Advertise product", C: "Inform of promotion", D: "Offer subscription discount" }, correct: "C" },
-            { id: 177, text: "What is suggested about the Digest?", options: { A: "Expanded readership", B: "Special issue", C: "Increased rates", D: "Full-color magazine" }, correct: "D" },
-            { id: 178, text: "What is mentioned about Ms. Bartosz?", options: { A: "Graphic designer", B: "Worked with Wickler", C: "Provides assistance", D: "Out of office" }, correct: "C" },
-            { id: 179, text: "The word 'placing' is closest in meaning to:", options: { A: "Hiring", B: "Putting", C: "Assigning", D: "Calculating" }, correct: "B" },
-            { id: 180, text: "What package does Mr. Wickler likely want?", options: { A: "Package 1", B: "Package 2", C: "Package 3", D: "Package 4" }, correct: "B" }
-        ]
-    },
+    passage: `<style>
+        .email-container { border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1.5rem; font-family: sans-serif; max-width: 650px; margin-left: auto; margin-right: auto; }
+        .email-header { background: #f1f5f9; border-bottom: 1px solid #e2e8f0; padding: 14px 18px; font-size: 0.9rem; color: #334155; }
+        .email-field { margin-bottom: 6px; display: flex; }
+        .email-label { font-weight: 700; width: 80px; color: #475569; flex-shrink: 0; }
+        .email-value { color: #0f172a; word-break: break-all; }
+        .email-body { padding: 20px; line-height: 1.6; font-size: 0.95rem; color: #1e293b; }
+        .pkg-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.88rem; }
+        .pkg-table th, .pkg-table td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
+        .pkg-table th { background-color: #f8fafc; font-weight: 700; color: #334155; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #854d0e; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #166534; }
+        .clue-highlight-3 { background-color: #bfdbfe; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #1e40af; }
+        .clue-highlight-4 { background-color: #fbcfe8; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #9d174d; }
+        .clue-highlight-5 { background-color: #ddd6fe; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #5b21b6; }
+    </style>
+    <div class="email-container">
+        <div class="email-header">
+            <div class="email-field"><span class="email-label">To:</span><span class="email-value">j.wickler@seed-delight.net</span></div>
+            <div class="email-field"><span class="email-label">From:</span><span class="email-value">bartosz@ashersfarmingdigest.com</span></div>
+            <div class="email-field"><span class="email-label">Date:</span><span class="email-value">September 22</span></div>
+            <div class="email-field" style="margin-bottom: 0;"><span class="email-label">Subject:</span><span class="email-value" style="font-weight: 600;">Asher's Farming Digest</span></div>
+        </div>
+        <div class="email-body">
+            Dear Mr. Wickler,<br><br>
+            For a limited time, <i>Asher's Farming Digest</i> is <span class="clue-highlight-1">offering discounted pricing on advertisements</span> to companies that have not yet advertised in our magazine. When you advertise with <i>Asher's Farming Digest</i>, you can reach a targeted audience of over 30,000 agriculture professionals in print and online. Take advantage of this unique opportunity to help expand your customer base!<br><br>
+            Our current offers for first-time advertisers, valid until October 15, are outlined below. To reserve any of these <span class="clue-highlight-2">full-color advertisements</span>, have one of our designers create a custom advertisement for you, or <span class="clue-highlight-3">request more information, please reply to this e-mail or call me</span> at 603-555-0103, ext. 27. Specifications for advertisements are available at www.ashersfarmingdigest.com/ads.
+            <table class="pkg-table">
+                <thead>
+                    <tr>
+                        <th>Package</th>
+                        <th>Format</th>
+                        <th>Price (Per Month)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>One full-page print ad plus 6" x 1" Web site ad</td>
+                        <td>$675</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>One half-page print ad plus <span class="clue-highlight-5">4" x 5" Web site ad</span></td>
+                        <td>$525</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>One half-page print ad plus 3" x 3" Web site ad</td>
+                        <td>$475</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>One quarter-page print ad plus 3" x 3" Web site ad</td>
+                        <td>$400</td>
+                    </tr>
+                </tbody>
+            </table>
+            Sincerely,<br><br>
+            Gosia Bartosz<br>
+            Marketing Coordinator, <i>Asher's Farming Digest</i>
+        </div>
+    </div>
+
+    <div class="email-container">
+        <div class="email-header">
+            <div class="email-field"><span class="email-label">To:</span><span class="email-value">bartosz@ashersfarmingdigest.com</span></div>
+            <div class="email-field"><span class="email-label">From:</span><span class="email-value">j.wickler@seed-delight.net</span></div>
+            <div class="email-field"><span class="email-label">Date:</span><span class="email-value">September 29</span></div>
+            <div class="email-field" style="margin-bottom: 0;"><span class="email-label">Subject:</span><span class="email-value" style="font-weight: 600;">Re: Asher's Farming Digest</span></div>
+        </div>
+        <div class="email-body">
+            Hello Ms. Bartosz,<br><br>
+            I received your e-mail and am interested in <span class="clue-highlight-4">placing</span> an advertisement in <i>Asher's Farming Digest</i>. First, though, I would like some clarification about the online advertisement. I reviewed the specifications on your Web site but am still uncertain about the location of the advertisement. Where exactly would the <span class="clue-highlight-5">4" x 5" advertisement</span> appear on your Web site?<br><br>
+            As soon as I hear from you, I can provide an electronic file of the advertisement together with payment details.<br><br>
+            Thanks,<br><br>
+            James Wickler<br>
+            Owner, Seed Delight Company
+        </div>
+    </div>`,
+    translation: `<div class="translation-header" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #1e293b;">Bản dịch & Phân tích</div>
+    <div class="email-container">
+        <div class="email-header">
+            <div class="email-field"><span class="email-label">Đến:</span><span class="email-value">j.wickler@seed-delight.net</span></div>
+            <div class="email-field"><span class="email-label">Từ:</span><span class="email-value">bartosz@ashersfarmingdigest.com</span></div>
+            <div class="email-field"><span class="email-label">Ngày:</span><span class="email-value">22 tháng 9</span></div>
+            <div class="email-field" style="margin-bottom: 0;"><span class="email-label">Chủ đề:</span><span class="email-value" style="font-weight: 600;">Asher's Farming Digest</span></div>
+        </div>
+        <div class="email-body">
+            Kính gửi ông Wickler,<br><br>
+            Trong một thời gian giới hạn, tạp chí <i>Asher's Farming Digest</i> đang <span class="clue-highlight-1">cung cấp mức giá giảm ưu đãi cho quảng cáo</span> dành cho các công ty chưa từng quảng cáo trên tạp chí của chúng tôi. Khi quảng cáo với <i>Asher's Farming Digest</i>, ông có thể tiếp cận độc giả mục tiêu gồm hơn 30.000 chuyên gia nông nghiệp cả trên bản in và trực tuyến. Hãy tận dụng cơ hội độc đáo này để mở rộng tập khách hàng của ông!<br><br>
+            Các ưu đãi hiện tại của chúng tôi dành cho nhà quảng cáo lần đầu (có hiệu lực đến ngày 15 tháng 10) được tóm tắt dưới đây. Để đặt bất kỳ <span class="clue-highlight-2">quảng cáo in màu</span> nào trong số này, nhờ một trong các nhà thiết kế của chúng tôi tạo quảng cáo riêng, hoặc <span class="clue-highlight-3">yêu cầu thêm thông tin, vui lòng phản hồi e-mail này hoặc gọi cho tôi</span> theo số 603-555-0103, máy lẻ 27. Thông số kỹ thuật cho các quảng cáo có sẵn tại www.ashersfarmingdigest.com/ads.
+            <table class="pkg-table">
+                <thead>
+                    <tr>
+                        <th>Gói</th>
+                        <th>Định dạng</th>
+                        <th>Giá (Mỗi tháng)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>1 quảng cáo bản in toàn trang + quảng cáo website 6" x 1"</td>
+                        <td>$675</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>1 quảng cáo bản in nửa trang + <span class="clue-highlight-5">quảng cáo website 4" x 5"</span></td>
+                        <td>$525</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>1 quảng cáo bản in nửa trang + quảng cáo website 3" x 3"</td>
+                        <td>$475</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>1 quảng cáo bản in 1/4 trang + quảng cáo website 3" x 3"</td>
+                        <td>$400</td>
+                    </tr>
+                </tbody>
+            </table>
+            Trân trọng,<br><br>
+            Gosia Bartosz<br>
+            Điều phối viên Marketing, <i>Asher's Farming Digest</i>
+        </div>
+    </div>
+
+    <div class="email-container">
+        <div class="email-header">
+            <div class="email-field"><span class="email-label">Đến:</span><span class="email-value">bartosz@ashersfarmingdigest.com</span></div>
+            <div class="email-field"><span class="email-label">Từ:</span><span class="email-value">j.wickler@seed-delight.net</span></div>
+            <div class="email-field"><span class="email-label">Ngày:</span><span class="email-value">29 tháng 9</span></div>
+            <div class="email-field" style="margin-bottom: 0;"><span class="email-label">Chủ đề:</span><span class="email-value" style="font-weight: 600;">Re: Asher's Farming Digest</span></div>
+        </div>
+        <div class="email-body">
+            Xin chào cô Bartosz,<br><br>
+            Tôi đã nhận được e-mail của cô và rất quan tâm đến việc <span class="clue-highlight-4">đăng</span> quảng cáo trên tạp chí <i>Asher's Farming Digest</i>. Tuy nhiên, trước tiên tôi muốn làm rõ một chút về quảng cáo trực tuyến. Tôi đã xem xét các thông số kỹ thuật trên trang web của cô nhưng vẫn chưa rõ về vị trí hiển thị. Quảng cáo kích thước <span class="clue-highlight-5">4" x 5"</span> sẽ xuất hiện chính xác ở đâu trên trang web của cô?<br><br>
+            Ngay khi nhận được phản hồi từ cô, tôi có thể cung cấp file điện tử của quảng cáo cùng với thông tin thanh toán.<br><br>
+            Cảm ơn cô,<br><br>
+            James Wickler<br>
+            Chủ sở hữu, Công ty Seed Delight
+        </div>
+    </div>`,
+    questions: [
+        {
+            id: 176,
+            text: "176. Why did Ms. Bartosz e-mail Mr. Wickler?",
+            options: [
+                { text: "(A) To announce the launch of a publication", correct: false },
+                { text: "(B) To advertise a new agricultural product", correct: false },
+                { text: "(C) To inform him of a special promotion", correct: true },
+                { text: "(D) To offer him a discount on a subscription", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> Double E-mail (Thư chào hàng dịch vụ quảng cáo & Thư phản hồi thắc mắc).<br>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Mục đích chính:</b> Ms. Bartosz chào bán các gói ưu đãi quảng cáo dành cho khách hàng lần đầu.<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Purpose Question</span> (Mục đích gửi email).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * E-mail 1, đoạn 1: <i>"For a limited time, Asher's Farming Digest is <span class='clue-highlight-1'>offering discounted pricing on advertisements</span>..."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>To announce the launch of a publication:</i> Sai. Tạp chí đã phát hành từ trước, không phải thông báo ra mắt ấn phẩm mới.<br>
+                * (B) <i>To advertise a new agricultural product:</i> Sai bẫy từ "agricultural". Ms. Bartosz bán dịch vụ quảng cáo (advertisement pricing), không phải bán sản phẩm nông nghiệp.<br>
+                * (C) <b>To inform him of a special promotion</b> &rarr; Chính xác. Việc giảm giá quảng cáo trong thời gian có hạn cho khách mới chính là một chương trình khuyến mãi đặc biệt.<br>
+                * (D) <i>To offer him a discount on a subscription:</i> Sai bẫy từ "discount". Giảm giá dành cho việc đặt quảng cáo (advertisements), không phải giảm giá mua/đăng ký tạp chí (subscription).<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>offering discounted pricing on advertisements</span> &rarr; <span style='color: #16a085;'>inform him of a special promotion</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (C) To inform him of a special promotion
+            </div>`
+        },
+        {
+            id: 177,
+            text: "177. What is suggested about Asher’s Farming Digest?",
+            options: [
+                { text: "(A) It recently expanded its readership.", correct: false },
+                { text: "(B) It will be releasing a special issue.", correct: false },
+                { text: "(C) It has increased its advertising rates.", correct: false },
+                { text: "(D) It publishes a full-color magazine.", correct: true }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Inference Question</span> (Suy luận về thông tin tạp chí).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * E-mail 1, đoạn 2: <i>"To reserve any of these <span class='clue-highlight-2'>full-color advertisements</span>..."</i> kết hợp với các gói bản in (<i>print ad</i>).<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>It recently expanded its readership:</i> Sai. Bài chỉ đề cập có hơn 30.000 độc giả, không nói vừa mới mở rộng.<br>
+                * (B) <i>It will be releasing a special issue:</i> Sai. Không có thông tin về ấn bản đặc biệt.<br>
+                * (C) <i>It has increased its advertising rates:</i> Sai trái ngược. Họ đang giảm giá (discounted pricing).<br>
+                * (D) <b>It publishes a full-color magazine</b> &rarr; Chính xác. Các gói quảng cáo in ấn đều là quảng cáo in màu toàn bộ (full-color), suy ra ấn phẩm/tạp chí bản in của họ xuất bản có màu.<br><br>
+                <strong>Đáp án:</strong> ✅ (D) It publishes a full-color magazine.
+            </div>`
+        },
+        {
+            id: 178,
+            text: "178. What is mentioned about Ms. Bartosz?",
+            options: [
+                { text: "(A) She is a graphic designer.", correct: false },
+                { text: "(B) She has worked with Mr. Wickler before.", correct: false },
+                { text: "(C) She can provide additional assistance.", correct: true },
+                { text: "(D) She will be out of the office in October.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Chi tiết về Ms. Bartosz).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * E-mail 1, đoạn 2: <i>"...or <span class='clue-highlight-3'>request more information, please reply to this e-mail or call me</span> at 603-555-0103, ext. 27."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>She is a graphic designer:</i> Sai bẫy. Bà ấy bảo "nhờ một trong các nhà thiết kế của chúng tôi", còn chức danh của bà ấy là Marketing Coordinator.<br>
+                * (B) <i>She has worked with Mr. Wickler before:</i> Sai. Đây là chương trình dành cho khách chưa từng quảng cáo (have not yet advertised).<br>
+                * (C) <b>She can provide additional assistance</b> &rarr; Chính xác. Khách hàng có thể gọi điện hoặc phản hồi e-mail cho bà để yêu cầu thêm thông tin/sự trợ giúp.<br>
+                * (D) <i>She will be out of the office in October:</i> Sai. Ngày 15/10 chỉ là thời hạn hết hạn khuyến mãi (valid until October 15).<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>request more information, reply or call me</span> &rarr; <span style='color: #16a085;'>provide additional assistance</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (C) She can provide additional assistance.
+            </div>`
+        },
+        {
+            id: 179,
+            text: "179. In the second e-mail, the word “placing” in paragraph 1, line 1, is closest in meaning to",
+            options: [
+                { text: "(A) hiring", correct: false },
+                { text: "(B) putting", correct: true },
+                { text: "(C) assigning", correct: false },
+                { text: "(D) calculating", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Vocabulary in Context</span> (Từ vựng theo ngữ cảnh).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * E-mail 2, đoạn 1: <i>"I received your e-mail and am interested in <span class='clue-highlight-4'>placing</span> an advertisement in Asher's Farming Digest."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích ngữ cảnh:</span><br>
+                * Cụm <i>"place an advertisement"</i> có nghĩa là đăng/đặt một bài quảng cáo vào ấn phẩm.<br>
+                * (A) <i>hiring:</i> Thuê (người).<br>
+                * (B) <b>putting</b> &rarr; Đặt, đưa vào (đăng bài quảng cáo vào báo/tạp chí).<br>
+                * (C) <i>assigning:</i> Phân công, giao nhiệm vụ.<br>
+                * (D) <i>calculating:</i> Tính toán.<br><br>
+                <strong>Đáp án:</strong> ✅ (B) putting
+            </div>`
+        },
+        {
+            id: 180,
+            text: "180. What package does Mr. Wickler most likely want?",
+            options: [
+                { text: "(A) Package 1", correct: false },
+                { text: "(B) Package 2", correct: true },
+                { text: "(C) Package 3", correct: false },
+                { text: "(D) Package 4", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Cross-reference / Multiple-document Inference</span> (Liên kết thông tin 2 văn bản).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * E-mail 2: Mr. Wickler hỏi cụ thể: <i>"Where exactly would the <span class='clue-highlight-5'>4\" x 5\" advertisement</span> appear on your Web site?"</i><br>
+                * E-mail 1 (Bảng giá): Tìm kích thước website ad <b>4" x 5"</b> &rarr; thuộc về <span class='clue-highlight-5'>Package 2</span> (One half-page print ad plus 4" x 5" Web site ad).<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Kết luận:</span><br>
+                * Do Mr. Wickler thắc mắc vị trí của quảng cáo kích thước 4" x 5", ông ấy chắc chắn đang muốn chọn <b>Package 2</b>.<br><br>
+                <strong>Đáp án:</strong> ✅ (B) Package 2
+            </div>`
+        }
+    ]
+},
     {
-        passage: `
-                <div class="doc-box">
-                    <div class="email-header">
-                        <strong>To:</strong> j.bonsky@kwipt.net<br>
-                        <strong>From:</strong> u.akpan@fraskerdigitalmarketing.com<br>
-                        <strong>Date:</strong> Wednesday, July 9<br>
-                        <strong>Subject:</strong> Frasker Digital Marketing technical writing
-                    </div>
-                    <p>Dear Ms. Bonsky,</p><br>
-                    <p>Thank you again for applying to Frasker Digital Marketing. We enjoyed speaking with you on Monday and are <span id="ev-181" class="ev-box">thrilled to invite you to join our technical writing team</span>. As you know, your work will entail writing user guides, installation manuals, newsletters, and other documents for our technology clients.</p><br>
-                    <p>Your work will begin in August with an in-person training session at our headquarters in Albany, New York. We'd like to find a time that works for as many people on the new team as possible. <span id="ev-182" class="ev-box">Please respond to this e-mail as soon as possible and let me know which weekend in August you prefer</span>.</p><br>
-                    <p>This is a contract position, and aside from the initial training session, work will be done remotely. As discussed, <span id="ev-183" class="ev-box">you will receive a page rate that depends on the complexity of each assignment</span> you choose to accept. <span id="ev-184" class="ev-box">Al Chalmers, our head of human resources, will be in touch soon with all the necessary documents you will need to fill out</span>.</p>
-                    
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #cbd5e1;">
-                    
-                    <div class="email-header">
-                        <strong>To:</strong> undisclosed recipients<br>
-                        <strong>From:</strong> u.akpan@fraskerdigitalmarketing.com<br>
-                        <strong>Date:</strong> Thursday, July 10<br>
-                        <strong>Subject:</strong> FDM training
-                    </div>
-                    <p>Dear Technical Writing Team,</p><br>
-                    <p>Based on your responses, we have determined that <span id="ev-185" class="ev-box">August 16-17</span> works best for most of you. Please note that training will run from Saturday morning through Sunday afternoon. <span id="ev-185-2" class="ev-box">We expect anyone who lives outside the area to arrive on Friday</span>, when we will arrange for you to have dinner with some of our local writers. All travel expenses will be covered by Frasker Digital Marketing.</p>
-                </div>
-            `,
-        questions: [
-            { id: 181, text: "Why did Ms. Akpan write to Ms. Bonsky?", options: { A: "Offer a position", B: "Technical help", C: "Promote workshop", D: "Negotiate salary" }, correct: "A" },
-            { id: 182, text: "What info is Ms. Bonsky asked to provide?", options: { A: "Education", B: "Availability for training", C: "Current clients", D: "Work summary" }, correct: "B" },
-            { id: 183, text: "What is indicated about team members?", options: { A: "Paid at variable rates", B: "Worked together before", C: "Same location", D: "Pay own travel" }, correct: "A" },
-            { id: 184, text: "Why will Mr. Chalmers contact Ms. Bonsky?", options: { A: "Company policy", B: "Travel arrangements", C: "Employment paperwork", D: "Software requirements" }, correct: "C" },
-            { id: 185, text: "What will Ms. Bonsky likely do on August 15?", options: { A: "Submit assignment", B: "Travel to Albany", C: "Participate in training", D: "Meet Mr. Chalmers" }, correct: "B" }
-        ]
-    },
+    passage: `<style>
+        .email-container { border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1.5rem; font-family: sans-serif; max-width: 650px; margin-left: auto; margin-right: auto; }
+        .email-header { background: #f1f5f9; border-bottom: 1px solid #e2e8f0; padding: 14px 18px; font-size: 0.9rem; color: #334155; }
+        .email-field { margin-bottom: 6px; display: flex; }
+        .email-label { font-weight: 700; width: 80px; color: #475569; flex-shrink: 0; }
+        .email-value { color: #0f172a; word-break: break-all; }
+        .email-body { padding: 20px; line-height: 1.6; font-size: 0.95rem; color: #1e293b; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #854d0e; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #166534; }
+        .clue-highlight-3 { background-color: #bfdbfe; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #1e40af; }
+        .clue-highlight-4 { background-color: #fbcfe8; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #9d174d; }
+        .clue-highlight-5 { background-color: #ddd6fe; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #5b21b6; }
+    </style>
+    <div class="email-container">
+        <div class="email-header">
+            <div class="email-field"><span class="email-label">To:</span><span class="email-value">j.bonsky@kwipt.net</span></div>
+            <div class="email-field"><span class="email-label">From:</span><span class="email-value">u.akpan@fraskerdigitalmarketing.com</span></div>
+            <div class="email-field"><span class="email-label">Date:</span><span class="email-value">Wednesday, July 9</span></div>
+            <div class="email-field" style="margin-bottom: 0;"><span class="email-label">Subject:</span><span class="email-value" style="font-weight: 600;">Frasker Digital Marketing technical writing</span></div>
+        </div>
+        <div class="email-body">
+            Dear Ms. Bonsky,<br><br>
+            Thank you again for applying to Frasker Digital Marketing. We enjoyed speaking with you on Monday and are thrilled to <span class="clue-highlight-1">invite you to join our technical writing team</span>. As you know, your work will entail writing user guides, installation manuals, newsletters, and other documents for our technology clients. Your strong background in information technology will be a big asset, as it is crucial that you understand the technical details of our clients' products and can articulate this information clearly and succinctly.<br><br>
+            Your work will begin in August with an in-person training session at our <span class="clue-highlight-5">headquarters in Albany, New York</span>. We'd like to find a time that works for as many people on the new team as possible, especially those like you who do not live in New York. Please respond to this e-mail as soon as possible and <span class="clue-highlight-2">let me know which weekend in August you prefer</span>.<br><br>
+            This is a contract position, and aside from the initial training session, work will be done remotely during whichever hours you choose. As discussed, you will <span class="clue-highlight-3">receive a page rate that depends on the complexity of each assignment</span> you choose to accept. <span class="clue-highlight-4">Al Chalmers, our head of human resources, will be in touch soon with all the necessary documents you will need to fill out</span>.<br><br>
+            We look forward to working with you!<br><br>
+            Uwana Akpan<br>
+            Frasker Digital Marketing
+        </div>
+    </div>
+
+    <div class="email-container">
+        <div class="email-header">
+            <div class="email-field"><span class="email-label">To:</span><span class="email-value">undisclosed recipients</span></div>
+            <div class="email-field"><span class="email-label">From:</span><span class="email-value">u.akpan@fraskerdigitalmarketing.com</span></div>
+            <div class="email-field"><span class="email-label">Date:</span><span class="email-value">Thursday, July 10</span></div>
+            <div class="email-field" style="margin-bottom: 0;"><span class="email-label">Subject:</span><span class="email-value" style="font-weight: 600;">FDM training</span></div>
+        </div>
+        <div class="email-body">
+            Dear Technical Writing Team,<br><br>
+            Based on your responses, we have determined that <span class="clue-highlight-5">August 16–17</span> works best for most of you. Please note that training will run from Saturday morning through Sunday afternoon. We <span class="clue-highlight-5">expect anyone who lives outside the area to arrive on Friday</span>, when we will arrange for you to have dinner with some of our local writers if you like. All travel expenses will be covered by Frasker Digital Marketing. More details about this will follow, but for now I just want to inform you of the schedule so you can put it on your calendars.<br><br>
+            Uwana Akpan<br>
+            Frasker Digital Marketing
+        </div>
+    </div>`,
+    translation: `<div class="translation-header" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #1e293b;">Bản dịch & Phân tích</div>
+    <div class="email-container">
+        <div class="email-header">
+            <div class="email-field"><span class="email-label">Đến:</span><span class="email-value">j.bonsky@kwipt.net</span></div>
+            <div class="email-field"><span class="email-label">Từ:</span><span class="email-value">u.akpan@fraskerdigitalmarketing.com</span></div>
+            <div class="email-field"><span class="email-label">Ngày:</span><span class="email-value">Thứ Tư, 9 tháng 7</span></div>
+            <div class="email-field" style="margin-bottom: 0;"><span class="email-label">Chủ đề:</span><span class="email-value" style="font-weight: 600;">Vị trí viết tài liệu kỹ thuật tại Frasker Digital Marketing</span></div>
+        </div>
+        <div class="email-body">
+            Kính gửi cô Bonsky,<br><br>
+            Cảm ơn cô một lần nữa vì đã ứng tuyển vào Frasker Digital Marketing. Chúng tôi rất vui được trò chuyện với cô vào thứ Hai và rất vui mừng được <span class="clue-highlight-1">mời cô gia nhập đội ngũ viết tài liệu kỹ thuật của chúng tôi</span>. Như cô đã biết, công việc của cô sẽ bao gồm viết hướng dẫn sử dụng, tài liệu hướng dẫn cài đặt, bản tin và các tài liệu khác cho các khách hàng công nghệ của chúng tôi. Nền tảng vững chắc của cô về công nghệ thông tin sẽ là một lợi thế lớn, vì điều quan trọng là cô hiểu rõ các chi tiết kỹ thuật về sản phẩm của khách hàng và có thể diễn đạt thông tin này một cách rõ ràng và súc tích.<br><br>
+            Công việc của cô sẽ bắt đầu vào tháng 8 với một buổi đào tạo trực tiếp tại <span class="clue-highlight-5">trụ sở chính của chúng tôi ở Albany, New York</span>. Chúng tôi muốn tìm thời gian phù hợp với nhiều người trong đội ngũ mới nhất có thể, đặc biệt là những người không sống ở New York như cô. Vui lòng phản hồi e-mail này càng sớm càng tốt và <span class="clue-highlight-2">cho tôi biết cô thích cuối tuần nào trong tháng 8</span>.<br><br>
+            Đây là vị trí làm việc theo hợp đồng, và ngoại trừ buổi đào tạo ban đầu, công việc sẽ được thực hiện từ xa trong bất kỳ khung giờ nào cô chọn. Như đã trao đổi, cô sẽ <span class="clue-highlight-3">nhận mức thù lao theo trang phụ thuộc vào độ phức tạp của từng nhiệm vụ</span> mà cô nhận. <span class="clue-highlight-4">Ông Al Chalmers, trưởng bộ phận nhân sự của chúng tôi, sẽ sớm liên hệ với cô cùng tất cả các giấy tờ cần thiết mà cô cần điền</span>.<br><br>
+            Chúng tôi rất mong được làm việc với cô!<br><br>
+            Uwana Akpan<br>
+            Frasker Digital Marketing
+        </div>
+    </div>
+
+    <div class="email-container">
+        <div class="email-header">
+            <div class="email-field"><span class="email-label">Đến:</span><span class="email-value">undisclosed recipients (những người nhận ẩn danh)</span></div>
+            <div class="email-field"><span class="email-label">Từ:</span><span class="email-value">u.akpan@fraskerdigitalmarketing.com</span></div>
+            <div class="email-field"><span class="email-label">Ngày:</span><span class="email-value">Thứ Năm, 10 tháng 7</span></div>
+            <div class="email-field" style="margin-bottom: 0;"><span class="email-label">Chủ đề:</span><span class="email-value" style="font-weight: 600;">Đào tạo FDM</span></div>
+        </div>
+        <div class="email-body">
+            Kính gửi Đội ngũ Viết tài liệu Kỹ thuật,<br><br>
+            Dựa trên phản hồi của các bạn, chúng tôi đã xác định rằng <span class="clue-highlight-5">ngày 16–17 tháng 8</span> là phù hợp nhất với hầu hết mọi người. Xin lưu ý rằng buổi đào tạo sẽ diễn ra từ sáng thứ Bảy đến chiều Chủ Nhật. Chúng tôi <span class="clue-highlight-5">dự kiến những ai sống ngoài khu vực sẽ đến vào thứ Sáu</span>, thời điểm chúng tôi sẽ sắp xếp để các bạn ăn tối với một số người viết địa phương nếu muốn. Toàn bộ chi phí đi lại sẽ do Frasker Digital Marketing chi trả. Thông tin chi tiết hơn sẽ được gửi sau, nhưng hiện tại tôi chỉ muốn thông báo lịch trình để các bạn ghi vào lịch làm việc của mình.<br><br>
+            Uwana Akpan<br>
+            Frasker Digital Marketing
+        </div>
+    </div>`,
+    questions: [
+        {
+            id: 181,
+            text: "181. Why did Ms. Akpan write to Ms. Bonsky?",
+            options: [
+                { text: "(A) To offer her a position", correct: true },
+                { text: "(B) To provide technical assistance", correct: false },
+                { text: "(C) To promote a writing workshop", correct: false },
+                { text: "(D) To negotiate a salary", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> Double E-mail (Thư thư thư mời nhận việc & Thông báo lịch đào tạo chung).<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Purpose Question</span> (Mục đích gửi thư).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * E-mail 1, đoạn 1: <i>"...are thrilled to <span class='clue-highlight-1'>invite you to join our technical writing team</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <b>To offer her a position</b> &rarr; Chính xác. Mời tham gia đội ngũ công ty ("invite you to join our team") đồng nghĩa với việc đưa ra lời mời làm việc (job offer).<br>
+                * (B) <i>To provide technical assistance:</i> Sai bẫy từ "technical". Bài nhắc tới "technical writing" chứ không phải cung cấp hỗ trợ kỹ thuật.<br>
+                * (C) <i>To promote a writing workshop:</i> Sai. Buổi đào tạo là dành cho nhân viên mới, không phải quảng bá hội thảo công khai.<br>
+                * (D) <i>To negotiate a salary:</i> Sai bẫy. Thư chỉ thông báo hình thức trả thù lao (page rate), không có sự thương lượng giá cả.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>invite you to join our team</span> &rarr; <span style='color: #16a085;'>offer her a position</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) To offer her a position
+            </div>`
+        },
+        {
+            id: 182,
+            text: "182. What information is Ms. Bonsky asked to provide?",
+            options: [
+                { text: "(A) Her educational background", correct: false },
+                { text: "(B) Her availability for training", correct: true },
+                { text: "(C) A list of her current clients", correct: false },
+                { text: "(D) A summary of her work experience", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Yêu cầu thông tin).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * E-mail 1, đoạn 2: <i>"Please respond to this e-mail as soon as possible and <span class='clue-highlight-2'>let me know which weekend in August you prefer</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>Her educational background:</i> Sai. Công ty đã biết học vấn/nền tảng của cô rồi.<br>
+                * (B) <b>Her availability for training</b> &rarr; Chính xác. Hỏi về cuối tuần thích hợp trong tháng 8 chính là hỏi về thời gian cô ấy có thể tham gia đào tạo.<br>
+                * (C) <i>A list of her current clients:</i> Không được đề cập.<br>
+                * (D) <i>A summary of her work experience:</i> Không được đề cập.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>which weekend in August you prefer</span> &rarr; <span style='color: #16a085;'>availability for training</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (B) Her availability for training
+            </div>`
+        },
+        {
+            id: 183,
+            text: "183. What is indicated about the technical writing team members?",
+            options: [
+                { text: "(A) They are paid at variable rates.", correct: true },
+                { text: "(B) They have all worked together before.", correct: false },
+                { text: "(C) They work from the same location.", correct: false },
+                { text: "(D) They pay their own travel expenses.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Inference Question</span> (Thông tin suy luận về đội ngũ).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * E-mail 1, đoạn 3: <i>"...you will <span class='clue-highlight-3'>receive a page rate that depends on the complexity of each assignment</span>..."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <b>They are paid at variable rates</b> &rarr; Chính xác. Mức trả tiền theo trang phụ thuộc vào độ phức tạp của bài viết, tức là mức lương/thù lao biến đổi linh hoạt (variable rates).<br>
+                * (B) <i>They have all worked together before:</i> Sai. Họ là "new team" (đội ngũ mới).<br>
+                * (C) <i>They work from the same location:</i> Sai trái ngược. E-mail 1 nêu rõ công việc làm từ xa ("work will be done remotely").<br>
+                * (D) <i>They pay their own travel expenses:</i> Sai trái ngược. E-mail 2 nêu rõ: "All travel expenses will be covered by Frasker Digital Marketing".<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>depends on complexity</span> &rarr; <span style='color: #16a085;'>variable rates</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) They are paid at variable rates.
+            </div>`
+        },
+        {
+            id: 184,
+            text: "184. Why will Mr. Chalmers contact Ms. Bonsky?",
+            options: [
+                { text: "(A) To clarify a company policy", correct: false },
+                { text: "(B) To make travel arrangements", correct: false },
+                { text: "(C) To issue employment paperwork", correct: true },
+                { text: "(D) To explain software requirements", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Tìm thông tin theo tên riêng Mr. Chalmers).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * E-mail 1, đoạn 3: <i>"<span class='clue-highlight-4'>Al Chalmers, our head of human resources, will be in touch soon with all the necessary documents you will need to fill out</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>To clarify a company policy:</i> Sai. Không đề cập giải thích chính sách.<br>
+                * (B) <i>To make travel arrangements:</i> Sai bẫy. Chi phí travel được nhắc đến ở E-mail 2 nhưng không phân công cho Mr. Chalmers.<br>
+                * (C) <b>To issue employment paperwork</b> &rarr; Chính xác. Trưởng phòng nhân sự (HR) gửi các giấy tờ cần điền chính là phát hành giấy tờ thủ tục nhận việc.<br>
+                * (D) <i>To explain software requirements:</i> Sai. Không nằm trong chức năng của Mr. Chalmers.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>necessary documents you will need to fill out</span> &rarr; <span style='color: #16a085;'>employment paperwork</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (C) To issue employment paperwork
+            </div>`
+        },
+        {
+            id: 185,
+            text: "185. What will Ms. Bonsky most likely do on August 15?",
+            options: [
+                { text: "(A) Submit a writing assignment", correct: false },
+                { text: "(B) Travel to Albany", correct: true },
+                { text: "(C) Participate in a training session", correct: false },
+                { text: "(D) Meet Mr. Chalmers", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Cross-reference / Multiple-document Inference</span> (Liên kết thời gian 2 e-mail).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence & Chuỗi suy luận:</span><br>
+                * <b>E-mail 1:</b> Buổi đào tạo trực tiếp diễn ra tại <span class='clue-highlight-5'>headquarters in Albany, New York</span>. Ms. Bonsky sống ngoài New York.<br>
+                * <b>E-mail 2:</b> Buổi đào tạo chốt vào <span class='clue-highlight-5'>thứ Bảy - Chủ Nhật (ngày 16–17 tháng 8)</span>.<br>
+                * <b>E-mail 2:</b> Yêu cầu những người ở ngoài khu vực <span class='clue-highlight-5'>đến vào thứ Sáu (arrive on Friday)</span>.<br>
+                * <b>Tính toán thời gian:</b> Ngày 16/8 là thứ Bảy &rarr; Thứ Sáu ngay trước đó chính là <b>ngày 15 tháng 8</b>.<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Kết luận:</span><br>
+                * Vì Ms. Bonsky sống ngoài New York và cần có mặt vào thứ Sáu (15/8) tại Albany, nên vào ngày 15/8 cô ấy sẽ <b>di chuyển đến Albany</b>.<br><br>
+                <strong>Đáp án:</strong> ✅ (B) Travel to Albany
+            </div>`
+        }
+    ]
+},
     {
-        passage: `
-                <div class="doc-box">
-                    <div style="background: #1e3a8a; color: #fff; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
-                        <h3 style="margin: 0;">Janney's Star Tours</h3>
-                        <p style="margin: 5px 0 0 0; font-size: 0.9em;">Edinburgh, Scotland</p>
-                    </div>
-                    <p>To celebrate the arrival of Spring, Janney's Star Tours is offering packages at 10 percent less than the cost of last year's tours. This offer applies to travel reservations made on or before 15 May. <span id="ev-186" class="ev-box">Our Spring tours are offered every week</span>, but book yours early before they fill up!</p><br>
-                    <p><strong>Standard Packages:</strong></p>
-                    <ul>
-                        <li><strong>Glasgow and Inverness:</strong> 4-day tour. Enjoy live theatre and modern art.</li>
-                        <li><strong>Aberdeen and Isle of Skye:</strong> 4-day tour. Stroll parks, visit galleries, and explore the misty northern island.</li>
-                        <li><strong>Dublin:</strong> 3- and 5-day tours to Belfast, Donegal, and Blarney Castle.</li>
-                    </ul>
-                    <p><span id="ev-87" class="ev-box">We can customize tours for special groups by tour length and type of attractions.</span></p>
-                    
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #cbd5e1;">
-                    
-                    <div class="email-header">
-                        <strong>From:</strong> noreply@bookings.janneysstar.com<br>
-                        <strong>To:</strong> ebryant127@telserver.com<br>
-                        <strong>Date:</strong> <span id="ev-188" class="ev-box">8 April</span><br>
-                        <strong>Subject:</strong> Confirmation of Reservation
-                    </div>
-                    <p>Dear Mr. Bryant, Your reservation has been confirmed:</p>
-                    <p><strong>Tour name:</strong> Aberdeen and Isle of Skye<br>
-                    <strong>Departure:</strong> Monday, 19 May, 9:00<br>
-                    <strong>Return:</strong> Thursday, 22 May, 19:00<br>
-                    <strong>Charged:</strong> £184.00</p>
-                    
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #cbd5e1;">
-                    
-                    <p><strong>Participant feedback:</strong></p>
-                    <p>"I'm a photographer, and the views are second to none. This company knows how to <span id="ev-189" class="ev-box">treat</span> its customers. <span id="ev-190" class="ev-box">Our guide, Dympna Murray, was knowledgeable... As a native of the city we visited</span>, she exhibited a charming familiarity with its traditions."</p>
-                    <p><em>— Evan Bryant</em></p>
-                </div>
-            `,
-        questions: [
-            { id: 186, text: "What is suggested about Janney's Star Tours?", options: { A: "Opened new offices", B: "Celebrating expansion", C: "New tours created", D: "Tours scheduled weekly" }, correct: "D" },
-            { id: 187, text: "What can they offer clients?", options: { A: "Artist discussions", B: "Repeat discounts", C: "Max group size", D: "Group preferences customization" }, correct: "D" },
-            { id: 188, text: "What is suggested about Mr. Bryant's tour?", options: { A: "Five days long", B: "Purchased at reduced price", C: "No gallery fees", D: "Designed for historians" }, correct: "B" },
-            { id: 189, text: "The word 'treat' is closest in meaning to:", options: { A: "Serve", B: "Pay for", C: "Develop", D: "Improve" }, correct: "A" },
-            { id: 190, text: "What is indicated about Ms. Murray?", options: { A: "She is from Aberdeen", B: "Newly trained", C: "Speaks several languages", D: "Local student" }, correct: "A" }
-        ]
-    },
+    passage: `<style>
+        .doc-container { border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1.5rem; font-family: sans-serif; max-width: 650px; margin-left: auto; margin-right: auto; }
+        .doc-header { background: #f1f5f9; border-bottom: 1px solid #e2e8f0; padding: 14px 18px; font-size: 0.9rem; color: #334155; }
+        .email-field { margin-bottom: 6px; display: flex; }
+        .email-label { font-weight: 700; width: 80px; color: #475569; flex-shrink: 0; }
+        .email-value { color: #0f172a; word-break: break-all; }
+        .doc-body { padding: 20px; line-height: 1.6; font-size: 0.95rem; color: #1e293b; }
+        .ad-title { text-align: center; font-size: 1.25rem; font-weight: bold; margin-bottom: 4px; color: #0f172a; }
+        .ad-stars { text-align: center; color: #f59e0b; margin-bottom: 4px; }
+        .ad-location { text-align: center; font-weight: 600; color: #475569; margin-bottom: 16px; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #854d0e; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #166534; }
+        .clue-highlight-3 { background-color: #bfdbfe; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #1e40af; }
+        .clue-highlight-4 { background-color: #fbcfe8; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #9d174d; }
+        .clue-highlight-5 { background-color: #ddd6fe; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #5b21b6; }
+    </style>
+
+    <div class="doc-container">
+        <div class="doc-body">
+            <div class="ad-title">Janney's Star Tours</div>
+            <div class="ad-stars">★★★★★</div>
+            <div class="ad-location">Edinburgh, Scotland</div>
+            To celebrate the arrival of Spring, Janney's Star Tours is <span class="clue-highlight-3">offering packages at 10 percent less than the cost of last year's tours. This offer applies to travel reservations made on or before 15 May</span>. Our Spring tours are <span class="clue-highlight-1">offered every week</span>, but book yours early before they fill up! Here is a sampling of our standard packages:<br><br>
+            ➤ <b>Glasgow and Inverness:</b> This 4-day tour begins in one of the most bustling seaports in Britain. Enjoy live theatre and view some of the best modern art in the country. Then continue on to Inverness, and experience the contrast offered by its high-tech businesses and ancient castles, forts, and woods.<br><br>
+            ➤ <b>Aberdeen and Isle of Skye:</b> The City of Aberdeen boasts energy, shipbuilding, and fishing among its diverse industries. During this 4-day tour, stroll Aberdeen's parks and gardens, visit art galleries, and check out the numerous cafes and bookshops around Aberdeen's universities. The tour will proceed to Skye, a cool, peaceful, and often misty northern island dotted with small villages.<br><br>
+            ➤ <b>Dublin:</b> Take a hop over to the Emerald Isle and explore the whole of Ireland. Our 3- and 5-day tours take you to Belfast, Donegal, the Blarney Castle, and more.<br><br>
+            <span class="clue-highlight-2"><b>We can customize tours for special groups by tour length and type of attractions.</b></span>
+        </div>
+    </div>
+
+    <div class="doc-container">
+        <div class="doc-header">
+            <div class="email-field"><span class="email-label">From:</span><span class="email-value">noreply@bookings.janneysstar.com</span></div>
+            <div class="email-field"><span class="email-label">To:</span><span class="email-value">ebryant127@telserver.com</span></div>
+            <div class="email-field"><span class="email-label">Date:</span><span class="email-value"><span class="clue-highlight-3">8 April</span></span></div>
+            <div class="email-field" style="margin-bottom: 0;"><span class="email-label">Subject:</span><span class="email-value" style="font-weight: 600;">Confirmation of Reservation</span></div>
+        </div>
+        <div class="doc-body">
+            Dear Mr. Bryant,<br><br>
+            Thank you for choosing Janney's Star Tours. Your reservation for one passenger(s) has been confirmed:<br><br>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; border: 1px solid #cbd5e1;">
+                <tr><td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: bold; width: 45%;">Tour name:</td><td style="padding: 8px; border: 1px solid #cbd5e1;"><span class="clue-highlight-5">Aberdeen and Isle of Skye</span></td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: bold;">Departure Date/Time from Edinburgh:</td><td style="padding: 8px; border: 1px solid #cbd5e1;">Monday, 19 May, 9:00</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: bold;">Return to Edinburgh:</td><td style="padding: 8px; border: 1px solid #cbd5e1;">Thursday, 22 May, 19:00</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: bold;">Your card has been charged:</td><td style="padding: 8px; border: 1px solid #cbd5e1;">£184.00</td></tr>
+            </table>
+            Our customer relations coordinator is happy to address any concerns you may have before your trip date. If you have an enquiry please e-mail tours@janneysstar.com or telephone +44 (0) 134 236 0155.
+        </div>
+    </div>
+
+    <div class="doc-container">
+        <div class="doc-header" style="font-weight: bold; font-size: 1rem;">Participant feedback</div>
+        <div class="doc-body">
+            I'm a photographer, and the views and locations you see on this tour are second to none. This company knows how to <span class="clue-highlight-4">treat</span> its customers, and I hope to be back for more adventures. Our guide, Dympna Murray, was knowledgeable and energetic. <span class="clue-highlight-5">As a native of the city we visited</span>, she exhibited a charming familiarity with its traditions and culture. I learned a lot about the history of the city through her interesting stories.<br><br>
+            <b>Posted by: Evan Bryant</b>
+        </div>
+    </div>`,
+    translation: `<div class="translation-header" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #1e293b;">Bản dịch & Phân tích</div>
+    <div class="doc-container">
+        <div class="doc-body">
+            <div class="ad-title">Janney's Star Tours</div>
+            <div class="ad-stars">★★★★★</div>
+            <div class="ad-location">Edinburgh, Scotland</div>
+            Để kỷ niệm sự bắt đầu của Mùa Xuân, Janney's Star Tours đang <span class="clue-highlight-3">cung cấp các gói tour với giá thấp hơn 10% so với giá năm ngoái. Ưu đãi này áp dụng cho các đặt tour thực hiện vào hoặc trước ngày 15 tháng 5</span>. Các tour mùa xuân của chúng tôi được <span class="clue-highlight-1">tổ chức hàng tuần</span>, vì vậy hãy đặt sớm trước khi hết chỗ! Dưới đây là một số gói tour tiêu chuẩn của chúng tôi:<br><br>
+            ➤ <b>Glasgow và Inverness:</b> Tour 4 ngày này bắt đầu tại một trong những cảng biển nhộn nhịp nhất Anh Quốc. Thưởng thức kịch sống động và ngắm nhìn một số tác phẩm nghệ thuật hiện đại tốt nhất cả nước. Sau đó tiếp tục đến Inverness và trải nghiệm sự tương phản giữa các doanh nghiệp công nghệ cao và lâu đài, pháo đài, khu rừng cổ kính.<br><br>
+            ➤ <b>Aberdeen và Đảo Skye:</b> Thành phố Aberdeen tự hào với ngành năng lượng, đóng tàu và đánh bắt cá trong số các ngành công nghiệp đa dạng. Trong tour 4 ngày này, hãy tản bộ qua các công viên, thăm phòng trưng bày nghệ thuật, và khám phá các quán cà phê và hiệu sách quanh các trường đại học ở Aberdeen. Tour sẽ tiếp tục đến Skye, một hòn đảo phía bắc mát mẻ, yên bình và thường phủ sương mù rải rác những ngôi làng nhỏ.<br><br>
+            ➤ <b>Dublin:</b> Ghé thăm Hòn đảo Ngọc Bích và khám phá toàn bộ Ireland. Các tour 3 và 5 ngày của chúng tôi sẽ đưa bạn đến Belfast, Donegal, Lâu đài Blarney, và nhiều nơi khác.<br><br>
+            <span class="clue-highlight-2"><b>Chúng tôi có thể tùy chỉnh tour cho các nhóm đặc biệt dựa trên thời lượng tour và loại điểm tham quan.</b></span>
+        </div>
+    </div>
+
+    <div class="doc-container">
+        <div class="doc-header">
+            <div class="email-field"><span class="email-label">Từ:</span><span class="email-value">noreply@bookings.janneysstar.com</span></div>
+            <div class="email-field"><span class="email-label">Đến:</span><span class="email-value">ebryant127@telserver.com</span></div>
+            <div class="email-field"><span class="email-label">Ngày:</span><span class="email-value"><span class="clue-highlight-3">8 tháng 4</span></span></div>
+            <div class="email-field" style="margin-bottom: 0;"><span class="email-label">Chủ đề:</span><span class="email-value" style="font-weight: 600;">Xác nhận đặt chỗ</span></div>
+        </div>
+        <div class="doc-body">
+            Kính gửi ông Bryant,<br><br>
+            Cảm ơn ông đã chọn Janney's Star Tours. Đặt chỗ cho 1 hành khách của ông đã được xác nhận:<br><br>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 16px; border: 1px solid #cbd5e1;">
+                <tr><td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: bold; width: 45%;">Tên tour:</td><td style="padding: 8px; border: 1px solid #cbd5e1;"><span class="clue-highlight-5">Aberdeen và Đảo Skye</span></td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: bold;">Ngày/Giờ khởi hành từ Edinburgh:</td><td style="padding: 8px; border: 1px solid #cbd5e1;">Thứ Hai, 19 tháng 5, 9:00</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: bold;">Ngày về Edinburgh:</td><td style="padding: 8px; border: 1px solid #cbd5e1;">Thứ Năm, 22 tháng 5, 19:00</td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #cbd5e1; font-weight: bold;">Thẻ của ông đã bị tính phí:</td><td style="padding: 8px; border: 1px solid #cbd5e1;">£184.00</td></tr>
+            </table>
+            Điều phối viên quan hệ khách hàng của chúng tôi rất vui lòng giải đáp mọi thắc mắc của ông trước ngày khởi hành. Nếu ông có câu hỏi, vui lòng gửi e-mail đến tours@janneysstar.com hoặc gọi điện đến số +44 (0) 134 236 0155.
+        </div>
+    </div>
+
+    <div class="doc-container">
+        <div class="doc-header" style="font-weight: bold; font-size: 1rem;">Phản hồi từ người tham gia</div>
+        <div class="doc-body">
+            Tôi là một nhiếp ảnh gia, và khung cảnh cũng như các địa điểm trong chuyến đi này không nơi nào bằng. Công ty này rất biết cách <span class="clue-highlight-4">đối xử / phục vụ</span> khách hàng, và tôi hy vọng sẽ trở lại cho những chuyến phiêu lưu khác. Hướng dẫn viên của chúng tôi, Dympna Murray, rất am hiểu và năng động. <span class="clue-highlight-5">Là một người bản địa của thành phố mà chúng tôi ghé thăm</span>, cô ấy thể hiện sự am hiểu quyến rũ về truyền thống và văn hóa ở đây. Tôi đã học được rất nhiều về lịch sử thành phố qua những câu chuyện thú vị của cô ấy.<br><br>
+            <b>Đăng bởi: Evan Bryant</b>
+        </div>
+    </div>`,
+    questions: [
+        {
+            id: 186,
+            text: "186. What is suggested about Janney's Star Tours?",
+            options: [
+                { text: "(A) It has recently opened new offices.", correct: false },
+                { text: "(B) It is celebrating a company expansion.", correct: false },
+                { text: "(C) It has created new tours to meet demand.", correct: false },
+                { text: "(D) It schedules its tours several times a month.", correct: true }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> Triple Passage (Advertisement + Confirmation Email + Website Feedback).<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Inference Question</span> (Suy luận thông tin về công ty).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * Passage 1 (Ad): <i>"Our Spring tours are <span class='clue-highlight-1'>offered every week</span>, but book yours early before they fill up!"</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>It has recently opened new offices:</i> Sai, không đề cập văn phòng mới.<br>
+                * (B) <i>It is celebrating a company expansion:</i> Sai bẫy từ "celebrate". Bài viết là "To celebrate the arrival of Spring" (ăn mừng mùa xuân đến), không phải mở rộng công ty.<br>
+                * (C) <i>It has created new tours to meet demand:</i> Sai, bài chỉ nói đây là các "standard packages" (gói tiêu chuẩn).<br>
+                * (D) <b>It schedules its tours several times a month</b> &rarr; Chính xác. Tour được tổ chức "mỗi tuần" (every week), đồng nghĩa với việc lịch trình được xếp nhiều lần trong một tháng.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>offered every week</span> &rarr; <span style='color: #16a085;'>schedules its tours several times a month</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (D) It schedules its tours several times a month.
+            </div>`
+        },
+        {
+            id: 187,
+            text: "187. According to the advertisement, what can Janney's Star Tours offer clients?",
+            options: [
+                { text: "(A) Discussions with artists and actors", correct: false },
+                { text: "(B) Reduced rates for repeat customers", correct: false },
+                { text: "(C) A guaranteed maximum tour group size", correct: false },
+                { text: "(D) Travel arrangements based on a group's preferences", correct: true }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Tìm thông tin dịch vụ trong bài quảng cáo).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * Passage 1 (Ad), dòng cuối: <i>"<span class='clue-highlight-2'>We can customize tours for special groups by tour length and type of attractions.</span>"</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>Discussions with artists and actors:</i> Sai bẫy. Quảng cáo có nhắc "live theatre" và "modern art", không nói được thảo luận trực tiếp.<br>
+                * (B) <i>Reduced rates for repeat customers:</i> Sai bẫy. Giảm 10% áp dụng cho khách đặt trước 15/5, không dành riêng cho khách hàng cũ.<br>
+                * (C) <i>A guaranteed maximum tour group size:</i> Không có thông tin về quy mô nhóm tối đa.<br>
+                * (D) <b>Travel arrangements based on a group's preferences</b> &rarr; Chính xác. Công ty có thể tùy chỉnh (customize) độ dài tour và điểm tham quan theo sở thích/yêu cầu của nhóm.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>customize tours for special groups by tour length and type of attractions</span> &rarr; <span style='color: #16a085;'>travel arrangements based on a group's preferences</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (D) Travel arrangements based on a group's preferences
+            </div>`
+        },
+        {
+            id: 188,
+            text: "188. What is suggested about Mr. Bryant's tour?",
+            options: [
+                { text: "(A) It will take five days to complete.", correct: false },
+                { text: "(B) It was purchased at a reduced price.", correct: true },
+                { text: "(C) It will not include gallery entrance fees.", correct: false },
+                { text: "(D) It has been especially designed for historians.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Cross-reference Question</span> (Liên kết thông tin giữa Ad và Confirmation Email).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence & Chuỗi suy luận:</span><br>
+                * <b>Passage 1 (Ad):</b> Giảm giá 10% cho các đặt chỗ thực hiện <span class='clue-highlight-3'>vào hoặc trước ngày 15 tháng 5</span> (<i>"on or before 15 May"</i>).<br>
+                * <b>Passage 2 (Email):</b> Ông Bryant nhận email xác nhận đặt tour vào ngày <span class='clue-highlight-3'>8 tháng 4</span> (<i>"8 April"</i>).<br>
+                * <b>Suy luận:</b> Vì ông Bryant đặt tour ngày 8/4 (trước hạn 15/5), ông ấy chắc chắn nhận được ưu đãi giảm giá 10%.<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>It will take five days to complete:</i> Sai. Tour từ 19 May đến 22 May là 4 ngày (Ad cũng ghi rõ tour này dài 4 ngày).<br>
+                * (B) <b>It was purchased at a reduced price</b> &rarr; Chính xác (Được mua với giá giảm nhờ đặt sớm trước 15/5).<br>
+                * (C) <i>It will not include gallery entrance fees:</i> Không đề cập đến phí vào cổng triển lãm.<br>
+                * (D) <i>It has been especially designed for historians:</i> Sai bẫy. Ông Bryant là nhiếp ảnh gia (photographer), không phải thiết kế cho nhà lịch sử.<br><br>
+                <strong>Đáp án:</strong> ✅ (B) It was purchased at a reduced price.
+            </div>`
+        },
+        {
+            id: 189,
+            text: "189. In the Web site feedback, the word \"treat\" in paragraph 1, line 2, is closest in meaning to",
+            options: [
+                { text: "(A) serve", correct: true },
+                { text: "(B) pay for", correct: false },
+                { text: "(C) develop", correct: false },
+                { text: "(D) improve", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Vocabulary in Context</span> (Từ vựng theo ngữ cảnh).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * Passage 3 (Feedback): <i>"This company knows how to <span class='clue-highlight-4'>treat</span> its customers, and I hope to be back for more adventures."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích nghĩa:</span><br>
+                * Cụm từ <i>"treat its customers"</i> trong ngữ cảnh dịch dịch vụ nghĩa là "đối xử / phục vụ khách hàng".<br>
+                * (A) <b>serve</b> (phục vụ) &rarr; Phù hợp nhất về nghĩa đối xử/phục vụ khách hàng.<br>
+                * (B) <i>pay for:</i> Bao bao/trả tiền cho ai (không phù hợp).<br>
+                * (C) <i>develop:</i> Phát triển.<br>
+                * (D) <i>improve:</i> Cải thiện.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) serve
+            </div>`
+        },
+        {
+            id: 190,
+            text: "190. What is indicated about Ms. Murray?",
+            options: [
+                { text: "(A) She is from Aberdeen.", correct: true },
+                { text: "(B) She is a newly trained guide.", correct: false },
+                { text: "(C) She speaks several languages.", correct: false },
+                { text: "(D) She studies at a local university.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Cross-reference Question</span> (Liên kết thông tin giữa Email và Feedback).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence & Chuỗi suy luận:</span><br>
+                * <b>Passage 2 (Email):</b> Tour ông Bryant đăng ký tên là <span class='clue-highlight-5'>Aberdeen and Isle of Skye</span>.<br>
+                * <b>Passage 3 (Feedback):</b> Nhận xét về HDV Dympna Murray: <i>"<span class='clue-highlight-5'>As a native of the city we visited</span>, she exhibited a charming familiarity with its traditions and culture."</i><br>
+                * <b>Suy luận:</b> "The city we visited" trong tour này là thành phố <b>Aberdeen</b>. Cô Murray là "native" (người bản xứ) của thành phố này, nghĩa là cô ấy đến từ Aberdeen.<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <b>She is from Aberdeen</b> &rarr; Chính xác.<br>
+                * (B) <i>She is a newly trained guide:</i> Sai, bài mô tả cô ấy rất am hiểu ("knowledgeable").<br>
+                * (C) <i>She speaks several languages:</i> Không được đề cập.<br>
+                * (D) <i>She studies at a local university:</i> Sai bẫy. Bài có đề cập các trường đại học ở Aberdeen nhưng không nói cô Murray học ở đó.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>native of [Aberdeen]</span> &rarr; <span style='color: #16a085;'>is from Aberdeen</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) She is from Aberdeen.
+            </div>`
+        }
+    ]
+},
     {
-        passage: `
-                <div class="doc-box">
-                    <div style="text-align: center; border-bottom: 2px solid #cbd5e1; margin-bottom: 20px; padding-bottom: 10px;">
-                        <h2 style="color: #1e3a8a; margin-bottom: 5px;">African Council for Industry & Commerce</h2>
-                        <h3 style="color: #334155; margin-bottom: 5px;">6th Annual Symposium</h3>
-                        <p>Van Ravenswaaij Convention Centre<br>Cape Town, South Africa<br>Saturday, 9 August</p>
-                        <p style="font-weight: bold; margin-top: 10px; font-size: 1.1em;">Tentative Schedule</p>
-                    </div>
-                    
-                    <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-                        <tr style="background: #f1f5f9;">
-                            <th style="border: 1px solid #cbd5e1; padding: 8px; width: 25%;">Time</th>
-                            <th style="border: 1px solid #cbd5e1; padding: 8px;">Location & Activity</th>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #cbd5e1; padding: 8px;">9:00 A.M.-9:30 A.M.</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 8px;"><strong>Leadwood Banquet Hall:</strong> Welcome and Opening Remarks by ACIC President Storey Dambuza</td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #cbd5e1; padding: 8px;">10:00 A.M.-11:30 A.M.</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 8px;">
-                                <strong>Mangrove Room:</strong> <span id="ev-191" class="ev-box">Enhancing Flavor, Texture, and Nutritional Value</span> - Marius Van Rhyn<br>
-                                <strong>Willowmore Room:</strong> Creating Standards of Excellence for Safety and Quality - Shameen Pillay
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #cbd5e1; padding: 8px;">1:00 P.M.-2:30 P.M.</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 8px;">
-                                <strong>Mangrove Room:</strong> <span id="ev-191-2" class="ev-box">Traditional Preservation Techniques Revisited: Canning and Pickling</span> - Fezekile Agwu<br>
-                                <strong>Willowmore Room:</strong> Purchasing Automated Equipment For Your Production Facility - Avanish Gupta
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="border: 1px solid #cbd5e1; padding: 8px;">3:00 P.M.-4:30 P.M.</td>
-                            <td style="border: 1px solid #cbd5e1; padding: 8px;">
-                                <strong>Mangrove Room:</strong> <span id="ev-191-3" class="ev-box">Innovations in Refrigeration and Storage for Perishable Products</span> - Anja Haasbroek<br>
-                                <strong>Willowmore Room:</strong> <span id="ev-193-1" class="ev-box">Packaging Strategies for Product Shipping - Thabo Kekana</span>
-                            </td>
-                        </tr>
-                    </table>
-                    
-                    <p>Presenters must notify Cedrick Molawa (cmolawa@acic.org.za) of needed changes by 3 July. A final version of the schedule will be posted by 10 July on our Web site, www.acic.org.za/schedule.</p><br>
-                    <p>Presenters MUST register for the event. Select the "Registration" tab on our Web site and fill out a registration form. <span id="ev-192" class="ev-box">Be sure to mark the box labeled, "Presenter".</span> <span id="ev-195-1" class="ev-box">Additionally, those planning to recruit personnel should complete an Employer Application</span>, available under the site's "Career Center" tab.</p><br>
-                    <p>The Vertin Suites has a limited number of rooms still available at a discounted rate, so consider booking promptly.</p>
-                    
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #cbd5e1;">
-                    
-                    <div class="email-header">
-                        <strong>From:</strong> Anja Haasbroek &lt;ahaasbroek5@mnpind.co.za&gt;<br>
-                        <strong>To:</strong> Cedrick Molawa &lt;cmolawa@acic.org.za&gt;<br>
-                        <strong>Date:</strong> Thursday, 24 June 1:50 P.M.<br>
-                        <strong>Subject:</strong> Schedule change request
-                    </div>
-                    <p>Dear Mr. Molawa,</p><br>
-                    <p>Due to circumstances beyond his control, <span id="ev-193-2" class="ev-box">my colleague, Thabo Kekana, is unable to give his presentation. I have now been asked to take over from him.</span> Looking at the most recent draft of the conference schedule, however, I noticed that the time slot assigned to Mr. Kekana conflicts with mine. Kindly assist me in resolving this dilemma. Thank you.</p><br>
-                    <p>Sincerely,<br>Anja Haasbroek</p>
-                    
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #cbd5e1;">
-                    
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
-                        <p style="color: #2563eb; font-weight: bold; margin-bottom: 10px;">https://www.acic.org.za</p>
-                        <p style="font-size: 0.9em; margin-bottom: 15px; color: #64748b;">Program &nbsp;&nbsp;|&nbsp;&nbsp; Registration &nbsp;&nbsp;|&nbsp;&nbsp; Sponsorships &nbsp;&nbsp;|&nbsp;&nbsp; Comments</p>
-                        <p>At the recent ACIC symposium I gave a presentation on the intricacies of buying automated machinery. Not only was my lecture well attended, during the subsequent question-and-answer session I was compelled to cover material that I had deliberately omitted from the presentation, fearing it would be too complicated. Clearly the audience was far more competent than I had anticipated. <span id="ev-195-2" class="ev-box">Additionally, in my <span id="ev-194" class="ev-box">capacity</span> as a recruiter, I interviewed a dozen candidates</span> for a critical position at my company. This initial experience with the ACIC symposium was utterly gratifying and I'm looking forward to the next edition.</p>
-                        <p style="text-align: right; font-style: italic;">— Avanish Gupta</p>
-                    </div>
-                </div>
-            `,
-        questions: [
-            { id: 191, text: "What industry is the focus?", options: { A: "Recycling", B: "Food", C: "Automotive", D: "Clothing" }, correct: "B" },
-            { id: 192, text: "What are presenters expected to do?", options: { A: "Mark 'Presenter' on registration", B: "Indicate where materials sent", C: "Reserve hotel by July 10", D: "Request discount code" }, correct: "A" },
-            { id: 193, text: "What has Ms. Haasbroek been asked to do?", options: { A: "Meeting with Molawa", B: "Submit draft", C: "Discuss goods for transport", D: "Cancel Kekana travel" }, correct: "C" },
-            { id: 194, text: "The word 'capacity' is closest in meaning to:", options: { A: "Role", B: "Time", C: "Ability", D: "Experience" }, correct: "A" },
-            { id: 195, text: "What is true about Mr. Gupta?", options: { A: "Opened plant recently", B: "Filled Employer Application", C: "Preferred this conference", D: "Topic easy to understand" }, correct: "B" }
-        ]
-    },
+    passage: `<style>
+        .webpage-container { border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .web-browser-header { background: #e2e8f0; padding: 8px 15px; display: flex; align-items: center; gap: 12px; }
+        .web-browser-dots span { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+        .web-browser-dots span:nth-child(1) { background: #fca5a5; }
+        .web-browser-dots span:nth-child(2) { background: #fde047; }
+        .web-browser-dots span:nth-child(3) { background: #86efac; }
+        .web-url { background: white; padding: 4px 12px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: #64748b; flex: 1; }
+        .web-nav { background: #1e293b; color: white; padding: 10px 20px; display: flex; gap: 20px; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
+        .doc-card { border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; background: #ffffff; margin-bottom: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .doc-title { font-weight: 700; font-size: 1.1rem; color: #1e293b; text-align: center; margin-bottom: 5px; }
+        .doc-subtitle { text-align: center; color: #64748b; font-size: 0.95rem; margin-bottom: 15px; }
+        .email-header { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 16px; margin-bottom: 15px; font-size: 0.9rem; line-height: 1.6; }
+        .email-header div { margin-bottom: 4px; }
+        .email-header strong { color: #475569; display: inline-block; width: 70px; }
+        .schedule-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.88rem; }
+        .schedule-table th, .schedule-table td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
+        .schedule-table th { background: #f1f5f9; color: #334155; font-weight: 600; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-3 { background-color: #bfdbfe; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-4 { background-color: #fbcfe8; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-5 { background-color: #fed7aa; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+    </style>
+
+    <!-- PASSAGE 1: SCHEDULE -->
+    <div class="doc-card">
+        <div class="doc-title">African Council for Industry & Commerce 6th Annual Symposium</div>
+        <div class="doc-subtitle">Van Ravenswaaij Convention Centre, Cape Town, South Africa | Saturday, 9 August</div>
+        <div style="text-align: center; font-weight: 600; margin-bottom: 10px; color: #334155;">Tentative Schedule</div>
+        
+        <table class="schedule-table">
+            <thead>
+                <tr>
+                    <th style="width: 22%;">Time</th>
+                    <th style="width: 39%;">Location: Leadwood Banquet Hall</th>
+                    <th style="width: 39%;">Location: Mangrove Room</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>9:00 Α.Μ.-9:30 Α.Μ.</td>
+                    <td colspan="2" style="text-align: center;">Welcome and Opening Remarks by ACIC President Storey Dambuza</td>
+                </tr>
+                <tr>
+                    <td>10:00 Α.Μ.-11:30 Α.Μ.</td>
+                    <td><span class="clue-highlight-1">Enhancing Flavor, Texture, and Nutritional Value</span>-Marius Van Rhyn</td>
+                    <td>Traditional Preservation Techniques Revisited: <span class="clue-highlight-1">Canning and Pickling</span>-Fezekile Agwu</td>
+                </tr>
+                <tr>
+                    <td>1:00 Р.М.-2:30 Ρ.Μ.</td>
+                    <td>Creating Standards of Excellence for Safety and Quality-Shameen Pillay</td>
+                    <td>Purchasing Automated Equipment For Your Production Facility-Avanish Gupta</td>
+                </tr>
+                <tr>
+                    <td>3:00 Ρ.Μ.-4:30 Ρ.Μ.</td>
+                    <td>Innovations in Refrigeration and Storage for <span class="clue-highlight-1">Perishable Products</span>-Anja Haasbroek</td>
+                    <td><span class="clue-highlight-3">Packaging Strategies for Product Shipping</span>-Thabo Kekana</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="font-size: 0.88rem; line-height: 1.5; color: #334155; margin-bottom: 10px;">Presenters must notify Cedrick Molawa (cmolawa@acic.org.za) of needed changes by 3 July. A final version of the schedule will be posted by 10 July on our Web site, www.acic.org.za/schedule.</p>
+        <p style="font-size: 0.88rem; line-height: 1.5; color: #334155; margin-bottom: 10px;">Presenters MUST register for the event. Select the "Registration" tab on our Web site and fill out a registration form. <span class="clue-highlight-2">Be sure to mark the box labeled, "Presenter"</span>. Additionally, <span class="clue-highlight-5">those planning to recruit personnel should complete an Employer Application</span>, available under the site's "Career Center" tab.</p>
+        <p style="font-size: 0.88rem; line-height: 1.5; color: #334155; margin-bottom: 0;">The Vertin Suites has a limited number of rooms still available at a discounted rate, so consider booking promptly.</p>
+    </div>
+
+    <!-- PASSAGE 2: EMAIL -->
+    <div class="doc-card">
+        <div class="email-header">
+            <div><strong>From:</strong> Anja Haasbroek &lt;ahaasbroek5@mnpind.co.za&gt;</div>
+            <div><strong>To:</strong> Cedrick Molawa &lt;cmolawa@acic.org.za&gt;</div>
+            <div><strong>Date:</strong> Thursday, 24 June 1:50 P.M.</div>
+            <div><strong>Subject:</strong> Schedule change request</div>
+        </div>
+        <div style="line-height: 1.6; color: #334155; font-size: 0.92rem;">
+            <p style="margin-bottom: 12px;">Dear Mr. Molawa:</p>
+            <p style="margin-bottom: 12px;">Due to circumstances beyond his control, my colleague, Thabo Kekana, is unable to give his presentation. <span class="clue-highlight-3">I have now been asked to take over from him.</span> Looking at the most recent draft of the conference schedule, however, I noticed that the time slot assigned to Mr. Kekana conflicts with mine. Kindly assist me in resolving this dilemma. Thank you.</p>
+            <p style="margin-bottom: 0;">Sincerely,<br>Anja Haasbroek</p>
+        </div>
+    </div>
+
+    <!-- PASSAGE 3: REVIEW / WEBPAGE -->
+    <div class="webpage-container">
+        <div class="web-browser-header">
+            <div class="web-browser-dots">
+                <span></span><span></span><span></span>
+            </div>
+            <div class="web-url">https://www.acic.org.za</div>
+        </div>
+        <div class="web-nav">
+            <span style="font-weight: normal; opacity: 0.7;">Program</span>
+            <span style="font-weight: normal; opacity: 0.7;">Registration</span>
+            <span style="font-weight: normal; opacity: 0.7;">Sponsorships</span>
+            <span style="border-bottom: 2px solid white; padding-bottom: 2px;">Comments</span>
+        </div>
+        <div class="web-content" style="line-height: 1.6; color: #334155; font-size: 0.92rem;">
+            <p style="margin-bottom: 12px;">At the recent ACIC symposium I gave a presentation on the intricacies of buying automated machinery. Not only was my lecture well attended, during the subsequent question-and-answer session I was compelled to cover material that I had deliberately omitted from the presentation, fearing it would be too complicated. Clearly the audience was far more competent than I had anticipated. Additionally, <span class="clue-highlight-4">in my <span class="clue-highlight-5">capacity</span> as a recruiter</span>, <span class="clue-highlight-5">I interviewed a dozen candidates</span> for a critical position at my company. This initial experience with the ACIC symposium was utterly gratifying and I'm looking forward to the next edition.</p>
+            <p style="margin-bottom: 0; font-weight: 600; color: #1e293b;">- Avanish Gupta</p>
+        </div>
+    </div>`,
+
+    translation: `<div class="translation-header">Bản dịch & Phân tích</div>
+    <style>
+        .webpage-container { border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; margin-bottom: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .web-browser-header { background: #e2e8f0; padding: 8px 15px; display: flex; align-items: center; gap: 12px; }
+        .web-browser-dots span { display: inline-block; width: 12px; height: 12px; border-radius: 50%; }
+        .web-browser-dots span:nth-child(1) { background: #fca5a5; }
+        .web-browser-dots span:nth-child(2) { background: #fde047; }
+        .web-browser-dots span:nth-child(3) { background: #86efac; }
+        .web-url { background: white; padding: 4px 12px; border-radius: 4px; font-family: monospace; font-size: 0.85rem; color: #64748b; flex: 1; }
+        .web-nav { background: #1e293b; color: white; padding: 10px 20px; display: flex; gap: 20px; font-size: 0.9rem; font-weight: 600; text-transform: uppercase; }
+        .doc-card { border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; background: #ffffff; margin-bottom: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .doc-title { font-weight: 700; font-size: 1.1rem; color: #1e293b; text-align: center; margin-bottom: 5px; }
+        .doc-subtitle { text-align: center; color: #64748b; font-size: 0.95rem; margin-bottom: 15px; }
+        .email-header { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 16px; margin-bottom: 15px; font-size: 0.9rem; line-height: 1.6; }
+        .email-header div { margin-bottom: 4px; }
+        .email-header strong { color: #475569; display: inline-block; width: 70px; }
+        .schedule-table { width: 100%; border-collapse: collapse; margin: 15px 0; font-size: 0.88rem; }
+        .schedule-table th, .schedule-table td { border: 1px solid #cbd5e1; padding: 8px 10px; text-align: left; }
+        .schedule-table th { background: #f1f5f9; color: #334155; font-weight: 600; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-3 { background-color: #bfdbfe; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-4 { background-color: #fbcfe8; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-5 { background-color: #fed7aa; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+    </style>
+
+    <!-- BẢN DỊCH VĂN BẢN 1 -->
+    <div class="doc-card">
+        <div class="doc-title">Hội thảo Thường niên lần thứ 6 của Hội đồng Công nghiệp & Thương mại Châu Phi</div>
+        <div class="doc-subtitle">Trung tâm Hội nghị Van Ravenswaaij, Cape Town, Nam Phi | Thứ Bảy, ngày 9 tháng 8</div>
+        <div style="text-align: center; font-weight: 600; margin-bottom: 10px; color: #334155;">Lịch trình Dự kiến</div>
+        
+        <table class="schedule-table">
+            <thead>
+                <tr>
+                    <th style="width: 22%;">Thời gian</th>
+                    <th style="width: 39%;">Địa điểm: Phòng tiệc Leadwood</th>
+                    <th style="width: 39%;">Địa điểm: Phòng Mangrove</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>9:00 Α.Μ.-9:30 Α.Μ.</td>
+                    <td colspan="2" style="text-align: center;">Chào mừng và Phát biểu khai mạc của Chủ tịch ACIC Storey Dambuza</td>
+                </tr>
+                <tr>
+                    <td>10:00 Α.Μ.-11:30 Α.Μ.</td>
+                    <td><span class="clue-highlight-1">Nâng cao hương vị, kết cấu và giá trị dinh dưỡng</span>-Marius Van Rhyn</td>
+                    <td>Xem lại các kỹ thuật bảo quản truyền thống: <span class="clue-highlight-1">Đóng hộp và muối chua</span>-Fezekile Agwu</td>
+                </tr>
+                <tr>
+                    <td>1:00 Р.Μ.-2:30 Ρ.Μ.</td>
+                    <td>Tạo lập tiêu chuẩn xuất sắc về an toàn và chất lượng-Shameen Pillay</td>
+                    <td>Mua sắm thiết bị tự động cho cơ sở sản xuất của bạn-Avanish Gupta</td>
+                </tr>
+                <tr>
+                    <td>3:00 Ρ.Μ.-4:30 Ρ.Μ.</td>
+                    <td>Những đổi mới trong làm lạnh và bảo quản <span class="clue-highlight-1">sản phẩm dễ hỏng</span>-Anja Haasbroek</td>
+                    <td><span class="clue-highlight-3">Chiến lược đóng gói phục vụ vận chuyển sản phẩm</span>-Thabo Kekana</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="font-size: 0.88rem; line-height: 1.5; color: #334155; margin-bottom: 10px;">Diễn giả phải thông báo cho Cedrick Molawa (cmolawa@acic.org.za) về các thay đổi cần thiết trước ngày 3 tháng 7. Bản lịch trình chính thức sẽ được đăng trước ngày 10 tháng 7 trên trang web của chúng tôi, www.acic.org.za/schedule.</p>
+        <p style="font-size: 0.88rem; line-height: 1.5; color: #334155; margin-bottom: 10px;">Diễn giả BẮT BUỘC phải đăng ký tham gia sự kiện. Chọn thẻ "Đăng ký" trên trang web và điền vào mẫu đăng ký. <span class="clue-highlight-2">Hãy nhớ đánh dấu vào ô có nhãn "Presenter" (Diễn giả)</span>. Ngoài ra, <span class="clue-highlight-5">những ai có kế hoạch tuyển dụng nhân sự nên hoàn thành Đơn đăng ký Nhà tuyển dụng (Employer Application)</span>, có sẵn trong thẻ "Trung tâm sự nghiệp" của trang web.</p>
+        <p style="font-size: 0.88rem; line-height: 1.5; color: #334155; margin-bottom: 0;">Khách sạn Vertin Suites còn một số lượng phòng giới hạn với mức giá ưu đãi, vì vậy hãy xem xét đặt phòng sớm.</p>
+    </div>
+
+    <!-- BẢN DỊCH VĂN BẢN 2 -->
+    <div class="doc-card">
+        <div class="email-header">
+            <div><strong>Từ:</strong> Anja Haasbroek &lt;ahaasbroek5@mnpind.co.za&gt;</div>
+            <div><strong>Đến:</strong> Cedrick Molawa &lt;cmolawa@acic.org.za&gt;</div>
+            <div><strong>Ngày:</strong> Thứ Năm, 24 tháng 6 lúc 1:50 P.M.</div>
+            <div><strong>Tiêu đề:</strong> Yêu cầu thay đổi lịch trình</div>
+        </div>
+        <div style="line-height: 1.6; color: #334155; font-size: 0.92rem;">
+            <p style="margin-bottom: 12px;">Thưa ông Molawa,</p>
+            <p style="margin-bottom: 12px;">Do những bất khả kháng, đồng nghiệp của tôi, Thabo Kekana, không thể thực hiện bài thuyết trình của mình. <span class="clue-highlight-3">Hiện tôi đã được yêu cầu tiếp quản bài nói của ông ấy.</span> Tuy nhiên, khi nhìn vào bản thảo mới nhất của lịch trình hội thảo, tôi nhận thấy khung giờ được phân công cho ông Kekana bị trùng với khung giờ của tôi. Xin vui lòng hỗ trợ tôi giải quyết tình huống khó khăn này. Xin cảm ơn ông.</p>
+            <p style="margin-bottom: 0;">Trân trọng,<br>Anja Haasbroek</p>
+        </div>
+    </div>
+
+    <!-- BẢN DỊCH VĂN BẢN 3 -->
+    <div class="webpage-container">
+        <div class="web-browser-header">
+            <div class="web-browser-dots">
+                <span></span><span></span><span></span>
+            </div>
+            <div class="web-url">https://www.acic.org.za</div>
+        </div>
+        <div class="web-nav">
+            <span style="font-weight: normal; opacity: 0.7;">Chương trình</span>
+            <span style="font-weight: normal; opacity: 0.7;">Đăng ký</span>
+            <span style="font-weight: normal; opacity: 0.7;">Tài trợ</span>
+            <span style="border-bottom: 2px solid white; padding-bottom: 2px;">Bình luận</span>
+        </div>
+        <div class="web-content" style="line-height: 1.6; color: #334155; font-size: 0.92rem;">
+            <p style="margin-bottom: 12px;">Tại hội thảo ACIC vừa qua, tôi đã trình bày về sự phức tạp của việc mua sắm máy móc tự động. Không chỉ bài giảng của tôi có rất đông người tham dự, mà trong phần hỏi đáp sau đó, tôi đã buộc phải trình bày thêm nội dung mà tôi đã cố tình bỏ qua trước đó vì sợ nó quá phức tạp. Rõ ràng là khán giả có năng lực hơn nhiều so với dự đoán của tôi. Ngoài ra, <span class="clue-highlight-4">với <span class="clue-highlight-5">tư cách</span> là một nhà tuyển dụng</span>, <span class="clue-highlight-5">tôi đã phỏng vấn một tá ứng viên</span> cho một vị trí quan trọng tại công ty. Trải nghiệm đầu tiên này với hội thảo ACIC hoàn toàn thỏa mãn và tôi rất mong chờ kỳ hội thảo tiếp theo.</p>
+            <p style="margin-bottom: 0; font-weight: 600; color: #1e293b;">- Avanish Gupta</p>
+        </div>
+    </div>`,
+
+    questions: [
+        {
+            id: 191,
+            text: "191. What industry is the focus of the conference?",
+            options: [
+                { text: "(A) Recycling", correct: false },
+                { text: "(B) Food", correct: true },
+                { text: "(C) Automotive", correct: false },
+                { text: "(D) Clothing", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> Triple Passage (Lịch trình + E-mail + Bài đánh giá trực tuyến).<br>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Mục đích chính:</b> Cung cấp lịch trình hội thảo ACIC, trao đổi xử lý trùng lịch trình diễn giả, và thu nhận phản hồi từ người tham dự.<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Main Idea / Detail Question</span> (Hỏi về ngành công nghiệp trọng tâm của hội thảo).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                Nhìn vào các chủ đề trong Lịch trình (Schedule):<br>
+                * <i>"<span class='clue-highlight-1'>Enhancing Flavor, Texture, and Nutritional Value</span>"</i> (Hương vị, kết cấu, giá trị dinh dưỡng)<br>
+                * <i>"<span class='clue-highlight-1'>Canning and Pickling</span>"</i> (Đóng hộp và muối chua)<br>
+                * <i>"<span class='clue-highlight-1'>Perishable Products</span>"</i> (Sản phẩm dễ hư hỏng/thực phẩm tươi sống)<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>Recycling:</i> Sai. Không có nội dung tái chế.<br>
+                * (B) <b>Food</b> &rarr; Chính xác. Các từ khóa như <i>flavor, nutritional, canning, pickling, perishable products</i> đều chỉ ngành công nghiệp thực phẩm.<br>
+                * (C) <i>Automotive:</i> Bẫy từ vựng! Trong bài có từ <i>automated machinery</i> (máy móc tự động), không liên quan tới <i>automotive</i> (ngành ô tô).<br>
+                * (D) <i>Clothing:</i> Sai. Không đề cập tới may mặc.<br><br>
+                <strong>Đáp án:</strong> ✅ (B) Food
+            </div>`
+        },
+        {
+            id: 192,
+            text: "192. According to the schedule, what are presenters expected to do?",
+            options: [
+                { text: "(A) Confirm on their registration that they are presenting", correct: true },
+                { text: "(B) Indicate where they would like their materials sent", correct: false },
+                { text: "(C) Reserve hotel accommodations by July 10", correct: false },
+                { text: "(D) Request a discount code from Vertin Suites", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Căn cứ đoạn ghi chú bên dưới Lịch trình).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"Presenters MUST register for the event. Select the \"Registration\" tab on our Web site and fill out a registration form. <span class='clue-highlight-2'>Be sure to mark the box labeled, \"Presenter\"</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <b>Confirm on their registration that they are presenting</b> &rarr; Chính xác. Đánh dấu vào ô \"Presenter\" khi điền đơn đăng ký đồng nghĩa với việc xác nhận mình là diễn giả.<br>
+                * (B) <i>Indicate where they would like their materials sent:</i> Sai. Không đề cập gửi tài liệu về đâu.<br>
+                * (C) <i>Reserve hotel accommodations by July 10:</i> Bẫy mốc thời gian! Ngày 10/7 là hạn đăng lịch chính thức, không phải hạn đặt khách sạn.<br>
+                * (D) <i>Request a discount code from Vertin Suites:</i> Sai. Bài chỉ bảo khách sạn có ưu đãi (discounted rate), không yêu cầu xin mã giảm giá.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>mark the box labeled, "Presenter"</span> &rarr; <span style='color: #16a085;'>Confirm on their registration that they are presenting</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) Confirm on their registration that they are presenting
+            </div>`
+        },
+        {
+            id: 193,
+            text: "193. What has Ms. Haasbroek been asked to do?",
+            options: [
+                { text: "(A) Arrange a meeting with Mr. Molawa", correct: false },
+                { text: "(B) Submit a draft of her presentation", correct: false },
+                { text: "(C) Discuss ways of preparing goods for transport", correct: true },
+                { text: "(D) Cancel travel arrangements made for Mr. Kekana", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Cross-reference Question</span> (Kết hợp E-mail + Schedule).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                - Trong E-mail, Cô Haasbroek viết: <i>"my colleague, Thabo Kekana, is unable to give his presentation. <span class='clue-highlight-3'>I have now been asked to take over from him.</span>"</i> (Tôi được yêu cầu thay thế bài nói của Thabo Kekana).<br>
+                - Đối chiếu bảng Lịch trình (Schedule): Bài thuyết trình của Thabo Kekana có tên là: <i>"<span class='clue-highlight-3'>Packaging Strategies for Product Shipping</span>"</i> (Chiến lược đóng gói cho việc vận chuyển sản phẩm).<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>Arrange a meeting with Mr. Molawa:</i> Sai. Cô ấy viết email nhờ hỗ trợ chứ không đặt cuộc họp.<br>
+                * (B) <i>Submit a draft of her presentation:</i> Sai. Không có yêu cầu nộp bản thảo.<br>
+                * (C) <b>Discuss ways of preparing goods for transport</b> &rarr; Chính xác. Tiếp quản bài của Thabo tức là cô ấy sẽ trình bày về chiến lược đóng gói chuẩn bị hàng hóa vận chuyển.<br>
+                * (D) <i>Cancel travel arrangements made for Mr. Kekana:</i> Sai. Cô không được giao hủy việc đi lại của đồng nghiệp.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>Packaging</span> &rarr; <span style='color: #16a085;'>preparing goods</span>.<br>
+                - <span style='color: #d35400;'>Product Shipping</span> &rarr; <span style='color: #16a085;'>transport</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (C) Discuss ways of preparing goods for transport
+            </div>`
+        },
+        {
+            id: 194,
+            text: "194. In the review, the word “capacity” in paragraph 1, line 5, is closest in meaning to",
+            options: [
+                { text: "(A) role", correct: true },
+                { text: "(B) time", correct: false },
+                { text: "(C) ability", correct: false },
+                { text: "(D) experience", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Vocabulary in Context</span> (Từ vựng theo ngữ cảnh).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"...in my <span class='clue-highlight-4'>capacity</span> as a recruiter, I interviewed a dozen candidates..."</i> (với tư cách / vai trò là nhà tuyển dụng, tôi đã phỏng vấn 12 ứng viên).<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <b>role</b> &rarr; Chính xác. Cụm từ <i>in one's capacity as...</i> tương đương với <i>in one's role as...</i> (với vai trò/tư cách là...).<br>
+                * (B) <i>time:</i> Sai nghĩa (thời gian).<br>
+                * (C) <i>ability:</i> Bẫy từ điển! Từ <i>capacity</i> bình thường có thể mang nghĩa là "khả năng/sức chứa", nhưng trong cấu trúc <i>in my capacity as...</i> nó mang nghĩa là "vai trò/tư cách".<br>
+                * (D) <i>experience:</i> Sai nghĩa (kinh nghiệm).<br><br>
+                <strong>Đáp án:</strong> ✅ (A) role
+            </div>`
+        },
+        {
+            id: 195,
+            text: "195. What is probably true about Mr. Gupta?",
+            options: [
+                { text: "(A) He opened a manufacturing plant recently.", correct: false },
+                { text: "(B) He filled out an Employer Application when registering.", correct: true },
+                { text: "(C) He preferred the recent ACIC conference over previous ones.", correct: false },
+                { text: "(D) He believed his topic would be easy to understand.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Inference Question</span> (Câu hỏi suy luận 2 bước kết hợp Review + Schedule).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                - Trong Bài đánh giá (Review), Mr. Gupta viết: <i>"<span class='clue-highlight-5'>in my capacity as a recruiter, I interviewed a dozen candidates</span>..."</i> &rarr; Ông ấy đóng vai trò tuyển dụng nhân sự tại sự kiện.<br>
+                - Trong Lịch trình (Schedule) có ghi chú: <i>"<span class='clue-highlight-5'>those planning to recruit personnel should complete an Employer Application</span>"</i> (những ai kế hoạch tuyển nhân sự nên điền Đơn đăng ký Nhà tuyển dụng).<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>He opened a manufacturing plant recently:</i> Sai. Bài không đề cập ông vừa mở nhà máy.<br>
+                * (B) <b>He filled out an Employer Application when registering.</b> &rarr; Chính xác. Vì ông Gupta tham gia tuyển dụng nhân sự tại hội thảo, theo quy định ghi ở Lịch trình, ông ấy đã phải điền Đơn Employer Application.<br>
+                * (C) <i>He preferred the recent ACIC conference over previous ones:</i> Sai. Bài viết đây là lần đầu tiên ông tham dự (<i>initial experience</i>), nên không thể so sánh với các lần trước.<br>
+                * (D) <i>He believed his topic would be easy to understand:</i> Bẫy ngược nghĩa! Ông từng cố tình bỏ qua bớt thông tin vì sợ chủ đề <i>"too complicated"</i> (quá phức tạp), chứ không nghĩ nó dễ.<br><br>
+                <strong>Đáp án:</strong> ✅ (B) He filled out an Employer Application when registering.
+            </div>`
+        }
+    ]
+},
     {
-        passage: `
-                <div class="doc-box">
-                    <h3 style="text-align: center; color: #1e3a8a; margin-bottom: 15px; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px;">Cordova Times</h3>
-                    <p><strong>CORDOVA (May 6)</strong>-Cordova city officials have begun preliminary discussions about what to do with Lowell Street Bridge, a historic city landmark that is in dire need of an upgrade. While costly restoration options are being considered, several factors make demolition a more likely outcome.</p><br>
-                    <p>"It's a tough decision and one we don't intend to make hastily." said city planner <span id="ev-197-1" class="ev-box">Colin Barnwell. "So far, it seems that replacing the bridge makes the most financial sense."</span></p><br>
-                    <p>Price isn't the only consideration, however. According to structural engineer Steve Pachenco, traffic flow is another important factor. <span id="ev-196" class="ev-box">"Highway 49 will soon be broadened from two lanes to four.</span> Then, Lowell Street Bridge will no longer be able to accommodate the increase in vehicles," he said. "The way I see it, a wider, more modern bridge is inevitable."</p><br>
-                    <p>For residents who want to share their opinions and ideas, <span id="ev-200-1" class="ev-box">the city council will be holding a public input session at Helman Square next Thursday</span> at 11:00 A.M.</p>
-                    
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #cbd5e1;">
-                    
-                    <h3 style="color: #334155; margin-bottom: 10px;">Letters to the Editor</h3>
-                    <p><strong>May 7</strong>-<span id="ev-197-2" class="ev-box">I'm writing in response to yesterday's article about Lowell Street Bridge.</span> This bridge is an invaluable part of Cordova's cultural identity and <span id="ev-197-3" class="ev-box">it is in the city's best interest to keep it intact.</span> Considering the tremendous amount of income the cultural-heritage-tourism industry brings to the city annually, I would argue that the short-term costs of restoring this historic landmark would be economically worthwhile.</p>
-                    <p style="text-align: right; font-style: italic;">— Maria Cantu, member of the Cordova Preservation Society (CPS)</p>
-                    
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #cbd5e1;">
-                    
-                    <div class="email-header">
-                        <strong>To:</strong> members@cordovaps.org<br>
-                        <strong>From:</strong> leo_contreras@cordovaps.org<br>
-                        <strong>Date:</strong> May 19<br>
-                        <strong>Subject:</strong> Lowell Street Bridge Update
-                    </div>
-                    <p>Dear CPS Members,</p><br>
-                    <p>Congratulations! Thanks to our strong community presence at the city council event, and after <span id="ev-198" class="ev-box">countless</span> phone calls to city council members, <span id="ev-199-1" class="ev-box">it looks like Lowell Street Bridge will not be demolished after all!</span> The Cordova Times published an article today stating that the city is now planning to relocate the bridge to the Eastside cultural district, where it will be used for foot traffic rather than motor vehicles.</p><br>
-                    <p><span id="ev-199-2" class="ev-box">This decision is surely due in part to the fact that each of you <span id="ev-200-2" class="ev-box">voiced your opinions last Thursday</span>.</span></p><br>
-                    <p>Thanks again,<br>Leo Contreras, Cordova Preservation Society Community Organizer</p>
-                </div>
-            `,
-            vieHtml: `
-                <div class="doc-box">
-                    <h3 style="text-align: center; color: #1e3a8a; margin-bottom: 15px; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px;">Thời báo Cordova</h3>
-                    <p><strong>CORDOVA (Ngày 6 tháng 5)</strong>-Các quan chức thành phố Cordova đã bắt đầu các cuộc thảo luận sơ bộ về việc phải làm gì với Cầu Lowell Street, một địa danh lịch sử của thành phố đang rất cần được nâng cấp. Mặc dù các lựa chọn phục hồi tốn kém đang được xem xét, một số yếu tố khiến việc phá dỡ trở thành một kết quả có nhiều khả năng xảy ra hơn.</p><br>
-                    <p>"Đó là một quyết định khó khăn và chúng tôi không có ý định đưa ra một cách vội vàng", nhà quy hoạch thành phố Colin Barnwell nói. "Cho đến nay, có vẻ như việc thay thế cây cầu là hợp lý nhất về mặt tài chính."</p><br>
-                    <p>Tuy nhiên, giá cả không phải là cân nhắc duy nhất. Theo kỹ sư kết cấu Steve Pachenco, lưu lượng giao thông là một yếu tố quan trọng khác. "Đường cao tốc 49 sẽ sớm được mở rộng từ hai làn xe lên bốn làn. Khi đó, Cầu Lowell Street sẽ không còn khả năng đáp ứng lượng xe cộ gia tăng", ông nói. "Theo cách tôi thấy, một cây cầu rộng hơn, hiện đại hơn là điều không thể tránh khỏi."</p><br>
-                    <p>Đối với những cư dân muốn chia sẻ ý kiến và ý tưởng của họ, hội đồng thành phố sẽ tổ chức một phiên lấy ý kiến công chúng tại Quảng trường Helman vào lúc 11:00 sáng thứ Năm tới.</p>
-                    
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #cbd5e1;">
-                    
-                    <h3 style="color: #334155; margin-bottom: 10px;">Thư gửi Biên tập viên</h3>
-                    <p><strong>Ngày 7 tháng 5</strong>-Tôi viết thư này để phản hồi lại bài báo ngày hôm qua về Cầu Lowell Street. Cây cầu này là một phần vô giá trong bản sắc văn hóa của Cordova và lợi ích tốt nhất của thành phố là giữ nó nguyên vẹn. Xem xét lượng thu nhập khổng lồ mà ngành du lịch di sản văn hóa mang lại cho thành phố hàng năm, tôi muốn lập luận rằng chi phí ngắn hạn để khôi phục địa danh lịch sử này sẽ hoàn toàn xứng đáng về mặt kinh tế.</p>
-                    <p style="text-align: right; font-style: italic;">— Maria Cantu, thành viên của Hiệp hội Bảo tồn Cordova (CPS)</p>
-                    
-                    <hr style="margin: 20px 0; border: 0; border-top: 1px dashed #cbd5e1;">
-                    
-                    <div class="email-header">
-                        <strong>Tới:</strong> members@cordovaps.org<br>
-                        <strong>Từ:</strong> leo_contreras@cordovaps.org<br>
-                        <strong>Ngày:</strong> 19 Tháng 5<br>
-                        <strong>Chủ đề:</strong> Cập nhật về Cầu Lowell Street
-                    </div>
-                    <p>Thân gửi các thành viên CPS,</p><br>
-                    <p>Xin chúc mừng! Nhờ sự hiện diện mạnh mẽ của cộng đồng chúng ta tại sự kiện của hội đồng thành phố, và sau vô số cuộc điện thoại gọi đến các thành viên hội đồng thành phố, có vẻ như Cầu Lowell Street sẽ không bị phá hủy sau tất cả! Tờ Cordova Times hôm nay đã đăng một bài báo nói rằng thành phố hiện đang có kế hoạch di dời cây cầu đến khu văn hóa Eastside, nơi nó sẽ được sử dụng cho người đi bộ thay vì xe cơ giới.</p><br>
-                    <p>Quyết định này chắc chắn một phần là do thực tế là mỗi người trong số các bạn đã lên tiếng nêu ý kiến của mình vào thứ Năm tuần trước.</p><br>
-                    <p>Cảm ơn một lần nữa,<br>Leo Contreras, Người tổ chức Cộng đồng Hiệp hội Bảo tồn Cordova</p>
-                </div>
-            `,
-        questions: [
-            { id: 196, text: "What is indicated about Cordova?", options: { A: "Offering tours", B: "Increase budget", C: "Road expansion project", D: "New regulations" }, correct: "C" },
-            { id: 197, text: "What is NOT implied about Ms. Cantu?", options: { A: "Values landmark", B: "Worked with Pachenco", C: "Disagrees with Barnwell", D: "Read May 6 article" }, correct: "B" },
-            { id: 198, text: "The word 'countless' is closest in meaning to:", options: { A: "Numerous", B: "Unrecorded", C: "Insignificant", D: "Registered" }, correct: "A" },
-            { id: 199, text: "Why congratulate CPS members?", options: { A: "New leadership", B: "In newspaper", C: "Influenced city decision", D: "Secured funding" }, correct: "C" },
-            { id: 200, text: "What is suggested about CPS members?", options: { A: "Repaired structure", B: "Meet every Thursday", C: "Spoke at Helman Square", D: "Live in Eastside" }, correct: "C" }
+    passage: `<style>
+        .doc-card { border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; background: #ffffff; margin-bottom: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .doc-title { font-weight: 700; font-size: 1.1rem; color: #1e293b; text-align: center; margin-bottom: 5px; }
+        .doc-subtitle { text-align: center; color: #64748b; font-size: 0.95rem; margin-bottom: 15px; }
+        .email-header { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 16px; margin-bottom: 15px; font-size: 0.9rem; line-height: 1.6; }
+        .email-header div { margin-bottom: 4px; }
+        .email-header strong { color: #475569; display: inline-block; width: 70px; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-3 { background-color: #bfdbfe; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-4 { background-color: #fbcfe8; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-5 { background-color: #fed7aa; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+    </style>
+
+    <!-- PASSAGE 1: NEWSPAPER ARTICLE -->
+    <div class="doc-card">
+        <div class="doc-title" style="text-align: left; margin-bottom: 10px;">CORDOVA (May 6)</div>
+        <div style="line-height: 1.6; color: #334155; font-size: 0.92rem;">
+            <p style="margin-bottom: 12px;">Cordova city officials have begun preliminary discussions about what to do with Lowell Street Bridge, a historic city landmark that is in dire need of an upgrade. While costly restoration options are being considered, several factors make demolition a more likely outcome.</p>
+            <p style="margin-bottom: 12px;">"It's a tough decision and one we don't intend to make hastily," said city planner Colin Barnwell. "So far, it seems that replacing the bridge makes the most financial sense."</p>
+            <p style="margin-bottom: 12px;">Price isn't the only consideration, however. According to structural engineer Steve Pachenco, traffic flow is another important factor. "<span class="clue-highlight-1">Highway 49 will soon be broadened from two lanes to four.</span> Then, Lowell Street Bridge will no longer be able to accommodate the increase in vehicles," he said. "The way I see it, a wider, more modern bridge is inevitable."</p>
+            <p style="margin-bottom: 0;">For residents who want to share their opinions and ideas, the city council will be <span class="clue-highlight-5">holding a public input session at Helman Square next Thursday at 11:00 A.M.</span></p>
+        </div>
+    </div>
+
+    <!-- PASSAGE 2: LETTER TO THE EDITOR -->
+    <div class="doc-card">
+        <div class="doc-title" style="text-align: left; margin-bottom: 12px;">Letters to the Editor</div>
+        <div style="line-height: 1.6; color: #334155; font-size: 0.92rem;">
+            <p style="margin-bottom: 12px;"><span class="clue-highlight-2">May 7—I'm writing in response to yesterday's article about Lowell Street Bridge.</span> <span class="clue-highlight-2">This bridge is an invaluable part of Cordova's cultural identity and it is in the city's best interest to keep it intact.</span> Considering the tremendous amount of income the cultural-heritage-tourism industry brings to the city annually, I would argue that the short-term costs of restoring this historic landmark would be economically worthwhile.</p>
+            <p style="margin-bottom: 0; font-weight: 600; color: #1e293b;">—Maria Cantu, member of the Cordova Preservation Society (CPS)</p>
+        </div>
+    </div>
+
+    <!-- PASSAGE 3: EMAIL -->
+    <div class="doc-card">
+        <div class="email-header">
+            <div><strong>To:</strong> members@cordovaps.org</div>
+            <div><strong>From:</strong> leo_contreras@cordovaps.org</div>
+            <div><strong>Date:</strong> May 19</div>
+            <div><strong>Subject:</strong> Lowell Street Bridge Update</div>
+        </div>
+        <div style="line-height: 1.6; color: #334155; font-size: 0.92rem;">
+            <p style="margin-bottom: 12px;">Dear CPS Members,</p>
+            <p style="margin-bottom: 12px;">Congratulations! <span class="clue-highlight-4">Thanks to our strong community presence at the city council event</span>, and after <span class="clue-highlight-3">countless</span> phone calls to city council members, it looks like Lowell Street Bridge will not be demolished after all! The Cordova Times published an article today stating that the city is now planning to relocate the bridge to the Eastside cultural district, where it will be used for foot traffic rather than motor vehicles.</p>
+            <p style="margin-bottom: 12px;"><span class="clue-highlight-4"><span class="clue-highlight-5">This decision is surely due in part to the fact that each of you voiced your opinions last Thursday.</span></span></p>
+            <p style="margin-bottom: 0;">Thanks again,<br>Leo Contreras, Cordova Preservation Society Community Organizer</p>
+        </div>
+    </div>`,
+
+    translation: `<div class="translation-header">Bản dịch & Phân tích</div>
+    <style>
+        .doc-card { border: 1px solid #cbd5e1; border-radius: 8px; padding: 20px; background: #ffffff; margin-bottom: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .doc-title { font-weight: 700; font-size: 1.1rem; color: #1e293b; text-align: center; margin-bottom: 5px; }
+        .email-header { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 16px; margin-bottom: 15px; font-size: 0.9rem; line-height: 1.6; }
+        .email-header div { margin-bottom: 4px; }
+        .email-header strong { color: #475569; display: inline-block; width: 70px; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-3 { background-color: #bfdbfe; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-4 { background-color: #fbcfe8; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+        .clue-highlight-5 { background-color: #fed7aa; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+    </style>
+
+    <!-- BẢN DỊCH VĂN BẢN 1 -->
+    <div class="doc-card">
+        <div class="doc-title" style="text-align: left; margin-bottom: 10px;">CORDOVA (Ngày 6 tháng 5)</div>
+        <div style="line-height: 1.6; color: #334155; font-size: 0.92rem;">
+            <p style="margin-bottom: 12px;">Các quan chức thành phố Cordova đã bắt đầu thảo luận sơ bộ về việc nên làm gì với Cầu Lowell Street, một địa danh lịch sử của thành phố đang rất cần được nâng cấp. Mặc dù các phương án khôi phục tốn kém đang được xem xét, một số yếu tố khiến việc phá bỏ có nhiều khả năng xảy ra hơn.</p>
+            <p style="margin-bottom: 12px;">"Đây là một quyết định khó khăn và chúng tôi không định đưa ra một cách vội vàng," quy hoạch viên thành phố Colin Barnwell cho biết. "Cho đến nay, có vẻ như việc thay thế cây cầu mang lại hiệu quả tài chính cao nhất."</p>
+            <p style="margin-bottom: 12px;">Tuy nhiên, giá cả không phải là cân nhắc duy nhất. Theo kỹ sư kết cấu Steve Pachenco, lưu lượng giao thông là một yếu tố quan trọng khác. "<span class="clue-highlight-1">Quốc lộ 49 sẽ sớm được mở rộng từ hai làn xe lên bốn làn.</span> Khi đó, Cầu Lowell Street sẽ không còn đủ khả năng đáp ứng lượng xe tăng lên," ông nói. "Theo cách tôi nhìn nhận, một cây cầu rộng hơn, hiện đại hơn là điều tất yếu."</p>
+            <p style="margin-bottom: 0;">Đối với những người dân muốn chia sẻ ý kiến và đóng góp ý tưởng, hội đồng thành phố sẽ <span class="clue-highlight-5">tổ chức một buổi lấy ý kiến công chúng tại Quảng trường Helman vào thứ Năm tuần tới lúc 11:00 sáng.</span></p>
+        </div>
+    </div>
+
+    <!-- BẢN DỊCH VĂN BẢN 2 -->
+    <div class="doc-card">
+        <div class="doc-title" style="text-align: left; margin-bottom: 12px;">Thư gửi Tòa soạn</div>
+        <div style="line-height: 1.6; color: #334155; font-size: 0.92rem;">
+            <p style="margin-bottom: 12px;"><span class="clue-highlight-2">Ngày 7 tháng 5—Tôi viết thư này để phản hồi bài báo ngày hôm qua về Cầu Lowell Street.</span> <span class="clue-highlight-2">Cây cầu này là một phần vô giá trong bản sắc văn hóa của Cordova và việc giữ cho nó nguyên vẹn là vì lợi ích tốt nhất của thành phố.</span> Xét đến khoản thu nhập to lớn mà ngành du lịch di sản văn hóa mang lại cho thành phố hàng năm, tôi cho rằng chi phí ngắn hạn cho việc khôi phục địa danh lịch sử này sẽ có giá trị về mặt kinh tế.</p>
+            <p style="margin-bottom: 0; font-weight: 600; color: #1e293b;">—Maria Cantu, thành viên của Hội Bảo tồn Cordova (CPS)</p>
+        </div>
+    </div>
+
+    <!-- BẢN DỊCH VĂN BẢN 3 -->
+    <div class="doc-card">
+        <div class="email-header">
+            <div><strong>Đến:</strong> members@cordovaps.org</div>
+            <div><strong>Từ:</strong> leo_contreras@cordovaps.org</div>
+            <div><strong>Ngày:</strong> 19 tháng 5</div>
+            <div><strong>Tiêu đề:</strong> Cập nhật về Cầu Lowell Street</div>
+        </div>
+        <div style="line-height: 1.6; color: #334155; font-size: 0.92rem;">
+            <p style="margin-bottom: 12px;">Kính gửi các thành viên CPS,</p>
+            <p style="margin-bottom: 12px;">Xin chúc mừng! <span class="clue-highlight-4">Nhờ vào sự hiện diện đông đảo của cộng đồng chúng ta tại sự kiện của hội đồng thành phố</span>, và sau <span class="clue-highlight-3">vô số</span> cuộc gọi điện thoại cho các thành viên hội đồng thành phố, có vẻ như Cầu Lowell Street cuối cùng sẽ không bị phá bỏ! Tờ Cordova Times hôm nay đã đăng một bài báo nêu rõ thành phố hiện đang lên kế hoạch di dời cây cầu đến khu văn hóa Eastside, nơi nó sẽ được sử dụng cho người đi bộ thay vì các phương tiện cơ giới.</p>
+            <p style="margin-bottom: 12px;"><span class="clue-highlight-4"><span class="clue-highlight-5">Quyết định này chắc chắn một phần là do mỗi người trong số các bạn đã nói lên ý kiến của mình vào thứ Năm tuần trước.</span></span></p>
+            <p style="margin-bottom: 0;">Xin cảm ơn lần nữa,<br>Leo Contreras, Người tổ chức cộng đồng của Hội Bảo tồn Cordova</p>
+        </div>
+    </div>`,
+
+    questions: [
+        {
+            id: 196,
+            text: "196. In the article, what is indicated about the city of Cordova?",
+            options: [
+                { text: "(A) It plans to start offering tours.", correct: false },
+                { text: "(B) It is going to increase its budget.", correct: false },
+                { text: "(C) It will soon start a road expansion project.", correct: true },
+                { text: "(D) It is enforcing new regulations.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> Triple Passage (Bài báo + Thư gửi tòa soạn + E-mail).<br>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Mục đích chính:</b> Cung cấp thông tin về dự án xử lý cầu Lowell Street, ý kiến bảo tồn của người dân và kết quả quyết định cuối cùng của thành phố.<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Hỏi thông tin chi tiết về thành phố Cordova trong bài báo).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                Trong Bài báo (Newspaper article):<br>
+                <i>"<span class='clue-highlight-1'>Highway 49 will soon be broadened from two lanes to four.</span>"</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>It plans to start offering tours:</i> Sai. Ngành du lịch được nhắc đến ở Thư gửi tòa soạn, không phải thành phố tự mở tour.<br>
+                * (B) <i>It is going to increase its budget:</i> Sai. Bài không nói thành phố tăng ngân sách.<br>
+                * (C) <b>It will soon start a road expansion project.</b> &rarr; Chính xác. Việc mở rộng Highway 49 từ 2 làn lên 4 làn (<i>broadened from two lanes to four</i>) chính là dự án mở rộng đường bộ (<i>road expansion project</i>).<br>
+                * (D) <i>It is enforcing new regulations:</i> Sai. Không đề cập đến quy định mới.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>Highway 49 will soon be broadened</span> &rarr; <span style='color: #16a085;'>start a road expansion project</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (C) It will soon start a road expansion project.
+            </div>`
+        },
+        {
+            id: 197,
+            text: "197. What is NOT implied about Ms. Cantu?",
+            options: [
+                { text: "(A) She values a city landmark.", correct: false },
+                { text: "(B) She worked with Mr. Pachenco.", correct: true },
+                { text: "(C) She disagrees with Mr. Barnwell.", correct: false },
+                { text: "(D) She read the May 6 newspaper article.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>NOT / Negative Question</span> (Tìm thông tin KHÔNG được suy ra về bà Cantu).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence & Loại trừ:</span><br>
+                * (A) <i>She values a city landmark:</i> Có trong bài. Bà viết: <i>"<span class='clue-highlight-2'>This bridge is an invaluable part of Cordova's cultural identity...</span>"</i> &rarr; Bà rất coi trọng cây cầu (landmark).<br>
+                * (B) <b>She worked with Mr. Pachenco</b> &rarr; Không có thông tin. Mr. Pachenco là kỹ sư kết cấu được trích dẫn trong bài báo, không có bằng chứng nào cho thấy bà Cantu từng làm việc với ông ấy.<br>
+                * (C) <i>She disagrees with Mr. Barnwell:</i> Có trong bài. Ông Barnwell cho rằng thay thế/phá bỏ là hợp lý nhất, còn bà Cantu cho rằng nên <i>"keep it intact"</i> (giữ nguyên vẹn) &rarr; Hai người bất đồng quan điểm.<br>
+                * (D) <i>She read the May 6 newspaper article:</i> Có trong bài. Thư bà gửi ngày May 7 viết: <i>"<span class='clue-highlight-2'>I'm writing in response to yesterday's article...</span>"</i> (Bài báo ngày hôm qua tức ngày 6/5).<br><br>
+                <strong>Đáp án:</strong> ✅ (B) She worked with Mr. Pachenco.
+            </div>`
+        },
+        {
+            id: 198,
+            text: "198. In the e-mail, the word “countless” in paragraph 1, line 2, is closest in meaning to",
+            options: [
+                { text: "(A) numerous", correct: true },
+                { text: "(B) unrecorded", correct: false },
+                { text: "(C) insignificant", correct: false },
+                { text: "(D) registered", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Vocabulary in Context</span> (Từ vựng theo ngữ cảnh).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"...and after <span class='clue-highlight-3'>countless</span> phone calls to city council members..."</i> (sau vô số các cuộc gọi điện thoại cho các thành viên hội đồng thành phố).<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <b>numerous</b> &rarr; Chính xác. <i>countless</i> = <i>numerous</i> (rất nhiều, không đếm xể).<br>
+                * (B) <i>unrecorded:</i> Sai nghĩa (không được ghi chép/lưu lại).<br>
+                * (C) <i>insignificant:</i> Sai nghĩa (không quan trọng, không đáng kể).<br>
+                * (D) <i>registered:</i> Sai nghĩa (đã đăng ký).<br><br>
+                <strong>Đáp án:</strong> ✅ (A) numerous
+            </div>`
+        },
+        {
+            id: 199,
+            text: "199. Why does Mr. Contreras congratulate CPS members?",
+            options: [
+                { text: "(A) They have elected new leadership.", correct: false },
+                { text: "(B) They have been featured in a newspaper article.", correct: false },
+                { text: "(C) They have helped influence a city decision.", correct: true },
+                { text: "(D) They have secured additional funding from the city.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail / Cause-and-Effect Question</span> (Lý do Mr. Contreras chúc mừng các thành viên CPS).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"Congratulations! <span class='clue-highlight-4'>Thanks to our strong community presence at the city council event</span>, and after countless phone calls... it looks like Lowell Street Bridge will not be demolished after all! ... <span class='clue-highlight-4'>This decision is surely due in part to the fact that each of you voiced your opinions last Thursday.</span>"</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>They have elected new leadership:</i> Sai. Không có việc bầu lãnh đạo mới.<br>
+                * (B) <i>They have been featured in a newspaper article:</i> Bẫy! Tờ báo đưa tin về việc di dời cầu, chứ không phải viết bài về các thành viên CPS.<br>
+                * (C) <b>They have helped influence a city decision</b> &rarr; Chính xác. Việc họ tham gia sự kiện và gọi điện/nói lên ý kiến đã góp phần thay đổi quyết định của thành phố (không phá bỏ cầu nữa mà di dời).<br>
+                * (D) <i>They have secured additional funding from the city:</i> Sai. Không có khoản tài trợ nào từ thành phố.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>voiced your opinions / strong community presence &rarr; decision</span> &rarr; <span style='color: #16a085;'>helped influence a city decision</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (C) They have helped influence a city decision.
+            </div>`
+        },
+        {
+            id: 195,
+            text: "200. What is suggested about CPS members?",
+            options: [
+                { text: "(A) They helped repair a structure.", correct: false },
+                { text: "(B) They meet regularly every Thursday.", correct: false },
+                { text: "(C) Some of them spoke at Helman Square.", correct: true },
+                { text: "(D) Some of them live in the Eastside cultural district.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Cross-reference / Inference Question</span> (Kết hợp Bài báo + E-mail).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                - Bài báo (Passage 1) thông báo địa điểm sự kiện: <i>"...the city council will be <span class='clue-highlight-5'>holding a public input session at Helman Square next Thursday at 11:00 A.M.</span>"</i><br>
+                - E-mail (Passage 3) nhắc lại việc tham dự sự kiện này: <i>"...<span class='clue-highlight-5'>each of you voiced your opinions last Thursday.</span>"</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>They helped repair a structure:</i> Sai. Họ đấu tranh bảo tồn chứ không trực tiếp sửa chữa.<br>
+                * (B) <i>They meet regularly every Thursday:</i> Bẫy tần suất! Họ phát biểu vào <i>"last Thursday"</i> (thứ Năm tuần trước) tại sự kiện lấy ý kiến, không phải cuộc họp định kỳ mỗi thứ Năm hàng tuần.<br>
+                * (C) <b>Some of them spoke at Helman Square</b> &rarr; Chính xác. Buổi lấy ý kiến diễn ra tại Quảng trường Helman vào thứ Năm, và các thành viên đã tới đó phát biểu/bày tỏ ý kiến (<i>voiced your opinions</i> = <i>spoke</i>).<br>
+                * (D) <i>Some of them live in the Eastside cultural district:</i> Sai. Eastside chỉ là nơi cây cầu sẽ được di dời tới, không nói các thành viên sống ở đó.<br><br>
+                <strong>Đáp án:</strong> ✅ (C) Some of them spoke at Helman Square.
+            </div>`
+        }
+    ]
+}
         ]
-    }
-]
 };
-  
