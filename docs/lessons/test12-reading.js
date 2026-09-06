@@ -316,4 +316,4 @@ window.testData = {
       "colorClass": "ev-40"
     }
   }
-};\n
+};
