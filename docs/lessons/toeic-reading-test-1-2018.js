@@ -449,7 +449,6 @@
     ],
     part6: [
         {
-            passageId: "p6-1",
             passage: `<p>Cecil Munrow, founder and president of Munrow's, Liverpool's largest retail clothier, announced that he <b>(31) ____________</b> £4,000 to the city's new community center. The funds derive from the sale of tickets to a party held last night at his company's <b>(32) __________</b>. Mr. Munrow will present a check to the center tomorrow at its opening ceremony.</p><p><b>(33) ____________</b> the past twenty years, Mr. Munrow has organized several fund-raising events for charitable institutions and community services <b>(34) _____________</b>.</p>`,
             questions: [
                 { id: 131, options: { A: "will donate", B: "donated", C: "might donate", D: "donating" }, correct: "A" },
@@ -459,7 +458,7 @@
             ]
         },
         {
-            passageId: "p6-2",
+           
             passage: `<p>WXO Radio Turns 50!</p><p>On February 3 WXO Radio will celebrate its fiftieth anniversary. That’s half a century of stimulating <b>(35) _________</b>. Over the years, we <b>(36) _______</b> our listeners breaking news, thought-provoking stories, and popular music from around the world.</p><p>Now we invite you to celebrate with us during an open house from 5:00 P.M to 6:30 P.M on February 3 at our Eighth Street studio. Take a tour and see some of the behind-the-scenes magic. Watch a demonstration of our digital audio equipment. <b>(37) _________</b>. The open house is free, but registration is required. We hope you can join us for this <b>(38) ________</b> occasion.</p>`,
             questions: [
                 { id: 135, options: { A: "concerts", B: "discussions", C: "programming", D: "development" }, correct: "C" },
@@ -468,7 +467,7 @@
                 { id: 138, options: { A: "special", B: "specialize", C: "especially", D: "specialization" }, correct: "A" }
             ]
         },
-        {passageId: "p6-3",
+        {
             passage: `<p>June 8-Today the Bratton City Council approved an agreement with KGRM Enterprises. Under the agreement, KGRM <b>(39) _____</b> the 22-acre lot on Mueller Street. The proposal calls for building both offices and retail stores on the site.</p><p>Bratton's mayor, Keith Wercler, says he welcomes the <b>(40) __________</b> opportunities this project will bring to the area. "We expect the project to create 700 permanent full-time jobs," he said. "I am glad it was finally approved after so many postponements." <b>(41) _________</b>.</p><p>KGRM spokesperson Katie Cornyn expects the project will take five years to complete, yet cautions that setbacks may still occur. "We've provided the council our best <b>(42) ________</b>, but it's not possible to foresee all issues that may arise," Cornyn said.</p>`,
             questions: [
                 { id: 139, options: { A: "to develop", B: "will develop", C: "has developed", D: "could have developed" }, correct: "B" },
@@ -477,7 +476,7 @@
                 { id: 142, options: { A: "argument", B: "background", C: "estimate", D: "combination" }, correct: "C" }
             ]
         },
-        {passageId: "p6-4",
+        {
             passage: `<p>From: Customer Care &lt;custcare@arttodaymag.ca&gt;<br>To: Karina Bhat &lt;kbhat871@5mail.ca&gt;<br>Date: November 5<br>Subject: Welcome to Art Today<br>Attachment: Form</p><p>Dear Ms. Bhat:</p><p>Thank you for subscribing to Art Today! <b>(43) _______</b> you will be among the first to know about exciting art exhibits, concerts, auctions, and festivals throughout Western Canada. Your first issue will arrive within the next few days, and then each issue will be sent at the beginning of the month. <b>(44) ______</b>.</p><p>Your subscription also allows you unlimited <b>(45) _______</b> to articles, videos, and other multimedia on our Web site. All you need to do is log in using your subscriber number and password, which you will find <b>(46) ____</b> the enclosed enrollment form.</p><p>Sincerely,<br>Ken Suzuki<br>Customer Representative</p>`,
             questions: [
                 { id: 143, options: { A: "Now", B: "Afterward", C: "Then", D: "Meanwhile" }, correct: "A" },
@@ -489,307 +488,1333 @@
     ],
 
   part7: [
- {passageId: "p7-1",
-        passage: `<div class="doc-box">
-                    <h3 style="text-align: center; color: #1e3a8a;">NOTICE</h3>
-                    <p>We are pleased to announce that Teresa Park has joined the <span id="ev-147" class="ev-box">Severin Law Firm</span> as an associate attorney. Ms. Park graduated with high honors from Naridell University Law School, where she specialized in copyright and trademark law. While attending school, she worked as a clerk in the legal aid office at the university.</p><br>
-                    <p>This past summer, she completed an internship at Delmar and Associates, a legal firm whose client base includes writers, musicians, and other professionals in the publishing industry. Ms. Park has an exceptional record of service and will be a valuable asset to our team. <span id="ev-148" class="ev-box">Please join us this Thursday at 3:00 P.M. in the main conference room to welcome her to our office.</span></p>
-                </div>
-            `,
-            vieHtml: `
-                <div class="doc-box">
-                    <h3 style="text-align: center; color: #1e3a8a;">THÔNG BÁO</h3>
-                    <p>Chúng tôi vui mừng thông báo rằng Teresa Park đã gia nhập <strong>Văn phòng Luật Severin</strong> với tư cách là luật sư cộng sự. Cô Park tốt nghiệp loại xuất sắc tại Trường Luật Đại học Naridell, nơi cô chuyên về luật bản quyền và thương hiệu. Trong thời gian đi học, cô đã làm thư ký tại văn phòng trợ giúp pháp lý tại trường đại học.</p><br>
-                    <p>Mùa hè vừa qua, cô đã hoàn thành kỳ thực tập tại Delmar và Cộng sự, một công ty luật có cơ sở khách hàng bao gồm các nhà văn, nhạc sĩ và các chuyên gia khác trong ngành xuất bản. Cô Park có thành tích phục vụ xuất sắc và sẽ là một tài sản quý giá cho đội ngũ của chúng tôi. <strong>Vui lòng tham gia cùng chúng tôi vào lúc 3:00 chiều Thứ Năm tuần này tại phòng họp chính để chào mừng cô ấy đến văn phòng của chúng ta.</strong></p>
-                </div>
-            `,
-        questions: [
-            { id: 147, text: "Where is the notice most likely posted?", options: { A: "In a law office", B: "In a talent agency", C: "In a recording studio", D: "In a publishing company" }, correct: "A" },
-            { id: 148, text: "What are employees invited to do on Thursday?", options: { A: "Watch a musical performance", B: "Join a community service group", C: "Attend a professional conference", D: "Meet a new staff member" }, correct: "D" }
-        ]
-    },
-    {passageId: "p7-2",
-        passage: `
-                <div class="doc-box" style="border: 1px solid #f97316; border-left: 6px solid #f97316; background: #fff7ed; padding: 25px; line-height: 1.6;">
-                    <p style="color: #9a3412; font-size: 1.1em;"><strong>Attention West Arragon Residents:</strong></p><br>
-                    <p>The West Arragon Business Directory has grown so large that it takes up a sizable portion of the neighborhood newsletter. As a result, <span id="ev-149" class="ev-box">we will no longer be printing the directory on paper and will offer it online instead</span>.</p><br>
-                    <p>The directory is not posted yet, but it will be found at <a href="#" style="color: #c2410c; text-decoration: underline;"><strong>www.westarragon.com</strong></a> in the next few weeks. When it becomes available, I suggest that you review your listing to make sure it is accurate. <span id="ev-150" class="ev-box">If you find that your listing is out of date or has a link that does not work, please let me know so that I can make the necessary changes</span>.</p><br>
-                    <div style="margin-top: 15px; color: #444;">
-                        <p>Thanks,</p>
-                        <p><strong>Judy Lanster</strong></p>
-                        <p><small>West Arragon Neighborhood Council<br>555-0013</small></p>
-                    </div>
-                </div>
-            `,
-        questions: [
-            { id: 149, text: "What change will be made to the business directory?", options: { A: "It will have shortened listings", B: "It will be available only online", C: "It will be available on a different date", D: "It will cover more than one neighborhood" }, correct: "B" },
-            { id: 150, text: "According to the notice, why might readers contact Ms. Lanster?", options: { A: "To request a correction", B: "To obtain an access code", C: "To subscribe to a newsletter", D: "To suggest changes in deadlines" }, correct: "A" }
-        ]
-    },
-    {passageId: "p7-3",
-        passage: `
-                <div class="doc-box">
-                    <div style="text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px;">
-                        <h3 style="color: #1e3a8a; font-size: 1.5em; margin-bottom: 10px;">Workshop: Team Building</h3>
-                        <div style="background: #f8fafc; display: inline-block; padding: 10px 25px; border-radius: 30px; border: 1px solid #cbd5e1;">
-                            <span style="margin-right: 15px;">📅 <strong>17 April</strong></span>
-                           <br> <span style="margin-right: 15px;">🕒 <span id="ev-153-time" class="ev-box"><strong>9:15 A.M. to 4:30 P.M.</strong></span></span>
-                            <br><span>💰 <span id="ev-153-fee" class="ev-box"><strong>£40 per person</strong></span></span>
-                        </div>
-                    </div>
-
-                    <table class="table-data" style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                        <thead>
-                            <tr style="background: #f1f5f9;">
-                                <th style="padding: 12px; border: 1px solid #cbd5e1; width: 20%; text-align: left;">Time</th>
-                                <th style="padding: 12px; border: 1px solid #cbd5e1; text-align: left;">Details</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="padding: 12px; border: 1px solid #cbd5e1;">9:15 A.M.</td>
-                                <td style="padding: 12px; border: 1px solid #cbd5e1;">
-                                    <strong>First Steps:</strong> <span id="ev-151" class="ev-box">Focus on important issues that small businesses face.</span> <span id="ev-152" class="ev-box">Identify your company's long- and short-term objectives</span> as well as any areas in need of improvement.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 12px; border: 1px solid #cbd5e1;">10:45 A.M.</td>
-                                <td style="padding: 12px; border: 1px solid #cbd5e1;">
-                                    <strong>Fostering Fellowship:</strong> Learn how to help create an atmosphere of cooperation rather than competition among your employees at all levels.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 12px; border: 1px solid #cbd5e1;">12:15 P.M.</td>
-                                <td style="padding: 12px; border: 1px solid #cbd5e1;">
-                                    <strong>Lunch Break:</strong> <span id="ev-153-meal" class="ev-box">Participants may choose between two complimentary entrees</span>: grilled chicken sandwich with salad greens or pasta with vegetables.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 12px; border: 1px solid #cbd5e1;">1:30 P.M.</td>
-                                <td style="padding: 12px; border: 1px solid #cbd5e1;">
-                                    <strong>Team Activities:</strong> Experiment with team-building exercises for both small and large groups. Work with your fellow participants to get ideas that you can use with your own employees.
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 12px; border: 1px solid #cbd5e1;">3:00 P.M.</td>
-                                <td style="padding: 12px; border: 1px solid #cbd5e1;">
-                                    <strong>Evaluation Techniques:</strong> Learn about methods to determine whether team-building activities are having the intended effect. Get tips on how to use common office software to track progress at your company.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            `,
-        questions: [
-            { id: 151, text: "For whom is the workshop most likely intended?", options: { A: "Business journalists", B: "Human resource experts", C: "Owners of small businesses", D: "New employees at small companies" }, correct: "C" },
-            { id: 152, text: "What session involves identifying goals?", options: { A: "First Steps", B: "Fostering Fellowship", C: "Team Activities", D: "Evaluation Techniques" }, correct: "A" },
-            { id: 153, text: "What is NOT indicated about the workshop?", options: { A: "It requires a fee to attend", B: "It includes a meal", C: "It is a one-day event", D: "It will focus on new software" }, correct: "D" }
-        ]
-    },
-    {passageId: "p7-4",
-        passage: `
-                <div class="doc-box" style="line-height: 1.6; color: #1e293b;">
-                    <div style="text-align: center; margin-bottom: 25px;">
-                        <h2 style="font-family: serif; border-bottom: 1px solid #334155; display: inline-block; padding-bottom: 5px;">Local News</h2>
-                        <p style="margin-top: 8px; font-style: italic; font-size: 0.9em;">Monday, March 31</p>
-                    </div>
-                    <p>The Cloud Theater on Gordon Street will close at the end of this month, but this important piece of real estate won't be closed for long. The building has been sold to the Lake Cinema Society (LCS). According to LCS Executive Director Kartik Malla, the group is planning to make some updates to the building before it reopens. He explained that <span id="ev-154" class="ev-box">the seats, screens, and sound systems will be replaced</span> in all of the theaters. <span id="ev-157" class="ev-box">[1]</span>.</p><br>
-
-                    <p>"However," Mr. Malla added, "we'll be keeping one of the Cloud Theater's old projectors so we can continue to show classic films in their original format".</p><br>
-
-                    <p>Up to now, the Cloud Theater has played mainly art house, independent, and foreign films. [2]. The former owner, Mr. Eugene Sattler, who has now retired, always sought to make the Cloud Theater a haven for artistic films. He was successful for many years, but ticket sales have declined in recent years and he decided it was time to sell. [3].</p><br>
-
-                    <p><span id="ev-155" class="ev-box">"This was a hard decision to make," said Mr. Sattler.</span> "I will miss working at the theater. I am happy the LCS is going to bring new life to the old theater".</p><br>
-
-                    <p>Under its new ownership, the theater will continue to show those artistic types of movies on special occasions. It will also show more mainstream movies that will appeal to families and children.</p><br>
-
-                    <p>The society plans to reopen the theater to the public on July 1. In addition, it will continue to serve as host for the classic film festival that begins the first weekend in August and continues for ten days. Everything about the festival will remain the same except for one thing. Formerly called the Gordon Street Film Festival, it will now be known as the Lakehurst Cinema Society Film Festival. <strong>[4]</strong>.</p>
-        </div>`,
-        questions: [
-            { id: 154, text: "What is suggested about the Cloud Theater?", options: { A: "It will show mainly classic films", B: "It will soon have new equipment installed", C: "Its ticket prices will increase", D: "Its customers are not happy" }, correct: "B" },
-            { id: 155, text: "According to the article, what was difficult for Mr. Sattler?", options: { A: "Securing equipment", B: "Selecting a location for retirement", C: "Deciding to sell the theater", D: "Finding buyers" }, correct: "C" },
-            { id: 156, text: "What was renamed?", options: { A: "A movie theater", B: "An executive position", C: "A film festival", D: "A Lakehurst street" }, correct: "C" },
-            { id: 157, text: "Where does this sentence best belong: 'The concession stand has also been eliminated.'", options: { A: "[1]", B: "[2]", C: "[3]", D: "[4]" }, correct: "A" }
-        ]
-    },
-    {passageId: "p7-5",
-        passage: `<div class="doc-box" style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);">
-            <div style="background: #0f172a; color: #f8fafc; padding: 20px; text-align: center;">
-                <h2 style="margin: 0; letter-spacing: 2px; font-family: 'Segoe UI', sans-serif;">VENTURE SOLUTIONS</h2>
-                <p style="margin: 5px 0 0 0; font-size: 0.85em; opacity: 0.8;">Next-Generation IT Corporate Services</p>
+ {
+    passage: `<style>
+        .notice-container { border: 1px solid #cbd5e1; border-radius: 8px; padding: 24px; background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1.5rem; font-family: sans-serif; }
+        .notice-header { text-align: center; font-weight: 700; font-size: 1.25rem; margin-bottom: 20px; color: #1e293b; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; letter-spacing: 0.5px; }
+        .notice-content { line-height: 1.7; color: #334155; font-size: 0.95rem; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 5px; border-radius: 4px; font-weight: 600; color: #854d0e; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 5px; border-radius: 4px; font-weight: 600; color: #166534; }
+    </style>
+    <div class="notice-container">
+        <div class="notice-header">Notice — Announcement</div>
+        <div class="notice-content">
+            <p>We are pleased to announce that Teresa Park has <span class="clue-highlight-1">joined the Severin Law Firm as an associate attorney</span>. Ms. Park graduated with high honors from Naridell University Law School, where she specialized in copyright and trademark law. While attending school, she worked as a clerk in the legal aid office at the university. This past summer, she completed an internship at Delmar and Associates, a legal firm whose client base includes writers, musicians, and other professionals in the publishing industry. Ms. Park has an exceptional record of service and will be a valuable asset to our team. Please join us this Thursday at 3:00 P.M. in the main conference room to <span class="clue-highlight-2">welcome her to our office</span>.</p>
+        </div>
+    </div>`,
+    translation: `<div class="translation-header" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #1e293b;">Bản dịch & Phân tích</div>
+    <div class="notice-container">
+        <div class="notice-header">Thông báo — Announcment</div>
+        <div class="notice-content">
+            <p>Chúng tôi vui mừng thông báo rằng Teresa Park đã <span class="clue-highlight-1">gia nhập Công ty Luật Severin với tư cách là luật sư cộng sự</span>. Cô Park tốt nghiệp xuất sắc Trường Luật Đại học Naridell, nơi cô chuyên về luật bản quyền và nhãn hiệu. Trong thời gian đi học, cô đã làm thư ký tại văn phòng trợ giúp pháp lý của trường đại học. Mùa hè vừa qua, cô đã hoàn thành kỳ thực tập tại Delmar and Associates, một công ty luật có đối tượng khách hàng bao gồm các nhà văn, nhạc sĩ và các chuyên gia khác trong ngành xuất bản. Cô Park có thành tích công tác xuất sắc và sẽ là một tài sản quý giá cho đội ngũ của chúng tôi. Xin vui lòng tham gia cùng chúng tôi vào thứ Năm tuần này lúc 3:00 chiều tại phòng họp chính để <span class="clue-highlight-2">chào đón cô ấy đến văn phòng của chúng tôi</span>.</p>
+        </div>
+    </div>`,
+    questions: [
+        {
+            id: 147,
+            text: "147. Where is the notice most likely posted?",
+            options: [
+                { text: "(A) In a law office", correct: true },
+                { text: "(B) In a talent agency", correct: false },
+                { text: "(C) In a recording studio", correct: false },
+                { text: "(D) In a publishing company", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> Notice / Announcement (Thông báo nội bộ công sở).<br>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Mục đích chính:</b> Thông báo việc Teresa Park gia nhập Severin Law Firm và mời nhân viên tham dự buổi chào đón.<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Inference / Context Question</span> (Câu hỏi suy luận ngữ cảnh/địa điểm).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"We are pleased to announce that Teresa Park has <span class='clue-highlight-1'>joined the Severin Law Firm as an associate attorney</span>... welcome her to <span class='clue-highlight-1'>our office</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <b>In a law office</b> &rarr; Chính xác. Bài đề cập <i>Severin Law Firm</i> (công ty luật) và <i>our office</i> (văn phòng chúng tôi) &rarr; Thông báo được dán tại văn phòng luật.<br>
+                * (B) <i>In a talent agency:</i> Sai bẫy. Bẫy từ <i>"writers, musicians"</i>, tuy nhiên đây chỉ là tệp khách hàng của công ty cũ (Delmar and Associates) nơi Teresa từng thực tập.<br>
+                * (C) <i>In a recording studio:</i> Sai bẫy. Từ <i>"musicians"</i> dễ gây liên tưởng đến phòng thu âm nhưng suy luận không có căn cứ.<br>
+                * (D) <i>In a publishing company:</i> Sai bẫy. Cụm <i>"publishing industry"</i> mô tả khách hàng của nơi thực tập cũ, không phải nơi đăng thông báo.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>Severin Law Firm / associate attorney</span> &rarr; <span style='color: #16a085;'>law office</span>.<br>
+                - <span style='color: #d35400;'>our office</span> &rarr; <span style='color: #16a085;'>office</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) In a law office
+            </div>`
+        },
+        {
+            id: 148,
+            text: "148. What are employees invited to do on Thursday?",
+            options: [
+                { text: "(A) Watch a musical performance", correct: false },
+                { text: "(B) Join a community service group", correct: false },
+                { text: "(C) Attend a professional conference", correct: false },
+                { text: "(D) Meet a new staff member", correct: true }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Câu hỏi chi tiết / Hành động cụ thể).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"Please join us this Thursday at 3:00 P.M. in the main conference room to <span class='clue-highlight-2'>welcome her to our office</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <i>Watch a musical performance:</i> Sai bẫy. Nhắc tới từ <i>"musicians"</i> nhưng không có buổi biểu diễn âm nhạc nào.<br>
+                * (B) <i>Join a community service group:</i> Sai bẫy. Cụm <i>"record of service"</i> trong bài nghĩa là lịch sử/thành tích cống hiến công tác, không phải nhóm dịch vụ cộng đồng.<br>
+                * (C) <i>Attend a professional conference:</i> Sai bẫy. <i>"main conference room"</i> chỉ là vị trí tổ chức (phòng họp), không phải tham dự hội nghị chuyên môn.<br>
+                * (D) <b>Meet a new staff member</b> &rarr; Chính xác. Mời nhân viên đến chào đón Teresa Park (luật sư mới gia nhập) đồng nghĩa với việc gặp gỡ nhân viên mới.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>welcome her / joined the firm</span> &rarr; <span style='color: #16a085;'>meet a new staff member</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (D) Meet a new staff member
+            </div>`
+        }
+    ]
+},
+    {
+    passage: `<style>
+        .notice-container { border: 1px solid #cbd5e1; border-radius: 8px; padding: 24px; background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1.5rem; font-family: sans-serif; }
+        .notice-header { text-align: center; font-weight: 700; font-size: 1.25rem; margin-bottom: 20px; color: #1e293b; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; letter-spacing: 0.5px; }
+        .notice-content { line-height: 1.7; color: #334155; font-size: 0.95rem; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 5px; border-radius: 4px; font-weight: 600; color: #854d0e; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 5px; border-radius: 4px; font-weight: 600; color: #166534; }
+    </style>
+    <div class="notice-container">
+        <div class="notice-header">Notice — Community Announcement</div>
+        <div class="notice-content">
+            <p style="margin-bottom: 15px;"><strong>Attention West Arragon Residents:</strong></p>
+            <p style="margin-bottom: 15px;">The West Arragon Business Directory has grown so large that it takes up a sizable portion of the neighborhood newsletter. As a result, we <span class="clue-highlight-1">will no longer be printing the directory on paper and will offer it online instead</span>.</p>
+            <p style="margin-bottom: 15px;">The directory is not posted yet, but it will be found at www.westarragon.com in the next few weeks. When it becomes available, I suggest that you review your listing to make sure it is accurate. If you find that your <span class="clue-highlight-2">listing is out of date or has a link that does not work, please let me know so that I can make the necessary changes</span>.</p>
+            <p style="margin-bottom: 0;">Thanks,<br><strong>Judy Lanster</strong><br>West Arragon Neighborhood Council<br>555-0013</p>
+        </div>
+    </div>`,
+    translation: `<div class="translation-header" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #1e293b;">Bản dịch & Phân tích</div>
+    <div class="notice-container">
+        <div class="notice-header">Thông báo — Cộng đồng West Arragon</div>
+        <div class="notice-content">
+            <p style="margin-bottom: 15px;"><strong>Gửi cư dân West Arragon:</strong></p>
+            <p style="margin-bottom: 15px;">Danh bạ Doanh nghiệp West Arragon đã phát triển quá lớn đến mức chiếm một phần đáng kể trong bản tin của khu dân cư. Do đó, chúng tôi <span class="clue-highlight-1">sẽ không còn in danh bạ trên giấy mà sẽ cung cấp trực tuyến</span>.</p>
+            <p style="margin-bottom: 15px;">Danh bạ hiện chưa được đăng, nhưng sẽ có tại địa chỉ www.westarragon.com trong vài tuần tới. Khi danh bạ có sẵn, tôi khuyên bạn nên kiểm tra lại thông tin của mình để đảm bảo tính chính xác. Nếu bạn thấy <span class="clue-highlight-2">thông tin của mình đã lỗi thời hoặc có liên kết không hoạt động, vui lòng cho tôi biết để tôi có thể thực hiện những thay đổi cần thiết</span>.</p>
+            <p style="margin-bottom: 0;">Cảm ơn,<br><strong>Judy Lanster</strong><br>Hội đồng Khu dân cư West Arragon<br>555-0013</p>
+        </div>
+    </div>`,
+    questions: [
+        {
+            id: 149,
+            text: "149. What change will be made to the business directory?",
+            options: [
+                { text: "(A) It will have shortened listings.", correct: false },
+                { text: "(B) It will be available only online.", correct: true },
+                { text: "(C) It will be distributed on a different date.", correct: false },
+                { text: "(D) It will cover more than one neighborhood.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> Notice / Community Notice (Thông báo cộng đồng).<br>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Mục đích chính:</b> Thông báo sự thay đổi hình thức phát hành danh bạ doanh nghiệp từ bản in sang trực tuyến.<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Câu hỏi chi tiết về sự thay đổi).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"...we <span class='clue-highlight-1'>will no longer be printing the directory on paper and will offer it online instead</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <i>It will have shortened listings:</i> Sai bẫy suy luận. Bài đề cập danh bạ quá lớn (<i>grown so large</i>), không nói đến việc rút ngắn danh sách.<br>
+                * (B) <b>It will be available only online</b> &rarr; Chính xác. Không còn in trên giấy (<i>no longer printing on paper</i>) và thay bằng trực tuyến (<i>offer online instead</i>) đồng nghĩa chỉ có sẵn trực tuyến.<br>
+                * (C) <i>It will be distributed on a different date:</i> Sai. Cụm <i>"in the next few weeks"</i> chỉ thời điểm đăng online, không phải thay đổi lịch phân phối.<br>
+                * (D) <i>It will cover more than one neighborhood:</i> Sai bẫy. Danh bạ lớn hơn không đồng nghĩa với việc mở rộng phạm vi sang khu vực khác.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>no longer printing on paper + offer online instead</span> &rarr; <span style='color: #16a085;'>available only online</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (B) It will be available only online.
+            </div>`
+        },
+        {
+            id: 150,
+            text: "150. According to the notice, why might readers contact Ms. Lanster?",
+            options: [
+                { text: "(A) To request a correction", correct: true },
+                { text: "(B) To obtain an access code", correct: false },
+                { text: "(C) To subscribe to a newsletter", correct: false },
+                { text: "(D) To suggest changes in deadlines", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Câu hỏi chi tiết về lý do liên hệ).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"If you find that your <span class='clue-highlight-2'>listing is out of date or has a link that does not work, please let me know so that I can make the necessary changes</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <b>To request a correction</b> &rarr; Chính xác. Nếu thông tin bị lỗi thời/hỏng liên kết (<i>out of date / broken link</i>), độc giả báo Judy (<i>let me know</i>) để thực hiện thay đổi (<i>make necessary changes</i> = <i>request a correction</i>).<br>
+                * (B) <i>To obtain an access code:</i> Sai bẫy. Bài không đề cập đến mã truy cập hay mật khẩu trang web.<br>
+                * (C) <i>To subscribe to a newsletter:</i> Sai bẫy từ khóa. <i>"newsletter"</i> chỉ là lý do danh bạ bị chiếm chỗ, không phải để đăng ký nhận bản tin.<br>
+                * (D) <i>To suggest changes in deadlines:</i> Sai bẫy. <i>"make necessary changes"</i> đề cập đến chỉnh sửa thông tin listing, không phải thay đổi thời hạn.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>listing out of date / make necessary changes</span> &rarr; <span style='color: #16a085;'>request a correction</span>.<br>
+                - <span style='color: #d35400;'>please let me know</span> &rarr; <span style='color: #16a085;'>contact Ms. Lanster</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) To request a correction
+            </div>`
+        }
+    ]
+},
+    {
+    passage: `<style>
+        .agenda-container { border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1.5rem; font-family: sans-serif; }
+        .agenda-header { background: #f8fafc; padding: 16px; text-align: center; border-bottom: 2px solid #e2e8f0; }
+        .agenda-title { font-weight: 700; font-size: 1.2rem; color: #0f172a; margin-bottom: 4px; }
+        .agenda-meta { font-size: 0.9rem; color: #475569; line-height: 1.4; }
+        .agenda-body { padding: 0; }
+        .agenda-item { display: flex; border-bottom: 1px solid #e2e8f0; padding: 14px 16px; gap: 16px; }
+        .agenda-item:last-child { border-bottom: none; }
+        .agenda-time { font-weight: 700; color: #0f172a; min-width: 90px; font-size: 0.9rem; }
+        .agenda-details { flex: 1; font-size: 0.9rem; color: #334155; line-height: 1.5; }
+        .agenda-session-title { font-weight: 700; font-style: italic; color: #1e293b; margin-bottom: 4px; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #854d0e; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #166534; }
+        .clue-highlight-3 { background-color: #fed7aa; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #9a3412; }
+    </style>
+    <div class="agenda-container">
+        <div class="agenda-header">
+            <div class="agenda-title">Workshop: Team Building</div>
+            <div class="agenda-meta">
+                17 April<br>
+                9:15 A.M. to 4:30 P.M.<br>
+                £40 per person
             </div>
-
-            <div style="padding: 25px; background: #fff;">
-                <div style="margin-bottom: 25px;">
-                    <p style="color: #2563eb; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-                        <span style="background: #2563eb; width: 4px; height: 18px; display: inline-block;"></span>
-                        As our corporate client, you:
-                    </p>
-                    <ul style="list-style: none; padding-left: 10px;">
-                        <li style="margin-bottom: 8px;">✅ gain access to cutting-edge technology</li>
-                        <li style="margin-bottom: 8px;">✅ pay only for what you use, thus reducing hardware and software expenses</li>
-                        <li style="margin-bottom: 8px;">✅ enjoy our streamlined, up-front, and ongoing billing</li>
-                    </ul>
-                </div>
-
-                <div style="background: #f8fafc; border: 1px solid #f1f5f9; padding: 20px; border-radius: 8px;">
-                    <p style="font-weight: 600; margin-bottom: 12px; color: #1e293b;">We provide:</p>
-                    <ul class="footer-list" style="line-height: 1.6;">
-                        <li style="margin-bottom: 6px;"><span id="ev-158" class="ev-box">customized software production</span> and <span id="ev-159" class="ev-box">regular maintenance of on-site hardware (requires one-year contract)</span></li>
-                        <li style="margin-bottom: 6px;">management and regular upgrades of applications and databases</li>
-                        <li style="margin-bottom: 6px;">storage, backup, and data recovery</li>
-                        <li style="margin-bottom: 6px;">an around-the-clock service center for fast resolution of issues</li>
-                        <li style="margin-bottom: 6px;">access to our exclusive Venture Remote Monitoring (VRM) system</li>
-                    </ul>
+        </div>
+        <div class="agenda-body">
+            <div class="agenda-item">
+                <div class="agenda-time">9:15 A.M.:</div>
+                <div class="agenda-details">
+                    <div class="agenda-session-title">First Steps</div>
+                    Focus on important issues that <span class="clue-highlight-1">small businesses</span> face. <span class="clue-highlight-2">Identify your company's long- and short-term objectives</span> as well as any areas in need of improvement.
                 </div>
             </div>
-        </div>`,
-        questions: [
-            { id: 158, text: "What is one of the services offered?", options: { A: "Legal advice", B: "Office accounting", C: "Building maintenance", D: "Software development" }, correct: "D" },
-            { id: 159, text: "What is mentioned about care of computer equipment?", options: { A: "It must be purchased for at least one year", B: "It is recommended for older systems", C: "It is performed by external consultants", D: "It is not available to new customers" }, correct: "A" }
-        ]
-    },
-    {passageId: "p7-6",
-        passage: `
-                <div class="doc-box" style="padding: 0; overflow: hidden; border: 1px solid #cbd5e1; border-radius: 12px;">
-                    <div style="background: #f1f5f9; padding: 10px 20px; border-bottom: 1px solid #cbd5e1;">
-                        http://www.youronlinejobfinder.com
-                    </div>
-                    <div style="padding: 25px; background: #fff;">
-                        <h3 style="color: #1e3a8a; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; margin-bottom: 20px;">Your Online Job Finder</h3>
-                        <p style="font-size: 1.1em; color: #1e40af;"><strong>Work for the best!</strong></p><br>
-                        
-                        <p>Other companies ask their salespeople to make countless calls to potential customers who are not expecting to be contacted. At AJQ Insurance, customers call us for their insurance needs! <span id="ev-160" class="ev-box">Our insurance sales associates take only inbound sales calls from interested potential policyholders.</span> These positions are free from the pressure of selling on commission.</p><br>
-
-                        <p>Complete our sales training while being paid a generous hourly rate. <span id="ev-161" class="ev-box">Take the exam to become a licensed insurance professional. If you succeed, you may be offered a salaried position.</span></p><br>
-
-                        <p>We will consider education and experience in the salary offer. Some university work is useful, but motivated high school graduates will also be considered. Because we work with our customers twenty-four hours a day, seven days a week, we offer many shifts to choose from with an additional 10% in pay for late-night and early-morning shifts.</p><br>
-
-                        <p>Please click "Apply Now" below to take advantage of this opportunity with youronlinejobfinder.com. You will need an active e-mail address and phone number to complete the process. Suitable candidates will be contacted by phone or e-mail. Call 409-555-0123 if you have any questions about the application process. <span id="ev-162" class="ev-box">We recommend that you become familiar with the company before applying by visiting our Web site at AJQinsurance.com.</span></p><br>
-
-                        <div style="text-align: center; margin-top: 20px;">
-                            <button style="background: #2563eb; color: #fff; border: none; padding: 12px 30px; border-radius: 8px;">Apply Now</button>
-                        </div>
-                    </div>
+            <div class="agenda-item">
+                <div class="agenda-time">10:45 A.M.:</div>
+                <div class="agenda-details">
+                    <div class="agenda-session-title">Fostering Fellowship</div>
+                    Learn how to help create an atmosphere of cooperation rather than competition among your employees at all levels.
                 </div>
-            `,
-        questions: [
-            { id: 160, text: "What duty is mentioned as part of the job?", options: { A: "Meeting sales commission targets", B: "Receiving calls from potential customers", C: "Working only during unconventional hours", D: "Calling people unfamiliar with the company" }, correct: "B" },
-            { id: 161, text: "What is required for a salaried position?", options: { A: "Sales experience", B: "A university degree", C: "Employer references", D: "An insurance license" }, correct: "D" },
-            { id: 162, text: "Why should applicants visit the AJQ Web site?", options: { A: "To learn about AJQ Insurance", B: "To apply for the job", C: "To ask questions", D: "To find application status" }, correct: "A" }
-        ]
-    },
-    {passageId: "p7-7",
-        passage: `
-                <div class="doc-box" style="background: #fffcf2; border: 1px solid #d4a373; padding: 30px; line-height: 1.8;">
-                    <div style="text-align: center; border-bottom: 2px solid #d4a373; margin-bottom: 20px; padding-bottom: 10px;">
-                        <h2 style="color: #5f4339; font-family: 'Georgia', serif; letter-spacing: 1px;">A Long-Lasting Love for Books</h2>
-                        <p style="color: #7f5539; font-size: 0.9em; margin-top: 5px;"><em>Pine Hill Local News • February 29</em></p>
-                    </div>
-
-                    <p>Both in and around Pine Hill, <span id="ev-163" class="ev-box">Alfred Carlson, who has been teaching Russian literature at Pine Hill State University for twenty years, is probably best known as the owner of The Treasure Box</span>, the town's oldest bookstore. The store has two unique features: it specializes in rare books and is open for business on Saturdays only. evIdently, walk-in sales make up only a small percentage of Mr. Carlson's business; the bulk of the store's revenue is generated by orders placed over the telephone or online by universities, museums, and private collectors.</p><br>
-
-                    <p>On Sunday, The Treasure Box will be celebrating its sixtieth anniversary. "When my mother, Willisa, opened the bookstore all those years ago on Green Edge Road, two blocks from here, she probably had no idea it would still be serving the public six decades later," Mr. Carlson said. The store still displays the original sign over the doorway. <span id="ev-165" class="ev-box">The interior retains the living-room atmosphere</span> it always had, with its mismatched tables and chairs. One section of the store is filled with books about baseball, an abiding passion of the Carlson family.</p><br>
-
-                    <p>Later this month, Mr. Carlson will mark another milestone: he will be retiring from his teaching position. <span id="ev-166" class="ev-box">His retirement does not mean, however, that The Treasure Box will see extended business hours; it will continue to be open once a week.</span> "I am not retiring from one job just so that I can spend more time on another," Mr. Carlson said. "Rather... I will be able to dedicate more time to my children and grandchildren".</p>
+            </div>
+            <div class="agenda-item">
+                <div class="agenda-time">12:15 P.M.:</div>
+                <div class="agenda-details">
+                    <div class="agenda-session-title">Lunch Break</div>
+                    Participants may choose between two complimentary entrees: grilled chicken sandwich with salad greens or pasta with vegetables.
                 </div>
-            `,
-        
-        questions: [
-            { id: 163, text: "Why was the article written?", options: { A: "To attract book club members", B: "To highlight unique selling benefits", C: "To celebrate local business achievements", D: "To announce relocation" }, correct: "C" },
-            { id: 164, text: "What is NOT suggested about Mr. Carlson?", options: { A: "He will soon end his teaching career", B: "He studies works by Russian authors", C: "He has lived in Pine Hill for almost ten years", D: "He enjoys talking about baseball" }, correct: "C" },
-            { id: 165, text: "The word 'retains' is closest in meaning to:", options: { A: "Contributed to", B: "Agrees with", C: "Remembers", D: "Keeps" }, correct: "D" },
-            { id: 166, text: "What is stated about The Treasure Box?", options: { A: "It will add a children's section", B: "It will maintain current hours", C: "Sales are expected to increase", D: "Its sign will be replaced" }, correct: "B" }
-        ]
-    },
-    {passageId: "p7-8",
-        passage: `
-                <div class="doc-box" style="background: #f1f5f9; padding: 20px;">
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                        
-                        <div style="align-self: flex-start; max-width: 85%; background: #ffffff; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 18px 18px 18px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            <strong style="color: #4338ca; font-size: 0.85em;">Iosif Volkov</strong>
-                            <p style="margin-top: 4px;">Ms. Medrano, I e-mailed you the revised contract. Have you received it?</p>
-                            <div style="text-align: right; font-size: 0.7em; color: #94a3b8; margin-top: 4px;">11:04 AM</div>
-                        </div>
-
-                        <div style="align-self: flex-end; max-width: 85%; background: #dcfce7; border: 1px solid #bbf7d0; padding: 12px 16px; border-radius: 18px 18px 0 18px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            <strong style="color: #15803d; font-size: 0.85em;">Lucia Medrano</strong>
-                            <p style="margin-top: 4px;">Yes, it just came in now. Thanks for making those changes.</p>
-                            <div style="text-align: right; font-size: 0.7em; color: #166534; margin-top: 4px;">11:06 AM</div>
-                        </div>
-
-                        <div style="align-self: flex-start; max-width: 85%; background: #ffffff; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 18px 18px 18px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            <strong style="color: #4338ca; font-size: 0.85em;">Iosif Volkov</strong>
-                            <p style="margin-top: 4px;"><span id="ev-167" class="ev-box">Of course. Thanks for bringing them to my attention.</span> <span id="ev-168" class="ev-box">The contract now states that you will be paid 175€ per accepted article</span> rather than 125€.</p>
-                            <div style="text-align: right; font-size: 0.7em; color: #94a3b8; margin-top: 4px;">11:07 AM</div>
-                        </div>
-
-                        <div style="align-self: flex-end; max-width: 85%; background: #dcfce7; border: 1px solid #bbf7d0; padding: 12px 16px; border-radius: 18px 18px 0 18px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            <strong style="color: #15803d; font-size: 0.85em;">Lucia Medrano</strong>
-                            <p style="margin-top: 4px;">Perfect. I'll look it over now, sign it, and send it back to you.</p>
-                            <div style="text-align: right; font-size: 0.7em; color: #166534; margin-top: 4px;">11:08 AM</div>
-                        </div>
-
-                        <div style="align-self: flex-start; max-width: 85%; background: #ffffff; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 18px 18px 18px 0; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
-                            <strong style="color: #4338ca; font-size: 0.85em;">Iosif Volkov</strong>
-                            <p style="margin-top: 4px;">Great. We're always looking for good material for our magazine. <span id="ev-168-2" class="ev-box">I look forward to receiving your submissions.</span></p>
-                            <div style="text-align: right; font-size: 0.7em; color: #94a3b8; margin-top: 4px;">11:10 AM</div>
-                        </div>
-
-                    </div>
-                </div>`,
-        questions: [
-            { id: 167, text: "At 11:07 A.M., what does Mr. Volkov mean by 'Of course'?", options: { A: "Email received", B: "Contract signed", C: "Solution is obvious", D: "Happy to fulfill request" }, correct: "D" },
-            { id: 168, text: "Who most likely is Ms. Medrano?", options: { A: "A writer", B: "A lawyer", C: "A financial adviser", D: "A human resources manager" }, correct: "A" }
-        ]
-    },
-    {passageId: "p7-9",
-        passage: `
-                <div class="doc-box">
-                    <div class="email-header">
-                        <strong>To:</strong> Mercedes Salinas &lt;msalinas@fithealthplanning.bm&gt;<br>
-                        <strong>From:</strong> Leonard Cowden &lt;lcowden@srhealthcenter.bm&gt;<br>
-                        <strong>Date:</strong> 16 April<br>
-                        <strong>Subject:</strong> Bermuda Healthy Living Conference
-                    </div>
-                    <p>Dear Ms. Salinas,</p><br>
-                    <p><span id="ev-169" class="ev-box">I'm excited that you have agreed to be one of the speakers</span> at our second annual Bermuda Healthy Living Conference on 12 May. I realize the invitation was last minute, and I truly appreciate your willingness to step in for Cara Branston. - [1] -. Your expertise as a dietitian will be greatly valued by our participants. <span id="ev-170" class="ev-box">The strong attendance at Ms. Branston's session last year</span> on vegetarian meal preparation reflected that. [2]. This year there is sure to be great interest in your unique approach to healthy eating.</p><br>
-                    <p>If you would like to sell copies of your book, please ship them in advance to allow time for us to set up a display. [3]. Also, be sure to let me know if you'll need access to a projector with a remote for your presentation. <span id="ev-171" class="ev-box">[4]</span> Lastly, could you send me a short biographical profile as soon as possible for inclusion in our conference program? Thanks again.</p><br>
-                    <p>Regards,</p>
-                    <p>Leonard Cowden</p>
+            </div>
+            <div class="agenda-item">
+                <div class="agenda-time">1:30 P.M.:</div>
+                <div class="agenda-details">
+                    <div class="agenda-session-title">Team Activities</div>
+                    Experiment with team-building exercises for both small and large groups. Work with your fellow participants to get ideas that you can <span class="clue-highlight-1">use with your own employees</span>.
                 </div>
-            `,
-        questions: [
-            { id: 169, text: "Why did Mr. Cowden send the email?", options: { A: "To invite her to an event", B: "To acknowledge acceptance of an offer", C: "To ask for a recommendation", D: "To reschedule a session" }, correct: "B" },
-            { id: 170, text: "What is suggested about Ms. Branston?", options: { A: "She spoke at the conference last year", B: "She wrote a popular book", C: "She is a colleague of Ms. Salinas", D: "She is studying dietitian" }, correct: "A" },
-            { id: 171, text: "Where does this sentence fit: 'It is no trouble at all to have visual equipment available.'", options: { A: "[1]", B: "[2]", C: "[3]", D: "[4]" }, correct: "D" }
-        ]
-    },
-    {passageId: "p7-10",
-        passage: `
-                <div class="doc-box" style="background: #f8fafc; padding: 20px; border-radius: 12px;">
-                    <div style="border-bottom: 1px solid #cbd5e1; padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between;">
-                        <span style="font-weight: bold; color: #1e3a8a;">Online Chat System</span>
-                        <span style="color: #64748b;">11 July</span>
-                    </div>
-                    <p><strong>Diane Ulrich | 10:25</strong><br>Jake, has order #9829-2 been sent out yet? If not, the customer has asked us to add item #645A.</p><br>
-                    <p><strong>Jake Hollis | 10:28</strong><br><span id="ev-172" class="ev-box">That's a customized silver ring, right?</span> The engravers usually require a minimum of 3 days to add the customer's personalized message.</p><br>
-                    <p><strong>Diane Ulrich | 10:29</strong><br>Can you get it any sooner? The customer needs it as soon as possible.</p><br>
-                    <p><strong>Jake Hollis | 10:31</strong><br>Let me check with someone from the engraving department.</p><br>
-                    <p><strong>Jake Hollis | 10:33</strong><br>Kim, <span id="ev-174" class="ev-box">can you do a rush job on a ring?</span> It's item #645A, for order #9829-2.</p><br>
-                    <p><strong>Kim O'Dell | 10:34</strong><br><span id="ev-175" class="ev-box">How soon do you need it? Is tomorrow OK?</span></p><br>
-                    <p><strong>Diane Ulrich | 10:35</strong><br>Yes, that works. Thank you both for your help!</p>
+            </div>
+            <div class="agenda-item">
+                <div class="agenda-time">3:00 P.M.:</div>
+                <div class="agenda-details">
+                    <div class="agenda-session-title">Evaluation Techniques</div>
+                    Learn about methods to determine whether team-building activities are having the intended effect. Get tips on how to use <span class="clue-highlight-3">common office software</span> to track progress at your company.
                 </div>
-            `,
-        questions: [
-            { id: 172, text: "What type of products does the store sell?", options: { A: "Books", B: "Jewelry", C: "Flowers", D: "Appliances" }, correct: "B" },
-            { id: 173, text: "What does the customer want to do?", options: { A: "Change an order", B: "Update address", C: "Receive a refund", D: "Choose shipping" }, correct: "A" },
-            { id: 174, text: "Why does Mr. Hollis contact Ms. O'Dell?", options: { A: "To request faster work", B: "Find shipping date", C: "Find meeting time", D: "Report message error" }, correct: "A" },
-            { id: 175, text: "At 10:35, what does 'that works' mean?", options: { A: "Interviewing someone", B: "Equipment is functional", C: "Customer satisfied with tomorrow", D: "New items for catalog" }, correct: "C" }
-        ]
-    },
-    {passageId: "p7-11",
+            </div>
+        </div>
+    </div>`,
+    translation: `<div class="translation-header" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #1e293b;">Bản dịch & Phân tích</div>
+    <div class="agenda-container">
+        <div class="agenda-header">
+            <div class="agenda-title">Hội thảo: Xây dựng đội nhóm</div>
+            <div class="agenda-meta">
+                Ngày 17 tháng 4<br>
+                9:15 sáng đến 4:30 chiều<br>
+                £40 mỗi người
+            </div>
+        </div>
+        <div class="agenda-body">
+            <div class="agenda-item">
+                <div class="agenda-time">9:15 sáng:</div>
+                <div class="agenda-details">
+                    <div class="agenda-session-title">Những bước đầu tiên (First Steps)</div>
+                    Tập trung vào những vấn đề quan trọng mà <span class="clue-highlight-1">các doanh nghiệp nhỏ</span> phải đối mặt. <span class="clue-highlight-2">Xác định các mục tiêu ngắn hạn và dài hạn của công ty bạn</span> cũng như bất kỳ lĩnh vực nào cần cải thiện.
+                </div>
+            </div>
+            <div class="agenda-item">
+                <div class="agenda-time">10:45 sáng:</div>
+                <div class="agenda-details">
+                    <div class="agenda-session-title">Thúc đẩy tình đồng nghiệp (Fostering Fellowship)</div>
+                    Học cách tạo ra môi trường hợp tác thay vì cạnh tranh giữa các nhân viên ở mọi cấp độ.
+                </div>
+            </div>
+            <div class="agenda-item">
+                <div class="agenda-time">12:15 trưa:</div>
+                <div class="agenda-details">
+                    <div class="agenda-session-title">Nghỉ trưa (Lunch Break)</div>
+                    Người tham dự có thể chọn một trong hai món ăn miễn phí: sandwich gà nướng với rau salad hoặc mì Ý với rau củ.
+                </div>
+            </div>
+            <div class="agenda-item">
+                <div class="agenda-time">1:30 chiều:</div>
+                <div class="agenda-details">
+                    <div class="agenda-session-title">Hoạt động đội nhóm (Team Activities)</div>
+                    Thực hành các bài tập xây dựng đội nhóm cho cả nhóm nhỏ và nhóm lớn. Làm việc với những người tham dự khác để lấy ý tưởng có thể <span class="clue-highlight-1">áp dụng cho nhân viên của chính bạn</span>.
+                </div>
+            </div>
+            <div class="agenda-item">
+                <div class="agenda-time">3:00 chiều:</div>
+                <div class="agenda-details">
+                    <div class="agenda-session-title">Kỹ thuật đánh giá (Evaluation Techniques)</div>
+                    Học các phương pháp xác định liệu các hoạt động xây dựng đội nhóm có đạt được hiệu quả mong muốn hay không. Nhận mẹo về cách sử dụng <span class="clue-highlight-3">phần mềm văn phòng thông dụng</span> để theo dõi tiến độ tại công ty bạn.
+                </div>
+            </div>
+        </div>
+    </div>`,
+    questions: [
+        {
+            id: 151,
+            text: "151. For whom is the workshop most likely intended?",
+            options: [
+                { text: "(A) Business journalists", correct: false },
+                { text: "(B) Human resource experts", correct: false },
+                { text: "(C) Owners of small businesses", correct: true },
+                { text: "(D) New employees at small companies", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> Workshop Schedule / Agenda (Lịch trình hội thảo).<br>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Mục đích chính:</b> Cung cấp nội dung, thời gian và đối tượng tham gia cho chương trình đào tạo về xây dựng đội nhóm.<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Inference / Target Audience Question</span> (Câu hỏi suy luận đối tượng mục tiêu).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"Focus on important issues that <span class='clue-highlight-1'>small businesses</span> face. Identify your company's long- and short-term objectives..."</i><br>
+                <i>"Work with your fellow participants to get ideas that you can <span class='clue-highlight-1'>use with your own employees</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <i>Business journalists:</i> Sai. Không có nội dung nào liên quan đến viết báo, phỏng vấn hay đưa tin.<br>
+                * (B) <i>Human resource experts:</i> Sai bẫy. Tuy đề cập đến nhân sự nhưng hội thảo nhắm vào người quản lý/chủ doanh nghiệp nhỏ chứ không dành riêng cho chuyên gia HR.<br>
+                * (C) <b>Owners of small businesses</b> &rarr; Chính xác. Người tham gia được hướng dẫn đặt mục tiêu cho công ty (<i>your company's objectives</i>) và quản lý nhân viên của mình (<i>your own employees</i>) tại các doanh nghiệp nhỏ (<i>small businesses</i>).<br>
+                * (D) <i>New employees at small companies:</i> Sai. Đại từ <i>"your own employees"</i> cho thấy người tham dự là chủ/quản lý chứ không phải nhân viên mới.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>small businesses + your company's objectives + your own employees</span> &rarr; <span style='color: #16a085;'>Owners of small businesses</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (C) Owners of small businesses
+            </div>`
+        },
+        {
+            id: 152,
+            text: "152. What session involves identifying goals?",
+            options: [
+                { text: "(A) First Steps", correct: true },
+                { text: "(B) Fostering Fellowship", correct: false },
+                { text: "(C) Team Activities", correct: false },
+                { text: "(D) Evaluation Techniques", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Matching thông tin vào session cụ thể).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                Session <b>First Steps</b>: <i>"<span class='clue-highlight-2'>Identify your company's long- and short-term objectives</span> as well as any areas in need of improvement."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <b>First Steps</b> &rarr; Chính xác. Session này hướng dẫn <i>identify objectives</i> (xác định mục tiêu), tương ứng với <i>identifying goals</i>.<br>
+                * (B) <i>Fostering Fellowship:</i> Sai. Chuyên đề về sự hợp tác giữa các nhân viên (<i>cooperation</i>).<br>
+                * (C) <i>Team Activities:</i> Sai. Chuyên đề về các thực hành bài tập nhóm (<i>team-building exercises</i>).<br>
+                * (D) <i>Evaluation Techniques:</i> Sai. Chuyên đề về các phương pháp đánh giá hiệu quả (<i>evaluation methods</i>).<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>Identify ... objectives</span> &rarr; <span style='color: #16a085;'>identifying goals</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) First Steps
+            </div>`
+        },
+        {
+            id: 153,
+            text: "153. What is NOT indicated about the workshop?",
+            options: [
+                { text: "(A) It requires a fee to attend.", correct: false },
+                { text: "(B) It includes a meal.", correct: false },
+                { text: "(C) It is a one-day event.", correct: false },
+                { text: "(D) It will focus on new software.", correct: true }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>NOT Question</span> (Tìm thông tin KHÔNG được đề cập).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence & Phân tích phương án:</span><br>
+                * (A) <i>It requires a fee to attend:</i> Có đề cập. Đề bài ghi rõ <i>"£40 per person"</i> &rarr; Có thu phí.<br>
+                * (B) <i>It includes a meal:</i> Có đề cập. Có <i>"Lunch Break"</i> với <i>"complimentary entrees"</i> (bữa ăn miễn phí đi kèm).<br>
+                * (C) <i>It is a one-day event:</i> Có đề cập. Chương trình diễn ra trọn gói trong 1 ngày duy nhất (<i>17 April, 9:15 A.M. to 4:30 P.M.</i>).<br>
+                * (D) <b>It will focus on new software</b> &rarr; KHÔNG được đề cập. Bài đọc chỉ nói sử dụng phần mềm văn phòng thông dụng (<i><span class='clue-highlight-3'>common office software</span></i>) để theo dõi tiến độ, không phải tập trung vào "phần mềm mới" (<i>new software</i>).<br><br>
+                <strong>Đáp án:</strong> ✅ (D) It will focus on new software.
+            </div>`
+        }
+    ]
+},
+    {
+    passage: `<style>
+        .article-container { border: 1px solid #cbd5e1; border-radius: 8px; padding: 24px; background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1.5rem; font-family: sans-serif; }
+        .article-header { border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; }
+        .article-title { font-weight: 700; font-size: 1.25rem; color: #0f172a; text-transform: uppercase; letter-spacing: 0.5px; }
+        .article-meta { font-size: 0.875rem; color: #64748b; font-weight: 600; margin-top: 4px; }
+        .article-content { line-height: 1.7; color: #334155; font-size: 0.95rem; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #854d0e; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #166534; }
+        .clue-highlight-3 { background-color: #fed7aa; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #9a3412; }
+        .clue-highlight-4 { background-color: #e0e7ff; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #3730a3; }
+    </style>
+    <div class="article-container">
+        <div class="article-header">
+            <div class="article-title">Local News</div>
+            <div class="article-meta">Monday, March 31</div>
+        </div>
+        <div class="article-content">
+            <p style="margin-bottom: 15px;">The Cloud Theater on Gordon Street will close at the end of this month, but this important piece of real estate won't be closed for long. The building has been sold to the Lakehurst Cinema Society (LCS). According to LCS Executive Director Kartik Malla, the group is planning to make some updates to the building before it reopens. He explained that <span class="clue-highlight-1">the seats, screens, and sound systems will be replaced in all of the theaters</span>. — [1] — "However," Mr. Malla added, "we'll be keeping one of the Cloud Theater's old projectors so we can continue to show classic films in their original format."</p>
+            <p style="margin-bottom: 15px;">Up to now, the Cloud Theater has played mainly art house, independent, and foreign films. — [2] — The former owner, Mr. Eugene Sattler, who has now retired, always sought to make the Cloud Theater a haven for artistic films. He was successful for many years, but ticket sales have declined in recent years and <span class="clue-highlight-2">he decided it was time to sell</span>. — [3] — "<span class="clue-highlight-2">This was a hard decision to make</span>," said Mr. Sattler. "I will miss working at the theater. I am happy the LCS is going to bring new life to the old theater."</p>
+            <p style="margin-bottom: 0;">Under its new ownership, the theater will continue to show those artistic types of movies on special occasions. It will also show more mainstream movies that will appeal to families and children. The society plans to reopen the theater to the public on July 1. In addition, it will continue to serve as host for the classic film festival that begins the first weekend in August and continues for ten days. Everything about the festival will remain the same except for one thing. <span class="clue-highlight-3">Formerly called the Gordon Street Film Festival, it will now be known as the Lakehurst Cinema Society Film Festival</span>. — [4] —.</p>
+        </div>
+    </div>`,
+    translation: `<div class="translation-header" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #1e293b;">Bản dịch & Phân tích</div>
+    <div class="article-container">
+        <div class="article-header">
+            <div class="article-title">Tin tức địa phương</div>
+            <div class="article-meta">Thứ Hai, ngày 31 tháng 3</div>
+        </div>
+        <div class="article-content">
+            <p style="margin-bottom: 15px;">Rạp Cloud Theater trên phố Gordon sẽ đóng cửa vào cuối tháng này, nhưng bất động sản quan trọng này sẽ không đóng cửa lâu. Tòa nhà đã được bán cho Lakehurst Cinema Society (LCS). Theo Giám đốc Điều hành LCS Kartik Malla, tổ chức đang lên kế hoạch thực hiện một số cải tạo đối với tòa nhà trước khi mở cửa trở lại. Ông giải thích rằng <span class="clue-highlight-1">ghế ngồi, màn hình và hệ thống âm thanh trong tất cả các phòng chiếu sẽ được thay thế</span>. — [1] — "Tuy nhiên," ông Malla nói thêm, "chúng tôi sẽ giữ lại một trong những máy chiếu cũ của Cloud Theater để tiếp tục chiếu các bộ phim kinh điển theo định dạng gốc của chúng."</p>
+            <p style="margin-bottom: 15px;">Cho đến nay, Cloud Theater chủ yếu chiếu các bộ phim nghệ thuật, phim độc lập và phim nước ngoài. — [2] — Chủ sở hữu cũ, ông Eugene Sattler, người hiện đã nghỉ hưu, luôn tìm cách biến Cloud Theater thành nơi trú ẩn cho các bộ phim mang tính nghệ thuật. Ông đã thành công trong nhiều năm, nhưng doanh số bán vé đã giảm trong những năm gần đây và <span class="clue-highlight-2">ông quyết định đã đến lúc phải bán rạp</span>. — [3] — "<span class="clue-highlight-2">Đây là một quyết định khó khăn</span>," ông Sattler chia sẻ. "Tôi sẽ rất nhớ công việc tại rạp chiếu phim. Tôi rất vui vì LCS sẽ mang lại sức sống mới cho rạp chiếu phim cũ."</p>
+            <p style="margin-bottom: 0;">Dưới quyền sở hữu mới, rạp sẽ tiếp tục chiếu những loại phim nghệ thuật đó vào các dịp đặc biệt. Rạp cũng sẽ chiếu nhiều bộ phim đại chúng hơn nhằm thu hút các gia đình và trẻ em. Tổ chức có kế hoạch mở cửa lại rạp cho công chúng vào ngày 1 tháng 7. Ngoài ra, rạp sẽ tiếp tục là nơi đăng cai liên hoan phim kinh điển bắt đầu vào cuối tuần đầu tiên của tháng 8 và kéo dài trong mười ngày. Mọi thứ về liên hoan phim sẽ giữ nguyên ngoại trừ một điều. <span class="clue-highlight-3">Trước đây có tên là Gordon Street Film Festival, nay sẽ được gọi là Lakehurst Cinema Society Film Festival</span>. — [4] —.</p>
+        </div>
+    </div>`,
+    questions: [
+        {
+            id: 154,
+            text: "154. What is suggested about the Cloud Theater?",
+            options: [
+                { text: "(A) It will show mainly classic films.", correct: false },
+                { text: "(B) It will soon have new equipment installed.", correct: true },
+                { text: "(C) Its ticket prices will increase.", correct: false },
+                { text: "(D) Its customers are not happy about changes that are planned.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> Local News Article (Bài báo tin tức địa phương).<br>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Mục đích chính:</b> Thông báo về việc việc đổi chủ, kế hoạch cải tạo và định hướng mới của rạp Cloud Theater.<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Inference Question</span> (Câu hỏi suy luận).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"...the group is planning to make some updates to the building before it reopens. He explained that <span class='clue-highlight-1'>the seats, screens, and sound systems will be replaced in all of the theaters</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <i>It will show mainly classic films:</i> Sai bẫy. Phim kinh điển chỉ chiếu bằng 1 máy chiếu cũ giữ lại; rạp sẽ chiếu nhiều phim đại chúng (<i>mainstream movies</i>) hơn.<br>
+                * (B) <b>It will soon have new equipment installed</b> &rarr; Chính xác. Việc thay thế ghế, màn hình và hệ thống âm thanh (<i>seats, screens, sound systems replaced</i>) đồng nghĩa với lắp đặt thiết bị mới (<i>new equipment installed</i>).<br>
+                * (C) <i>Its ticket prices will increase:</i> Sai bẫy. Bài chỉ nói doanh số bán vé giảm (<i>ticket sales declined</i>), không đề cập giá vé tăng (<i>ticket prices increase</i>).<br>
+                * (D) <i>Its customers are not happy about changes that are planned:</i> Sai. Không có thông tin về phản ứng tiêu cực từ khách hàng.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>seats, screens, and sound systems replaced</span> &rarr; <span style='color: #16a085;'>new equipment installed</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (B) It will soon have new equipment installed.
+            </div>`
+        },
+        {
+            id: 155,
+            text: "155. According to the article, what was difficult for Mr. Sattler?",
+            options: [
+                { text: "(A) Securing suitable equipment", correct: false },
+                { text: "(B) Selecting a location for retirement", correct: false },
+                { text: "(C) Deciding to sell the theater", correct: true },
+                { text: "(D) Finding buyers for the theater", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Câu hỏi chi tiết).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"...<span class='clue-highlight-2'>he decided it was time to sell</span>. — [3] — \"<span class='clue-highlight-2'>This was a hard decision to make</span>,\" said Mr. Sattler."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <i>Securing suitable equipment:</i> Sai. Tìm thiết bị không được đề cập là khó khăn của ông Sattler.<br>
+                * (B) <i>Selecting a location for retirement:</i> Sai bẫy. Bài nói ông đã nghỉ hưu (<i>retired</i>) chứ không nói ông gặp khó khăn trong việc chọn nơi nghỉ hưu.<br>
+                * (C) <b>Deciding to sell the theater</b> &rarr; Chính xác. Ông Sattler chia sẻ việc quyết định bán rạp (<i>decided it was time to sell</i>) là một quyết định rất khó khăn (<i>a hard decision to make</i> = <i>difficult</i>).<br>
+                * (D) <i>Finding buyers for the theater:</i> Sai. Khó khăn nằm ở việc ra quyết định bán, không phải việc đi tìm người mua.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>hard decision to make</span> &rarr; <span style='color: #16a085;'>difficult</span>.<br>
+                - <span style='color: #d35400;'>decided it was time to sell</span> &rarr; <span style='color: #16a085;'>Deciding to sell the theater</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (C) Deciding to sell the theater
+            </div>`
+        },
+        {
+            id: 156,
+            text: "156. What was renamed?",
+            options: [
+                { text: "(A) A movie theater", correct: false },
+                { text: "(B) An executive position", correct: false },
+                { text: "(C) A film festival", correct: true },
+                { text: "(D) A Lakehurst street", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Xác định đối tượng đổi tên).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"<span class='clue-highlight-3'>Formerly called the Gordon Street Film Festival, it will now be known as the Lakehurst Cinema Society Film Festival</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <i>A movie theater:</i> Sai. Rạp phim vẫn giữ tên <i>Cloud Theater</i>.<br>
+                * (B) <i>An executive position:</i> Sai. Chức vụ <i>Executive Director</i> không thay đổi tên.<br>
+                * (C) <b>A film festival</b> &rarr; Chính xác. Sự kiện trước đây gọi là <i>Gordon Street Film Festival</i> nay đổi thành <i>Lakehurst Cinema Society Film Festival</i>.<br>
+                * (D) <i>A Lakehurst street:</i> Sai bẫy. Tên con đường (<i>Gordon Street</i>) không bị đổi tên, chỉ có tên liên hoan phim thay đổi.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>Formerly called X, now known as Y</span> &rarr; <span style='color: #16a085;'>renamed</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (C) A film festival
+            </div>`
+        },
+        {
+            id: 157,
+            text: "157. In which of the positions marked [1], [2], [3], and [4] does the following sentence best belong? \"The concession stand has also been eliminated.\"",
+            options: [
+                { text: "(A) [1]", correct: true },
+                { text: "(B) [2]", correct: false },
+                { text: "(C) [3]", correct: false },
+                { text: "(D) [4]", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Sentence Insertion</span> (Chèn câu vào vị trí phù hợp).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Phân tích liên kết logic:</span><br>
+                - Câu cần chèn: <i>"The concession stand has <span class='clue-highlight-4'>also</span> been eliminated."</i> (Quầy bán đồ ăn cũng đã bị loại bỏ).<br>
+                - Từ nối then chốt: <i><b>also</b></i> chỉ ra câu này bổ sung vào một chuỗi các thay đổi/thay thế cơ sở vật chất đã nêu trước đó.<br>
+                - Xét vị trí <b>[1]</b>:<br>
+                &nbsp;&nbsp;+ Đứng trước [1]: Nêu các thay đổi về cơ sở vật chất (<i>seats, screens, sound systems replaced</i>).<br>
+                &nbsp;&nbsp;+ Chèn câu: Quầy bán đồ ăn <i>cũng bị loại bỏ</i> (thay đổi bổ sung).<br>
+                &nbsp;&nbsp;+ Đứng sau [1]: Từ nối <i>"However"</i> tạo sự tương phản hoàn hảo &rarr; Mặc dù nhiều thứ bị loại bỏ/thay thế, một máy chiếu cũ vẫn được giữ lại.<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Lý do các vị trí khác sai:</span><br>
+                * [2]: Nằm ở đoạn đang trình bày về các thể loại phim từng chiếu (<i>art house, foreign films</i>), không liên quan tới cải tạo cơ sở vật chất.<br>
+                * [3]: Nằm giữa câu về quyết định bán rạp và trích dẫn cảm xúc của ông Sattler (<i>hard decision to make</i>), chèn vào sẽ làm đứt mạch văn.<br>
+                * [4]: Nằm ở cuối bài, đoạn đang nói về việc đổi tên liên hoan phim (<i>festival name change</i>), hoàn toàn lạc đề.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) [1]
+            </div>`
+        }
+    ]
+},
+    {
+    passage: `<style>
+        .ad-container { border: 1px solid #cbd5e1; border-radius: 8px; padding: 24px; background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1.5rem; font-family: sans-serif; }
+        .ad-header { border-bottom: 2px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; }
+        .ad-title { font-weight: 800; font-size: 1.4rem; color: #0f172a; text-transform: uppercase; letter-spacing: 1px; }
+        .ad-subtitle { font-weight: 600; font-size: 0.95rem; color: #334155; margin-bottom: 8px; }
+        .ad-list { margin: 0 0 16px 20px; padding: 0; color: #334155; font-size: 0.95rem; line-height: 1.6; }
+        .ad-list li { margin-bottom: 6px; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #854d0e; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #166534; }
+    </style>
+    <div class="ad-container">
+        <div class="ad-header">
+            <div class="ad-title">Venture Solutions</div>
+        </div>
+        <div class="ad-subtitle">As our corporate client, you</div>
+        <ul class="ad-list">
+            <li>gain access to cutting-edge technology</li>
+            <li>pay only for what you use, thus reducing hardware and software expenses</li>
+            <li>enjoy our streamlined, up-front, and ongoing billing</li>
+        </ul>
+        <div class="ad-subtitle">We provide</div>
+        <ul class="ad-list">
+            <li><span class="clue-highlight-1">customized software production</span> and <span class="clue-highlight-2">regular maintenance of on-site hardware (requires one-year contract)</span></li>
+            <li>management and regular upgrades of applications and databases</li>
+            <li>storage, backup, and data recovery</li>
+            <li>an around-the-clock service center for fast resolution of issues</li>
+            <li>access to our exclusive Venture Remote Monitoring (VRM) system</li>
+        </ul>
+    </div>`,
+    translation: `<div class="translation-header" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #1e293b;">Bản dịch & Phân tích</div>
+    <div class="ad-container">
+        <div class="ad-header">
+            <div class="ad-title">Giải pháp Venture (Venture Solutions)</div>
+        </div>
+        <div class="ad-subtitle">Là khách hàng doanh nghiệp của chúng tôi, bạn sẽ:</div>
+        <ul class="ad-list">
+            <li>tiếp cận công nghệ tiên tiến nhất</li>
+            <li>chỉ trả tiền cho những gì bạn sử dụng, từ đó giảm chi phí phần cứng và phần mềm</li>
+            <li>tận hưởng quy trình tính phí tinh gọn, minh bạch trả trước và liên tục</li>
+        </ul>
+        <div class="ad-subtitle">Chúng tôi cung cấp:</div>
+        <ul class="ad-list">
+            <li><span class="clue-highlight-1">phát triển phần mềm theo yêu cầu</span> và <span class="clue-highlight-2">bảo trì định kỳ phần cứng tại chỗ (yêu cầu hợp đồng một năm)</span></li>
+            <li>quản lý và nâng cấp thường xuyên các ứng dụng và cơ sở dữ liệu</li>
+            <li>lưu trữ, sao lưu và khôi phục dữ liệu</li>
+            <li>trung tâm dịch vụ hoạt động 24/7 để giải quyết nhanh chóng các vấn đề</li>
+            <li>quyền truy cập vào hệ thống Giám sát Từ xa Venture (VRM) độc quyền</li>
+        </ul>
+    </div>`,
+    questions: [
+        {
+            id: 158,
+            text: "158. What is one of the services offered by Venture Solutions?",
+            options: [
+                { text: "(A) Legal advice", correct: false },
+                { text: "(B) Office accounting", correct: false },
+                { text: "(C) Building maintenance", correct: false },
+                { text: "(D) Software development", correct: true }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> Business / Promotional Advertisement (Quảng cáo dịch vụ công nghệ cho doanh nghiệp).<br>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Mục đích chính:</b> Quảng bá các dịch vụ giải pháp CNTT mà Venture Solutions cung cấp cho khách hàng doanh nghiệp.<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Câu hỏi chi tiết).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"We provide: <span class='clue-highlight-1'>customized software production</span>..."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <i>Legal advice:</i> Sai. Không có thông tin về tư vấn pháp lý.<br>
+                * (B) <i>Office accounting:</i> Sai bẫy. Bài có đề cập <i>billing</i> (tính phí/hóa đơn), không phải dịch vụ kế toán (<i>accounting</i>).<br>
+                * (C) <i>Building maintenance:</i> Sai bẫy đối tượng. Bài đề cập bảo trì phần cứng (<i>hardware maintenance</i>), không phải bảo trì tòa nhà (<i>building maintenance</i>).<br>
+                * (D) <b>Software development</b> &rarr; Chính xác. Cụm từ <i>customized software production</i> tương đương với phát triển phần mềm (<i>software development</i>).<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>software production</span> &rarr; <span style='color: #16a085;'>software development</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (D) Software development
+            </div>`
+        },
+        {
+            id: 159,
+            text: "159. What is mentioned about ongoing care of computer equipment?",
+            options: [
+                { text: "(A) It must be purchased for a minimum of one year.", correct: true },
+                { text: "(B) It is recommended for older computer systems.", correct: false },
+                { text: "(C) It is performed by external consultants.", correct: false },
+                { text: "(D) It is not available to new customers.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question / Paraphrase</span> (Câu hỏi chi tiết).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"...<span class='clue-highlight-2'>regular maintenance of on-site hardware (requires one-year contract)</span>..."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <b>It must be purchased for a minimum of one year</b> &rarr; Chính xác. Việc bảo trì thiết bị phần cứng (<i>regular maintenance of hardware</i>) yêu cầu hợp đồng 1 năm (<i>requires one-year contract</i>), tức là phải cam kết mua dịch vụ tối thiểu một năm.<br>
+                * (B) <i>It is recommended for older computer systems:</i> Sai. Bài không đề cập thông tin dành riêng cho hệ thống máy tính cũ.<br>
+                * (C) <i>It is performed by external consultants:</i> Sai. Không đề cập việc thuê cố vấn bên ngoài.<br>
+                * (D) <i>It is not available to new customers:</i> Sai bẫy. Việc yêu cầu hợp đồng 1 năm không có nghĩa là không cung cấp cho khách hàng mới.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>ongoing care of computer equipment</span> &rarr; <span style='color: #16a085;'>regular maintenance of on-site hardware</span>.<br>
+                - <span style='color: #d35400;'>requires one-year contract</span> &rarr; <span style='color: #16a085;'>must be purchased for a minimum of one year</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) It must be purchased for a minimum of one year.
+            </div>`
+        }
+    ]
+},
+    {
+    passage: `<style>
+        .job-container { border: 1px solid #cbd5e1; border-radius: 8px; overflow: hidden; background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1.5rem; font-family: sans-serif; }
+        .web-bar { background: #f1f5f9; padding: 8px 16px; border-bottom: 1px solid #cbd5e1; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #475569; }
+        .web-url { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 4px 10px; width: 100%; font-family: monospace; }
+        .job-body { padding: 20px; color: #334155; line-height: 1.65; font-size: 0.95rem; }
+        .job-header { text-align: center; border-bottom: 2px dashed #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; }
+        .job-site-name { font-weight: 800; font-size: 1.3rem; color: #0f172a; }
+        .job-tagline { font-weight: 700; font-style: italic; color: #2563eb; font-size: 1.1rem; margin-top: 4px; }
+        .apply-btn-container { text-align: center; margin-top: 16px; }
+        .apply-btn { display: inline-block; background: #2563eb; color: #ffffff; font-weight: 700; padding: 8px 24px; border-radius: 20px; font-size: 0.9rem; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #854d0e; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #166534; }
+        .clue-highlight-3 { background-color: #fed7aa; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #9a3412; }
+    </style>
+    <div class="job-container">
+        <div class="web-bar">
+            <span>🌐</span>
+            <div class="web-url">http://www.youronlinejobfinder.com</div>
+        </div>
+        <div class="job-body">
+            <div class="job-header">
+                <div class="job-site-name">Your Online Job Finder</div>
+                <div class="job-tagline">Work for the best!</div>
+            </div>
+            <p style="margin-bottom: 14px;">Other companies ask their salespeople to make countless calls to potential customers who are not expecting to be contacted. At AJQ Insurance, customers call us for their insurance needs! <span class="clue-highlight-1">Our insurance sales associates take only inbound sales calls from interested potential policyholders</span>. These positions are free from the pressure of selling on commission.</p>
+            <p style="margin-bottom: 14px;">Complete our sales training while being paid a generous hourly rate. <span class="clue-highlight-2">Take the exam to become a licensed insurance professional. If you succeed, you may be offered a salaried position</span>.</p>
+            <p style="margin-bottom: 14px;">We will consider education and experience in the salary offer. Some university work is useful, but motivated high school graduates will also be considered. Because we work with our customers twenty-four hours a day, seven days a week, we offer many shifts to choose from—with an additional 10% in pay for late-night and early-morning shifts.</p>
+            <p style="margin-bottom: 0;">Please click "Apply Now" below to take advantage of this opportunity with youronlinejobfinder.com. You will need an active e-mail address and phone number to complete the process. Suitable candidates will be contacted by phone or e-mail. Call 409-555-0123 if you have any questions about the application process. <span class="clue-highlight-3">We recommend that you become familiar with the company before applying by visiting our Web site at AJQinsurance.com</span>.</p>
+            <div class="apply-btn-container">
+                <span class="apply-btn">Apply Now</span>
+            </div>
+        </div>
+    </div>`,
+    translation: `<div class="translation-header" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #1e293b;">Bản dịch & Phân tích</div>
+    <div class="job-container">
+        <div class="web-bar">
+            <span>🌐</span>
+            <div class="web-url">http://www.youronlinejobfinder.com</div>
+        </div>
+        <div class="job-body">
+            <div class="job-header">
+                <div class="job-site-name">Công cụ tìm việc trực tuyến của bạn (Your Online Job Finder)</div>
+                <div class="job-tagline">Hãy làm việc cho công ty tốt nhất!</div>
+            </div>
+            <p style="margin-bottom: 14px;">Các công ty khác yêu cầu nhân viên bán hàng thực hiện vô số cuộc gọi đến những khách hàng tiềm năng vốn không mong đợi được liên hệ. Tại Bảo hiểm AJQ, khách hàng chủ động gọi cho chúng tôi khi có nhu cầu bảo hiểm! <span class="clue-highlight-1">Nhân viên kinh doanh bảo hiểm của chúng tôi chỉ tiếp nhận các cuộc gọi bán hàng đến từ các chủ hợp đồng tiềm năng có quan tâm</span>. Những vị trí này không chịu áp lực bán hàng hưởng hoa hồng.</p>
+            <p style="margin-bottom: 14px;">Hãy hoàn thành khóa đào tạo bán hàng của chúng tôi trong khi vẫn được trả mức lương theo giờ hậu đĩnh. <span class="clue-highlight-2">Tham gia kỳ thi để trở thành chuyên viên bảo hiểm có cấp phép. Nếu thành công, bạn có thể được đề nghị một vị trí hưởng lương cố định</span>.</p>
+            <p style="margin-bottom: 14px;">Chúng tôi sẽ xem xét trình độ học vấn và kinh nghiệm trong mức lương đề xuất. Một số quá trình học đại học sẽ có ích, nhưng những người tốt nghiệp trung học có động lực cũng sẽ được xem xét. Vì chúng tôi phục vụ khách hàng 24/7, chúng tôi cung cấp nhiều ca làm việc để lựa chọn—với mức phụ cấp thêm 10% lương cho các ca làm đêm muộn và sáng sớm.</p>
+            <p style="margin-bottom: 0;">Vui lòng nhấp vào "Nộp hồ sơ ngay" bên dưới để tận dụng cơ hội này với youronlinejobfinder.com. Bạn sẽ cần một địa chỉ e-mail và số điện thoại đang hoạt động để hoàn tất quy trình. Các ứng viên phù hợp sẽ được liên hệ qua điện thoại hoặc e-mail. Gọi 409-555-0123 nếu bạn có bất kỳ câu hỏi nào về quy trình ứng tuyển. <span class="clue-highlight-3">Chúng tôi khuyên bạn nên tìm hiểu kỹ về công ty trước khi ứng tuyển bằng cách truy cập trang Web của chúng tôi tại AJQinsurance.com</span>.</p>
+            <div class="apply-btn-container">
+                <span class="apply-btn">Nộp hồ sơ ngay (Apply Now)</span>
+            </div>
+        </div>
+    </div>`,
+    questions: [
+        {
+            id: 160,
+            text: "160. What duty is mentioned as part of the job?",
+            options: [
+                { text: "(A) Meeting sales commission targets", correct: false },
+                { text: "(B) Receiving calls from potential customers", correct: true },
+                { text: "(C) Working only during unconventional hours", correct: false },
+                { text: "(D) Calling people who are unfamiliar with the company", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> Job Advertisement / Recruitment Notice (Quảng cáo tuyển dụng trực tuyến).<br>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Mục đích chính:</b> Tuyển dụng vị trí nhân viên bán hàng bảo hiểm (insurance sales associates) cho công ty AJQ Insurance.<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Nhiệm vụ công việc).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"<span class='clue-highlight-1'>Our insurance sales associates take only inbound sales calls from interested potential policyholders</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <i>Meeting sales commission targets:</i> Sai bẫy. Bài đọc ghi <i>"free from the pressure of selling on commission"</i> (không bị áp lực bán hàng theo hoa hồng).<br>
+                * (B) <b>Receiving calls from potential customers</b> &rarr; Chính xác. Việc tiếp nhận các cuộc gọi đến từ khách hàng quan tâm (<i>take inbound sales calls from potential policyholders</i>) tương đương với việc nhận cuộc gọi từ khách hàng tiềm năng.<br>
+                * (C) <i>Working only during unconventional hours:</i> Sai bẫy. Công ty có nhiều ca làm (<i>many shifts</i>), ca đêm/sáng sớm chỉ được cộng thêm 10% lương chứ không bắt buộc làm duy nhất các giờ này.<br>
+                * (D) <i>Calling people who are unfamiliar with the company:</i> Sai bẫy đối tượng. Gọi cho người lạ (<i>outbound calls</i>) là công việc ở các công ty khác (<i>other companies</i>), không phải ở AJQ Insurance.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>take inbound sales calls</span> &rarr; <span style='color: #16a085;'>Receiving calls</span>.<br>
+                - <span style='color: #d35400;'>interested potential policyholders</span> &rarr; <span style='color: #16a085;'>potential customers</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (B) Receiving calls from potential customers
+            </div>`
+        },
+        {
+            id: 161,
+            text: "161. According to the advertisement, what is required for a salaried position?",
+            options: [
+                { text: "(A) Sales experience", correct: false },
+                { text: "(B) A university degree", correct: false },
+                { text: "(C) Employer references", correct: false },
+                { text: "(D) An insurance license", correct: true }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail / Requirement Question</span> (Điều kiện bắt buộc cho vị trí hưởng lương cố định).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"<span class='clue-highlight-2'>Take the exam to become a licensed insurance professional. If you succeed, you may be offered a salaried position</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <i>Sales experience:</i> Sai bẫy. Kinh nghiệm chỉ được xem xét khi đề xuất mức lương (<i>considered in the salary offer</i>), không phải là yêu cầu bắt buộc.<br>
+                * (B) <i>A university degree:</i> Sai bẫy. Bài đọc ghi rõ học sinh tốt nghiệp cấp 3 (<i>high school graduates</i>) vẫn được xem xét.<br>
+                * (C) <i>Employer references:</i> Sai. Không có thông tin về thư giới thiệu từ chủ cũ.<br>
+                * (D) <b>An insurance license</b> &rarr; Chính xác. Ứng viên phải vượt qua kỳ thi để có chứng chỉ hành nghề bảo hiểm (<i>become a licensed insurance professional</i>) thì mới có cơ hội nhận vị trí chính thức hưởng lương cố định (<i>salaried position</i>).<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>become a licensed insurance professional</span> &rarr; <span style='color: #16a085;'>An insurance license</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (D) An insurance license
+            </div>`
+        },
+        {
+            id: 162,
+            text: "162. According to the advertisement, why should applicants visit the AJQ Web site?",
+            options: [
+                { text: "(A) To learn about AJQ Insurance", correct: true },
+                { text: "(B) To apply for the insurance sales job", correct: false },
+                { text: "(C) To ask questions about the process", correct: false },
+                { text: "(D) To find out about their application status", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Purpose Question</span> (Mục đích truy cập website).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"<span class='clue-highlight-3'>We recommend that you become familiar with the company before applying by visiting our Web site at AJQinsurance.com</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <b>To learn about AJQ Insurance</b> &rarr; Chính xác. Truy cập website công ty để làm quen/tìm hiểu về công ty (<i>become familiar with the company</i>) trước khi nộp hồ sơ.<br>
+                * (B) <i>To apply for the insurance sales job:</i> Sai. Việc ứng tuyển được thực hiện bằng cách nhấn nút "Apply Now" trên trang <i>youronlinejobfinder.com</i>.<br>
+                * (C) <i>To ask questions about the process:</i> Sai. Nếu có thắc mắc về quy trình ứng tuyển, bài đọc yêu cầu gọi điện thoại đến số <i>409-555-0123</i>.<br>
+                * (D) <i>To find out about their application status:</i> Sai. Không có thông tin về việc tra cứu trạng thái hồ sơ trên trang web.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>become familiar with the company</span> &rarr; <span style='color: #16a085;'>To learn about AJQ Insurance</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) To learn about AJQ Insurance
+            </div>`
+        }
+    ]
+},
+    {
+    passage: `<style>
+        .article-container { border: 1px solid #cbd5e1; border-radius: 8px; padding: 24px; background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1.5rem; font-family: sans-serif; line-height: 1.65; color: #334155; }
+        .article-header { border-bottom: 2px solid #0f172a; padding-bottom: 12px; margin-bottom: 16px; }
+        .article-title { font-weight: 800; font-size: 1.35rem; color: #0f172a; }
+        .article-date { font-weight: 600; font-size: 0.9rem; color: #64748b; margin-bottom: 12px; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #854d0e; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #166534; }
+        .clue-highlight-3 { background-color: #fed7aa; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #9a3412; }
+    </style>
+    <div class="article-container">
+        <div class="article-header">
+            <div class="article-title">A Long-Lasting Love for Books</div>
+        </div>
+        <div class="article-date">February 29</div>
+        <p style="margin-bottom: 14px;">Both in and around Pine Hill, Alfred Carlson, who <span class="clue-highlight-1">has been teaching Russian literature at Pine Hill State University for twenty years</span>, is probably best known as the owner of <span class="clue-highlight-1">The Treasure Box, the town's oldest bookstore</span>. The store has two unique features: it specializes in rare books and is open for business on Saturdays only. Evidently, walk-in sales make up only a small percentage of Mr. Carlson's business; the bulk of the store's revenue is generated by orders placed over the telephone or online by universities, museums, and private collectors.</p>
+        <p style="margin-bottom: 14px;">On Sunday <span class="clue-highlight-1">The Treasure Box will be celebrating its sixtieth anniversary</span>. "When my mother, Willisa, opened the bookstore all those years ago on Green Edge Road, two blocks from here, she probably had no idea it would still be serving the public six decades later," Mr. Carlson said. The store still displays the original sign over the doorway. The interior <span class="clue-highlight-2">retains</span> the living-room atmosphere it always had, with its mismatched tables and chairs. One section of the store is filled with books about baseball, an abiding passion of the Carlson family. On Friday nights the store becomes an informal social club. Not surprisingly, members tend to <span class="clue-highlight-1">enjoy conversation about rare books, literature, and baseball</span>.</p>
+        <p style="margin-bottom: 0;">Later this month Mr. Carlson will mark another milestone: he will be <span class="clue-highlight-1">retiring from his teaching position</span>. His retirement does not mean, however, that The Treasure Box will see extended business hours; it will <span class="clue-highlight-3">continue to be open once a week</span>. "I am not retiring from one job just so that I can spend more time on another," Mr. Carlson said. "Rather, the fact that I no longer will have to prepare for classes or grade students' papers means that I will be able to dedicate more time to my children and grandchildren."</p>
+    </div>`,
+    translation: `<div class="translation-header" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #1e293b;">Bản dịch & Phân tích</div>
+    <div class="article-container">
+        <div class="article-header">
+            <div class="article-title">Tình yêu bền chặt dành cho những cuốn sách (A Long-Lasting Love for Books)</div>
+        </div>
+        <div class="article-date">Ngày 29 tháng 2</div>
+        <p style="margin-bottom: 14px;">Cả ở trong và xung quanh Pine Hill, Alfred Carlson, người <span class="clue-highlight-1">đã giảng dạy văn học Nga tại Đại học Bang Pine Hill suốt 20 năm</span>, có lẽ được biết đến nhiều nhất với tư cách là chủ sở hữu của <span class="clue-highlight-1">The Treasure Box, hiệu sách lâu đời nhất trong thị trấn</span>. Cửa hàng có hai đặc điểm độc đáo: chuyên về sách hiếm và chỉ mở cửa kinh doanh vào thứ Bảy. Rõ ràng, doanh số bán lẻ trực tiếp chỉ chiếm một phần nhỏ trong việc kinh doanh của ông Carlson; phần lớn doanh thu của cửa hàng đến từ các đơn đặt hàng qua điện thoại hoặc trực tuyến từ các trường đại học, bảo tàng và nhà sưu tầm tư nhân.</p>
+        <p style="margin-bottom: 14px;">Chủ nhật này, <span class="clue-highlight-1">The Treasure Box sẽ kỷ niệm 60 năm thành lập</span>. "Khi mẹ tôi, Willisa, mở hiệu sách nhiều năm trước trên đường Green Edge, cách đây hai dãy nhà, bà có lẽ không ngờ rằng nó vẫn phục vụ công chúng sau sáu thập kỷ," ông Carlson nói. Cửa hàng vẫn treo tấm biển nguyên bản phía trên lối vào. Nội thất vẫn <span class="clue-highlight-2">giữ được</span> bầu không khí phòng khách như trước đây, với những chiếc bàn và ghế không đồng bộ. Một khu vực của cửa hàng tràn ngập sách về bóng chày, niềm đam mê sâu sắc của gia đình Carlson. Tối thứ Sáu, cửa hàng trở thành một câu lạc bộ xã hội không chính thức. Không có gì kinh ngạc khi các thành viên thường <span class="clue-highlight-1">thích trò chuyện về sách hiếm, văn học và bóng chày</span>.</p>
+        <p style="margin-bottom: 0;">Cuối tháng này, ông Carlson sẽ đánh dấu một cột mốc khác: ông sẽ <span class="clue-highlight-1">nghỉ việc giảng dạy</span>. Tuy nhiên, việc nghỉ hưu của ông không có nghĩa là The Treasure Box sẽ kéo dài giờ kinh doanh; nó sẽ <span class="clue-highlight-3">tiếp tục mở cửa mỗi tuần một lần</span>. "Tôi không nghỉ việc này chỉ để dành nhiều thời gian hơn cho việc khác," ông Carlson chia sẻ. "Thực ra, việc không còn phải chuẩn bị bài giảng hay chấm bài cho sinh viên đồng nghĩa với việc tôi có thể dành nhiều thời gian hơn cho con cháu."</p>
+    </div>`,
+    questions: [
+        {
+            id: 163,
+            text: "163. Why most likely was the article written?",
+            options: [
+                { text: "(A) To attract members to a new book club", correct: false },
+                { text: "(B) To highlight the benefits of selling items that are unique", correct: false },
+                { text: "(C) To celebrate the achievements of a local business personality", correct: true },
+                { text: "(D) To announce the relocation of an established business", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> Local News Article (Bài báo tin tức địa phương / Nhân vật tiêu biểu).<br>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Mục đích chính:</b> Tôn vinh và giới thiệu về ông Alfred Carlson và hiệu sách lâu đời của gia đình nhân dịp kỷ niệm 60 năm thành lập và cột mốc nghỉ hưu của ông.<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Main Purpose Question</span> (Mục đích bài viết).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"<span class='clue-highlight-1'>Alfred Carlson ... owner of The Treasure Box, the town's oldest bookstore ... The Treasure Box will be celebrating its sixtieth anniversary ... mark another milestone: retiring from his teaching position</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <i>To attract members to a new book club:</i> Sai bẫy từ vựng. Cửa hàng là nơi tụ họp không chính thức (<i>informal social club</i>), không phải bài viết chiêu mộ thành viên cho câu lạc bộ sách mới.<br>
+                * (B) <i>To highlight the benefits of selling items that are unique:</i> Sai. Bài viết chỉ nhắc đến sách hiếm như một đặc điểm độc đáo (<i>unique feature</i>), không nhằm mục đích phân tích lợi ích kinh doanh.<br>
+                * (C) <b>To celebrate the achievements of a local business personality</b> &rarr; Chính xác. Bài báo tôn vinh thành tựu của ông Alfred Carlson (một doanh nhân/nhân vật địa phương) và thương hiệu lâu đời của ông.<br>
+                * (D) <i>To announce the relocation of an established business:</i> Sai bẫy vị trí. Địa điểm trên đường Green Edge Road là nơi mẹ ông mở 60 năm trước, không phải thông báo chuyển địa điểm hiện tại.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>Alfred Carlson / owner of the town's oldest bookstore</span> &rarr; <span style='color: #16a085;'>local business personality</span>.<br>
+                - <span style='color: #d35400;'>sixtieth anniversary / mark another milestone</span> &rarr; <span style='color: #16a085;'>celebrate the achievements</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (C) To celebrate the achievements of a local business personality
+            </div>`
+        },
+        {
+            id: 164,
+            text: "164. What is NOT suggested about Mr. Carlson?",
+            options: [
+                { text: "(A) He will soon be ending his career as an instructor.", correct: false },
+                { text: "(B) He studies works written by Russian authors.", correct: false },
+                { text: "(C) He has lived in Pine Hill for almost ten years.", correct: true },
+                { text: "(D) He enjoys talking about baseball with others.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>NOT Question / Negative Detail</span> (Chi tiết KHÔNG được đề cập/gợi ý).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * Option A: <i>"<span class='clue-highlight-1'>retiring from his teaching position</span>"</i> &rarr; Sắp kết thúc sự nghiệp giảng dạy (Có đề cập).<br>
+                * Option B: <i>"<span class='clue-highlight-1'>teaching Russian literature</span>"</i> &rarr; Giảng dạy văn học Nga đồng nghĩa với việc ông nghiên cứu tác phẩm của các tác giả Nga (Có gợi ý).<br>
+                * Option D: <i>"<span class='clue-highlight-1'>enjoy conversation about rare books, literature, and baseball</span>"</i> &rarr; Thích trò chuyện về bóng chày (Có đề cập).<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích đáp án đúng:</span><br>
+                * (C) <b>He has lived in Pine Hill for almost ten years</b> &rarr; Không được đề cập. Bài đọc ghi ông giảng dạy tại Đại học Bang Pine Hill trong 20 năm (<i>teaching ... for twenty years</i>), nhưng không đề cập thời gian ông sinh sống tại địa phương này. Việc giảng dạy 20 năm không đồng nghĩa với việc sống ở đó gần 10 năm.<br><br>
+                <strong>Đáp án:</strong> ✅ (C) He has lived in Pine Hill for almost ten years.
+            </div>`
+        },
+        {
+            id: 165,
+            text: "165. The word “retains” in paragraph 2, line 9, is closest in meaning to",
+            options: [
+                { text: "(A) contributed to", correct: false },
+                { text: "(B) agrees with", correct: false },
+                { text: "(C) remembers", correct: false },
+                { text: "(D) keeps", correct: true }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Vocabulary in Context</span> (Từ vựng theo ngữ cảnh).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Ngữ cảnh bài đọc:</span><br>
+                <i>"The interior <span class='clue-highlight-2'>retains</span> the living-room atmosphere it always had..."</i><br>
+                (Phần nội thất vẫn <span class='clue-highlight-2'>giữ được</span> không khí phòng khách mà nó luôn có...)<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <i>contributed to:</i> Đóng góp vào (Không phù hợp).<br>
+                * (B) <i>agrees with:</i> Đồng ý với (Không phù hợp).<br>
+                * (C) <i>remembers:</i> Ghi nhớ (Không áp dụng cho đồ vật/không gian).<br>
+                * (D) <b>keeps</b> &rarr; Duy trì / Giữ lại (Hoàn toàn đồng nghĩa với <i>retain</i> trong ngữ cảnh này).<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>retain</span> = <span style='color: #16a085;'>keep / maintain / preserve</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (D) keeps
+            </div>`
+        },
+        {
+            id: 166,
+            text: "166. What is stated about The Treasure Box?",
+            options: [
+                { text: "(A) It will be adding a section devoted to children’s books.", correct: false },
+                { text: "(B) It will maintain its current hours of operation.", correct: true },
+                { text: "(C) Its sales are expected to increase this year.", correct: false },
+                { text: "(D) Its sign will be replaced later in the month.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question</span> (Chi tiết về hiệu sách).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                <i>"His retirement does not mean, however, that The Treasure Box will see extended business hours; <span class='clue-highlight-3'>it will continue to be open once a week</span>."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <i>It will be adding a section devoted to children’s books:</i> Sai. Cửa hàng chỉ có khu vực sách bóng chày (<i>books about baseball</i>).<br>
+                * (B) <b>It will maintain its current hours of operation</b> &rarr; Chính xác. Cửa hàng vẫn tiếp tục mở cửa mỗi tuần một lần (<i>continue to be open once a week</i>), tức là giữ nguyên thời gian hoạt động hiện tại.<br>
+                * (C) <i>Its sales are expected to increase this year:</i> Sai. Bài đọc không đưa ra dự báo nào về tăng trưởng doanh số.<br>
+                * (D) <i>Its sign will be replaced later in the month:</i> Sai bẫy. Bài đề cập cửa hàng vẫn treo tấm biển nguyên bản (<i>original sign</i>), không có kế hoạch thay thế.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>continue to be open once a week</span> &rarr; <span style='color: #16a085;'>maintain its current hours of operation</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (B) It will maintain its current hours of operation.
+            </div>`
+        }
+    ]
+},
+    {
+    passage: `<style>
+        .chat-container { border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; background: #f8fafc; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1.5rem; font-family: sans-serif; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .chat-header { background: #3b82f6; color: #ffffff; padding: 12px 16px; font-weight: 700; font-size: 1rem; display: flex; align-items: center; justify-content: space-between; }
+        .chat-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+        .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; line-height: 1.5; font-size: 0.92rem; }
+        .msg-left { background: #ffffff; border: 1px solid #e2e8f0; align-self: flex-start; border-top-left-radius: 2px; }
+        .msg-right { background: #dbeafe; border: 1px solid #bfdbfe; align-self: flex-end; border-top-right-radius: 2px; color: #1e3a8a; }
+        .msg-meta { font-weight: 700; font-size: 0.8rem; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px; }
+        .msg-sender { color: #0f172a; }
+        .msg-time { color: #64748b; font-weight: 400; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #854d0e; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #166534; }
+    </style>
+    <div class="chat-container">
+        <div class="chat-header">
+            <span>📱 Text Message Chain</span>
+            <span style="font-size: 0.8rem; opacity: 0.9;">Messages</span>
+        </div>
+        <div class="chat-body">
+            <div class="chat-msg msg-left">
+                <div class="msg-meta">
+                    <span class="msg-sender">Iosif Volkov</span>
+                    <span class="msg-time">11:04 A.M.</span>
+                </div>
+                Ms. Medrano, I e-mailed you the revised contract. Have you received it?
+            </div>
+            <div class="chat-msg msg-right">
+                <div class="msg-meta">
+                    <span class="msg-sender">Lucia Medrano</span>
+                    <span class="msg-time">11:06 A.M.</span>
+                </div>
+                Yes, it just came in now. Thanks for making those changes.
+            </div>
+            <div class="chat-msg msg-left">
+                <div class="msg-meta">
+                    <span class="msg-sender">Iosif Volkov</span>
+                    <span class="msg-time">11:07 A.M.</span>
+                </div>
+                <span class="clue-highlight-1">Of course</span>. Thanks for bringing them to my attention. The contract now states that you will be paid <span class="clue-highlight-2">175€ per accepted article</span> rather than 125€.
+            </div>
+            <div class="chat-msg msg-right">
+                <div class="msg-meta">
+                    <span class="msg-sender">Lucia Medrano</span>
+                    <span class="msg-time">11:08 A.M.</span>
+                </div>
+                Perfect. I'll look it over now, sign it, and send it back to you.
+            </div>
+            <div class="chat-msg msg-left">
+                <div class="msg-meta">
+                    <span class="msg-sender">Iosif Volkov</span>
+                    <span class="msg-time">11:10 A.M.</span>
+                </div>
+                Great. We're always looking for good material for our <span class="clue-highlight-2">magazine</span>. I look forward to receiving your <span class="clue-highlight-2">submissions</span>.
+            </div>
+        </div>
+    </div>`,
+    translation: `<div class="translation-header" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #1e293b;">Bản dịch & Phân tích</div>
+    <div class="chat-container">
+        <div class="chat-header">
+            <span>📱 Chuỗi tin nhắn văn bản</span>
+            <span style="font-size: 0.8rem; opacity: 0.9;">Tin nhắn</span>
+        </div>
+        <div class="chat-body">
+            <div class="chat-msg msg-left">
+                <div class="msg-meta">
+                    <span class="msg-sender">Iosif Volkov</span>
+                    <span class="msg-time">11:04 A.M.</span>
+                </div>
+                Cô Medrano, tôi đã gửi email cho cô hợp đồng đã sửa đổi. Cô đã nhận được chưa?
+            </div>
+            <div class="chat-msg msg-right">
+                <div class="msg-meta">
+                    <span class="msg-sender">Lucia Medrano</span>
+                    <span class="msg-time">11:06 A.M.</span>
+                </div>
+                Vâng, nó vừa mới tới xong. Cảm ơn ông đã thực hiện những thay đổi đó.
+            </div>
+            <div class="chat-msg msg-left">
+                <div class="msg-meta">
+                    <span class="msg-sender">Iosif Volkov</span>
+                    <span class="msg-time">11:07 A.M.</span>
+                </div>
+                <span class="clue-highlight-1">Tất nhiên rồi</span>. Cảm ơn cô đã chỉ ra điều đó cho tôi. Hợp đồng hiện ghi rõ cô sẽ được trả <span class="clue-highlight-2">175€ cho mỗi bài viết được chấp nhận</span> thay vì 125€.
+            </div>
+            <div class="chat-msg msg-right">
+                <div class="msg-meta">
+                    <span class="msg-sender">Lucia Medrano</span>
+                    <span class="msg-time">11:08 A.M.</span>
+                </div>
+                Tuyệt vời. Tôi sẽ xem qua ngay bây giờ, ký tên và gửi lại cho ông.
+            </div>
+            <div class="chat-msg msg-left">
+                <div class="msg-meta">
+                    <span class="msg-sender">Iosif Volkov</span>
+                    <span class="msg-time">11:10 A.M.</span>
+                </div>
+                Rất tốt. Chúng tôi luôn tìm kiếm bài viết tốt cho <span class="clue-highlight-2">tạp chí</span> của mình. Tôi rất mong nhận được các <span class="clue-highlight-2">bài gửi</span> của cô.
+            </div>
+        </div>
+    </div>`,
+    questions: [
+        {
+            id: 167,
+            text: "167. At 11:07 A.M., what does Mr. Volkov mean when he writes, \"Of course\"?",
+            options: [
+                { text: "(A) He already knew that an e-mail had been received.", correct: false },
+                { text: "(B) He has received a signed contract.", correct: false },
+                { text: "(C) He thinks the solution to a problem is obvious.", correct: false },
+                { text: "(D) He was happy to fulfill a request.", correct: true }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> Instant Messaging / Text-message Chain (Hội thoại tin nhắn công việc).<br>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Mục đích chính:</b> Xử lý điều khoản hợp đồng thù lao bài viết giữa đại diện tạp chí và tác giả.<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Meaning in Context</span> (Hàm ý câu nói).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * Tin nhắn [11:06 A.M.] từ Lucia Medrano: <i>"Thanks for making those changes."</i> (Cảm ơn vì đã thực hiện các thay đổi).<br>
+                * Tin nhắn [11:07 A.M.] từ Iosif Volkov: <i>"<span class='clue-highlight-1'>Of course</span>. Thanks for bringing them to my attention."</i> (Tất nhiên rồi. Cảm ơn đã chỉ ra cho tôi).<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <i>He already knew that an e-mail had been received:</i> Sai. Từ "Of course" đáp lại lời cảm ơn, không phải xác nhận đã biết email đến.<br>
+                * (B) <i>He has received a signed contract:</i> Sai bẫy thời gian. Đến 11:08 A.M. Cô Medrano mới nói sẽ ký và gửi lại (<i>I'll look it over now, sign it...</i>).<br>
+                * (C) <i>He thinks the solution to a problem is obvious:</i> Sai bẫy nghĩa đen. "Of course" ở đây là câu đáp lịch sự phản hồi lời cảm ơn, không mang nghĩa giải pháp hiển nhiên.<br>
+                * (D) <b>He was happy to fulfill a request</b> &rarr; Chính xác. Cụm "Of course" thể hiện thái độ sẵn lòng/vui vẻ đáp ứng yêu cầu chỉnh sửa hợp đồng từ phía cô Medrano.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>Thanks for making those changes -> Of course</span> &rarr; <span style='color: #16a085;'>happy to fulfill a request</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (D) He was happy to fulfill a request.
+            </div>`
+        },
+        {
+            id: 168,
+            text: "168. Who most likely is Ms. Medrano?",
+            options: [
+                { text: "(A) A writer", correct: true },
+                { text: "(B) A lawyer", correct: false },
+                { text: "(C) A financial adviser", correct: false },
+                { text: "(D) A human resources manager", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Inference Question / Occupation</span> (Suy luận nghề nghiệp).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * <i>"...you will be paid <span class='clue-highlight-2'>175€ per accepted article</span>..."</i> (được trả 175€ cho mỗi bài viết được chấp nhận).<br>
+                * <i>"...looking for good material for our <span class='clue-highlight-2'>magazine</span>. I look forward to receiving your <span class='clue-highlight-2'>submissions</span>."</i> (tìm nội dung cho tạp chí / mong nhận được bài gửi của cô).<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <b>A writer</b> &rarr; Chính xác. Người viết bài cho tạp chí và nhận nhuận bút theo từng bài viết (<i>accepted article / submissions / magazine</i>) chính là nhà văn/tác giả/người viết bài.<br>
+                * (B) <i>A lawyer:</i> Sai bẫy từ vựng. Mặc dù có đề cập đến hợp đồng (<i>contract</i>), nhưng đối tượng không phải là luật sư.<br>
+                * (C) <i>A financial adviser:</i> Sai. Tiền 175€ là thù lao bài viết, không liên quan đến tư vấn tài chính.<br>
+                * (D) <i>A human resources manager:</i> Sai. Không có từ khóa liên quan đến nhân sự hay tuyển dụng nhân viên.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>paid per accepted article / magazine / submissions</span> &rarr; <span style='color: #16a085;'>A writer</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) A writer
+            </div>`
+        }
+    ]
+},
+    {
+    passage: `<style>
+        .email-container { border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; background: #ffffff; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1.5rem; font-family: sans-serif; max-width: 650px; margin-left: auto; margin-right: auto; }
+        .email-header { background: #f1f5f9; border-bottom: 1px solid #e2e8f0; padding: 14px 18px; font-size: 0.9rem; color: #334155; }
+        .email-field { margin-bottom: 6px; display: flex; }
+        .email-label { font-weight: 700; width: 80px; color: #475569; flex-shrink: 0; }
+        .email-value { color: #0f172a; word-break: break-all; }
+        .email-body { padding: 20px; line-height: 1.6; font-size: 0.95rem; color: #1e293b; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #854d0e; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #166534; }
+        .clue-highlight-3 { background-color: #bfdbfe; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #1e40af; }
+    </style>
+    <div class="email-container">
+        <div class="email-header">
+            <div class="email-field"><span class="email-label">To:</span><span class="email-value">Mercedes Salinas &lt;msalinas@fithealthplanning.bm&gt;</span></div>
+            <div class="email-field"><span class="email-label">From:</span><span class="email-value">Leonard Cowden &lt;lcowden@srhealthcenter.bm&gt;</span></div>
+            <div class="email-field"><span class="email-label">Subject:</span><span class="email-value" style="font-weight: 600;">Bermuda Healthy Living Conference</span></div>
+            <div class="email-field" style="margin-bottom: 0;"><span class="email-label">Date:</span><span class="email-value">16 April</span></div>
+        </div>
+        <div class="email-body">
+            Dear Ms. Salinas,<br><br>
+            I'm excited that <span class="clue-highlight-1">you have agreed to be one of the speakers</span> at our second annual Bermuda Healthy Living Conference on 12 May. I realize the invitation was last minute, and I truly appreciate your willingness to step in for Cara Branston. — [1] — Your expertise as a dietitian will be greatly valued by our participants. The strong attendance at <span class="clue-highlight-2">Ms. Branston's session last year</span> on vegetarian meal preparation reflected that. — [2] — This year there is sure to be great interest in your unique approach to healthy eating.<br><br>
+            If you would like to sell copies of your book, please ship them in advance to allow time for us to set up a display. — [3] — Also, be sure to let me know if you'll need access to <span class="clue-highlight-3">a projector with a remote</span> for your presentation. — [4] —. Lastly, could you send me a short biographical profile as soon as possible for inclusion in our conference program? Thanks again.<br><br>
+            Regards,<br><br>
+            Leonard Cowden
+        </div>
+    </div>`,
+    translation: `<div class="translation-header" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #1e293b;">Bản dịch & Phân tích</div>
+    <div class="email-container">
+        <div class="email-header">
+            <div class="email-field"><span class="email-label">Đến:</span><span class="email-value">Mercedes Salinas &lt;msalinas@fithealthplanning.bm&gt;</span></div>
+            <div class="email-field"><span class="email-label">Từ:</span><span class="email-value">Leonard Cowden &lt;lcowden@srhealthcenter.bm&gt;</span></div>
+            <div class="email-field"><span class="email-label">Chủ đề:</span><span class="email-value" style="font-weight: 600;">Hội nghị Sống Khỏe Bermuda</span></div>
+            <div class="email-field" style="margin-bottom: 0;"><span class="email-label">Ngày:</span><span class="email-value">16 tháng 4</span></div>
+        </div>
+        <div class="email-body">
+            Kính gửi cô Salinas,<br><br>
+            Tôi rất vui vì <span class="clue-highlight-1">cô đã đồng ý trở thành một trong những diễn giả</span> tại Hội nghị Sống Khỏe Bermuda thường niên lần thứ hai của chúng tôi vào ngày 12 tháng 5. Tôi biết lời mời này diễn ra vào phút chót, và tôi thực sự cảm kích sự sẵn lòng thế chỗ cho Cara Branston của cô. — [1] — Kiến thức chuyên môn của cô với tư cách là một chuyên gia dinh dưỡng sẽ được người tham dự đánh giá rất cao. Lượng người tham dự đông đảo tại <span class="clue-highlight-2">buổi thuyết trình của cô Branston vào năm ngoái</span> về chuẩn bị bữa ăn chay đã phản ánh điều đó. — [2] — Năm nay chắc chắn sẽ có sự quan tâm lớn đối với phương pháp tiếp cận độc đáo của cô về ăn uống lành mạnh.<br><br>
+            Nếu cô muốn bán các bản sao cuốn sách của mình, vui lòng gửi trước để chúng tôi có thời gian chuẩn bị khu trưng bày. — [3] — Ngoài ra, hãy nhớ báo cho tôi biết nếu cô cần sử dụng <span class="clue-highlight-3">máy chiếu có điều khiển từ xa</span> cho bài thuyết trình của mình. — [4] —. Cuối cùng, cô có thể gửi cho tôi một tiểu sử ngắn càng sớm càng tốt để đưa vào chương trình hội nghị được không? Cảm ơn cô một lần nữa.<br><br>
+            Trân trọng,<br><br>
+            Leonard Cowden
+        </div>
+    </div>`,
+    questions: [
+        {
+            id: 169,
+            text: "169. Why did Mr. Cowden most likely send the e-mail?",
+            options: [
+                { text: "(A) To invite Ms. Salinas to an event", correct: false },
+                { text: "(B) To acknowledge Ms. Salinas acceptance of an offer", correct: true },
+                { text: "(C) To ask Ms. Salinas for a recommendation", correct: false },
+                { text: "(D) To propose that a session be rescheduled", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> E-mail Message (Thư điện tử xác nhận & dặn dò sự kiện).<br>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Mục đích chính:</b> Cảm ơn Ms. Salinas vì đã nhận lời làm diễn giả thế chỗ phút chót và dặn dò các công tác chuẩn bị.<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Purpose Question</span> (Mục đích gửi email).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * <i>"I'm excited that <span class='clue-highlight-1'>you have agreed to be one of the speakers</span>..."</i><br>
+                * <i>"...I truly appreciate your willingness to step in for Cara Branston."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <i>To invite Ms. Salinas to an event:</i> Sai bẫy tiến trình thời gian. Lời mời đã được đưa ra trước đó và Salinas <b>đã đồng ý (have agreed)</b> rồi, không phải giờ mới mời.<br>
+                * (B) <b>To acknowledge Ms. Salinas acceptance of an offer</b> &rarr; Chính xác. Cowden gửi email để ghi nhận/xác nhận việc Ms. Salinas chấp nhận lời mời làm diễn giả.<br>
+                * (C) <i>To ask Ms. Salinas for a recommendation:</i> Sai. Việc xin tiểu sử (<i>biographical profile</i>) không phải là thư giới thiệu.<br>
+                * (D) <i>To propose that a session be rescheduled:</i> Sai. Cụm <i>step in for</i> nghĩa là thay thế người khác, không phải đổi lịch thuyết trình.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>you have agreed to be one of the speakers</span> &rarr; <span style='color: #16a085;'>acceptance of an offer</span>.<br>
+                - <span style='color: #d35400;'>I'm excited / truly appreciate</span> &rarr; <span style='color: #16a085;'>acknowledge</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (B) To acknowledge Ms. Salinas acceptance of an offer
+            </div>`
+        },
+        {
+            id: 170,
+            text: "170. What is suggested about Ms. Branston?",
+            options: [
+                { text: "(A) She spoke at the conference last year.", correct: true },
+                { text: "(B) She wrote a popular book about nutrition.", correct: false },
+                { text: "(C) She is a colleague of Ms. Salinas.", correct: false },
+                { text: "(D) She is studying to be a dietitian.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Inference Question</span> (Suy luận thông tin nhân vật).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * <i>"The strong attendance at <span class='clue-highlight-2'>Ms. Branston's session last year</span> on vegetarian meal preparation reflected that."</i><br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án theo thứ tự:</span><br>
+                * (A) <b>She spoke at the conference last year</b> &rarr; Chính xác. Việc cô ấy có một bài thuyết trình/phiên họp (<i>session</i>) tại hội nghị năm ngoái chứng tỏ cô ấy đã làm diễn giả ở đó.<br>
+                * (B) <i>She wrote a popular book about nutrition:</i> Sai bẫy nhầm đối tượng. Đoạn đề cập bán sách là dành cho Ms. Salinas.<br>
+                * (C) <i>She is a colleague of Ms. Salinas:</i> Sai. Không có bằng chứng thể hiện hai người làm chung công ty/tổ chức.<br>
+                * (D) <i>She is studying to be a dietitian:</i> Sai bẫy danh từ. Chuyên gia dinh dưỡng (<i>dietitian</i>) là danh hiệu chuyên môn của Ms. Salinas.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>Ms. Branston's session last year</span> &rarr; <span style='color: #16a085;'>spoke at the conference last year</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) She spoke at the conference last year.
+            </div>`
+        },
+        {
+            id: 171,
+            text: "171. In which of the positions marked [1], [2], [3], and [4] does the following sentence best belong? \"It is no trouble at all to have visual equipment available.\"",
+            options: [
+                { text: "(A) [1]", correct: false },
+                { text: "(B) [2]", correct: false },
+                { text: "(C) [3]", correct: false },
+                { text: "(D) [4]", correct: true }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Sentence Insertion</span> (Chèn câu vào vị trí thích hợp).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Phân tích mối liên kết ngữ nghĩa:</span><br>
+                * Câu cần chèn: <i>"It is no trouble at all to have <b>visual equipment</b> available."</i> (Việc chuẩn bị sẵn thiết bị hình ảnh/trình chiếu hoàn toàn không có vấn đề gì).<br>
+                * Từ khóa cốt lõi: <span class='clue-highlight-3'>visual equipment</span> (thiết bị trình chiếu / hình ảnh).<br>
+                * Đặt trước vị trí <b>[4]</b> là câu: <i>"Also, be sure to let me know if you'll need access to <span class='clue-highlight-3'>a projector with a remote</span> for your presentation."</i> (Ngoài ra, hãy báo cho tôi nếu cô cần máy chiếu có điều khiển từ xa).<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Quy tắc nối từ cụ thể sang từ tổng quát (Specific &rarr; General):</span><br>
+                * <i>Projector with a remote</i> (Danh từ cụ thể) &rarr; thuộc nhóm <i>visual equipment</i> (Danh từ bao quát).<br>
+                * Đặt câu chèn vào vị trí <b>[4]</b> giúp mạch văn diễn tiến tự nhiên: Đặt câu hỏi xem đối phương có cần máy chiếu không &rarr; Trấn an rằng việc chuẩn bị thiết bị trình chiếu không hề phiền phức &rarr; Chuyển sang yêu cầu cuối cùng (<i>Lastly...</i>).<br><br>
+                <strong>Đáp án:</strong> ✅ (D) [4]
+            </div>`
+        }
+    ]
+},
+    {
+    passage: `<style>
+        .chat-container { border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; background: #f8fafc; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 1.5rem; font-family: sans-serif; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .chat-header { background: #0284c7; color: #ffffff; padding: 12px 16px; font-weight: 700; font-size: 1rem; display: flex; align-items: center; justify-content: space-between; }
+        .chat-body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+        .chat-msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; line-height: 1.5; font-size: 0.92rem; }
+        .msg-diane { background: #ffffff; border: 1px solid #e2e8f0; align-self: flex-start; border-top-left-radius: 2px; }
+        .msg-jake { background: #e0f2fe; border: 1px solid #bae6fd; align-self: flex-end; border-top-right-radius: 2px; color: #0369a1; }
+        .msg-kim { background: #fef3c7; border: 1px solid #fde68a; align-self: flex-start; border-top-left-radius: 2px; color: #92400e; }
+        .msg-meta { font-weight: 700; font-size: 0.8rem; margin-bottom: 4px; display: flex; justify-content: space-between; gap: 12px; }
+        .msg-sender { color: #0f172a; }
+        .msg-time { color: #64748b; font-weight: 400; }
+        .clue-highlight-1 { background-color: #fef08a; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #854d0e; }
+        .clue-highlight-2 { background-color: #bbf7d0; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #166534; }
+        .clue-highlight-3 { background-color: #bfdbfe; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #1e40af; }
+        .clue-highlight-4 { background-color: #fbcfe8; padding: 2px 4px; border-radius: 4px; font-weight: 600; color: #9d174d; }
+    </style>
+    <div class="chat-container">
+        <div class="chat-header">
+            <span>💬 Group Chat - Order Processing</span>
+            <span style="font-size: 0.8rem; opacity: 0.9;">11 July</span>
+        </div>
+        <div class="chat-body">
+            <div class="chat-msg msg-diane">
+                <div class="msg-meta">
+                    <span class="msg-sender">Diane Ulrich</span>
+                    <span class="msg-time">10:25</span>
+                </div>
+                Jake, has order #9829-2 been sent out yet? If not, the customer has asked us to <span class="clue-highlight-2">add item #645A</span>.
+            </div>
+            <div class="chat-msg msg-jake">
+                <div class="msg-meta">
+                    <span class="msg-sender" style="color: #0369a1;">Jake Hollis</span>
+                    <span class="msg-time">10:28</span>
+                </div>
+                That's a <span class="clue-highlight-1">customized silver ring</span>, right? The engravers usually require a minimum of 3 days to add the customer's personalized message.
+            </div>
+            <div class="chat-msg msg-diane">
+                <div class="msg-meta">
+                    <span class="msg-sender">Diane Ulrich</span>
+                    <span class="msg-time">10:29</span>
+                </div>
+                Can you get it any sooner? The customer needs it as soon as possible.
+            </div>
+            <div class="chat-msg msg-jake">
+                <div class="msg-meta">
+                    <span class="msg-sender" style="color: #0369a1;">Jake Hollis</span>
+                    <span class="msg-time">10:31</span>
+                </div>
+                Let me check with someone from the engraving department.
+            </div>
+            <div class="chat-msg msg-jake">
+                <div class="msg-meta">
+                    <span class="msg-sender" style="color: #0369a1;">Jake Hollis</span>
+                    <span class="msg-time">10:33</span>
+                </div>
+                Kim, can you <span class="clue-highlight-3">do a rush job</span> on a ring? It's item #645A, for order #9829-2.
+            </div>
+            <div class="chat-msg msg-kim">
+                <div class="msg-meta">
+                    <span class="msg-sender" style="color: #92400e;">Kim O'Dell</span>
+                    <span class="msg-time">10:34</span>
+                </div>
+                How soon do you need it? <span class="clue-highlight-4">Is tomorrow OK?</span>
+            </div>
+            <div class="chat-msg msg-diane">
+                <div class="msg-meta">
+                    <span class="msg-sender">Diane Ulrich</span>
+                    <span class="msg-time">10:35</span>
+                </div>
+                Yes, <span class="clue-highlight-4">that works</span>. Thank you both for your help!
+            </div>
+        </div>
+    </div>`,
+    translation: `<div class="translation-header" style="font-weight: bold; font-size: 1.1rem; margin-bottom: 10px; color: #1e293b;">Bản dịch & Phân tích</div>
+    <div class="chat-container">
+        <div class="chat-header">
+            <span>💬 Trò chuyện nhóm - Xử lý đơn hàng</span>
+            <span style="font-size: 0.8rem; opacity: 0.9;">11 tháng 7</span>
+        </div>
+        <div class="chat-body">
+            <div class="chat-msg msg-diane">
+                <div class="msg-meta">
+                    <span class="msg-sender">Diane Ulrich</span>
+                    <span class="msg-time">10:25</span>
+                </div>
+                Jake, đơn hàng #9829-2 đã được gửi đi chưa? Nếu chưa, khách hàng đã yêu cầu chúng ta <span class="clue-highlight-2">thêm sản phẩm #645A</span> vào.
+            </div>
+            <div class="chat-msg msg-jake">
+                <div class="msg-meta">
+                    <span class="msg-sender" style="color: #0369a1;">Jake Hollis</span>
+                    <span class="msg-time">10:28</span>
+                </div>
+                Đó là một <span class="clue-highlight-1">chiếc nhẫn bạc tùy chỉnh</span> đúng không? Bộ phận khắc thường yêu cầu tối thiểu 3 ngày để thêm thông điệp cá nhân hóa của khách hàng.
+            </div>
+            <div class="chat-msg msg-diane">
+                <div class="msg-meta">
+                    <span class="msg-sender">Diane Ulrich</span>
+                    <span class="msg-time">10:29</span>
+                </div>
+                Cậu có thể hoàn thành sớm hơn không? Khách hàng cần nó càng sớm càng tốt.
+            </div>
+            <div class="chat-msg msg-jake">
+                <div class="msg-meta">
+                    <span class="msg-sender" style="color: #0369a1;">Jake Hollis</span>
+                    <span class="msg-time">10:31</span>
+                </div>
+                Để tôi kiểm tra với ai đó ở bộ phận khắc.
+            </div>
+            <div class="chat-msg msg-jake">
+                <div class="msg-meta">
+                    <span class="msg-sender" style="color: #0369a1;">Jake Hollis</span>
+                    <span class="msg-time">10:33</span>
+                </div>
+                Kim, cô có thể <span class="clue-highlight-3">làm gấp</span> một chiếc nhẫn không? Đó là mã hàng #645A, cho đơn hàng #9829-2.
+            </div>
+            <div class="chat-msg msg-kim">
+                <div class="msg-meta">
+                    <span class="msg-sender" style="color: #92400e;">Kim O'Dell</span>
+                    <span class="msg-time">10:34</span>
+                </div>
+                Cậu cần sớm thế nào? <span class="clue-highlight-4">Ngày mai có được không?</span>
+            </div>
+            <div class="chat-msg msg-diane">
+                <div class="msg-meta">
+                    <span class="msg-sender">Diane Ulrich</span>
+                    <span class="msg-time">10:35</span>
+                </div>
+                Vâng, <span class="clue-highlight-4">thế thì được</span>. Cảm ơn cả hai người đã giúp đỡ!
+            </div>
+        </div>
+    </div>`,
+    questions: [
+        {
+            id: 172,
+            text: "172. What type of products does the store sell?",
+            options: [
+                { text: "(A) Books", correct: false },
+                { text: "(B) Jewelry", correct: true },
+                { text: "(C) Flowers", correct: false },
+                { text: "(D) Appliances", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Dạng văn bản:</b> Instant Messaging Chain (Nhóm chat nội bộ xử lý đơn hàng).<br>
+                <b style='color: #2c3e50; font-size: 1.1rem;'>🎯 Mục đích chính:</b> Thêm món hàng cần khắc (nhẫn bạc) vào đơn hàng có sẵn và đàm phán thời gian làm gấp.<br><br>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Inference Question / Specific to Category</span> (Suy luận nhóm sản phẩm).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * Tin nhắn [10:28] từ Jake Hollis: <i>"That's a <span class='clue-highlight-1'>customized silver ring</span>, right?"</i> (Đó là chiếc nhẫn bạc được tùy chỉnh đúng không?).<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>Books:</i> Sai. Không có manh mối liên quan đến sách báo hay xuất bản.<br>
+                * (B) <b>Jewelry</b> &rarr; Chính xác. Nhẫn bạc (<i>silver ring</i>) thuộc nhóm mặt hàng trang sức (<i>jewelry</i>).<br>
+                * (C) <i>Flowers:</i> Sai. Không có từ khóa liên quan đến hoa cắm/hoa tươi.<br>
+                * (D) <i>Appliances:</i> Sai. Không có từ khóa về đồ gia dụng hay thiết bị điện.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>customized silver ring</span> &rarr; <span style='color: #16a085;'>Jewelry</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (B) Jewelry
+            </div>`
+        },
+        {
+            id: 173,
+            text: "173. What does the customer want to do?",
+            options: [
+                { text: "(A) Change an order", correct: true },
+                { text: "(B) Update a delivery address", correct: false },
+                { text: "(C) Receive a refund", correct: false },
+                { text: "(D) Choose a different shipping method", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Detail Question / Paraphrasing</span> (Chi tiết yêu cầu khách hàng).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * Tin nhắn [10:25] từ Diane Ulrich: <i>"...the customer has asked us to <span class='clue-highlight-2'>add item #645A</span>."</i> (khách hàng yêu cầu chúng ta thêm món hàng #645A vào đơn).<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <b>Change an order</b> &rarr; Chính xác. Thêm một sản phẩm mới (<i>add item #645A</i>) vào đơn hàng đã đặt chính là hành động thay đổi/điều chỉnh đơn hàng.<br>
+                * (B) <i>Update a delivery address:</i> Sai. Bài không đề cập gì đến địa chỉ giao hàng.<br>
+                * (C) <i>Receive a refund:</i> Sai. Khách hàng muốn mua thêm đồ chứ không phải đòi hoàn tiền.<br>
+                * (D) <i>Choose a different shipping method:</i> Sai bẫy. Diane chỉ kiểm tra đơn đã xuất đi chưa (<i>sent out yet</i>), chứ khách không đổi phương thức vận chuyển.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>add item #645A to order</span> &rarr; <span style='color: #16a085;'>Change an order</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) Change an order
+            </div>`
+        },
+        {
+            id: 174,
+            text: "174. Why does Mr. Hollis contact Ms. O’Dell?",
+            options: [
+                { text: "(A) To ask if some work can be completed faster than usual", correct: true },
+                { text: "(B) To find out when an order will be shipped", correct: false },
+                { text: "(C) To find out when a meeting will be held", correct: false },
+                { text: "(D) To alert her to an error in a previous message", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Purpose Question</span> (Mục đích liên lạc).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * Tin nhắn [10:33] từ Jake Hollis gửi Kim O'Dell: <i>"Kim, can you <span class='clue-highlight-3'>do a rush job</span> on a ring?"</i> (Kim, cô có thể làm gấp một chiếc nhẫn được không?).<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <b>To ask if some work can be completed faster than usual</b> &rarr; Chính xác. <i>Do a rush job</i> (làm việc gấp) đồng nghĩa với việc hoàn thành công việc nhanh hơn bình thường (quy trình chuẩn cần 3 ngày).<br>
+                * (B) <i>To find out when an order will be shipped:</i> Sai bẫy đối tượng. Diane là người hỏi Jake về thời gian gửi đơn, chứ Jake không hỏi Kim câu này.<br>
+                * (C) <i>To find out when a meeting will be held:</i> Sai. Không có cuộc họp nào được đề cập.<br>
+                * (D) <i>To alert her to an error in a previous message:</i> Sai. Không có thông báo lỗi sai nào.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>do a rush job</span> &rarr; <span style='color: #16a085;'>completed faster than usual</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (A) To ask if some work can be completed faster than usual
+            </div>`
+        },
+        {
+            id: 175,
+            text: "175. At 10:35, what does Ms. Ulrich most likely mean when she writes, “that works”?",
+            options: [
+                { text: "(A) She plans to interview someone for a job.", correct: false },
+                { text: "(B) She is pleased that the equipment is functioning properly.", correct: false },
+                { text: "(C) The customer will be satisfied if the item is engraved tomorrow.", correct: true },
+                { text: "(D) Some new items will be chosen for a catalog by the end of the day.", correct: false }
+            ],
+            explanation: `<div class='exp-clue' style='line-height: 1.6;'>
+                <span style='color: #e67e22; font-weight: bold;'>1. Dạng câu hỏi:</span> 👉 <span style='color: #e67e22;'>Meaning in Context</span> (Ngữ cảnh hàm ý).<br><br>
+                <span style='color: #27ae60; font-weight: bold;'>2. Evidence:</span><br>
+                * Tin nhắn [10:34] từ Kim O'Dell: <i>"<span class='clue-highlight-4'>Is tomorrow OK?</span>"</i> (Ngày mai có được không?).<br>
+                * Tin nhắn [10:35] từ Diane Ulrich: <i>"Yes, <span class='clue-highlight-4'>that works</span>. Thank you both for your help!"</i> (Vâng, thế thì được. Cảm ơn cả hai người!).<br><br>
+                <span style='color: #2980b9; font-weight: bold;'>3. Phân tích các đáp án:</span><br>
+                * (A) <i>She plans to interview someone for a job:</i> Sai hoàn toàn ngữ cảnh.<br>
+                * (B) <i>She is pleased that the equipment is functioning properly:</i> Sai bẫy từ đa nghĩa "work". Trong tiếng Anh giao tiếp, <i>"that works"</i> nghĩa là "phương án đó phù hợp/được", không liên quan đến máy móc hoạt động (functioning).<br>
+                * (C) <b>The customer will be satisfied if the item is engraved tomorrow</b> &rarr; Chính xác. Diane xác nhận thời hạn ngày mai mà Kim đưa ra là chấp nhận được và thỏa mãn nhu cầu cần gấp của khách hàng.<br>
+                * (D) <i>Some new items will be chosen for a catalog...:</i> Sai. Không liên quan đến danh mục sản phẩm.<br><br>
+                <span style='color: #8e44ad; font-weight: bold;'>🔄 Paraphrase từ ETS:</span><br>
+                - <span style='color: #d35400;'>Is tomorrow OK? -> Yes, that works</span> &rarr; <span style='color: #16a085;'>satisfied if the item is engraved tomorrow</span>.<br><br>
+                <strong>Đáp án:</strong> ✅ (C) The customer will be satisfied if the item is engraved tomorrow.
+            </div>`
+        }
+    ]
+},
+    {
         passage: `
                 <div class="doc-box">
                     <div class="email-header">
@@ -838,7 +1863,7 @@
             { id: 180, text: "What package does Mr. Wickler likely want?", options: { A: "Package 1", B: "Package 2", C: "Package 3", D: "Package 4" }, correct: "B" }
         ]
     },
-    {passageId: "p7-12",
+    {
         passage: `
                 <div class="doc-box">
                     <div class="email-header">
@@ -872,7 +1897,7 @@
             { id: 185, text: "What will Ms. Bonsky likely do on August 15?", options: { A: "Submit assignment", B: "Travel to Albany", C: "Participate in training", D: "Meet Mr. Chalmers" }, correct: "B" }
         ]
     },
-    {passageId: "p7-13",
+    {
         passage: `
                 <div class="doc-box">
                     <div style="background: #1e3a8a; color: #fff; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px;">
@@ -917,7 +1942,7 @@
             { id: 190, text: "What is indicated about Ms. Murray?", options: { A: "She is from Aberdeen", B: "Newly trained", C: "Speaks several languages", D: "Local student" }, correct: "A" }
         ]
     },
-    {passageId: "p7-14",
+    {
         passage: `
                 <div class="doc-box">
                     <div style="text-align: center; border-bottom: 2px solid #cbd5e1; margin-bottom: 20px; padding-bottom: 10px;">
@@ -993,7 +2018,7 @@
             { id: 195, text: "What is true about Mr. Gupta?", options: { A: "Opened plant recently", B: "Filled Employer Application", C: "Preferred this conference", D: "Topic easy to understand" }, correct: "B" }
         ]
     },
-    {passageId: "p7-15",
+    {
         passage: `
                 <div class="doc-box">
                     <h3 style="text-align: center; color: #1e3a8a; margin-bottom: 15px; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px;">Cordova Times</h3>
