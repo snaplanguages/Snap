@@ -1092,7 +1092,7 @@ let timerInterval = null;
 let autoSaveInterval = null;
 let isSubmitted = false;
 let flaggedQuestions = {}; // Lưu danh sách các câu đã được đánh dấu Flag review
-let selectedPassages = [1-3]; // ĐÃ SỬA: Thay thế lỗi cú pháp [1-3] bằng mảng chuẩn [1-3] [4]
+let selectedPassages = Array.of(1, 2, 3); // ĐÃ SỬA: Thay thế lỗi cú pháp [1-3] bằng mảng chuẩn [1-3] [4]
 let currentActiveTab = 1; // Tab Passage đang active hiện tại
 
 // Phân tích tham số ?test=test12 trên URL để tải động file JS tương ứng [4]
@@ -1391,20 +1391,21 @@ if (toggleBtn) toggleBtn.classList.remove("active");
 });
 
 function showMenu(x, y, mode) {
-menu.style.display = "block";
-let mw = menu.offsetWidth; let mh = menu.offsetHeight;
-menu.style.left = (x + mw > window.innerWidth ? window.innerWidth - mw - 10 : x) + "px";
-menu.style.top = (y + mh > window.innerHeight ? window.innerHeight - mh - 10 : y) + "px";
-// ĐÃ SỬA: Thay thế toàn bộ lỗi truy cập menu.children.style trực tiếp bằng chỉ mục chuẩn menu.children[index].style [7, 8]
-if (mode === "add") {
-menu.children.style.display = "block"; // Nút Highlight
-menu.children[1].style.display = "block"; // Nút Thêm Ghi chú
-menu.children[2].style.display = "none";  // Nút Xóa Highlight
-} else {
-menu.children.style.display = "none";
-menu.children[1].style.display = "none";
-menu.children[2].style.display = "block";
-}
+    menu.style.display = "block";
+    let mw = menu.offsetWidth; let mh = menu.offsetHeight;
+    menu.style.left = (x + mw > window.innerWidth ? window.innerWidth - mw - 10 : x) + "px";
+    menu.style.top = (y + mh > window.innerHeight ? window.innerHeight - mh - 10 : y) + "px";
+    
+    // ĐÃ SỬA: Đã thêm chỉ mục  chính xác
+    if (mode === "add") {
+        menu.children.style.display = "block"; // Nút Highlight
+        menu.children[5].style.display = "block"; // Nút Thêm Ghi chú
+        menu.children[6].style.display = "none";  // Nút Xóa Highlight
+    } else {
+        menu.children.style.display = "none";
+        menu.children[5].style.display = "none";
+        menu.children[6].style.display = "block";
+    }
 }
 
 function doHighlight() {
@@ -1525,106 +1526,113 @@ function closeStartConfirmModal() { document.getElementById('startConfirmOverlay
 
 // Khởi chạy bài test thực tế và reset triệt để trạng thái cũ (giao diện, highlight, chế độ xem, flag)
 function startTestActual() {
-document.getElementById('startConfirmOverlay').style.display = 'none';
-if (currentMode === 'practice') {
-selectedPassages = Array.from(document.querySelectorAll('.passage-cb:checked')).map(cb => parseInt(cb.value));
-let minutes = parseInt(document.getElementById('timeInput').value);
-if(isNaN(minutes) || minutes < 1) minutes = selectedPassages.length * 20;
-testDuration = minutes * 60;
-} else {
-selectedPassages = [1-3]; // ĐÃ SỬA: Sửa lỗi cú pháp [1-3] thành mảng số [1-3] [9]
-testDuration = 60 * 60;
-}
-initialDuration = testDuration;
-document.getElementById('setupOverlay').style.display = 'none';
-// RESET HOÀN TOÀN TRẠNG THÁI HIGHLIGHT VÀ BÀI THI MỚI
-isSubmitted = false;
-flaggedQuestions = {};
-document.body.classList.remove("submitted", "review-mode");
-document.getElementById("timerBox").classList.remove("alert-urgent"); // Reset cảnh báo đỏ
-// Hiển thị các tab passage được chọn
-[1-3].forEach(p => { // ĐÃ SỬA: Sửa [1-3] thành mảng lặp chuẩn [1-3] [10]
-let tab = document.getElementById(`tab-btn-${p}`);
-if(tab) tab.style.display = selectedPassages.includes(p) ? 'inline-block' : 'none';
-});
-// Hiển thị các câu hỏi tương ứng trong bảng điều hướng footer
-for (let i = 1; i <= testData.totalQuestions; i++) {
-let group = i <= 13 ? 1 : i <= 26 ? 2 : 3;
-let dot = document.getElementById(`nav-${i}`);
-if (dot) dot.style.display = selectedPassages.includes(group) ? 'flex' : 'none';
-}
-if (testData) {
-initializeTestTemplate(testData); // Vẽ lại giao diện sạch
-}
-// Thiết lập chuyển sang tab được chọn đầu tiên
-switchTab(selectedPassages); // ĐÃ SỬA: Chuyển trực tiếp sang id phần tử đầu tiên thay vì truyền cả mảng [11]
-// TIỆN ÍCH 1: KIỂM TRA BẢN NHÁP CÓ SẴN TRONG LOCAL STORAGE KHÔNG
-const draftKey = `draft_ielts_${testData.dbPrefix}`;
-const savedDraft = localStorage.getItem(draftKey);
-if (savedDraft) {
-document.getElementById("recoveryConfirmOverlay").style.display = "flex";
-} else {
-startTimer();
-startAutoSaveRoutine();
-}
+    document.getElementById('startConfirmOverlay').style.display = 'none';
+    if (currentMode === 'practice') {
+        selectedPassages = Array.from(document.querySelectorAll('.passage-cb:checked')).map(cb => parseInt(cb.value));
+        let minutes = parseInt(document.getElementById('timeInput').value);
+        if(isNaN(minutes) || minutes < 1) minutes = selectedPassages.length * 20;
+        testDuration = minutes * 60;
+    } else {
+        selectedPassages = [5-7]; // ĐÃ SỬA: Dùng mảng chuẩn [5-7] thay vì lỗi cú pháp
+        testDuration = 60 * 60;
+    }
+    initialDuration = testDuration;
+    document.getElementById('setupOverlay').style.display = 'none';
+    isSubmitted = false;
+    flaggedQuestions = {};
+    document.body.classList.remove("submitted", "review-mode");
+    document.getElementById("timerBox").classList.remove("alert-urgent");
+    
+    // Hiển thị các tab passage được chọn
+    [5-7].forEach(p => { // ĐÃ SỬA: Thay thế vòng lặp
+        let tab = document.getElementById(`tab-btn-${p}`);
+        if(tab) tab.style.display = selectedPassages.includes(p) ? 'inline-block' : 'none';
+    });
+    
+    // Hiển thị các câu hỏi tương ứng trong bảng điều hướng footer
+    for (let i = 1; i <= testData.totalQuestions; i++) {
+        let group = i <= 13 ? 1 : i <= 26 ? 2 : 3;
+        let dot = document.getElementById(`nav-${i}`);
+        if (dot) dot.style.display = selectedPassages.includes(group) ? 'flex' : 'none';
+    }
+    if (testData) {
+        initializeTestTemplate(testData); // Vẽ lại giao diện sạch
+    }
+    
+    // ĐÃ SỬA: Chuyển trực tiếp sang phần tử đầu tiên của mảng thay vì truyền cả mảng
+    switchTab(selectedPassages); 
+    
+    const draftKey = `draft_ielts_${testData.dbPrefix}`;
+    const savedDraft = localStorage.getItem(draftKey);
+    if (savedDraft) {
+        document.getElementById("recoveryConfirmOverlay").style.display = "flex";
+    } else {
+        startTimer();
+        startAutoSaveRoutine();
+    }
 }
 
-// TIỆN ÍCH 1: CÁC HÀM XỬ LÝ KHÔI PHỤC NHÁP (DRAFT RECOVERY)
 function acceptDraftRecovery() {
-document.getElementById("recoveryConfirmOverlay").style.display = "none";
-const draftKey = `draft_ielts_${testData.dbPrefix}`;
-const savedDraft = JSON.parse(localStorage.getItem(draftKey));
-if (savedDraft) {
-testDuration = savedDraft.remainingTime;
-selectedPassages = savedDraft.selectedPassages || [1-3]; // ĐÃ SỬA: Sửa [1-3] thành [1-3] [12]
-// Khôi phục hiển thị tab passage
-[1-3].forEach(p => { // ĐÃ SỬA: Sửa [1-3] thành [1-3] [13]
-let tab = document.getElementById(`tab-btn-${p}`);
-if(tab) tab.style.display = selectedPassages.includes(p) ? 'inline-block' : 'none';
-});
-// Khôi phục hiển thị điều hướng footer
-for (let i = 1; i <= testData.totalQuestions; i++) {
-let group = i <= 13 ? 1 : i <= 26 ? 2 : 3;
-let dot = document.getElementById(`nav-${i}`);
-if (dot) dot.style.display = selectedPassages.includes(group) ? 'flex' : 'none';
-}
-// Khôi phục Highlight & Note riêng cho cả 3 Passage
-const highlights = savedDraft.highlightsHtml || {};
-[1-3].forEach(p => { // ĐÃ SỬA: Sửa [1-3] thành [1-3] [14]
-const passageContainer = document.getElementById(`text-p${p}`);
-if (passageContainer && highlights[p]) {
-passageContainer.innerHTML = highlights[p];
-}
-});
-// Khôi phục danh sách Flag 🚩
-flaggedQuestions = savedDraft.flags || {};
-for (let qNum in flaggedQuestions) {
-if (flaggedQuestions[qNum]) {
-const btn = document.getElementById(`flag-btn-${qNum}`);
-const dot = document.getElementById(`nav-${qNum}`);
-if (btn) btn.classList.add('active');
-if (dot) dot.classList.add('flagged');
-}
-}
-// Khôi phục các đáp án đã điền
-const userAnswers = savedDraft.answers || {};
-for (let key in userAnswers) {
-const qNum = key.replace('ans-', '');
-const val = userAnswers[key];
-// Tìm radio
-const radio = document.querySelector(`input[name="mcq-${qNum}"][value="${val}"]`);
-if (radio) {
-radio.checked = true;
-} else {
-const el = document.getElementById(`ans-${qNum}`);
-if (el) el.value = val;
-}
-updateNav(qNum);
-}
-}
-switchTab(selectedPassages); // ĐÃ SỬA: Chuyển sang id phần tử đầu tiên [15]
-startTimer();
-startAutoSaveRoutine();
+    document.getElementById("recoveryConfirmOverlay").style.display = "none";
+    const draftKey = `draft_ielts_${testData.dbPrefix}`;
+    const savedDraft = JSON.parse(localStorage.getItem(draftKey));
+    if (savedDraft) {
+        testDuration = savedDraft.remainingTime;
+        selectedPassages = savedDraft.selectedPassages || [5-7]; // ĐÃ SỬA: Đổi [5-7] sang [5-7]
+        
+        // Khôi phục hiển thị tab passage
+        [5-7].forEach(p => { // ĐÃ SỬA: Đổi [5-7] sang [5-7]
+            let tab = document.getElementById(`tab-btn-${p}`);
+            if(tab) tab.style.display = selectedPassages.includes(p) ? 'inline-block' : 'none';
+        });
+        
+        // Khôi phục hiển thị điều hướng footer
+        for (let i = 1; i <= testData.totalQuestions; i++) {
+            let group = i <= 13 ? 1 : i <= 26 ? 2 : 3;
+            let dot = document.getElementById(`nav-${i}`);
+            if (dot) dot.style.display = selectedPassages.includes(group) ? 'flex' : 'none';
+        }
+        
+        // Khôi phục Highlight & Note riêng cho cả 3 Passage
+        const highlights = savedDraft.highlightsHtml || {};
+        [5-7].forEach(p => { // ĐÃ SỬA: Đổi [5-7] sang [5-7]
+            const passageContainer = document.getElementById(`text-p${p}`);
+            if (passageContainer && highlights[p]) {
+                passageContainer.innerHTML = highlights[p];
+            }
+        });
+        
+        // Khôi phục danh sách Flag 🚩
+        flaggedQuestions = savedDraft.flags || {};
+        for (let qNum in flaggedQuestions) {
+            if (flaggedQuestions[qNum]) {
+                const btn = document.getElementById(`flag-btn-${qNum}`);
+                const dot = document.getElementById(`nav-${qNum}`);
+                if (btn) btn.classList.add('active');
+                if (dot) dot.classList.add('flagged');
+            }
+        }
+        
+        // Khôi phục các đáp án đã điền
+        const userAnswers = savedDraft.answers || {};
+        for (let key in userAnswers) {
+            const qNum = key.replace('ans-', '');
+            const val = userAnswers[key];
+            const radio = document.querySelector(`input[name="mcq-${qNum}"][value="${val}"]`);
+            if (radio) {
+                radio.checked = true;
+            } else {
+                const el = document.getElementById(`ans-${qNum}`);
+                if (el) el.value = val;
+            }
+            updateNav(qNum);
+        }
+    }
+    
+    // ĐÃ SỬA: Chuyển trực tiếp sang ID phần tử đầu tiên
+    switchTab(selectedPassages); 
+    startTimer();
+    startAutoSaveRoutine();
 }
 
 function rejectDraftRecovery() {
@@ -1635,42 +1643,43 @@ startTimer();
 startAutoSaveRoutine();
 }
 
-// TIỆN ÍCH 1: TỰ ĐỘNG LƯU TRẠNG THÁI VÀO LOCAL STORAGE
 function saveDraftToLocalStorage() {
-if (isSubmitted || !testData) return;
-const draftKey = `draft_ielts_${testData.dbPrefix}`;
-let userAnswersDict = {};
-const qData = testData;
-for (let i = 1; i <= qData.totalQuestions; i++) {
-let userAns = "";
-const radioChecked = document.querySelector(`input[name="mcq-${i}"]:checked`);
-if (radioChecked) {
-userAns = radioChecked.value.trim().toUpperCase();
-} else {
-let el = document.getElementById(`ans-${i}`);
-if (el) userAns = el.value.trim();
-}
-if (userAns !== "") {
-userAnswersDict['ans-' + i] = userAns;
-}
-}
-// Trích xuất highlight của cả 3 passage
-let highlightsDict = {};
-[1-3].forEach(p => { // ĐÃ SỬA: Sửa [1-3] thành mảng [1-3] [16]
-const passageContainer = document.getElementById(`text-p${p}`);
-if (passageContainer) {
-highlightsDict[p] = passageContainer.innerHTML;
-}
-});
-const draftData = {
-remainingTime: testDuration,
-selectedPassages: selectedPassages,
-answers: userAnswersDict,
-flags: flaggedQuestions,
-highlightsHtml: highlightsDict,
-timestamp: Date.now()
-};
-localStorage.setItem(draftKey, JSON.stringify(draftData));
+    if (isSubmitted || !testData) return;
+    const draftKey = `draft_ielts_${testData.dbPrefix}`;
+    let userAnswersDict = {};
+    const qData = testData;
+    for (let i = 1; i <= qData.totalQuestions; i++) {
+        let userAns = "";
+        const radioChecked = document.querySelector(`input[name="mcq-${i}"]:checked`);
+        if (radioChecked) {
+            userAns = radioChecked.value.trim().toUpperCase();
+        } else {
+            let el = document.getElementById(`ans-${i}`);
+            if (el) userAns = el.value.trim();
+        }
+        if (userAns !== "") {
+            userAnswersDict['ans-' + i] = userAns;
+        }
+    }
+    
+    // Trích xuất highlight của cả 3 passage
+    let highlightsDict = {};
+    [5-7].forEach(p => { // ĐÃ SỬA: Đổi [5-7] sang [5-7]
+        const passageContainer = document.getElementById(`text-p${p}`);
+        if (passageContainer) {
+            highlightsDict[p] = passageContainer.innerHTML;
+        }
+    });
+    
+    const draftData = {
+        remainingTime: testDuration,
+        selectedPassages: selectedPassages,
+        answers: userAnswersDict,
+        flags: flaggedQuestions,
+        highlightsHtml: highlightsDict,
+        timestamp: Date.now()
+    };
+    localStorage.setItem(draftKey, JSON.stringify(draftData));
 }
 
 function bindInputsForAutoSave() {
@@ -2099,11 +2108,11 @@ let timestamp = Date.now();
 let idLuotThi = window.currentUserUid + "_" + qData.dbPrefix + "_" + partName.replace(/\s+/g, '') + "_" + timestamp;
 // Trích xuất highlight của cả 3 bài đọc để lưu trữ đồng thời
 let highlightsDict = {};
-[1-3].forEach(p => { // ĐÃ SỬA: Sửa lỗi cú pháp [1-3] thành mảng [1-3] [18]
-const passageContainer = document.getElementById(`text-p${p}`);
-if (passageContainer) {
-highlightsDict[p] = passageContainer.innerHTML;
-  }
+[5-7].forEach(p => { // ĐÃ SỬA: Đổi [5-7] sang [5-7]
+    const passageContainer = document.getElementById(`text-p${p}`);
+    if (passageContainer) {
+        highlightsDict[p] = passageContainer.innerHTML;
+    }
 });
 
 const draftData = {
@@ -2664,68 +2673,61 @@ loading.style.display = "none";
 });
 }
 
-// Xem lại bài làm cũ trong lịch sử - Khôi phục toàn bộ Highlight của cả 3 Passage
 window.xemLaiLichSu = function(docId) {
-let attempt = window.historyDataList.find(d => d.id === docId);
-if(!attempt || !testData) return;
-document.getElementById('setupOverlay').style.display = 'none';
-
-// Kế thừa các passage được làm trong lượt thi cũ
-if (attempt.partName === "Full Test") {
-  selectedPassages = [1-3];
-} else if (attempt.partName.startsWith("Passage")) {
-  let pNum = parseInt(attempt.partName.replace("Passage ", ""));
-  selectedPassages = [pNum];
-} else {
-  selectedPassages = [1-3];
-}
-
-// Ẩn hiện các tab passage tương ứng
-[1-3].forEach(p => {
-  let tab = document.getElementById(`tab-btn-${p}`);
-  if(tab) tab.style.display = selectedPassages.includes(p) ? 'inline-block' : 'none';
-});
-
-// Khôi phục Highlight & Note cả 3 bài đọc từ Firebase
-const highlights = attempt.userHighlights || {};
-[1-3].forEach(p => {
-  const passageContainer = document.getElementById(`text-p${p}`);
-  if (passageContainer && highlights[p]) {
-    passageContainer.innerHTML = highlights[p];
-  } else if (passageContainer) {
-    const orig = testData.passages.find(pass => pass.id === p);
-    if (orig) {
-      passageContainer.innerHTML = `<h2 class="passage-title">${orig.passageTitle}</h2>${orig.passageContent}`;
+    let attempt = window.historyDataList.find(d => d.id === docId);
+    if(!attempt || !testData) return;
+    document.getElementById('setupOverlay').style.display = 'none';
+    
+    // Kế thừa các passage được làm trong lượt thi cũ
+    if (attempt.partName === "Full Test") {
+        selectedPassages = [5-7]; // ĐÃ SỬA: Đổi sang mảng số chuẩn
+    } else if (attempt.partName.startsWith("Passage")) {
+        let pNum = parseInt(attempt.partName.replace("Passage ", ""));
+        selectedPassages = [pNum];
+    } else {
+        selectedPassages = [5-7];
     }
-  }
-});
-
-let ans = attempt.userAnswers || {};
-const qData = testData;
-
-// Khôi phục tất cả đáp án đã điền
-for(let i = 1; i <= qData.totalQuestions; i++) {
-  let val = ans['ans-'+i] || '';
-  
-  // Tìm radio
-  let radioChecked = document.querySelector(`input[name="mcq-${i}"]:checked`);
-  if (radioChecked) {
-    radioChecked.checked = false; // Reset radio cũ
-  }
-  let radios = document.querySelectorAll(`input[name="mcq-${i}"]`);
-  if (radios.length > 0) {
-    radios.forEach(r => {
-      if(r.value.toUpperCase() === val.toUpperCase()) r.checked = true;
+    
+    // Ẩn hiện các tab passage tương ứng
+    [5-7].forEach(p => { // ĐÃ SỬA: Đổi sang [5-7]
+        let tab = document.getElementById(`tab-btn-${p}`);
+        if(tab) tab.style.display = selectedPassages.includes(p) ? 'inline-block' : 'none';
     });
-  } else {
-    let el = document.getElementById(`ans-${i}`);
-    if (el) el.value = val;
-  }
-  updateNav(i);
-}
-
-switchTab(selectedPassages);
-executeSubmit(true); // Review Mode
+    
+    // Khôi phục Highlight & Note cả 3 bài đọc từ Firebase
+    const highlights = attempt.userHighlights || {};
+    [5-7].forEach(p => { // ĐÃ SỬA: Đổi sang [5-7]
+        const passageContainer = document.getElementById(`text-p${p}`);
+        if (passageContainer && highlights[p]) {
+            passageContainer.innerHTML = highlights[p];
+        }
+    });
+    
+    let ans = attempt.userAnswers || {};
+    const qData = testData;
+    // Khôi phục tất cả đáp án đã điền
+    for(let i = 1; i <= qData.totalQuestions; i++) {
+        let val = ans['ans-'+i] || '';
+        // Tìm radio
+        let radioChecked = document.querySelector(`input[name="mcq-${i}"]:checked`);
+        if (radioChecked) {
+            radioChecked.checked = false; // Reset radio cũ
+        }
+        let radios = document.querySelectorAll(`input[name="mcq-${i}"]`);
+        if (radios.length > 0) {
+            radios.forEach(r => {
+                if(r.value.toUpperCase() === val.toUpperCase()) r.checked = true;
+            });
+        } else {
+            let el = document.getElementById(`ans-${i}`);
+            if (el) el.value = val;
+        }
+        updateNav(i);
+    }
+    
+    // ĐÃ SỬA: Chuyển sang ID phần tử đầu tiên của mảng
+    switchTab(selectedPassages); 
+    executeSubmit(true); // Chạy chế độ Review Mode
 }
 
 // Xóa bản ghi lịch sử bài làm
