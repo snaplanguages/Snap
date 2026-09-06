@@ -288,19 +288,19 @@ window.testData = {
     </thead>
     <tbody>
       <tr>
-        <td><strong>14.</strong> <input type="text" class="ielts-inline-input" id="ans-14" oninput="updateNav(14)" placeholder="e.g. Genetic"> background from parents and family</td>
+        <td><strong>14.</strong> <input type="text" class="ielts-inline-input" id="ans-14" oninput="updateNav(14)" placeholder="..."> background from parents and family</td>
         <td>Including to all of siblings</td>
         <td>40%-50%</td>
       </tr>
       <tr>
         <td>Shared Environment</td>
-        <td>to <strong>15.</strong> <input type="text" class="ielts-inline-input" id="ans-15" oninput="updateNav(15)" placeholder="e.g. all of siblings"></td>
-        <td>less than <strong>16.</strong> <input type="text" class="ielts-inline-input" id="ans-16" oninput="updateNav(16)" placeholder="e.g. 10%"></td>
+        <td>to <strong>15.</strong> <input type="text" class="ielts-inline-input" id="ans-15" oninput="updateNav(15)" placeholder="..."></td>
+        <td>less than <strong>16.</strong> <input type="text" class="ielts-inline-input" id="ans-16" oninput="updateNav(16)" placeholder="..."></td>
       </tr>
       <tr>
-        <td><strong>17.</strong> <input type="text" class="ielts-inline-input" id="ans-17" oninput="updateNav(17)" placeholder="e.g. Non-shared environment"></td>
+        <td><strong>17.</strong> <input type="text" class="ielts-inline-input" id="ans-17" oninput="updateNav(17)" placeholder="..."></td>
         <td>to part of siblings</td>
-        <td><strong>18.</strong> <input type="text" class="ielts-inline-input" id="ans-18" oninput="updateNav(18)" placeholder="e.g. 40%"> - 50%</td>
+        <td><strong>18.</strong> <input type="text" class="ielts-inline-input" id="ans-18" oninput="updateNav(18)" placeholder="...."> - 50%</td>
       </tr>
     </tbody>
   </table>
