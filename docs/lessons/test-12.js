@@ -1,4 +1,4 @@
-// tệp test12-reading.js\nwindow.testData = {
+window.testData = {
   "testName": "Test 12",
   "dbPrefix": "test12",
   "title": "IELTS Reading Full Test 12",
