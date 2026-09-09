@@ -691,47 +691,150 @@ function finishTest(isRestoring = false) {
   }
 }
 
-function openDetail(idx) {
-  const q = questions[idx];
-  document.getElementById('modal-title').innerText = `Phân tích chi tiết Câu ${q.id} ✨`;
-  modalAudio.src = q.audio;
-  document.getElementById('modal-image').src = q.image;
+    function openDetail(idx) {
+        const q = questions[idx];
+        document.getElementById('modal-title').innerText = `Phân tích chi tiết Câu ${q.id} ✨`;
+        document.getElementById('modal-audio').src = q.audio;
+        
+        // --- ĐÃ GẮN SRC CHO HÌNH ẢNH TRONG MODAL ---
+        document.getElementById('modal-image').src = q.image;
+        
+        const enLines = q.script_en.split('<br>');
+        const viLines = q.script_vi.split('<br>');
+        let combinedHTML = '';
+        for(let i = 0; i < enLines.length; i++) {
+            combinedHTML += `
+                <div class="script-row">
+                    <div class="script-en">${enLines[i]}</div>
+                    <div class="script-vi">${viLines[i]}</div>
+                </div>
+            `;
+        }
+        document.getElementById('modal-script-combined').innerHTML = combinedHTML;
+        document.getElementById('modal-vocab').innerHTML = q.vocab;
+        document.getElementById('modal-grammar').innerHTML = q.grammar;
 
-  const enLines = q.script_en.split('<br>');
-  const viLines = q.script_vi.split('<br>');
-  let combinedHTML = '';
-  for(let i = 0; i < enLines.length; i++) {
-    combinedHTML += `
-      <div class="script-row">
-        <div class="script-en">${enLines[i]}</div>
-        <div class="script-vi">${viLines[i]}</div>
-      </div>
-    `;
-  }
-  document.getElementById('modal-script-combined').innerHTML = combinedHTML;
-  document.getElementById('modal-vocab').innerHTML = q.vocab;
-  document.getElementById('modal-grammar').innerHTML = q.grammar;
+        const explainDiv = document.getElementById('modal-explains');
+        explainDiv.innerHTML = '';
+        q.explains.forEach(ex => {
+            const div = document.createElement('div');
+            div.className = `explain-item ${ex.type === 'correct' ? 'explain-correct' : 'explain-wrong'}`;
+            div.innerHTML = `<strong>(${ex.opt})</strong> ${ex.text}`;
+            explainDiv.appendChild(div);
+        });
 
-  const explainDiv = document.getElementById('modal-explains');
-  explainDiv.innerHTML = '';
-  q.explains.forEach(ex => {
-    const div = document.createElement('div');
-    div.className = `explain-item ${ex.type === 'correct' ? 'explain-correct' : 'explain-wrong'}`;
-    div.innerHTML = `<strong>(${ex.opt})</strong> ${ex.text}`;
-    explainDiv.appendChild(div);
-  });
+        document.getElementById('modal-detail').style.display = 'flex';
+    }
 
-  document.getElementById('modal-detail').style.display = 'flex';
-}
+    function closeModal() {
+        document.getElementById('modal-detail').style.display = 'none';
+        document.getElementById('modal-audio').pause();
+    }
 
-function closeModal() {
-  document.getElementById('modal-detail').style.display = 'none';
-  modalAudio.pause();
-}
+    // --- LOGIC LỊCH SỬ ---
+    function saveLocalHistory(score, total, answersArray, timeTakenStr) {
+        let history = JSON.parse(localStorage.getItem(LOCAL_HISTORY_KEY)) || [];
+        let now = new Date();
+        history.unshift({
+            id: Date.now().toString(),
+            date: now.toLocaleDateString('vi-VN'),
+            time: now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }),
+            score: score,
+            total: total,
+            answers: answersArray,
+            timeTaken: timeTakenStr 
+        });
+        localStorage.setItem(LOCAL_HISTORY_KEY, JSON.stringify(history));
+    }
 
-function openHistoryModal() { document.getElementById('historyOverlay').style.display = 'flex'; }
-function closeHistoryModal() { document.getElementById('historyOverlay').style.display = 'none'; }
-function closeConfirmDelete() { document.getElementById('customConfirmDeleteOverlay').style.display = 'none'; }
+    function openHistoryModal() {
+        document.getElementById('historyOverlay').style.display = 'flex';
+        renderHistoryList();
+    }
+
+    function closeHistoryModal() {
+        document.getElementById('historyOverlay').style.display = 'none';
+    }
+
+    function renderHistoryList() {
+        let listEl = document.getElementById("historyList");
+        
+        if (window.currentUserUid && window.layLichSuTuFirebase) {
+            window.layLichSuTuFirebase().then(firebaseHistory => {
+                hienThiDanhSach(firebaseHistory, listEl, true);
+            });
+        } else {
+            let localHistory = JSON.parse(localStorage.getItem(LOCAL_HISTORY_KEY)) || [];
+            hienThiDanhSach(localHistory, listEl, false);
+        }
+    }
+
+    function hienThiDanhSach(historyArray, listEl, isCloud) {
+        if (!historyArray || historyArray.length === 0) {
+            listEl.innerHTML = `<div style="text-align:center; color:#888; padding: 20px; font-weight: 500;">Chưa có dữ liệu làm bài. ${isCloud ? '(Cloud ☁️)' : '(Thiết bị này 📱)'}</div>`;
+            return;
+        }
+
+        listEl.innerHTML = historyArray.map((item, index) => {
+            let soCauDung = item.correctQ !== undefined ? item.correctQ : item.score;
+            let tongSoCau = item.totalQ !== undefined ? item.totalQ : item.total;
+            
+            let diemQuyDoi = isCloud && item.score !== undefined && item.score > tongSoCau 
+                ? ` (Điểm: ${item.score})` 
+                : '';
+
+            return `
+            <div class="history-item">
+                <div class="history-info">
+                    <span class="history-date">Lần ${historyArray.length - index}: ${item.time || ''} ${item.date}</span>
+                    <span class="history-score">Chính xác: ${soCauDung}/${tongSoCau} câu${diemQuyDoi} ${isCloud ? '☁️' : '📱'}</span>
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 500;">⏱ Thời gian làm bài: ${item.timeTaken || '--:--'}</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button class="btn-review" onclick='restoreAttempt(${JSON.stringify(item.answers || [])})'>Xem lại</button>
+                    <button class="btn-delete-history" onclick="deleteAttempt('${item.id}', ${isCloud})" title="Xóa bài này">&times;</button>
+                </div>
+            </div>
+            `;
+        }).join("");
+    }
+
+    let pendingDelete = { id: null, isCloud: false };
+
+    function deleteAttempt(id, isCloud) {
+        pendingDelete = { id, isCloud };
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'flex';
+    }
+
+    function closeConfirmDelete() {
+        pendingDelete = { id: null, isCloud: false };
+        document.getElementById('customConfirmDeleteOverlay').style.display = 'none';
+    }
+
+    function executeDelete() {
+        if (!pendingDelete.id) return;
+        
+        if (pendingDelete.isCloud && window.xoaLichSuFirebase) {
+            window.xoaLichSuFirebase(pendingDelete.id).then(() => {
+                closeConfirmDelete();
+                renderHistoryList();
+            });
+        } else {
+            let history = JSON.parse(localStorage.getItem(LOCAL_HISTORY_KEY)) || [];
+            history = history.filter(h => h.id !== pendingDelete.id);
+            localStorage.setItem(LOCAL_HISTORY_KEY, JSON.stringify(history));
+            closeConfirmDelete();
+            renderHistoryList();
+        }
+    }
+
+    function restoreAttempt(answersArray) {
+        if (!answersArray || answersArray.length === 0) return;
+        userAnswers = answersArray;
+        closeHistoryModal();
+        finishTest(true); 
+    }
+
 </script>
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
