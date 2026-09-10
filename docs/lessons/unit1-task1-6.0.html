@@ -35,22 +35,349 @@
         }
     </script>
     <style>
-        body { background-color: #F8FAFC; color: #334155; }
-        h1, h2, h3, h4, h5 { font-family: '"Be Vietnam Pro"', sans-serif; }
-        .card { background: white; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); padding: 1.5rem; margin-bottom: 2rem; border-top: 5px solid #4F46E5; }
-        @media (min-width: 768px) {
-            .card { padding: 2rem; }
-        }
-        .input-blank { border: none; border-bottom: 2px dashed #94A3B8; background: transparent; padding: 2px 5px; text-align: center; color: #4F46E5; font-weight: 600; outline: none; transition: all 0.3s; min-width: 100px; display: inline-block; }
-        .input-blank:focus { border-bottom-color: #F472B6; background-color: #FDF2F8; }
-        .correct { border-bottom-color: #22C55E !important; color: #16A34A; background-color: #F0FDF4; }
-        .incorrect { border-bottom-color: #EF4444 !important; color: #DC2626; background-color: #FEF2F2; }
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; margin-bottom: 1rem; }
-        th, td { border: 1px solid #E2E8F0; padding: 10px; text-align: left; }
-        th { background-color: #EEF2FF; color: #4F46E5; font-weight: 700; }
-        .hint-box { display: none; background-color: #F0FDF4; border-left: 4px solid #22C55E; padding: 1rem; margin-top: 1rem; border-radius: 4px; }
-        .brand-text { background: linear-gradient(to right, #4F46E5, #F472B6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-    </style>
+:root {
+  /* Tông màu chủ đạo SnapEnglish: Cam Đào - Đỏ Cam Ấm - Nền Dịu Mắt */
+  --brand-primary: #e65245;       /* Đỏ cam đào ấm áp */
+  --brand-gradient: linear-gradient(135deg, #f05a4b 0%, #e0483a 50%, #c83729 100%);
+  --brand-peach: #ff8e72;          /* Cam đào tươi tắn */
+  --brand-peach-soft: #fff1ed;     /* Nền hồng đào mỏng nhẹ */
+  --brand-peach-hover: #fcdbd0;    /* Hover hồng đào */
+  
+  --bg-canvas: #f9f5f2;            /* Nền tổng thể đầm, dịu mắt */
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --card-border: #f0e2dc;
+  --text-title: #2d1f1d;          /* Chữ chính nâu đen đậm */
+  --text-body: #5a4b48;           /* Chữ nội dung nâu trầm */
+  --text-muted: #8d7b77;          /* Chữ phụ */
+  
+  --correct-color: #10b981;
+  --correct-bg: #d1fae5;
+  --wrong-color: #e65245;
+  --wrong-bg: #ffe4e6;
+  
+  --shadow-sm: 0 4px 12px rgba(230, 82, 69, 0.05);
+  --shadow-md: 0 10px 25px rgba(218, 70, 56, 0.08);
+  
+  --topbar-height: 48px;
+  --radius-xl: 20px;
+  --radius-md: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  background-color: var(--bg-canvas);
+  color: var(--text-body);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding-top: calc(var(--topbar-height) + 16px);
+  padding-bottom: 60px;
+  position: relative;
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(255, 142, 114, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 90% 80%, rgba(230, 82, 69, 0.06) 0%, transparent 45%);
+  background-attachment: fixed;
+}
+
+/* WATERMARK NỀN CHÌM SNAPENGLISH */
+.bg-watermark {
+  position: fixed;
+  bottom: 20px;
+  right: 30px;
+  font-size: 11vw;
+  font-weight: 800;
+  color: rgba(230, 82, 69, 0.035);
+  z-index: -1;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -2px;
+}
+
+/* FIXED TOP NAVBAR */
+.top-navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--topbar-height);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(230, 82, 69, 0.12);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4%;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+}
+
+.brand-badge {
+  background: var(--brand-gradient);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 8px;
+  letter-spacing: -0.3px;
+  box-shadow: 0 2px 8px rgba(230, 82, 69, 0.25);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.brand-badge::before {
+  content: '⚡';
+  font-size: 11px;
+}
+
+.brand-subtitle {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-title);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.brand-subtitle::before {
+  content: '/';
+  color: var(--brand-peach);
+  font-weight: 300;
+}
+
+.topbar-score-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px dashed var(--brand-primary);
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--brand-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 10px 16px;
+}
+
+/* BANNER BÀI HỌC GỌN GÀNG */
+.unit-banner {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 20px 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 241, 237, 0.6) 100%);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: var(--shadow-sm);
+}
+
+.unit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: var(--brand-peach-soft);
+  color: var(--brand-primary);
+  font-weight: 800;
+  font-size: 11px;
+  border-radius: 30px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 8px;
+  border: 1px solid rgba(230, 82, 69, 0.15);
+}
+
+.unit-title {
+  color: var(--text-title);
+  font-size: 24px;
+  font-weight: 800;
+  margin: 2px 0;
+  letter-spacing: -0.5px;
+}
+
+.unit-subtitle {
+  color: var(--text-muted);
+  font-size: 13.5px;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* TABS ĐIỀU HƯỚNG MƯỢT MÀ */
+.nav-tabs-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.nav-tabs {
+  display: inline-flex;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  padding: 4px;
+  border-radius: 60px;
+  border: 1px solid var(--card-border);
+  gap: 4px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+}
+
+.nav-tab {
+  padding: 8px 18px;
+  border-radius: 50px;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  color: var(--text-body);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-tab:hover {
+  color: var(--brand-primary);
+}
+
+.nav-tab.active {
+  background: var(--brand-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(230, 82, 69, 0.22);
+}
+
+/* GLASS CARDS - KHOẢNG CÁCH TỐI ƯU CHỐNG CHOÁNG CHỖ */
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-title);
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0 0 14px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px dashed var(--card-border);
+}
+
+.card-header-title i {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--brand-peach-soft);
+  color: var(--brand-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+/* INPUT BLANKS & BẢNG BÀI TẬP */
+.input-blank {
+  border: none;
+  border-bottom: 2px dashed var(--brand-peach);
+  background: transparent;
+  padding: 2px 6px;
+  text-align: center;
+  color: var(--brand-primary);
+  font-weight: 700;
+  outline: none;
+  transition: all 0.25s ease;
+  min-width: 80px;
+  display: inline-block;
+}
+
+.input-blank:focus {
+  border-bottom-color: var(--brand-primary);
+  background-color: var(--brand-peach-soft);
+}
+
+.input-blank.correct {
+  border-bottom-color: var(--correct-color) !important;
+  color: var(--correct-color);
+  background-color: var(--correct-bg);
+}
+
+.input-blank.incorrect {
+  border-bottom-color: var(--wrong-color) !important;
+  color: var(--wrong-color);
+  background-color: var(--wrong-bg);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+}
+
+th, td {
+  border: 1px solid var(--card-border);
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 13.5px;
+}
+
+th {
+  background-color: var(--brand-peach-soft);
+  color: var(--brand-primary);
+  font-weight: 800;
+}
+
+/* KHUNG MẸO THẦN CHÚ SNAPENGLISH */
+.mnemonic-box {
+  margin-top: 14px;
+  background: linear-gradient(135deg, #fffbe3 0%, #fef3c7 100%);
+  border: 1.5px solid #f59e0b;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  color: #78350f;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.08);
+}
+
+.mnemonic-title {
+  font-weight: 800;
+  color: #b45309;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+
+.mnemonic-text {
+  font-weight: 700;
+  color: #92400e;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 6px 10px;
+  border-radius: 8px;
+  display: block;
+  margin-top: 4px;
+  border-left: 4px solid #f59e0b;
+  line-height: 1.5;
+}
+</style>
 </head>
 <body class="antialiased leading-relaxed">
 
