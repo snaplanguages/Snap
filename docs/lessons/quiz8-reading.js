@@ -1,5 +1,5 @@
 window.quizData = {
-  title: "Reading Practice 2 | The Evolutionary Mystery: Crocodile Survives",
+  title: "Reading Practice 8 | The Evolutionary Mystery: Crocodile Survives",
   testName: "Test 3",
   partName: "Passage 2",
   dbPrefix: "ielts_R_T3_P2",
