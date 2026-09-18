@@ -1498,164 +1498,1360 @@ Ghi nhớ các biểu đạt đồng nghĩa chỉ tầm quan trọng cốt lõi.
     colorClass: "ev-13"
   },
   14: {
-      translation: "Tác động [di truyền] nền tảng từ cha mẹ và gia đình.",
-      exp: "Đoạn B viết: <i>'Are we the result of nature (our genetic background) or nurture...?'</i>. Bảng tóm tắt đang hỏi về yếu tố tự nhiên (Nature/Genetics). Từ cần điền đứng trước 'background' là <b>genetic</b>.",
-      vocab: "<b>Genetic background (n)</b>: Nền tảng di truyền | <b>Heredity (n)</b>: Sự di truyền",
+      translation: `<b>Câu hỏi:</b> Tác động [di truyền] nền tảng từ cha mẹ và gia đình.<br><br><b>Nói đơn giản:</b> Tìm từ thích hợp điền vào chỗ trống mô tả nền tảng sinh học/di truyền từ cha mẹ ảnh hưởng 40%-50% đến tất cả anh chị em.`,
+      exp: `<b>Dạng câu hỏi:</b> Table Completion (Điền từ vào bảng tóm tắt)
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph B
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"Are we the result of nature (our genetic background) or nurture (our environment)? Generally, the given rate of influence on children is 40% to 50%. It may refer to all of siblings of a family."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>Are we the result of nature (our genetic background) or nurture...</b>: Liệu chúng ta có phải là kết quả của tự nhiên (nền tảng di truyền của chúng ta) hay nuôi dưỡng...</li>
+<li><b>given rate of influence on children is 40% to 50%</b>: tỷ lệ ảnh hưởng được đưa ra đối với trẻ em là 40% đến 50%.</li>
+<li><b>refer to all of siblings of a family</b>: tham chiếu/áp dụng cho tất cả anh chị em trong một gia đình.</li>
+</ul>
+<br><br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bảng (Question)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">______ background</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">our genetic background</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Từ cần điền chính xác bổ nghĩa cho "background" là "genetic".</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Including to all of siblings</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">refer to all of siblings of a family</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Phạm vi áp dụng trùng khớp hoàn toàn cho toàn bộ anh chị em.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">40%-50%</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">40% to 50%</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Số liệu tỷ lệ ảnh hưởng trùng khớp tuyệt đối.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Bảng tóm tắt chia làm 3 cột: Loại tác động, Phạm vi anh chị em, Tỷ lệ ảnh hưởng.
+<br>
+- Hàng 1 có tỷ lệ 40%-50% và áp dụng cho "all of siblings".
+<br>
+- Bài đọc đoạn B định nghĩa yếu tố Nature là "our genetic background" với tỷ lệ ảnh hưởng 40% to 50% cho "all of siblings". Từ đứng ngay trước "background" là <b>GENETIC</b>.
+<br><br>
+<b>🚫 Phân tích bẫy & Lỗi sai thường gặp (Error Analysis):</b>
+<br>
+- Học viên dễ nhầm chọn "nature" hoặc "heredity". Tuy nhiên, câu hỏi đã có sẵn từ "background" ngay sau ô trống, do đó bắt buộc phải điền tính từ <b>GENETIC</b> để tạo thành cụm danh từ chuẩn <i>genetic background</i>.
+<br><br>
+<b>🎓 Bài học rút ra (Lesson):</b>
+<br>
+Khi làm dạng Table Completion, hãy chú ý ngữ pháp xung quanh ô trống. Nếu sau ô trống là một danh từ (background), từ cần điền thường là một tính từ (genetic) hoặc danh từ bổ nghĩa.`,
+      vocab: `<b>Genetic background (n)</b>: Nền tảng di truyền<br><b>Heredity (n)</b>: Sự di truyền<br><b>Siblings (n)</b>: Anh chị em ruột<br><b>Nature vs Nurture</b>: Tranh luận giữa Yếu tố tự nhiên (di truyền) và Môi trường nuôi dưỡng`,
       colorClass: "ev-14"
     },
     15: {
-      translation: "Môi trường chung (Shared Environment): Tham chiếu đến [tất cả anh chị em].",
-      exp: "Đoạn D phân tích về Môi trường chung: <i>'It may also refer to all of siblings of a family...'</i>. Cột 'Range of Reference' (Phạm vi tham chiếu) tương ứng với cụm từ chỉ toàn bộ anh chị em: <b>all siblings</b> hoặc <b>all of siblings</b>.",
-      vocab: "<b>Shared environment (n)</b>: Môi trường dùng chung | <b>Sibling (n)</b>: Anh chị em ruột",
+      translation: `<b>Câu hỏi:</b> Môi trường chung (Shared Environment): Tham chiếu đến [tất cả anh chị em].<br><br><b>Nói đơn giản:</b> Tìm cụm từ trong đoạn D mô tả phạm vi anh chị em bị ảnh hưởng bởi Môi trường chung.`,
+      exp: `<b>Dạng câu hỏi:</b> Table Completion (Điền từ vào bảng tóm tắt)
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph D
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"It may also refer to all of siblings of a family, but the rate of influence is less than 10 per cent."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>It may also refer to...</b>: Nó (Môi trường chung) cũng có thể tham chiếu/áp dụng cho...</li>
+<li><b>all of siblings of a family</b>: tất cả anh chị em trong một gia đình.</li>
+<li><b>rate of influence is less than 10 per cent</b>: tỷ lệ ảnh hưởng là dưới 10 phần trăm.</li>
+</ul>
+<br><br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bảng (Question)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Range of Reference: to ______</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">refer to all of siblings</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Cụm từ mô tả phạm vi anh chị em là "all of siblings" hoặc "all siblings".</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">less than 10 per cent</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">less than 10 per cent</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Mốc tỷ lệ khớp hoàn toàn với thông tin ở cột bên phải.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Dựa vào mốc tỷ lệ "less than 10 per cent" ở cột 3 của hàng "Shared Environment", ta định vị ngay đến câu cuối đoạn D.
+<br>
+- Cấu trúc "refer to [all of siblings]" tương ứng trực tiếp với ô trống "to [15]".
+<br>
+- Đáp án chính xác là <b>ALL SIBLINGS</b> (2 từ) hoặc <b>ALL OF SIBLINGS</b> (3 từ), hoàn toàn tuân thủ giới hạn "NO MORE THAN THREE WORDS".
+<br><br>
+<b>🚫 Phân tích bẫy & Lỗi sai thường gặp (Error Analysis):</b>
+<br>
+- Vi phạm giới hạn từ: Nếu học viên chép nguyên văn "all of siblings of a family" (6 từ) sẽ bị gạch đứt do vi phạm quy tắc 3 từ. Cần cắt gọt chỉ lấy phần danh từ cốt lõi <i>all siblings</i> hoặc <i>all of siblings</i>.`,
+      vocab: `<b>Shared environment (n)</b>: Môi trường dùng chung (sống cùng nhà, học cùng trường)<br><b>Reference (n)</b>: Sự tham chiếu, phạm vi đề cập<br><b>Common environment (n)</b>: Môi trường chung`,
       colorClass: "ev-15"
     },
     16: {
-      translation: "Môi trường chung: Tỷ lệ ảnh hưởng [dưới 10 phần trăm].",
-      exp: "Đoạn D nêu rõ tỷ lệ tác động của môi trường chung: <i>'...but the rate of influence is less than 10 per cent.'</i>. Do đó từ cần điền là <b>10 per cent</b> (hoặc 10%).",
-      vocab: "<b>Rate of influence (n)</b>: Tỷ lệ ảnh hưởng | <b>Evident (adj)</b>: Rõ ràng, hiển nhiên",
+      translation: `<b>Câu hỏi:</b> Tỷ lệ ảnh hưởng của Môi trường chung đến trẻ em là ít hơn [10%].<br><br><b>Nói đơn giản:</b> Tìm con số chỉ tỷ lệ phần trăm ảnh hưởng của Shared Environment trong đoạn D.`,
+      exp: `<b>Dạng câu hỏi:</b> Table Completion (Điền từ vào bảng tóm tắt)
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph D
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"...but the rate of influence is less than 10 per cent."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>the rate of influence</b>: tỷ lệ ảnh hưởng (khớp với tiêu đề cột 3).</li>
+<li><b>is less than 10 per cent</b>: là ít hơn 10 phần trăm. Bảng câu hỏi đã in sẵn từ "less than", nên phần còn thiếu là "10 per cent" / "10%".</li>
+</ul>
+<br><br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bảng (Question)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">less than ______</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">less than 10 per cent</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Bảng đã có "less than", ô trống chỉ cần điền con số "10%" hoặc "10 percent".</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Đối chiếu dòng Shared Environment ở cột Rate of Influence.
+<br>
+- Bài đọc đoạn D viết nguyên văn "less than 10 per cent".
+<br>
+- Đáp án hợp lệ: <b>10%</b>, <b>10 PERCENT</b>, hoặc <b>10 PER CENT</b>.
+<br><br>
+<b>🎓 Bài học rút ra (Lesson):</b>
+<br>
+Trong bài IELTS Reading, ký hiệu phần trăm (%) và chữ "percent / per cent" có thể dùng thay thế cho nhau. Hãy chú ý các từ đứng trước ô trống (như "less than") để không điền lặp từ.`,
+      vocab: `<b>Rate of influence (n)</b>: Tỷ lệ ảnh hưởng<br><b>Per cent / Percent (%)</b>: Phần trăm`,
       colorClass: "ev-16"
     },
     17: {
-      translation: "[Môi trường không chung] (Non-shared environment): Tham chiếu đến một phần anh chị em.",
-      exp: "Đoạn E mô tả loại ảnh hưởng áp dụng cho một bộ phận anh chị em (part of siblings): <i>'Non-shared environment, it may refer to the part of siblings of a family...'</i>. Nên từ khóa chính xác là <b>Non-shared environment</b>.",
-      vocab: "<b>Non-shared environment (n)</b>: Môi trường không dùng chung (trải nghiệm cá nhân độc lập)",
+      translation: `<b>Câu hỏi:</b> [Môi trường không chung] là loại tác động chỉ áp dụng cho một phần anh chị em với tỷ lệ 40%-50%.<br><br><b>Nói đơn giản:</b> Tìm tên loại tác động môi trường ở đầu đoạn E được áp dụng cho "part of siblings".`,
+      exp: `<b>Dạng câu hỏi:</b> Table Completion (Điền từ vào bảng tóm tắt)
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph E
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"Non-shared environment, it may refer to the part of siblings of a family, the rate of influence to children is 40 % to 50%."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>Non-shared environment</b>: Môi trường không chung (trải nghiệm cá nhân riêng biệt của từng đứa trẻ).</li>
+<li><b>refer to the part of siblings</b>: đề cập/áp dụng cho một phần anh chị em (đối lập với "all of siblings").</li>
+<li><b>rate of influence ... is 40 % to 50%</b>: tỷ lệ ảnh hưởng đến trẻ em là 40% đến 50%.</li>
+</ul>
+<br><br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bảng (Question)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">______ (Type of Impact)</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">Non-shared environment</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Tên của loại yếu tố môi trường thứ ba được so sánh trong bảng.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">to part of siblings</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">part of siblings of a family</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Phạm vi đối tượng khớp hoàn toàn.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Hàng 3 của bảng yêu cầu xác định tên "Type of Impact".
+<br>
+- Dựa vào thông tin định vị ở cột 2 "part of siblings" và cột 3 "40%-50%", ta tìm thấy câu ở cuối đoạn E.
+<br>
+- Khái niệm duy nhất đứng ở đầu câu này chính là <b>NON-SHARED ENVIRONMENT</b>.
+<br><br>
+<b>🚫 Phân tích bẫy & Lỗi sai thường gặp (Error Analysis):</b>
+<br>
+- Sai chính tả: Thiếu gạch nối "Non-shared" hoặc chép thiếu từ "environment". Luôn kiểm tra chính xác từng ký tự khi chép từ passage sang answer sheet.`,
+      vocab: `<b>Non-shared environment (n)</b>: Môi trường không chung (trải nghiệm độc lập của mỗi cá nhân)<br><b>Part of siblings (n)</b>: Một bộ phận anh chị em`,
       colorClass: "ev-17"
     },
     18: {
-      translation: "Môi trường không chung: Tỷ lệ ảnh hưởng [40%] đến 50%.",
-      exp: "Đoạn E đưa ra con số thống kê chính xác: <i>'...the rate of influence to children is 40 % to 50%.'</i>. Bảng câu hỏi đã điền sẵn ký tự '- 50%', phần còn khuyết thiếu cần điền là <b>40%</b> (hoặc 40 percent).",
+      translation: `<b>Câu hỏi:</b> Tỷ lệ ảnh hưởng của Môi trường không chung là [40%] - 50%.<br><br><b>Nói đơn giản:</b> Tìm con số tỷ lệ phần trăm còn thiếu ở mốc dưới của Non-shared environment trong đoạn E.`,
+      exp: `<b>Dạng câu hỏi:</b> Table Completion (Điền từ vào bảng tóm tắt)
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph E
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"...the rate of influence to children is 40 % to 50%."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>rate of influence to children</b>: tỷ lệ ảnh hưởng đến trẻ em.</li>
+<li><b>is 40 % to 50%</b>: là 40% đến 50%. Bảng câu hỏi đã có sẵn mốc "- 50%", nên con số cần điền trước dấu gạch ngang là <b>40%</b> (hoặc 40 percent).</li>
+</ul>
+<br><br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bảng (Question)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">______ - 50%</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">40 % to 50%</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Mốc bắt đầu của khoảng phần trăm còn thiếu là 40%.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Nhìn vào ô trống 18 ở hàng Non-shared environment, cột Rate of Influence.
+<br>
+- Dẫn chứng đoạn E ghi rõ "40 % to 50%".
+<br>
+- Đáp án chính xác cần điền: <b>40%</b> (hoặc 40 PERCENT).`,
+      vocab: `<b>Range (n)</b>: Khoảng, phạm vi<br><b>Influence (n/v)</b>: Tác động, ảnh hưởng`,
       colorClass: "ev-18"
     },
     19: {
-      translation: "Nghiên cứu gần đây cho thấy tác động từ cha mẹ sẽ dễ bị [gián đoạn] bởi ảnh hưởng từ bạn bè cùng lứa.",
-      exp: "Đoạn F có câu: <i>'...the impact from parents will be easy to be interrupted by the influence from the children of the same age.'</i>. 'Peer pressure' ở câu hỏi đã paraphrase lại từ cụm 'influence from children of the same age' trong bài đọc. Từ cần điền là động từ bị động: <b>interrupted</b>.",
-      vocab: "<b>Interrupt (v)</b>: Bị gián đoạn, bị can thiệp | <b>Peer pressure (n)</b>: Áp lực/ảnh hưởng từ bạn đồng lứa",
+      translation: `<b>Câu hỏi:</b> Các nghiên cứu gần đây chỉ ra rằng tác động từ cha mẹ sẽ dễ bị [gián đoạn/can thiệp] bởi sự ảnh hưởng từ bạn bè cùng lứa tuổi.<br><br><b>Nói đơn giản:</b> Tìm động từ dạng bị động điền vào câu 19 mô tả điều gì xảy ra với tác động của cha mẹ trước ảnh hưởng của bạn bè.`,
+      exp: `<b>Dạng câu hỏi:</b> Sentence Completion (Hoàn thành câu)
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph F
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"Research in recent years suggested that the impact from parents will be easy to be interrupted by the influence from the children of the same age."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>Research in recent years suggested that...</b>: Nghiên cứu trong những năm gần đây gợi ý rằng...</li>
+<li><b>the impact from parents</b>: tác động từ cha mẹ (chủ ngữ của mệnh đề phụ).</li>
+<li><b>will be easy to be interrupted</b>: sẽ dễ dàng bị gián đoạn/ngắt quãng.</li>
+<li><b>by the influence from the children of the same age</b>: bởi sự ảnh hưởng từ những đứa trẻ cùng tuổi (bạn đồng lứa / peers).</li>
+</ul>
+<br><br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">easy to be ______</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">easy to be interrupted</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Cấu trúc bị động "to be + V3/ed". Từ cần điền là "interrupted".</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">children of the same age</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">children of the same age</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Cụm từ chỉ bạn đồng lứa khớp 100%.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- So sánh cấu trúc câu hỏi 19 và câu văn trong bài đọc đoạn F.
+<br>
+- Khung ngữ pháp: "will be easy to be [V3/ed] by...".
+<br>
+- Từ duy nhất ở dạng quá khứ phân tử đứng ở vị trí này trong bài đọc là <b>INTERRUPTED</b>.
+<br><br>
+<b>📘 Ngữ pháp quan trọng:</b>
+<br>
+- Cấu trúc bị động với động từ nguyên mẫu: <b>be + adjective + to be + V3/ed</b> (easy to be interrupted = dễ bị can thiệp/làm gián đoạn).`,
+      vocab: `<b>Interrupt (v)</b>: Làm gián đoạn, ngắt lời, can thiệp<br><b>Children of the same age (n)</b>: Trẻ em cùng độ tuổi (bạn đồng lứa / peers)<br><b>Peers (n)</b>: Bạn đồng lứa`,
       colorClass: "ev-19"
     },
     20: {
-      translation: "[Sự đa dạng/biến đổi] kiến thức mà trẻ em tiếp thu từ các nền văn hóa khác đang tăng lên.",
-      exp: "Đoạn F viết: <i>'That also showed that variations of knowledge that children get from other culture are increasing.'</i>. Cụm 'variations of knowledge' nghĩa là sự đa dạng/biến đổi về tri thức. Từ cần điền là danh từ số nhiều: <b>variations</b>.",
-      vocab: "<b>Variation (n)</b>: Sự đa dạng, sự biến đổi | <b>Phenotypic variance (n)</b>: Biến thái kiểu hình",
+      translation: `<b>Câu hỏi:</b> Điều đó cũng cho thấy rằng [sự đa dạng/biến đổi] kiến thức mà trẻ em tiếp thu từ các nền văn hóa khác đang tăng lên.<br><br><b>Nói đơn giản:</b> Tìm danh từ điền vào chỗ trống đứng trước "of knowledge that children get from other culture are increasing".`,
+      exp: `<b>Dạng câu hỏi:</b> Sentence Completion (Hoàn thành câu)
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph F
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"That also showed that variations of knowledge that children get from other culture are increasing."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>That also showed that...</b>: Điều đó cũng chỉ ra rằng...</li>
+<li><b>variations of knowledge</b>: những sự đa dạng/biến đổi của tri thức (chủ ngữ chính của mệnh đề).</li>
+<li><b>that children get from other culture</b>: mệnh đề quan hệ bổ nghĩa cho "knowledge" (mà trẻ em có được từ nền văn hóa khác).</li>
+<li><b>are increasing</b>: đang gia tăng (động từ chính số nhiều chia theo "variations").</li>
+</ul>
+<br><br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">______ of knowledge</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">variations of knowledge</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Danh từ đứng trước "of knowledge" là "variations".</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">are increasing</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">are increasing</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Động từ số nhiều "are" chứng minh chủ ngữ bắt buộc phải ở dạng số nhiều (variations).</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Đọc tiếp câu tiếp theo trong đoạn F.
+- Cụm từ trong bài đọc: "variations of knowledge that children get...".
+- Từ cần điền đứng trước "of knowledge" là danh từ số nhiều <b>VARIATIONS</b>.
+<br><br>
+<b>🚫 Phân tích bẫy & Lỗi sai thường gặp (Error Analysis):</b>
+<br>
+- Viết ở dạng số ít "variation": Động từ chính phía sau là "are increasing". Nếu điền "variation" số ít sẽ vi phạm sự hòa hợp giữa chủ ngữ và động từ. Bắt buộc phải là <b>VARIATIONS</b>.`,
+      vocab: `<b>Variation (n)</b>: Sự đa dạng, biến thể, sự biến đổi<br><b>Culture (n)</b>: Văn hóa<br><b>Subject-Verb Agreement</b>: Sự hòa hợp giữa Chủ ngữ và Động từ`,
       colorClass: "ev-20"
     },
     21: {
-      translation: "Nhiều [mối quan tâm/lợi ích] giữa cha mẹ và con cái đang xung đột với nhau.",
-      exp: "Đoạn F khẳng định: <i>'A number of interests between... parents and their children are conflicting.'</i>. Từ 'competing' trong câu tóm tắt đồng nghĩa với 'conflicting' (mâu thuẫn, cạnh tranh). Từ cần điền là <b>interests</b>.",
-      vocab: "<b>Conflicting / Competing (adj)</b>: Mâu thuẫn, xung đột, cạnh tranh | <b>Interests (n)</b>: Mối quan tâm, lợi ích",
+      translation: `<b>Câu hỏi:</b> Nhiều [mối quan tâm/lợi ích] giữa cha mẹ và con cái hoặc ngay cả giữa chính cha mẹ với nhau đang xung đột/mâu thuẫn.<br><br><b>Nói đơn giản:</b> Tìm danh từ điền vào chỗ trống đứng sau "A number of" mô tả thứ đang xung đột giữa bố mẹ và con cái.`,
+      exp: `<b>Dạng câu hỏi:</b> Sentence Completion (Hoàn thành câu)
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph F
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"A number of interests between, whatever, fathers and mothers or parents and their children are conflicting."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>A number of interests</b>: Một số lượng/nhiều mối quan tâm, lợi ích. Cấu trúc <i>A number of + N(plural) + V(plural)</i>.</li>
+<li><b>between ... fathers and mothers or parents and their children</b>: giữa bố và mẹ hoặc giữa cha mẹ và con cái họ.</li>
+<li><b>are conflicting</b>: đang mâu thuẫn, xung đột lẫn nhau.</li>
+</ul>
+<br><br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">A number of ______</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">A number of interests</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Danh từ số nhiều đứng sau "A number of" là "interests".</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">between parents and children</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">between ... parents and their children</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Đã được rút gọn lại giữ nguyên ý nghĩa trong câu hỏi.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">are conflicting</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">are conflicting</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Mâu thuẫn/xung đột.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Đặt câu hỏi đối chiếu với câu cuối đoạn F.
+- Sau cấu trúc "A number of" bắt buộc phải là một danh từ số nhiều.
+- Bài đọc viết "A number of interests...", do đó từ chính xác cần điền là <b>INTERESTS</b>.`,
+      vocab: `<b>Interests (n)</b>: Mối quan tâm, quyền lợi, sở thích<br><b>Conflicting (adj)</b>: Mâu thuẫn, xung đột, chọi nhau<br><b>A number of + Plural Noun</b>: Nhiều/Một số...`,
       colorClass: "ev-21"
     },
     22: {
-      translation: "Gia đình càng đông con thì tác động của môi trường càng lớn.",
-      exp: "Bài đọc có bàn về anh chị em (siblings) và các loại môi trường, nhưng <b>KHÔNG HỀ</b> đề cập hay đưa ra so sánh quy mô gia đình (số lượng con) có làm gia tăng mức độ ảnh hưởng của môi trường hay không. Ta chọn <b>NOT GIVEN</b>.",
-      tip: "🚩 <b>Bẫy IELTS:</b> Đừng tự dùng logic đời sống để suy đoán. Nếu bài đọc không đưa ra mối quan hệ so sánh (mô hình 'The more... the more...'), luôn chọn <b>NOT GIVEN</b>.",
+      translation: `<b>Câu hỏi:</b> Gia đình càng có nhiều con thì tác động của môi trường càng lớn.<br><br><b>Nói đơn giản:</b> Đánh giá xem tác giả có khẳng định số lượng con trong gia đình tỉ lệ thuận với mức độ ảnh hưởng của môi trường hay không.`,
+      exp: `<b>Dạng câu hỏi:</b> YES / NO / NOT GIVEN
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Toàn bộ bài đọc (Không có vị trí dẫn chứng)
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>Bài đọc có đề cập đến "siblings" (anh chị em), "shared environment" và "non-shared environment", nhưng KHÔNG HỀ đưa ra bất kỳ phát biểu nào so sánh quy mô số lượng con trong gia đình với cường độ tác động của môi trường.</i>
+<br><br>
+<b>📊 Bảng phân tích đối chiếu thông tin:</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Ý kiến trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Kết luận đối chiếu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">The more children ... the more impacts of environment</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">Không đề cập đến mối quan hệ giữa số con và mức độ tác động môi trường.</td>
+<td style="padding: 8px; border: 1px solid #ddd; color: #f57c00; font-weight: bold;">NOT GIVEN</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Mệnh đề so sánh kép "The more... the more..." khẳng định một quy luật tỉ lệ thuận giữa 2 biến số: (1) Số lượng con cái, và (2) Mức độ ảnh hưởng của môi trường.
+<br>
+- Quét toàn bộ bài đọc: Tác giả chỉ phân tích tỷ lệ ảnh hưởng của môi trường chung (<10%) và môi trường không chung (40%-50%), hoàn toàn không bàn luận về việc nhà đông con hơn thì môi trường tác động mạnh hơn hay yếu đi.
+<br>
+- Thông tin không thể kiểm chứng được tính đúng/sai dựa vào bài đọc → Chọn <b>NOT GIVEN</b>.
+<br><br>
+<b>⚠️ Bẫy IELTS cần lưu ý (Trap):</b>
+<br>
+- Bẫy suy diễn đời sống: Nhiều học viên suy luận logic ngoài thực tế "nhà đông con thì tương tác xã hội nhiều hơn nên môi trường tác động nhiều hơn". Hãy nhớ quy tắc vàng IELTS: <b>Chỉ căn cứ vào thông tin có sẵn trong bài đọc, không dùng kiến thức bên ngoài!</b>`,
+      vocab: `<b>The more... the more...</b>: Cấu trúc so sánh kép (Càng... thì càng...)<br><b>Not Given</b>: Không đề cập / Không đủ thông tin xác minh`,
       colorClass: null
     },
     23: {
-      translation: "Các phương pháp nghiên cứu sinh đôi vẫn gặp phải những sự khác biệt không thể giải thích hoàn toàn bằng di truyền.",
-      exp: "Đoạn E khẳng định: <i>'...genetic influence never explains all of the variances for complex phenotypes, and the remaining variance must be ascribed to environmental influences.'</i> (Yếu tố di truyền không bao giờ giải thích được tất cả biến thể, phần còn lại thuộc về môi trường). Điều này khớp hoàn toàn với nhận định của câu hỏi. Ta chọn <b>YES</b>.",
-      vocab: "<b>Ascribe to (v)</b>: Quy cho, gán cho | <b>Purely genetic (adj)</b>: Thuần túy di truyền",
+      translation: `<b>Câu hỏi:</b> Các phương pháp dựa trên nghiên cứu trẻ sinh đôi vẫn gặp phải những sự khác biệt bất ngờ mà không thể quy hoàn toàn cho lời giải thích về di truyền.<br><br><b>Nói đơn giản:</b> Có đúng là nghiên cứu trẻ sinh đôi cho thấy di truyền KHÔNG giải thích được 100% sự khác biệt, mà phần còn lại phải do môi trường?`,
+      exp: `<b>Dạng câu hỏi:</b> YES / NO / NOT GIVEN
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph E
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"...the best available evidence for the importance of environmental influence comes from this same quantitative genetic research because genetic influence never explains all of the variances for complex phenotypes, and the remaining variance must be ascribed to environmental influences."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>quantitative genetic research (twin and adoption methods)</b>: nghiên cứu di truyền số lượng (phương pháp nghiên cứu sinh đôi và con nuôi).</li>
+<li><b>genetic influence never explains all of the variances</b>: ảnh hưởng di truyền KHÔNG BAO GIỜ giải thích được toàn bộ các biến thể (những sự khác biệt).</li>
+<li><b>the remaining variance must be ascribed to environmental influences</b>: biến thể còn lại bắt buộc phải quy cho ảnh hưởng của môi trường.</li>
+</ul>
+<br><br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Methods based on twin studies</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">Quantitative genetic methods, such as twin... methods</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Phương pháp nghiên cứu di truyền dựa trên trẻ sinh đôi.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">unexpected differences / variances</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">variances for complex phenotypes</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Các biến thể/sự khác biệt kiểu hình phức tạp.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">cannot be ascribed to purely genetic explanation</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">genetic influence never explains all... remaining ascribed to environment</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Di truyền không giải thích được hết, phần còn lại thuộc về môi trường. Đồng nghĩa hoàn toàn.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- <b>Câu hỏi khẳng định:</b> Nghiên cứu sinh đôi phát hiện ra những điểm khác biệt không thể giải thích thuần túy bằng di truyền.
+<br>
+- <b>Bài đọc khẳng định:</b> Phương pháp di truyền số lượng (nghiên cứu sinh đôi) chỉ ra rằng di truyền không bao giờ giải thích được mọi biến thể, phần còn lại bắt buộc thuộc về môi trường.
+<br>
+- Ý nghĩa hai bên hoàn toàn trùng khớp 100% → Chọn <b>YES</b>.`,
+      vocab: `<b>Twin methods (n)</b>: Phương pháp nghiên cứu trẻ sinh đôi<br><b>Phenotype (n)</b>: Kiểu hình (biểu hiện ra bên ngoài của gen)<br><b>Ascribe to (v)</b>: Quy cho, gán cho<br><b>Purely (adv)</b>: Thuần túy, hoàn toàn`,
       colorClass: "ev-23"
     },
     24: {
-      translation: "Trẻ em thích nói ngôn ngữ của bạn bè cùng lứa hơn là ngôn ngữ của cha mẹ.",
-      exp: "Đoạn F có nhắc đến ảnh hưởng từ bạn bè đồng trang lứa (children of the same age), nhưng <b>KHÔNG CÓ</b> thông tin nào nói về việc học hay nói ngôn ngữ (language) hay sở thích nói chuyện. Thông tin bị suy diễn vượt quá bản gốc nên đáp án chuẩn xác nhất về mặt học thuật là <b>NOT GIVEN</b> (Mã nguồn cũ để chấp nhận cả NO).",
+      translation: `<b>Câu hỏi:</b> Tác động từ cha mẹ mạnh hơn sự ảnh hưởng từ bạn bè cùng lứa tuổi.<br><br><b>Nói đơn giản:</b> Đối chiếu tuyên bố "ảnh hưởng từ cha mẹ mạnh hơn bạn đồng lứa" với nội dung đoạn F trong bài đọc.`,
+      exp: `<b>Dạng câu hỏi:</b> YES / NO / NOT GIVEN
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph F
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"Research in recent years suggested that the impact from parents will be easy to be interrupted by the influence from the children of the same age."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>impact from parents</b>: tác động từ cha mẹ.</li>
+<li><b>will be easy to be interrupted by...</b>: sẽ dễ dàng bị gián đoạn/ngắt quãng/can thiệp bởi...</li>
+<li><b>influence from the children of the same age</b>: ảnh hưởng từ những đứa trẻ cùng tuổi (bạn đồng lứa).</li>
+</ul>
+<br><br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Tuyên bố trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Parent impact is stronger than peer influence</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">Parent impact is easy to be interrupted by peer influence</td>
+<td style="padding: 8px; border: 1px solid #ddd; color: #d32f2f; font-weight: bold;">Mâu thuẫn trực tiếp (Mạnh hơn vs Dễ bị lấn át/can thiệp).</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- <b>Câu hỏi khẳng định:</b> Tác động từ cha mẹ mạnh hơn tác động từ bạn bè đồng lứa.
+<br>
+- <b>Bài đọc chỉ ra:</b> Tác động từ cha mẹ rất yếu thế, dễ dàng bị gián đoạn/lấn át (easy to be interrupted) bởi bạn bè cùng tuổi.
+<br>
+- Nhận định của câu hỏi mâu thuẫn trực tiếp với phát biểu của bài đọc → Chọn <b>NO</b>. (Hệ thống đáp án cũng linh hoạt chấp nhận <b>NOT GIVEN</b> nếu xem xét dưới góc độ so sánh cường độ tuyệt đối).`,
+      vocab: `<b>Stronger than</b>: Mạnh hơn (So sánh hơn)<br><b>Interrupted (adj/v)</b>: Bị làm gián đoạn, bị can thiệp/lấn át`,
       colorClass: "ev-24"
     },
     25: {
-      translation: "Nghiên cứu về ảnh hưởng của môi trường không chung là một ý tưởng được đồng thuận rộng rãi giữa các nhà nghiên cứu.",
-      exp: "Đoạn G viết: <i>'Thus, the question is whether or not quasi-experimental behavioral genetic designs can be used to actually identify systematic non-shared environmental mechanisms...'</i>. Việc dùng câu hỏi hoài nghi 'whether or not' chứng tỏ đây vẫn là vấn đề đang tranh luận và chưa đạt được sự đồng thuận chung (generally agreed). Ta chọn <b>NO</b>.",
-      vocab: "<b>Generally agreed (adj)</b>: Được đồng thuận rộng rãi | <b>Idiosyncratically (adv)</b>: Một cách đặc dị/riêng biệt",
+      translation: `<b>Câu hỏi:</b> Nghiên cứu về ảnh hưởng của môi trường không chung là một ý tưởng được đồng thuận rộng rãi giữa các nhà nghiên cứu trong lĩnh vực này.<br><br><b>Nói đơn giản:</b> Kiểm tra xem các nhà khoa học đã hoàn toàn nhất trí/đồng thuận về cơ chế tác động của Non-shared environment hay chưa.`,
+      exp: `<b>Dạng câu hỏi:</b> YES / NO / NOT GIVEN
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph G
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"Turkheimer and Waldron (2000) have noted that non-shared environmental influences... may not be systematic, but instead may operate idiosyncratically and in ways that cannot be ascertained. Thus, the question is whether or not quasi-experimental behavioral genetic designs can be used to actually identify systematic non-shared environmental mechanisms..."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>may not be systematic... operate idiosyncratically... cannot be ascertained</b>: có thể không mang tính hệ thống, mà hoạt động một cách dị biệt/ngẫu nhiên theo những cách không thể xác định chắc chắn được.</li>
+<li><b>the question is whether or not...</b>: câu hỏi đặt ra là liệu có thể hay không thể sử dụng các thiết kế nghiên cứu để thực sự nhận diện cơ chế... (thể hiện sự hoài nghi và chưa có câu trả lời ngã ngũ).</li>
+</ul>
+<br><br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Tuyên bố trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">generally agreed idea</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">the question is whether or not... / cannot be ascertained</td>
+<td style="padding: 8px; border: 1px solid #ddd; color: #d32f2f; font-weight: bold;">Mâu thuẫn (Đồng thuận rộng rãi vs Vẫn còn nghi vấn / Chưa nhất trí).</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- <b>Câu hỏi cho rằng:</b> Việc nghiên cứu môi trường không chung là một ý tưởng đã được giới nghiên cứu đồng thuận rộng rãi (generally agreed).
+<br>
+- <b>Bài đọc chỉ ra:</b> Vấn đề này vô cùng phức tạp, không chắc chắn (cannot be ascertained), và tác giả vẫn phải đặt câu hỏi nghi vấn "whether or not" (liệu có thể hay không).
+<br>
+- Sự hoài nghi trong bài đọc phủ định hoàn toàn khẳng định "generally agreed" → Chọn <b>NO</b>.`,
+      vocab: `<b>Generally agreed (adj)</b>: Được đồng thuận chung<br><b>Idiosyncratically (adv)</b>: Một cách dị biệt, ngẫu nhiên cá thể<br><b>Ascertain (v)</b>: Xác định chắc chắn<br><b>Whether or not</b>: Liệu có... hay không`,
       colorClass: "ev-25"
     },
     26: {
-      translation: "Theo đoạn văn, nhận xét nào là ĐÚNG về nghiên cứu hiện tại đối với ảnh hưởng của môi trường không chung?",
-      exp: "Đoạn G dẫn chứng nhận định của Turkheimer & Waldron rằng các yếu tố này hoạt động không có hệ thống (not systematic), mang tính riêng biệt và chưa thể xác định chắc chắn (cannot be ascertained). Điều này đồng nghĩa với việc nghiên cứu hiện tại <b>chưa được chứng minh đầy đủ</b> (not sufficiently proved). Ta chọn đáp án <b>B</b>.",
-      vocab: "<b>Ascertain (v)</b>: Xác định chắc chắn | <b>Sufficiently proved (adj)</b>: Được chứng minh đầy đủ",
+      translation: `<b>Câu hỏi:</b> Theo bài đọc, nhận xét nào sau đây là ĐÚNG về Nghiên cứu hiện tại về ảnh hưởng của môi trường không chung đối với trẻ em?<br><br><b>Nói đơn giản:</b> Chọn 1 trong 4 đáp án A, B, C, D phản ánh chính xác trạng thái của nghiên cứu hiện tại về Non-shared environment trong đoạn G.`,
+      exp: `<b>Dạng câu hỏi:</b> Multiple Choice (Trắc nghiệm chọn 1 đáp án)
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph G
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"Turkheimer and Waldron (2000) have noted that non-shared environmental influences——which include all of the random measurement error——may not be systematic, but instead may operate idiosyncratically and in ways that cannot be ascertained."</i>
+<br><br>
+<b>📝 Phân tích sâu các lựa chọn (Distractor Analysis):</b>
+<ul>
+<li><b>A. a little biased in nature</b> (Có bản chất hơi thiên vị): ❌ <b>Sai.</b> Bài đọc không hề đề cập đến khái niệm "bias" (thiên vị) trong các nghiên cứu này.</li>
+<li><b>B. not sufficiently proved</b> (Chưa được chứng minh đầy đủ):  <b>ĐÚNG.</b> Vì đoạn G khẳng định các tác động này "cannot be ascertained" (không thể xác định/chứng minh chắc chắn) và "may not be systematic", và vẫn cần nghiên cứu thêm để làm rõ. Cụm "not sufficiently proved" paraphrase hoàn hảo cho "cannot be ascertained".</li>
+<li><b>C. very systematic</b> (Rất có tính hệ thống): ❌ <b>Sai hoàn toàn.</b> Bài đọc phản bác trực tiếp: "may NOT be systematic". Bẫy chọn đáp án ngược nghĩa.</li>
+<li><b>D. can be workable</b> (Có thể hoạt động/khả thi ngay): ❌ <b>Sai.</b> Bài đọc vẫn đang đặt câu hỏi nghi vấn "the question is whether or not... can be used", chứ chưa xác nhận tính khả thi chắc chắn.</li>
+</ul>
+<br><br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Đáp án B</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">not sufficiently proved</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">cannot be ascertained / whether or not...</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Chưa thể chứng minh/xác định một cách đầy đủ và chắc chắn.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Đoạn G tóm tắt tình trạng của nghiên cứu Non-shared environment: nhiều sai số đo lường ngẫu nhiên, hoạt động dị biệt không thể xác định (cannot be ascertained).
+- Do đó, bình luận chính xác nhất về nghiên cứu hiện tại là nó <b>chưa được chứng minh một cách đầy đủ (not sufficiently proved)</b>.
+- Đáp án đúng là <b>B</b>.`,
+      vocab: `<b>Sufficiently (adv)</b>: Một cách đầy đủ, thỏa đáng<br><b>Proved (adj/V3)</b>: Được chứng minh<br><b>Biased (adj)</b>: Thiên vị, lệch lạc<br><b>Systematic (adj)</b>: Có tính hệ thống, phương pháp luận`,
       colorClass: "ev-26"
     },
-    27: {
-      translation: "New Zealand sẽ không ấm lên nhiều như các quốc gia khác trong thế kỷ tới vì nó được bao quanh bởi biển.",
-      exp: "Đoạn A chỉ ra rằng trong khi vùng cực bắc tăng 6°C và các lục địa lớn tăng 4°C, thì vùng biển Nam Đại Dương xung quanh New Zealand chỉ tăng 2°C nhờ cơ chế hoạt động giống 'máy điều hòa' (air conditioner).",
-      vocab: "<b>Comparatively fortunate</b>: Tương đối may mắn | <b>Air conditioner</b>: Máy điều hòa khí hậu",
-      colorClass: "ev-27"
-    },
-    28: {
-      translation: "Sự thay đổi thời tiết thường niên của New Zealand vẫn sẽ tiếp diễn mà không bị ảnh hưởng lớn bởi xu hướng ấm lên toàn cầu.",
-      exp: "Đoạn B khẳng định: 'These variables will continue unaffected so that... the warming trend may not be uniform.' (Các biến số khí hậu này vẫn tiếp tục không bị ảnh hưởng, do đó xu hướng ấm lên có thể không đồng đều).",
-      vocab: "<b>Fluctuate (v)</b>: Dao động, biến động | <b>Uniform (adj)</b>: Đồng đều, nhất quán",
-      colorClass: "ev-28"
-    },
-    29: {
-      translation: "New Zealand được dự báo sẽ chịu ảnh hưởng nặng nề hơn bởi cả lũ lụt và hạn hán.",
-      exp: "Đoạn C đề cập rằng gió tây mạnh hơn và thường xuyên hơn sẽ mang lại lượng mưa cực lớn gây lũ lụt ở bờ tây (catastrophic rainfall) và gây khô hạn dễ dẫn tới hạn hán ở bờ đông (drier / drought-prone).",
-      vocab: "<b>Catastrophic (adj)</b>: Thảm khốc, thảm họa | <b>Drought-prone (adj)</b>: Dễ bị hạn hán",
-      colorClass: "ev-29"
-    },
-    30: {
-      translation: "Tác giả nhắc đến cụm từ 'moisture deficit' (thâm hụt độ ẩm) nhằm làm nổi bật việc điều kiện gieo trồng sẽ ngày càng suy thoái.",
-      exp: "Đoạn D phân tích: thâm hụt độ ẩm của đất sẽ kéo dài hơn, khiến một đợt hạn hán mức độ trung bình ngày nay có nguy cơ trở thành sự kiện diễn ra hàng năm vào cuối thế kỷ (almost annual occurrence).",
-      vocab: "<b>Moisture deficit (n)</b>: Sự thâm hụt độ ẩm của đất | <b>Deteriorate (v)</b>: Suy thoái, tệ đi",
-      colorClass: "ev-30"
-    },
-    31: {
-      translation: "Sự ấm lên toàn cầu có thể làm tăng lượng tuyết rơi tại một số địa điểm trượt tuyết nhất định.",
-      exp: "Đoạn D chỉ ra: 'The amount of snow that falls may actually increase, however, even in some northern centres, owing to the intensification of precipitation' (Lượng tuyết rơi thực tế có thể tăng lên do sự gia tăng cường độ mưa/tuyết).",
-      vocab: "<b>Intensification (n)</b>: Sự tăng cường, gia tăng cường độ | <b>Precipitation (n)</b>: Lượng mưa/tuyết rơi",
-      colorClass: "ev-31"
-    },
-    32: {
-      translation: "Tác giả dẫn nghiên cứu mới nhất của NIWA nhằm minh họa một địa danh cụ thể (Southern Alps) sẽ chịu tác động rõ rệt từ sự ấm lên ra sao.",
-      exp: "Đoạn E dẫn thông tin từ NIWA để chứng minh: 'warming over the Southern Alps could be significantly greater than over the rest of the country' (sự ấm lên tại dãy Southern Alps có thể lớn hơn đáng kể so với phần còn lại của đất nước).",
-      vocab: "<b>Offset (v)</b>: Bù đắp, đền bù",
-      colorClass: "ev-32"
-    },
-    33: {
-      translation: "Mức độ dâng lên của nước biển xung quanh New Zealand phụ thuộc vào sự tan băng ở các [vùng cực - D. polar regions].",
-      exp: "Đoạn F liệt kê các nơi tan băng: 'Arctic, Greenland and Antarctica' (Bắc Cực, Greenland và Nam Cực). Các vùng này nằm ở khu vực Nam Cực và Bắc Cực, tương đương với <b>polar regions</b> (đáp án D).",
-      vocab: "<b>Melting of the ice</b>: Sự tan băng | <b>Polar regions</b>: Các vùng cực",
-      colorClass: "ev-33"
-    },
-    34: {
-      translation: "Nước biển dâng cao hơn sẽ dẫn đến việc sụt giảm [sản xuất nông nghiệp - A. agriculture production].",
-      exp: "Đoạn F viết: hệ thống nước ngầm bị nhiễm mặn sẽ phá hỏng việc tưới tiêu nông nghiệp, 'which in turn could diminish crop harvests' (làm giảm sút sản lượng thu hoạch mùa màng), tương đương với <b>agriculture production</b> (đáp án A).",
-      vocab: "<b>Groundwater contamination</b>: Nhiễm mặn nước ngầm | <b>Diminish crop harvests</b>: Suy giảm thu hoạch cây trồng",
-      colorClass: "ev-34"
-    },
-    35: {
-      translation: "Nước biển dâng cũng làm biến đổi hình dạng của các [vùng đất ven biển - F. coastal land].",
-      exp: "Đoạn F giải thích rằng quá trình xói mòn sẽ 'altering the contours of whole shorelines' (làm thay đổi đường nét/đường bao của toàn bộ đường bờ biển), tương đương với thay đổi hình dạng của <b>coastal land</b> (đáp án F).",
-      vocab: "<b>Estuary (n)</b>: Cửa sông | <b>Contours of shorelines</b>: Đường nét, hình dạng bờ biển",
-      colorClass: "ev-35"
-    },
-    36: {
-      translation: "Thế giới tự nhiên ít có khả năng phản ứng linh hoạt trước thách thức hơn con người. (YES)",
-      exp: "Đoạn G viết rõ: 'Human systems are better able to adapt to change than natural ecosystems because humans can see a problem coming and plan a response.' (Hệ thống của con người có khả năng thích ứng tốt hơn hệ sinh thái tự nhiên...).",
-      vocab: "<b>Responsive (adj)</b>: Phản ứng nhanh nhạy, linh hoạt | <b>Ecosystem (n)</b>: Hệ sinh thái",
-      colorClass: "ev-36"
-    },
-    37: {
-      translation: "Ngành nông nghiệp New Zealand đang quá bảo thủ và chống lại các sáng kiến mới. (NOT GIVEN)",
-      exp: "Đoạn G chỉ nói: 'Farmers and horticulturalists have made considerable advances, replacing crops...' (Người nông dân đã có nhiều tiến bộ lớn, thay thế cây trồng cho phù hợp). Không hề có thông tin nói họ bảo thủ (conservative) hay chống đối sáng kiến.",
-      vocab: "<b>Conservative (adj)</b>: Bảo thủ | <b>Considerable advances</b>: Những tiến bộ vượt bậc",
-      colorClass: null
-    },
-    38: {
-      translation: "Sự nóng lên toàn cầu là một tiến trình diễn ra chậm; nó sẽ ảnh hưởng đến các vùng khác nhau theo nhiều cách khác nhau. (NOT GIVEN)",
-      exp: "Đoạn I có nói 'New Zealand may warm more slowly than most places' (New Zealand có thể ấm lên chậm hơn các nơi khác), nhưng bài đọc không khẳng định xu hướng ấm lên của toàn cầu nói chung là chậm.",
-      vocab: "<b>Vulnerable (adj)</b>: Dễ bị tổn thương",
-      colorClass: null
-    },
-    39: {
-      translation: "Loài thằn lằn tuatara cực kỳ dễ bị tổn thương trước sự thay đổi của điều kiện khí hậu. (YES)",
-      exp: "Đoạn H dẫn chứng loài tuatara có giới tính quyết định bởi nhiệt độ ấp trứng. Khi nhiệt độ tăng, tỉ lệ con đực tăng vọt làm mất cân bằng giới tính nghiêm trọng (males outnumber females by nearly two to one), khiến loài này gặp nguy hiểm.",
-      vocab: "<b>Incubated (v)</b>: Được ấp (trứng) | <b>Outnumber (v)</b>: Vượt trội về số lượng",
-      colorClass: "ev-39"
-    },
-    40: {
-      translation: "New Zealand phải cắt giảm khí thải carbon nếu muốn làm chậm tiến trình nóng lên toàn cầu. (NO)",
-      exp: "Đoạn H khẳng định lượng khí thải của New Zealand chỉ chiếm 0.5% toàn cầu. Do đó, 'Even if New Zealanders were to achieve... carbon neutrality, this would have no discernable impact on global climate change.' (Dù có đạt trung hòa carbon thì cũng không tạo ra tác động rõ rệt nào lên biến đổi khí hậu toàn cầu).",
-      vocab: "<b>Carbon neutrality (n)</b>: Sự trung hòa carbon | <b>Discernable impact</b>: Tác động có thể nhận thấy rõ",
-      colorClass: "ev-40"
-    }
+  27: {
+  translation: `<b>Câu hỏi:</b> Ý chính của đoạn văn đầu tiên là gì?<br><br><b>Nói đơn giản:</b> Đoạn A chủ yếu muốn truyền tải thông điệp gì về mức độ ấm lên của New Zealand so với các quốc gia khác trong thế kỷ tới?`,
+  exp: `<b>Dạng câu hỏi:</b> Multiple Choice — Main Idea Question (Ý chính của đoạn A)
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph A
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"New Zealand is a small country, but it is surrounded by a vast ocean. That giant body of water acts like a huge air conditioner, buffering the land against extreme temperature changes... Southern Ocean... expected to warm by only around 2°C... Consequently, New Zealand will not warm as much as many other countries."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>surrounded by a vast ocean / giant body of water</b>: được bao bọc bởi đại dương bao la (tương đương với <i>surrounded by sea</i>).</li>
+<li><b>acts like a huge air conditioner</b>: đóng vai trò như một chiếc máy điều hòa khổng lồ giúp giảm thiểu sự thay đổi nhiệt độ cực đoan.</li>
+<li><b>warm by only around 2°C vs 4°C/6°C elsewhere</b>: biển Nam Đại Dương quanh NZ chỉ ấm lên khoảng 2°C, thấp hơn nhiều so với lục địa lớn (4°C) hay vùng nhiệt đới (6°C).</li>
+<li><b>Consequently, New Zealand will not warm as much as many other countries</b>: Kết quả là, New Zealand sẽ không bị ấm lên nhiều như nhiều quốc gia khác.</li>
+</ul>
+<br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Đáp án D</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">not warm as much as other countries</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">will not warm as much as many other countries</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Trùng khớp 100% về vế so sánh mức độ ấm lên.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">surrounded by sea</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">surrounded by a vast ocean</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Đại dương bao la xung quanh = biển bao bọc.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Đoạn A mở đầu bằng việc mô tả vị trí địa lý đặc thù của New Zealand: là một đảo quốc được bao bọc bởi biển. Biển Nam Đại Dương hoạt động như một cỗ máy làm mát, giúp kìm hãm mức tăng nhiệt độ chỉ ở mức 2°C (so với 4°C-6°C ở các khu vực khác).
+<br>
+- Kết luận trực tiếp của đoạn A: <i>"New Zealand will not warm as much as many other countries."</i>
+<br>
+- Phương án <b>D</b> tóm tắt chính xác 100% ý chính này.
+<br><br>
+<b>🚫 Phân tích các đáp án sai (Distractors Analysis):</b>
+<ul>
+<li><b>A. The air condition... maintain a high quality...</b>: ❌ <i>Bẫy ẩn dụ (Metaphor Trap).</i> Bài đọc dùng hình ảnh so sánh đại dương như một chiếc "air conditioner" (máy điều hòa làm mát nhiệt độ), chứ không nói về "air quality" (chất lượng không khí).</li>
+<li><b>B. The Southern Ocean will remain at a constant strength</b>: ❌ <i>Bẫy thông tin sai.</i> Bài đọc không hề nói về "strength" cố định của đại dương.</li>
+<li><b>C. The continents will warm more than the point</b>: ❌ <i>Sai ngữ pháp/ngữ nghĩa.</i> Câu văn diễn đạt không trọn vẹn và không đúng ý chính của đoạn.</li>
+</ul>
+<br>
+<b>🎓 Bài học & Bẫy IELTS:</b>
+<br>
+Cảnh giác với bẫy từ đồng dạng / ẩn dụ: Khi bài đọc dùng từ "air conditioner" như một phép so sánh tu từ về mặt nhiệt độ, các lựa chọn nhiễu sẽ cố tình lái sang nghĩa đen "chất lượng không khí" (air condition/quality) để đánh lừa người đọc lướt.`,
+  vocab: `<b>Vast ocean (n)</b>: Đại dương bao la<br><b>Buffer (v)</b>: Đóng vai trò làm vật đệm, giảm chấn động/tác động<br><b>Substantial (adj)</b>: Lớn, đáng kể<br><b>Landmass (n)</b>: Vùng diện tích đất liền lớn, lục địa`,
+  colorClass: "ev-27"
+},
+
+28: {
+  translation: `<b>Câu hỏi:</b> Tác giả nói gì về thời tiết biến động của New Zealand?<br><br><b>Nói đơn giản:</b> Theo bài đọc, hiện tượng thời tiết thất thường/biến động hàng năm của New Zealand sẽ diễn ra như thế nào dưới tác động của sự ấm lên toàn cầu?`,
+  exp: `<b>Dạng câu hỏi:</b> Multiple Choice — Specific Detail
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph B
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"This moderating marine influence does not mean New Zealand will escape climate change, however. Year-to-year weather variation will continue to occur as normal, superimposed on top of the long-term warming trend."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>Year-to-year weather variation</b>: Sự biến động thời tiết từ năm này sang năm khác (thời tiết biến động / variable weather).</li>
+<li><b>will continue to occur as normal</b>: sẽ tiếp tục diễn ra như bình thường (sẽ tiếp diễn / will continue).</li>
+<li><b>superimposed on top of the long-term warming trend</b>: được xếp chồng lên trên xu hướng ấm lên dài hạn (nghĩa là bản chất sự biến động này không bị xóa bỏ hay thay đổi bởi hiện tượng ấm lên toàn cầu).</li>
+</ul>
+<br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Đáp án B</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Variable weather</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">Year-to-year weather variation</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Thời tiết biến động = sự thay đổi thời tiết qua từng năm.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">will continue, unchanged</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">will continue to occur as normal</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Sẽ tiếp tục diễn ra như bình thường không bị thay đổi.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Tác giả nhấn mạnh rằng dù có xu hướng ấm lên toàn cầu, những đợt thời tiết thất thường tự nhiên giữa các năm vẫn sẽ diễn ra như một quy luật bình thường (continue to occur as normal).
+- Phương án <b>B</b> diễn đạt lại hoàn hảo: <i>Variable weather will continue, unchanged by global warming.</i>
+<br><br>
+<b>🚫 Phân tích các đáp án sai (Distractors Analysis):</b>
+<ul>
+<li><b>A. Temperature changes of 1°C will not seem important...</b>: ❌ <i>Not Mentioned.</i> Bài đọc không hề thảo luận về việc thay đổi 1°C có quan trọng hay không.</li>
+<li><b>C. There was an unusually small amount of variation in 2006-2007</b>: ❌ <i>Contradiction (Trái ngược).</i> Đoạn B nói năm 2006-2007 có các mẫu thời tiết bất thường (unusual weather patterns), biểu hiện sự biến động rõ rệt chứ không phải "small amount of variation".</li>
+<li><b>D. Summer temperatures will vary but winter ones will be consistent</b>: ❌ <i>False Split.</i> Bài đọc không hề phân chia sự nhất quán/biến động giữa mùa hè và mùa đông.</li>
+</ul>`,
+  vocab: `<b>Moderating (adj)</b>: Điều hòa, làm dịu bớt<br><b>Superimpose (v)</b>: Đặt/xếp chồng lên trên cái khác<br><b>Persist (v)</b>: Bền bỉ tiếp tục, kéo dài tồn tại<br><b>Natural variability (n)</b>: Tính biến động tự nhiên`,
+  colorClass: "ev-28"
+},
+
+29: {
+  translation: `<b>Câu hỏi:</b> Tác động được dự báo của các điều kiện đại dương ở phía nam New Zealand là gì?<br><br><b>Nói đơn giản:</b> Sự thay đổi của luồng gió và điều kiện biển phía Nam sẽ gây ra những hiện tượng thời tiết cực đoan nào cho New Zealand?`,
+  exp: `<b>Dạng câu hỏi:</b> Multiple Choice — Cause and Effect / Detail
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph C
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"...stronger, more frequent west winds will bring increased, sometimes catastrophic rainfall to the west coast of the country and create drier conditions in some eastern regions that are already drought-prone."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>stronger, more frequent west winds</b>: gió tây mạnh hơn và xuất hiện thường xuyên hơn.</li>
+<li><b>catastrophic rainfall to the west coast</b>: lượng mưa lớn gây thảm họa/mưa lũ ở bờ biển phía Tây (tương đương <i>floods</i>).</li>
+<li><b>drier conditions in eastern regions ... drought-prone</b>: điều kiện khô hạn hơn ở các vùng phía Đông vốn đã dễ bị hạn hán (tương đương <i>droughts</i>).</li>
+</ul>
+<br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Đáp án A</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">floods</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">catastrophic rainfall</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Mưa lớn thảm họa dẫn tới ngập lụt.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">droughts</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">drier conditions ... drought-prone</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Điều kiện khô hạn ở các vùng dễ bị hạn hán.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">more affected</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">bring increased ... create drier...</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Tăng cường cả hai thái cực thời tiết cực đoan.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Tác động ở phía Nam tạo ra luồng gió tây mạnh hơn, kéo theo 2 hệ quả thời tiết song song đối lập: Mưa lũ cực đoan ở bờ Tây và Khô hạn/Hạn hán nghiêm trọng hơn ở bờ Đông.
+- Do đó, New Zealand sẽ chịu ảnh hưởng gia tăng bởi cả lũ lụt và hạn hán (<b>A. New Zealand will be more affected by floods and droughts</b>).
+<br><br>
+<b>🚫 Phân tích các đáp án sai (Distractors Analysis):</b>
+<ul>
+<li><b>B. Antarctica will not be adversely affected...</b>: ❌ <i>Not Mentioned.</i> Bài đọc không nói Nam Cực không bị ảnh hưởng xấu.</li>
+<li><b>C. The band of west winds will move further to the south</b>: ❌ <i>Misinterpretation.</i> Bài đọc nói gió tây trở nên mạnh hơn (become stronger), chứ không di chuyển dịch hơn về phía Nam.</li>
+<li><b>D. The usual west wind will no longer be reliable</b>: ❌ <i>Distortion.</i> Bài đọc nói gió tây mạnh hơn và xuất hiện thường xuyên hơn (stronger, more frequent), chứ không phải "không đáng tin cậy".</li>
+</ul>`,
+  vocab: `<b>Profound (adj)</b>: Sâu sắc, ảnh hưởng rất lớn<br><b>Catastrophic (adj)</b>: Thảm khốc, gây thảm họa lớn<br><b>Drought-prone (adj)</b>: Dễ xảy ra hạn hán<br><b>Rainfall (n)</b>: Lượng mưa`,
+  colorClass: "ev-29"
+},
+
+30: {
+  translation: `<b>Câu hỏi:</b> Tác giả đề cập đến thuật ngữ 'moisture deficit' (thâm hụt độ ẩm) nhằm mục đích gì?<br><br><b>Nói đơn giản:</b> Việc phân tích hiện tượng đất bị thiếu hụt độ ẩm được tác giả sử dụng để chứng minh điều gì về điều kiện phát triển cây trồng?`,
+  exp: `<b>Dạng câu hỏi:</b> Multiple Choice — Writer's Purpose / Example Function
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph D
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"Furthermore, in the drier regions, the average moisture deficit... will increase. Soils could go into moisture deficit earlier in the growing season and the deficits could last longer into autumn that at present. What we think of today as a medium-severity drought could be an almost annual occurrence by the end of the century."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>average moisture deficit ... will increase</b>: sự thâm hụt độ ẩm trung bình của đất sẽ gia tăng.</li>
+<li><b>go into moisture deficit earlier ... last longer</b>: đất thiếu nước sớm hơn trong mùa sinh trưởng và tình trạng thiếu nước kéo dài hơn vào mùa thu.</li>
+<li><b>medium-severity drought ... annual occurrence</b>: hạn hán mức độ trung bình ngày nay sẽ trở thành hiện tượng xảy ra hàng năm.</li>
+</ul>
+<br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Đáp án C</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">growing conditions</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">soils available to plants ... growing season</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Điều kiện nuôi dưỡng và trồng trọt nông nghiệp.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">deteriorate</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">moisture deficit increase ... drought annual occurrence</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Suy thoái, trở nên tồi tệ hơn do đất bị khô cạn đe dọa cây trồng.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Tác giả định nghĩa "moisture deficit" là sự chênh lệch giữa lượng nước trong đất và lượng nước cây cần để phát triển tối ưu.
+- Việc thâm hụt độ ẩm diễn ra sớm hơn và kéo dài hơn minh họa rõ ràng cho sự suy thoái nghiêm trọng của điều kiện gieo trồng (<b>C. How growing conditions will deteriorate</b>).
+<br><br>
+<b>🚫 Phân tích các đáp án sai (Distractors Analysis):</b>
+<ul>
+<li><b>A. The droughts will be shorter but more severe</b>: ❌ <i>Contradiction.</i> Bài đọc nói đợt thâm hụt kéo dài *lâu hơn* (last longer), chứ không ngắn hơn (shorter).</li>
+<li><b>B. How the growing season will become longer</b>: ❌ <i>Misinterpretation.</i> Bài đọc nói tình trạng *thiếu nước* xuất hiện sớm hơn trong mùa sinh trưởng, chứ không phải mùa sinh trưởng kéo dài thuận lợi hơn.</li>
+<li><b>D. That farmers should alter the make-up of soils</b>: ❌ <i>Not Mentioned.</i> Không đề cập việc nông dân phải biến đổi thành phần hóa học/cấu trúc của đất.</li>
+</ul>`,
+  vocab: `<b>Moisture deficit (n)</b>: Sự thâm hụt/thiếu hụt độ ẩm<br><b>Optimum growth (n)</b>: Sự phát triển tối ưu<br><b>Deteriorate (v)</b>: Suy thoái, biến đổi xấu đi<br><b>Annual occurrence (n)</b>: Sự việc xảy ra hàng năm`,
+  colorClass: "ev-30"
+},
+
+31: {
+  translation: `<b>Câu hỏi:</b> Dự báo nào được đưa ra về lượng tuyết rơi?<br><br><b>Nói đơn giản:</b> Theo bài đọc, hiện tượng ấm lên toàn cầu ảnh hưởng thế nào đến lượng tuyết rơi ở một số vùng núi phía Bắc?`,
+  exp: `<b>Dạng câu hỏi:</b> Multiple Choice — Detail Question
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph D
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"The amount of snow that falls may actually increase, however, even in some northern centres, owing to the intensification of precipitation, Ski-field base station may eventually have to be moved upwards to be within reach of the new snow line but there could still be plenty of the white stuff up there."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>amount of snow that falls may actually increase</b>: lượng tuyết rơi thực tế có thể gia tăng (cung cấp nhiều tuyết hơn / provide more snow).</li>
+<li><b>owing to the intensification of precipitation</b>: do sự tăng cường của lượng mưa/tuyết (mưa bão dồn dập hơn do không khí ấm giữ nhiều hơi nước hơn).</li>
+<li><b>there could still be plenty of the white stuff up there</b>: vẫn có thể có rất nhiều "thứ màu trắng" (tuyết) ở trên các độ cao lớn.</li>
+</ul>
+<br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Đáp án D</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Warming may provide more snow</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">amount of snow ... may actually increase</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Hiện tượng ấm lên gây mưa dồn dập tạo ra lượng tuyết rơi nhiều hơn.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">for some ski locations</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">even in some northern centres ... ski-field</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Ở một số trung tâm/trượt tuyết phía Bắc.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Mặc dù đường tuyết vĩnh cửu nâng cao lên, nhưng do lượng mưa/tuyết tăng cường (intensification of precipitation) bởi không khí ấm, một số khu vực trượt tuyết phía Bắc thực tế có thể nhận được lượng tuyết rơi nhiều hơn.
+- Đáp án <b>D. Warming may provide more snow for some ski locations</b> hoàn toàn khớp với ý này.
+<br><br>
+<b>🚫 Phân tích các đáp án sai (Distractors Analysis):</b>
+<ul>
+<li><b>A. The skifields may have to close</b>: ❌ <i>Contradiction.</i> Bài đọc phủ định việc đóng cửa, khẳng định "still be plenty of the white stuff up there".</li>
+<li><b>B. The ski season will be later in the year than at present</b>: ❌ <i>Not Mentioned.</i> Bài đọc không nói về việc thời gian mở mùa trượt tuyết bị trễ hơn.</li>
+<li><b>C. The northern ski field will have to move to the south</b>: ❌ <i>Bẫy hướng di chuyển.</i> Bài đọc nói các trạm trượt tuyết phải di chuyển lên cao hơn (moved upwards), chứ không phải di chuyển về phía Nam (move to the south).</li>
+</ul>`,
+  vocab: `<b>Snow line (n)</b>: Đường ranh giới tuyết bao phủ vĩnh cửu<br><b>Intensification (n)</b>: Sự tăng cường, gia tăng cường độ<br><b>Precipitation (n)</b>: Lượng mưa/tuyết rơi từ khí quyển<br><b>Ski-field (n)</b>: Khu vực trượt tuyết`,
+  colorClass: "ev-31"
+},
+
+32: {
+  translation: `<b>Câu hỏi:</b> Tác giả đề cập đến các nghiên cứu mới nhất của NIWA nhằm mục đích gì?<br><br><b>Nói đơn giản:</b> Việc trích dẫn số liệu từ Viện NIWA giúp tác giả minh họa điều gì về ảnh hưởng của sự ấm lên toàn cầu lên một khu vực địa lý cụ thể?`,
+  exp: `<b>Dạng câu hỏi:</b> Multiple Choice — Exemplification / Detail
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph E
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"The latest studies conducted by the National Institute for Water and Atmospheric Research (NIWA), however, suggest that by the end of the century, warming over the Southern Alps could be significantly greater than over the rest of the country."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>National Institute for Water and Atmospheric Research (NIWA)</b>: Viện nghiên cứu Nước và Khí quyển Quốc gia.</li>
+<li><b>Southern Alps</b>: Dãy Alps phía Nam (địa danh cụ thể / a particular place).</li>
+<li><b>warming ... significantly greater than over the rest of the country</b>: sự ấm lên ở đây có thể lớn hơn đáng kể so với phần còn lại của đất nước (chịu ảnh hưởng bởi hiện tượng ấm lên / affected by warming).</li>
+</ul>
+<br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Đáp án A</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">a particular place</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">Southern Alps</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Một địa danh/khu vực địa lý cụ thể.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">affected by warming</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">warming ... significantly greater</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Mức độ ấm lên diễn ra mạnh mẽ hơn ở vùng này.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Nghiên cứu của NIWA được trích dẫn để chỉ ra một ngoại lệ khu vực: Dãy Southern Alps sẽ trải qua mức độ ấm lên cao hơn hẳn so với mức bình quân của toàn bộ New Zealand.
+- Điều này chứng minh <i>how a particular place could be affected by warming</i> (<b>A</b>).
+<br><br>
+<b>🚫 Phân tích các đáp án sai (Distractors Analysis):</b>
+<ul>
+<li><b>B. that the warming trend has been intensifying since 1978</b>: ❌ <i>Bẫy ghép mốc thời gian.</i> Mốc 1978 ở đoạn E nói về việc tuyết rơi tăng bù đắp cho sụt giảm băng, không phải kết luận của NIWA về xu hướng ấm lên.</li>
+<li><b>C. that freezing levels will rise throughout the century</b>: ❌ <i>Not Mentioned.</i> Không phải nội dung cốt lõi NIWA báo cáo.</li>
+<li><b>D. how the growth of glaciers is likely to cause damage</b>: ❌ <i>Contradiction.</i> Băng hà đang bị thu hẹp 35% (glaciers reduced), chứ không có sự phát triển ("growth") gây hại.</li>
+</ul>`,
+  vocab: `<b>Glacier (n)</b>: Sông băng, khối băng hà<br><b>Offset (v)</b>: Đền bù, bù đắp cân bằng<br><b>Particular place (n)</b>: Một khu vực/địa danh cụ thể`,
+  colorClass: "ev-32"
+},
+
+33: {
+  translation: `<b>Câu hỏi:</b> Mức độ dâng lên của nước biển trong tương lai xung quanh New Zealand vẫn chưa chắc chắn và có thể được quyết định ở [vùng cực - D. polar regions].<br><br><b>Nói đơn giản:</b> Tìm đáp án trong ô từ tương đương với các vùng đất băng giá (Bắc Cực, Nam Cực) được đề cập ở đoạn F.`,
+  exp: `<b>Dạng câu hỏi:</b> Summary Completion with Options (Chọn từ trong hộp)
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph F
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"Predictions for the coming years cover a wide range, however, partly because of unknown rises resulting from the melting of the ice in the Arctic, Greenland and Antarctica."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>Predictions ... cover a wide range / unknown rises</b>: Các dự báo dao động lớn / chưa chắc chắn (uncertain extent).</li>
+<li><b>melting of the ice in the Arctic, Greenland and Antarctica</b>: sự tan băng ở Bắc Cực, Greenland và Nam Cực (các vùng cực / polar regions).</li>
+</ul>
+<br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ chọn trong Hộp (Option D)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">D. polar regions</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">Arctic, Greenland and Antarctica</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Bắc Cực và Nam Cực là các vùng cực của Trái Đất.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Mức độ nước biển dâng bị ảnh hưởng bởi việc băng tan tại Arctic, Greenland & Antarctica.
+- Trong danh sách các từ A-G, cụm <b>D. polar regions</b> (vùng cực) là cụm từ khái quát chính xác nhất cho ba địa danh này.
+- Đáp án chính xác là <b>D</b>.`,
+  vocab: `<b>Polar regions (n)</b>: Các vùng cực (Bắc Cực & Nam Cực)<br><b>Uncertain (adj)</b>: Không chắc chắn, mơ hồ<br><b>Melting of ice (n)</b>: Sự tan chảy của băng`,
+  colorClass: "ev-33"
+},
+
+34: {
+  translation: `<b>Câu hỏi:</b> Mực nước biển dâng cao hơn có thể dẫn đến sự sụt giảm trong [sản xuất nông nghiệp - A. agriculture production].<br><br><b>Nói đơn giản:</b> Tìm đáp án chọn trong hộp mô tả hậu quả của việc nước mặn xâm nhập làm hỏng nguồn nước tưới tiêu nông nghiệp.`,
+  exp: `<b>Dạng câu hỏi:</b> Summary Completion with Options (Chọn từ trong hộp)
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph F
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"...groundwater systems may become contaminated with saltwater, spoiling them for the irrigation of farmland, which in turn could diminish crop harvests."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>groundwater contaminated with saltwater</b>: nguồn nước ngầm bị nhiễm mặn.</li>
+<li><b>spoiling ... irrigation of farmland</b>: làm hỏng nguồn nước tưới tiêu đất canh tác.</li>
+<li><b>diminish crop harvests</b>: làm sụt giảm sản lượng thu hoạch cây trồng (tương đương giảm <i>agriculture production</i>).</li>
+</ul>
+<br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ chọn trong Hộp (Option A)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">A. agriculture production</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">irrigation of farmland ... diminish crop harvests</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Tưới tiêu nông trại và năng suất cây trồng = sản xuất nông nghiệp.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">reduced</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">diminish</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Giảm sút, suy giảm.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Chuỗi nguyên nhân - kết quả: Nước biển dâng → Nước ngầm nhiễm mặn → Mất nước tưới tiêu → Giảm sản lượng cây trồng.
+- Danh từ mô tả sự suy giảm thu hoạch cây trồng trong bảng lựa chọn chính là <b>A. agriculture production</b>.
+- Đáp án đúng là <b>A</b>.`,
+  vocab: `<b>Agriculture production (n)</b>: Sản xuất nông nghiệp<br><b>Groundwater (n)</b>: Nước ngầm<br><b>Irrigation (n)</b>: Sự tưới tiêu<br><b>Diminish (v)</b>: Sụt giảm, làm nhỏ đi`,
+  colorClass: "ev-34"
+},
+
+35: {
+  translation: `<b>Câu hỏi:</b> ...và dẫn đến những thay đổi đối với hình dạng của [đất ven biển - F. coastal land].<br><br><b>Nói đơn giản:</b> Tìm đáp án đại diện cho đường bờ biển/vùng ven biển bị biến đổi hình dạng do xói mòn ở đoạn F.`,
+  exp: `<b>Dạng câu hỏi:</b> Summary Completion with Options (Chọn từ trong hộp)
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph F
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"Similarly, over time, estuaries may be enlarged by erosion as tidal influences reach further upstream, altering the contours of whole shorelines..."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>altering the contours</b>: làm thay đổi đường nét/hình dạng (changes to the shape).</li>
+<li><b>whole shorelines / estuaries</b>: toàn bộ đường bờ biển / cửa sông (đất ven biển / coastal land).</li>
+</ul>
+<br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ chọn trong Hộp (Option F)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">F. coastal land</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">whole shorelines / estuaries</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Đường bờ biển và cửa sông = vùng đất ven biển.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">changes to the shape</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">altering the contours</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Thay đổi đường nét khung hình.</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Hiện tượng thủy triều lấn sâu gây xói mòn làm biến đổi đường nét (contours) của bờ biển.
+- Lựa chọn phù hợp nhất trong hộp từ là <b>F. coastal land</b>.
+- Đáp án chính xác là <b>F</b>.`,
+  vocab: `<b>Coastal land (n)</b>: Vùng đất ven biển<br><b>Contours (n)</b>: Đường nét, đường bao quanh hình dáng<br><b>Erosion (n)</b>: Sự xói mòn<br><b>Estuary (n)</b>: Cửa sông`,
+  colorClass: "ev-35"
+},
+
+36: {
+  translation: `<b>Câu hỏi:</b> Thế giới tự nhiên ít có khả năng phản ứng linh hoạt trước các thách thức hơn con người.<br><br><b>Nói đơn giản:</b> Đánh giá xem có đúng bài đọc khẳng định xã hội loài người có khả năng thích ứng tốt hơn các hệ sinh thái tự nhiên hay không.`,
+  exp: `<b>Dạng câu hỏi:</b> YES / NO / NOT GIVEN
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph G
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"Human systems are better able to adapt to change than natural ecosystems because humans can see a problem coming and plan a response."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>Human systems are better able to adapt ... than natural ecosystems</b>: Các hệ thống của con người có khả năng thích ứng với sự thay đổi tốt hơn các hệ sinh thái tự nhiên.</li>
+<li><b>because humans can see a problem coming and plan a response</b>: bởi vì con người có thể dự đoán khó khăn và lập kế hoạch ứng phó.</li>
+</ul>
+<br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Ý kiến trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối quan hệ đối chiếu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">Natural world is less likely to respond flexibly than humans</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">Human systems are better able to adapt than natural ecosystems</td>
+<td style="padding: 8px; border: 1px solid #ddd; color: #2e7d32; font-weight: bold;">Trùng khớp hoàn toàn (Con người tốt hơn Tự nhiên = Tự nhiên kém linh hoạt hơn Con người).</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- <b>Câu hỏi:</b> Tự nhiên kém linh hoạt/thích ứng kém hơn con người.
+- <b>Bài đọc:</b> Con người có khả năng thích ứng tốt hơn hệ sinh thái tự nhiên.
+- Hai phát biểu này là sự đảo chiều logic hoàn toàn đồng nhất (A > B chính là B < A).
+- Đáp án là <b>YES</b>.`,
+  vocab: `<b>Respond flexibly (v)</b>: Phản ứng linh hoạt<br><b>Adapt to change (v)</b>: Thích ứng với sự thay đổi<br><b>Natural ecosystem (n)</b>: Hệ sinh thái tự nhiên`,
+  colorClass: "ev-36"
+},
+
+37: {
+  translation: `<b>Câu hỏi:</b> Ngành nông nghiệp đang quá bảo thủ và chống lại các sáng kiến mới.<br><br><b>Nói đơn giản:</b> Có phải bài đọc cáo buộc nông dân và ngành nông nghiệp New Zealand lạc hậu, không chịu đổi mới hay không?`,
+  exp: `<b>Dạng câu hỏi:</b> YES / NO / NOT GIVEN
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph G
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"Farmers and horticulturalists have made considerable advances, replacing crops they grow to better suit the new conditions."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>Farmers and horticulturalists</b>: Nông dân và những người làm nghề làm vườn (ngành nông nghiệp).</li>
+<li><b>made considerable advances, replacing crops</b>: đã có những tiến bộ đáng kể, thay đổi các loại cây trồng để phù hợp tốt hơn với điều kiện mới.</li>
+<li><b>too conservative and resistant to innovation</b>: bài đọc KHÔNG hề kết luận ngành nông nghiệp "quá bảo thủ và chống đối sáng kiến". Thực tế bài đọc ghi nhận họ đã có nhiều tiến bộ.</li>
+</ul>
+<br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Ý kiến trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Kết luận đối chiếu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: #d32f2f;">too conservative and resistant to innovation</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">made considerable advances, replacing crops</td>
+<td style="padding: 8px; border: 1px solid #ddd; color: #e65100; font-weight: bold;">Không có thông tin đánh giá họ bảo thủ (Missing / Unsupported).</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Bài đọc chỉ khen ngợi người nông dân đã chủ động thay đổi cây trồng và có tiến bộ.
+- Không hề có thông tin quy chụp rằng ngành nông nghiệp "quá bảo thủ" (too conservative).
+- Do thông tin không thể xác nhận hay phủ định phát biểu này, đáp án chắc chắn là <b>NOT GIVEN</b>.`,
+  vocab: `<b>Conservative (adj)</b>: Bảo thủ, duy trì cái cũ<br><b>Resistant to (adj)</b>: Kháng cự, chống lại<br><b>Horticulturalist (n)</b>: Người trồng hoa/cây cảnh/làm vườn<br><b>Considerable advances (n)</b>: Những tiến bộ đáng kể`,
+  colorClass: "ev-37"
+},
+
+38: {
+  translation: `<b>Câu hỏi:</b> Hầu hết các loài ở New Zealand sẽ dễ dàng sống sót nếu biến đổi khí hậu diễn ra nhanh chóng.<br><br><b>Nói đơn giản:</b> Kiểm tra xem có đúng bài đọc khẳng định phần lớn sinh vật sẽ sống sót tốt nếu tốc độ biến đổi khí hậu diễn ra nhanh hay không.`,
+  exp: `<b>Dạng câu hỏi:</b> YES / NO / NOT GIVEN
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph H
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"For natural ecosystems the rate of change is crucial. If it is low, the plants and animals and fish will be able to ‘keep up’; if it is high, only the most adaptable species-those that can survive in the widest range of ecological niches-are likely to survive."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>If rate of change is high</b>: Nếu tốc độ biến đổi khí hậu diễn ra nhanh/cao.</li>
+<li><b>only the most adaptable species ... are likely to survive</b>: CHỈ CÓ những loài có khả năng thích nghi cao nhất mới có khả năng sống sót (mâu thuẫn trực tiếp với "Most species will easily survive").</li>
+</ul>
+<br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Ý kiến trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối quan hệ đối chiếu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: #d32f2f;">Most species will easily survive</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">only the most adaptable species are likely to survive</td>
+<td style="padding: 8px; border: 1px solid #ddd; color: #d32f2f; font-weight: bold;">Mâu thuẫn trực tiếp (Hầu hết dễ sống sót vs Chỉ số ít loài thích nghi nhất mới sống sót).</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- <b>Câu hỏi:</b> Hầu hết các loài sẽ dễ dàng sống sót nếu khí hậu đổi nhanh.
+- <b>Bài đọc:</b> Nếu tốc độ đổi nhanh, CHỈ BẢO VỆ ĐƯỢC những loài thích nghi nhất, các loài khác sẽ rất khó sống sót.
+- Nhận định mâu thuẫn trực tiếp với bài đọc -> Đáp án là <b>NO</b> (hoặc NOT GIVEN nếu không đánh giá số lượng tuyệt đối).`,
+  vocab: `<b>Crucial (adj)</b>: Mang tính quyết định, cực kỳ quan trọng<br><b>Keep up (v)</b>: Theo kịp, bắt kịp<br><b>Ecological niche (n)</b>: Ô sinh thái, vị trí sinh thái đặc thụ`,
+  colorClass: "ev-38"
+},
+
+39: {
+  translation: `<b>Câu hỏi:</b> Loài thằn lằn tuatara rất dễ bị tổn thương trước sự thay đổi của điều kiện khí hậu.<br><br><b>Nói đơn giản:</b> Có đúng bài đọc đưa ra ví dụ thằn lằn tuatara bị đe dọa sinh sản trực tiếp do nhiệt độ tăng làm lệch tỷ lệ giới tính hay không?`,
+  exp: `<b>Dạng câu hỏi:</b> YES / NO / NOT GIVEN
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph H
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"Take tuatara, for instance. Their sex is determined by the temperature at which the eggs are incubated in warm (currently above 22 °C) condition become predominately male – and now males already outnumber females by nearly two to one in some island refuges."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>Take tuatara, for instance</b>: Lấy loài tuatara làm ví dụ tiêu biểu.</li>
+<li><b>sex is determined by incubation temperature</b>: giới tính được quyết định bởi nhiệt độ ấp trứng.</li>
+<li><b>warm condition become predominately male ... outnumber females 2 to 1</b>: thời tiết ấm lên khiến con đực chiếm đa số, hiện nay số lượng con đực đã áp đảo con mái theo tỷ lệ 2:1 ở một số đảo.</li>
+</ul>
+<br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Ý kiến trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối quan hệ đối chiếu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">tuatara is vulnerable</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">sex determined by temperature ... males outnumber females 2:1</td>
+<td style="padding: 8px; border: 1px solid #ddd; color: #2e7d32; font-weight: bold;">Trùng khớp 100% (Mất cân bằng giới tính do nhiệt độ đe dọa sự duy trì nòi giống).</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- Ví dụ về tuatara minh họa cho sự nhạy cảm cực kỳ cao của sinh vật trước nhiệt độ: khi khí hậu ấm lên, trứng nở ra toàn con đực (2 đực : 1 mái), làm suy giảm khả năng duy trì nòi giống.
+- Điều này chứng minh loài tuatara rất dễ bị tổn thương trước biến đổi khí hậu (<b>vulnerable to changes in climate conditions</b>).
+- Đáp án là <b>YES</b>.`,
+  vocab: `<b>Vulnerable (adj)</b>: Dễ bị tổn thương, nguy cấp<br><b>Incubate (v)</b>: Ấp trứng<br><b>Predominately (adv)</b>: Chiếm ưu thế, phần lớn<br><b>Outnumber (v)</b>: Đông hơn về số lượng`,
+  colorClass: "ev-39"
+},
+
+40: {
+  translation: `<b>Câu hỏi:</b> New Zealand bắt buộc phải cắt giảm lượng khí thải carbon nếu muốn làm chậm quá trình ấm lên toàn cầu.<br><br><b>Nói đơn giản:</b> Có đúng tác giả khẳng định việc New Zealand cắt giảm khí thải carbon sẽ có tác dụng trực tiếp làm chậm lại sự ấm lên của khí hậu toàn cầu không?`,
+  exp: `<b>Dạng câu hỏi:</b> YES / NO / NOT GIVEN
+<br><br>
+<b>📍 Vị trí dẫn chứng:</b> Paragraph H
+<br><br>
+<b>🔍 Dẫn chứng thực tế (Evidence):</b>
+<br>
+<i>"New Zealand’s own greenhouse emissions are tiny – around 0.5% of the global total. Even if New Zealanders were to achieve the government’s target of carbon neutrality, this would have no discernable impact on global climate change."</i>
+<br><br>
+<b>📝 Phân tích chi tiết câu dẫn chứng:</b>
+<ul>
+<li><b>greenhouse emissions are tiny (0.5%)</b>: lượng khí thải nhà kính của NZ cực kỳ nhỏ (chỉ chiếm 0.5% tổng toàn cầu).</li>
+<li><b>Even if ... achieve carbon neutrality</b>: Ngay cả khi người dân NZ đạt được mục tiêu trung hòa carbon của chính phủ.</li>
+<li><b>no discernable impact on global climate change</b>: việc này cũng KHÔNG tạo ra tác động rõ rệt nào đối với sự biến đổi khí hậu toàn cầu.</li>
+</ul>
+<br>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
+<table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Ý kiến trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối quan hệ đối chiếu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: #d32f2f;">NZ must reduce carbon emission to slow warming</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">carbon neutrality would have no discernable impact on global climate change</td>
+<td style="padding: 8px; border: 1px solid #ddd; color: #d32f2f; font-weight: bold;">Mâu thuẫn trực tiếp (Bắt buộc phải giảm để làm chậm vs Có giảm hoàn toàn cũng không tạo ra tác động rõ rệt).</td>
+</tr>
+</tbody>
+</table>
+<br>
+<b>💡 Logic lập luận:</b>
+<br>
+- <b>Câu hỏi khẳng định:</b> New Zealand phải giảm khí thải carbon thì mới làm chậm được sự ấm lên toàn cầu.
+- <b>Bài đọc phủ định:</b> Do khí thải của NZ quá nhỏ (0.5%), ngay cả khi NZ đưa khí thải về 0 (carbon neutrality), nó cũng chẳng làm chậm hay ảnh hưởng gì tới biến đổi khí hậu toàn cầu.
+- Hai nhận định mâu thuẫn trực tiếp 100%.
+- Đáp án chính xác là <b>NO</b>.`,
+  vocab: `<b>Carbon neutrality (n)</b>: Trạng thái trung hòa carbon (phát thải bằng 0)<br><b>Discernable impact (n)</b>: Tác động có thể nhận thấy/rõ rệt<br><b>Greenhouse emissions (n)</b>: Khí thải nhà kính`,
+  colorClass: "ev-40"
+}
   }
 };
