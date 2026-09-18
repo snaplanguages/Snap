@@ -7,265 +7,272 @@ window.quizData = {
   startQ: 1,
   endQ: 13,
   totalQuestions: 13,
-  
   passageContent: `
-<p class="paragraph"><strong>A.</strong> The American Academy of Pediatrics recognizes three stages of adolescence. These are early, middle and late adolescence, and each has its own developmental tasks. Teenagers move through these tasks at their own speed depending on their physical development and hormone levels. Although these stages are common to all teenagers, each child will go through them in his or her own highly individual ways.</p>
-<p class="paragraph"><strong>B.</strong> During the early years young people make the first attempts to <span id="ev-4" class="ev-box">leave the dependent, secure role of a child and to establish themselves as unique individuals, independent of their parents.</span> Early adolescence is marked by rapid physical growth and maturation. The focus of adolescents’ self-concepts is thus often on their physical self and their evaluation of their physical acceptability. Early adolescence is also a period of <span id="ev-3" class="ev-box">intense conformity to peers. ‘Getting along,’ not being different, and being accepted</span> seem somehow pressing to the early adolescent. <span id="ev-2" class="ev-box">The worst possibility, from the view of the early adolescent, is to be seen by peers as ‘different’.</span></p>
-<p class="paragraph"><strong>C.</strong> Middle adolescence is marked by the <span id="ev-6" class="ev-box">emergence of new thinking skills. The intellectual world of the young person is suddenly greatly expanded.</span> Their concerns about peers are more directed toward their <span id="ev-1" class="ev-box">opposite sexed peers</span>. It is also during this period that the move to establish psychological independence from one’s parents accelerates. Delinquency behavior may emerge since parental views are no longer seen as absolutely correct by adolescents. Despite some delinquent behavior, middle adolescence is a period during which young people are oriented toward what is right and proper. They are developing a sense of behavioral maturity and learning to control their impulsiveness.</p>
-<p class="paragraph"><strong>D.</strong> Late adolescence is marked by the final preparations for adult roles. The developmental demands of late adolescence often extend into the period that we think of as young adulthood. Late adolescents attempt to crystallize their vocational goals and to establish a sense of personal identity. <span id="ev-5" class="ev-box">Their needs for peer approval are diminished</span> and they are largely psychologically independent from their parents. The shift to adulthood is nearly complete.</p>
-<p class="paragraph"><strong>E.</strong> Some years ago, Professor Robert Havighurst of the University of Chicago proposed that stages in human development can best be thought of in terms of the developmental tasks that are part of the normal transition. He identified eleven developmental tasks associated with the adolescent transition. <span id="ev-7" class="ev-box">One developmental task an adolescent needs to achieve is to adjust to a new physical sense of self.</span> At no other time since birth does an individual undergo such rapid and profound physical changes as during early adolescence. Puberty is marked by sudden rapid growth in height and weight. Also, the young person experiences the emergence and accentuation of those physical traits that make him or her a boy or girl. <span id="ev-7-part2" class="ev-box">The effect of this rapid change is that young adolescent often becomes focused on his or her body.</span></p>
-<p class="paragraph"><strong>F.</strong> Before adolescence, children’s thinking is dominated by a need to have a concrete example for any problem that they solve. Their thinking is constrained to what is real and physical. <span id="ev-11" class="ev-box">During adolescence, young people begin to recognize and understand abstractions.</span> The adolescent must adjust to increased cognitive demands at school. Adults see high school in part as a place where adolescents prepare for adult roles and responsibilities and in part as preparatory for further education. <span id="ev-8" class="ev-box">School curricula are frequently dominated by the inclusion of more abstract, demanding material, regardless of whether the adolescents have achieved formal thought.</span> Since <span id="ev-10" class="ev-box">not all adolescents make the intellectual transition at the same rate</span>, demands for abstract thinking prior to achievement of that ability may be frustrating.</p>
-<p class="paragraph"><strong>G.</strong> During adolescence, as teens develop increasingly complex knowledge systems and a sense of self, they also <span id="ev-9" class="ev-box">adopt an integrated set of values and morals.</span> During the early stages of moral development, parents provide their child with a structured set of rules of what is right and wrong, what is acceptable and unacceptable. Eventually, the adolescent must assess the parents’ values as they come into conflict with values expressed by peers and other segments of society. To reconcile differences, the adolescent <span id="ev-9-part2" class="ev-box">restructures those beliefs into a personal ideology.</span></p>
-<p class="paragraph"><strong>H.</strong> The adolescent must develop expanded verbal skills. As adolescents mature intellectually, as they face increased school demands, and as they prepare for adult roles, they must develop new verbal skills to accommodate more complex concepts and tasks. Their limited language of childhood is no longer adequate. <span id="ev-12" class="ev-box">Adolescents may appear less competent because of their inability to express themselves meaningfully.</span></p>
-<p class="paragraph"><strong>I.</strong> <span id="ev-13" class="ev-box">The adolescent must establish emotional and psychological independence from his or her parents.</span> Childhood is marked by a strong dependence on one’s parents. Adolescents may yearn to keep that safe, secure, supportive, dependent relationship. Yet, to be an adult implies a sense of independence, of autonomy, of being one’s own person. <span id="ev-13-part2" class="ev-box">Adolescents may vacillate between their desire for dependence and their need to be independent.</span> In an attempt to assert their need for independence and individuality, adolescents may respond with what appears to be hostility and lack of cooperation.</p>
-<p class="paragraph"><strong>J.</strong> Adolescents do not progress through these multiple developmental tasks separately. At any given time, adolescents may be dealing with several. Further, the centrality of specific developmental tasks varies with early, middle, and late periods of the transition.</p>
-`,
+<p class="paragraph"><span class="paragraph-label">A.</span> The American Academy of Pediatrics recognizes three stages of adolescence. These are early, middle and late adolescence, and each has its own developmental tasks. Teenagers move through these tasks at their own speed depending on their physical development and hormone levels. Although these stages are common to all teenagers, each child will go through them in his or her own highly individual ways.</p>
 
+<p class="paragraph"><span class="paragraph-label">B.</span> During the early years young people make the first attempts to <span id="ev-4" class="ev-box">leave the dependent, secure role of a child and to establish themselves as unique individuals, independent of their parents.</span> Early adolescence is marked by rapid physical growth and maturation. The focus of adolescents’ self-concepts is thus often on their physical self and their evaluation of their physical acceptability. Early adolescence is also a period of <span id="ev-3" class="ev-box">intense conformity to peers. ‘Getting along,’ not being different, and being accepted</span> seem somehow pressing to the early adolescent. <span id="ev-2" class="ev-box">The worst possibility, from the view of the early adolescent, is to be seen by peers as ‘different’.</span></p>
+
+<p class="paragraph"><span class="paragraph-label">C.</span> Middle adolescence is marked by the <span id="ev-6" class="ev-box">emergence of new thinking skills. The intellectual world of the young person is suddenly greatly expanded.</span> Their concerns about peers are more directed toward their <span id="ev-1" class="ev-box">opposite sexed peers</span>. It is also during this period that the move to establish psychological independence from one’s parents accelerates. Delinquency behavior may emerge since parental views are no longer seen as absolutely correct by adolescents. Despite some delinquent behavior, middle adolescence is a period during which young people are oriented toward what is right and proper. They are developing a sense of behavioral maturity and learning to control their impulsiveness.</p>
+
+<p class="paragraph"><span class="paragraph-label">D.</span> Late adolescence is marked by the final preparations for adult roles. The developmental demands of late adolescence often extend into the period that we think of as young adulthood. Late adolescents attempt to crystallize their vocational goals and to establish a sense of personal identity. <span id="ev-5" class="ev-box">Their needs for peer approval are diminished</span> and they are largely psychologically independent from their parents. The shift to adulthood is nearly complete.</p>
+
+<p class="paragraph"><span class="paragraph-label">E.</span> <span id="ev-7" class="ev-box">One developmental task an adolescent needs to achieve is to adjust to a new physical sense of self.</span> Early adolescence is a period of rapid physical growth and maturation. <span id="ev-7-part2" class="ev-box">The effect of this rapid change is that young adolescent often becomes focused on his or her body.</span> Professor Havighurst of Chicago University proposed eleven developmental tasks associated with the adolescent transition. The first task is adjusting to a new physical sense of self. The second is achieving a new and more mature relationship with age-mates of both sexes. The third task is achieving a masculine or feminine social role.</p>
+
+<p class="paragraph"><span class="paragraph-label">F.</span> Before adolescence, children’s thinking is dominated by a need to have a concrete example for any problem that they solve. Their thinking is constrained to what is real and physical. <span id="ev-11" class="ev-box">During adolescence, young people begin to recognize and understand abstractions.</span> The adolescent must adjust to increased cognitive demands at school. Adults see high school in part as a place where adolescents prepare for adult roles and responsibilities and in part as preparatory for further education. <span id="ev-8" class="ev-box">School curricula are frequently dominated by the inclusion of more abstract, demanding material, regardless of whether the adolescents have achieved formal thought.</span> Since <span id="ev-10" class="ev-box">not all adolescents make the intellectual transition at the same rate</span>, demands for abstract thinking prior to achievement of that ability may be frustrating.</p>
+
+<p class="paragraph"><span class="paragraph-label">G.</span> <span id="ev-9" class="ev-box">During adolescence, as teens develop increasingly complex knowledge systems and a sense of self, they also adopt an integrated set of values and morals.</span> In early adolescence, most teens hold a moral code that is identical to that of their parents. In middle adolescence, as teens examine their parents’ values, they may question those values, especially if they see parents as hypocritical. At the same time, teens are exposed to values of peers, which may conflict with those of their parents. To reconcile differences, the adolescent restructures those beliefs into a personal ideology.</p>
+
+<p class="paragraph"><span class="paragraph-label">H.</span> The adolescent must develop expanded verbal skills. As adolescents mature intellectually, as they face increased school demands, and as they prepare for adult roles, they must develop new verbal skills to accommodate more complex concepts and tasks. Their limited language of childhood is no longer adequate. <span id="ev-12" class="ev-box">Adolescents may appear less competent because of their inability to express themselves meaningfully.</span></p>
+
+<p class="paragraph"><span class="paragraph-label">I.</span> <span id="ev-13" class="ev-box">The adolescent must establish emotional and psychological independence from his or her parents.</span> Childhood is marked by a strong dependence on one’s parents. Adolescents may yearn to keep that safe, secure, supportive, dependent relationship. Yet, to be an adult implies a sense of independence, of autonomy, of being one’s own person. <span id="ev-13-part2" class="ev-box">Adolescents may vacillate between their desire for dependence and their need to be independent.</span> In an attempt to assert their need for independence and individuality, adolescents may respond with what appears to be hostility and lack of cooperation.</p>
+`,
   questionsHTML: `
 <div class="question-section">
-  <div class="instruction">
-    <strong>Questions 1-6: Match the characteristics with the stages of adolescence.</strong><br>
-    Select the correct letter, <strong>A</strong>, <strong>B</strong>, or <strong>C</strong>, in answer boxes 1-6.<br><br>
-    <strong>A.</strong> early adolescence (Thanh thiếu niên đầu)<br>
-    <strong>B.</strong> middle adolescence (Thanh thiếu niên giữa)<br>
-    <strong>C.</strong> later adolescence (Thanh thiếu niên muộn)
-  </div>
-  
-  <div class="q-row" id="q-row-1">
-    <span class="q-num">1.</span>
-    <span class="q-content">
-      interested in the opposite sex
-      <select class="input-select" id="ans-1" onchange="updateNav(1)">
-        <option value="">Select...</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-      </select>
-      <span id="fb-1" class="feedback"></span>
-    </span>
-  </div>
-  <div id="exp-1"></div>
+<div class="instruction">
+Questions 1-6<br>
+Match each statement with the correct stage of adolescence, <strong>A–C</strong>.<br>
+Write the correct letter, <strong>A, B or C</strong>, in answer boxes 1-6.
+</div>
+<div class="headings-list">
+<p><strong>A</strong> Early adolescence</p>
+<p><strong>B</strong> Middle adolescence</p>
+<p><strong>C</strong> Late adolescence</p>
+</div>
+<div class="q-row" id="q-row-1">
+<span class="q-num">1.</span>
+<span class="q-content">
+interested in the opposite sex
+<select class="input-select" id="ans-1" onchange="updateNav(1)">
+<option value="">Select...</option>
+<option value="A">A</option>
+<option value="B">B</option>
+<option value="C">C</option>
+</select>
+<span id="fb-1" class="feedback"></span>
+</span>
+</div>
+<div id="exp-1"></div>
 
-  <div class="q-row" id="q-row-2">
-    <span class="q-num">2.</span>
-    <span class="q-content">
-      exposure to danger
-      <select class="input-select" id="ans-2" onchange="updateNav(2)">
-        <option value="">Select...</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-      </select>
-      <span id="fb-2" class="feedback"></span>
-    </span>
-  </div>
-  <div id="exp-2"></div>
+<div class="q-row" id="q-row-2">
+<span class="q-num">2.</span>
+<span class="q-content">
+exposure to danger
+<select class="input-select" id="ans-2" onchange="updateNav(2)">
+<option value="">Select...</option>
+<option value="A">A</option>
+<option value="B">B</option>
+<option value="C">C</option>
+</select>
+<span id="fb-2" class="feedback"></span>
+</span>
+</div>
+<div id="exp-2"></div>
 
-  <div class="q-row" id="q-row-3">
-    <span class="q-num">3.</span>
-    <span class="q-content">
-      the same as others
-      <select class="input-select" id="ans-3" onchange="updateNav(3)">
-        <option value="">Select...</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-      </select>
-      <span id="fb-3" class="feedback"></span>
-    </span>
-  </div>
-  <div id="exp-3"></div>
+<div class="q-row" id="q-row-3">
+<span class="q-num">3.</span>
+<span class="q-content">
+the same as others
+<select class="input-select" id="ans-3" onchange="updateNav(3)">
+<option value="">Select...</option>
+<option value="A">A</option>
+<option value="B">B</option>
+<option value="C">C</option>
+</select>
+<span id="fb-3" class="feedback"></span>
+</span>
+</div>
+<div id="exp-3"></div>
 
-  <div class="q-row" id="q-row-4">
-    <span class="q-num">4.</span>
-    <span class="q-content">
-      beginning to form individual thinking without family context
-      <select class="input-select" id="ans-4" onchange="updateNav(4)">
-        <option value="">Select...</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-      </select>
-      <span id="fb-4" class="feedback"></span>
-    </span>
-  </div>
-  <div id="exp-4"></div>
+<div class="q-row" id="q-row-4">
+<span class="q-num">4.</span>
+<span class="q-content">
+beginning to form individual thinking without family context
+<select class="input-select" id="ans-4" onchange="updateNav(4)">
+<option value="">Select...</option>
+<option value="A">A</option>
+<option value="B">B</option>
+<option value="C">C</option>
+</select>
+<span id="fb-4" class="feedback"></span>
+</span>
+</div>
+<div id="exp-4"></div>
 
-  <div class="q-row" id="q-row-5">
-    <span class="q-num">5.</span>
-    <span class="q-content">
-      less need the approval of friends
-      <select class="input-select" id="ans-5" onchange="updateNav(5)">
-        <option value="">Select...</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-      </select>
-      <span id="fb-5" class="feedback"></span>
-    </span>
-  </div>
-  <div id="exp-5"></div>
+<div class="q-row" id="q-row-5">
+<span class="q-num">5.</span>
+<span class="q-content">
+less need the approval of friends
+<select class="input-select" id="ans-5" onchange="updateNav(5)">
+<option value="">Select...</option>
+<option value="A">A</option>
+<option value="B">B</option>
+<option value="C">C</option>
+</select>
+<span id="fb-5" class="feedback"></span>
+</span>
+</div>
+<div id="exp-5"></div>
 
-  <div class="q-row" id="q-row-6">
-    <span class="q-num">6.</span>
-    <span class="q-content">
-      intellectual booming
-      <select class="input-select" id="ans-6" onchange="updateNav(6)">
-        <option value="">Select...</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-      </select>
-      <span id="fb-6" class="feedback"></span>
-    </span>
-  </div>
-  <div id="exp-6"></div>
+<div class="q-row" id="q-row-6">
+<span class="q-num">6.</span>
+<span class="q-content">
+intellectual booming
+<select class="input-select" id="ans-6" onchange="updateNav(6)">
+<option value="">Select...</option>
+<option value="A">A</option>
+<option value="B">B</option>
+<option value="C">C</option>
+</select>
+<span id="fb-6" class="feedback"></span>
+</span>
+</div>
+<div id="exp-6"></div>
 </div>
 
 <div class="question-section">
-  <div class="instruction">
-    <strong>Questions 7-10: Complete each sentence with the correct ending, A–F, below.</strong><br>
-    Select the correct letter, <strong>A–F</strong>, in boxes 7-10.
-  </div>
-  
-  <div class="headings-list" style="font-size: 14px; margin-bottom: 20px; color: #475569; background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px dashed #cbd5e1; line-height: 1.6;">
-    <strong>A.</strong> form personal identity with a set of morals and values (Hình thành bản sắc cá nhân với một hệ chuẩn mực đạo đức và giá trị)<br>
-    <strong>B.</strong> develops stable and productive peer relationships (Phát triển mối quan hệ bạn bè ổn định và hiệu quả)<br>
-    <strong>C.</strong> are designed to be more challenging than some can accept (Được thiết kế đầy thách thức hơn mức một số người có thể tiếp nhận)<br>
-    <strong>D.</strong> varies from people to people (Thay đổi/khác nhau giữa mỗi người)<br>
-    <strong>E.</strong> focuses on creating a self-image (Tập trung vào việc kiến tạo hình ảnh cá nhân)<br>
-    <strong>F.</strong> become an extension of their parents (Trở thành một phần kéo dài của cha mẹ)
-  </div>
+<div class="instruction">
+Questions 7-10<br>
+Complete each sentence with the correct ending, <strong>A–F</strong>, below.<br>
+Write the correct letter, <strong>A–F</strong>, in answer boxes 7-10.
+</div>
+<div class="headings-list">
+<p><strong>A</strong> form personal identity with a set of morals and values</p>
+<p><strong>B</strong> is essential to a smooth transition to adulthood</p>
+<p><strong>C</strong> are designed to be more challenging than some can accept</p>
+<p><strong>D</strong> varies from people to people</p>
+<p><strong>E</strong> focuses on creating a self-image</p>
+<p><strong>F</strong> become an extension of their parents</p>
+</div>
 
-  <div class="q-row" id="q-row-7">
-    <span class="q-num">7.</span>
-    <span class="q-content">
-      One of Havighurst’s research
-      <select class="input-select" id="ans-7" onchange="updateNav(7)">
-        <option value="">Select...</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-        <option value="D">D</option>
-        <option value="E">E</option>
-        <option value="F">F</option>
-      </select>
-      <span id="fb-7" class="feedback"></span>
-    </span>
-  </div>
-  <div id="exp-7"></div>
+<div class="q-row" id="q-row-7">
+<span class="q-num">7.</span>
+<span class="q-content">
+One of Havighurst’s research
+<select class="input-select" id="ans-7" onchange="updateNav(7)">
+<option value="">Select...</option>
+<option value="A">A</option>
+<option value="B">B</option>
+<option value="C">C</option>
+<option value="D">D</option>
+<option value="E">E</option>
+<option value="F">F</option>
+</select>
+<span id="fb-7" class="feedback"></span>
+</span>
+</div>
+<div id="exp-7"></div>
 
-  <div class="q-row" id="q-row-8">
-    <span class="q-num">8.</span>
-    <span class="q-content">
-      High School Courses
-      <select class="input-select" id="ans-8" onchange="updateNav(8)">
-        <option value="">Select...</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-        <option value="D">D</option>
-        <option value="E">E</option>
-        <option value="F">F</option>
-      </select>
-      <span id="fb-8" class="feedback"></span>
-    </span>
-  </div>
-  <div id="exp-8"></div>
+<div class="q-row" id="q-row-8">
+<span class="q-num">8.</span>
+<span class="q-content">
+High School Courses
+<select class="input-select" id="ans-8" onchange="updateNav(8)">
+<option value="">Select...</option>
+<option value="A">A</option>
+<option value="B">B</option>
+<option value="C">C</option>
+<option value="D">D</option>
+<option value="E">E</option>
+<option value="F">F</option>
+</select>
+<span id="fb-8" class="feedback"></span>
+</span>
+</div>
+<div id="exp-8"></div>
 
-  <div class="q-row" id="q-row-9">
-    <span class="q-num">9.</span>
-    <span class="q-content">
-      Adolescence is a time when young people
-      <select class="input-select" id="ans-9" onchange="updateNav(9)">
-        <option value="">Select...</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-        <option value="D">D</option>
-        <option value="E">E</option>
-        <option value="F">F</option>
-      </select>
-      <span id="fb-9" class="feedback"></span>
-    </span>
-  </div>
-  <div id="exp-9"></div>
+<div class="q-row" id="q-row-9">
+<span class="q-num">9.</span>
+<span class="q-content">
+Adolescence is a time when young people
+<select class="input-select" id="ans-9" onchange="updateNav(9)">
+<option value="">Select...</option>
+<option value="A">A</option>
+<option value="B">B</option>
+<option value="C">C</option>
+<option value="D">D</option>
+<option value="E">E</option>
+<option value="F">F</option>
+</select>
+<span id="fb-9" class="feedback"></span>
+</span>
+</div>
+<div id="exp-9"></div>
 
-  <div class="q-row" id="q-row-10">
-    <span class="q-num">10.</span>
-    <span class="q-content">
-      The developmental speed of thinking patterns
-      <select class="input-select" id="ans-10" onchange="updateNav(10)">
-        <option value="">Select...</option>
-        <option value="A">A</option>
-        <option value="B">B</option>
-        <option value="C">C</option>
-        <option value="D">D</option>
-        <option value="E">E</option>
-        <option value="F">F</option>
-      </select>
-      <span id="fb-10" class="feedback"></span>
-    </span>
-  </div>
-  <div id="exp-10"></div>
+<div class="q-row" id="q-row-10">
+<span class="q-num">10.</span>
+<span class="q-content">
+The developmental speed of thinking patterns
+<select class="input-select" id="ans-10" onchange="updateNav(10)">
+<option value="">Select...</option>
+<option value="A">A</option>
+<option value="B">B</option>
+<option value="C">C</option>
+<option value="D">D</option>
+<option value="E">E</option>
+<option value="F">F</option>
+</select>
+<span id="fb-10" class="feedback"></span>
+</span>
+</div>
+<div id="exp-10"></div>
 </div>
 
 <div class="question-section">
-  <div class="instruction">
-    <strong>Questions 11-13: Do the following statements agree with the information given in Reading Passage?</strong><br>
-    In boxes 11-13 on your answer sheet, write:<br><br>
-    <strong>TRUE</strong> if the statement agrees with the information<br>
-    <strong>FALSE</strong> if the statement contradicts the information<br>
-    <strong>NOT GIVEN</strong> if there is no information on this
-  </div>
+<div class="instruction">
+Questions 11-13<br>
+Do the following statements agree with the information given in Reading Passage?<br>
+In boxes 11-13 on your answer sheet, write:<br>
+<strong>TRUE</strong> if the statement agrees with the information<br>
+<strong>FALSE</strong> if the statement contradicts the information<br>
+<strong>NOT GIVEN</strong> if there is no information on this
+</div>
 
-  <div class="q-row" id="q-row-11">
-    <span class="q-num">11.</span>
-    <span class="q-content">
-      The adolescent lacks the ability to think abstractly.
-      <select class="input-select" id="ans-11" onchange="updateNav(11)">
-        <option value="">Select...</option>
-        <option value="TRUE">TRUE</option>
-        <option value="FALSE">FALSE</option>
-        <option value="NOT GIVEN">NOT GIVEN</option>
-      </select>
-      <span id="fb-11" class="feedback"></span>
-    </span>
-  </div>
-  <div id="exp-11"></div>
+<div class="q-row" id="q-row-11">
+<span class="q-num">11.</span>
+<span class="q-content">
+The adolescent lacks the ability to think abstractly.
+<select class="input-select" id="ans-11" onchange="updateNav(11)">
+<option value="">Select...</option>
+<option value="TRUE">TRUE</option>
+<option value="FALSE">FALSE</option>
+<option value="NOT GIVEN">NOT GIVEN</option>
+</select>
+<span id="fb-11" class="feedback"></span>
+</span>
+</div>
+<div id="exp-11"></div>
 
-  <div class="q-row" id="q-row-12">
-    <span class="q-num">12.</span>
-    <span class="q-content">
-      Adolescents may have a deficit in their language ability.
-      <select class="input-select" id="ans-12" onchange="updateNav(12)">
-        <option value="">Select...</option>
-        <option value="TRUE">TRUE</option>
-        <option value="FALSE">FALSE</option>
-        <option value="NOT GIVEN">NOT GIVEN</option>
-      </select>
-      <span id="fb-12" class="feedback"></span>
-    </span>
-  </div>
-  <div id="exp-12"></div>
+<div class="q-row" id="q-row-12">
+<span class="q-num">12.</span>
+<span class="q-content">
+Adolescents may have a deficit in their language ability.
+<select class="input-select" id="ans-12" onchange="updateNav(12)">
+<option value="">Select...</option>
+<option value="TRUE">TRUE</option>
+<option value="FALSE">FALSE</option>
+<option value="NOT GIVEN">NOT GIVEN</option>
+</select>
+<span id="fb-12" class="feedback"></span>
+</span>
+</div>
+<div id="exp-12"></div>
 
-  <div class="q-row" id="q-row-13">
-    <span class="q-num">13.</span>
-    <span class="q-content">
-      The adolescent experiences a transition from reliance on his parents to independence.
-      <select class="input-select" id="ans-13" onchange="updateNav(13)">
-        <option value="">Select...</option>
-        <option value="TRUE">TRUE</option>
-        <option value="FALSE">FALSE</option>
-        <option value="NOT GIVEN">NOT GIVEN</option>
-      </select>
-      <span id="fb-13" class="feedback"></span>
-    </span>
-  </div>
-  <div id="exp-13"></div>
+<div class="q-row" id="q-row-13">
+<span class="q-num">13.</span>
+<span class="q-content">
+The adolescent experiences a transition from reliance on his parents to independence.
+<select class="input-select" id="ans-13" onchange="updateNav(13)">
+<option value="">Select...</option>
+<option value="TRUE">TRUE</option>
+<option value="FALSE">FALSE</option>
+<option value="NOT GIVEN">NOT GIVEN</option>
+</select>
+<span id="fb-13" class="feedback"></span>
+</span>
+</div>
+<div id="exp-13"></div>
 </div>
 `,
-
   correctAnswers: {
     1: "B",
     2: "A",
@@ -281,7 +288,6 @@ window.quizData = {
     12: "TRUE",
     13: "TRUE"
   },
-
   explanations: {
     1: {
       translation: `<b>Câu hỏi:</b> Quan tâm, hứng thú với người khác giới.<br><br><b>Nói đơn giản:</b> Giai đoạn nào bắt đầu xuất hiện sự chú ý và bận tâm nhiều hơn đối với những người bạn khác giới?`,
@@ -295,33 +301,33 @@ window.quizData = {
 <br><br>
 <b>📝 Phân tích chi tiết câu dẫn chứng:</b>
 <ul>
-  <li><b>Their concerns about peers</b>: Những mối bận tâm/quan tâm của thanh thiếu niên về bạn bè.</li>
-  <li><b>are more directed toward</b>: được định hướng nhiều hơn về phía / tập trung nhiều hơn vào.</li>
-  <li><b>their opposite sexed peers</b>: những người bạn cùng trang lứa khác giới của họ.</li>
+<li><b>Their concerns about peers</b>: Những mối bận tâm/quan tâm của thanh thiếu niên về bạn bè.</li>
+<li><b>are more directed toward</b>: được định hướng nhiều hơn về phía / tập trung nhiều hơn vào.</li>
+<li><b>their opposite sexed peers</b>: những người bạn cùng trang lứa khác giới của họ.</li>
 </ul>
 👉 <i>Ý nghĩa cả câu:</i> Những bận tâm của họ về bạn bè đồng trang lứa giờ đây được hướng nhiều hơn tới những người bạn khác giới.
 <br><br>
-<b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
+<b>📊 Bảng phân tích từ khóa (Paraphrase Mapping):</b>
 <table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
-  <thead>
-    <tr style="background-color: #f2f2f2; font-weight: bold;">
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">interested in</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">concerns ... directed toward</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Quan tâm, chú ý = Mối bận tâm hướng tới một đối tượng cụ thể.</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">the opposite sex</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">opposite sexed peers</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Người khác giới = Bạn bè khác giới tính.</td>
-    </tr>
-  </tbody>
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">interested in</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">concerns ... directed toward</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Quan tâm, chú ý = Mối bận tâm hướng tới một đối tượng cụ thể.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">the opposite sex</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">opposite sexed peers</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Người khác giới = Bạn bè khác giới tính.</td>
+</tr>
+</tbody>
 </table>
 <br>
 <b>💡 Logic lập luận:</b>
@@ -334,11 +340,11 @@ window.quizData = {
 <br>
 - <b>A (early adolescence):</b> Ở giai đoạn đầu, sự tập trung của trẻ chủ yếu hướng vào "physical self" (bản thân về mặt thể chất) và áp lực "conformity to peers" (hòa nhập với nhóm bạn cùng giới/nói chung để không bị coi là khác biệt) chứ chưa hướng mạnh tới bạn khác giới.
 <br>
-- <b>C (later adolescence):</b> Giai đoạn này tập trung vào việc chuẩn bị cho vai trò người lớn (adult roles) và định hình mục tiêu nghề nghiệp (vocational goals) chứ không phải là mốc bắt đầu nảy sinh mối quan tâm khác giới mạnh mẽ như giai đoạn giữa.
+- <b>C (late adolescence):</b> Giai đoạn này tập trung vào việc chuẩn bị cho vai trò người lớn (adult roles) và định hình mục tiêu nghề nghiệp (vocational goals) chứ không phải là mốc bắt đầu nảy sinh mối quan tâm khác giới mạnh mẽ như giai đoạn giữa.
 <br><br>
 <b>⚠️ Bẫy cần tránh (Trap):</b>
 <br>
-Mối quan hệ yêu đương hay quan tâm khác giới thường bị lầm tưởng là thuộc về giai đoạn muộn (later adolescence) vì lúc đó mới chín chắn. Tuy nhiên, bài đọc mô tả sự dịch chuyển tâm lý này bắt đầu "bùng nổ" và định hình rõ rệt nhất ngay từ giai đoạn giữa (middle). Hãy luôn bám sát văn bản thay vì tự suy diễn.
+Mối quan hệ yêu đương hay quan tâm khác giới thường bị lầm tưởng là thuộc về giai đoạn muộn (late adolescence) vì lúc đó mới chín chắn. Tuy nhiên, bài đọc mô tả sự dịch chuyển tâm lý này bắt đầu "bùng nổ" và định hình rõ rệt nhất ngay từ giai đoạn giữa (middle). Hãy luôn bám sát văn bản thay vì tự suy diễn.
 <br><br>
 <b>🚫 Phân tích lỗi sai (Error Analysis):</b>
 <br>
@@ -366,28 +372,28 @@ Khi làm dạng bài Matching Features, hãy khoanh vùng các thực thể so s
 <br><br>
 <b>📝 Phân tích chi tiết câu dẫn chứng:</b>
 <ul>
-  <li><b>The worst possibility</b>: Khả năng tồi tệ nhất / viễn cảnh khủng khiếp nhất (đại diện cho "danger" - nguy cơ/hiểm họa lớn nhất đối với họ).</li>
-  <li><b>from the view of the early adolescent</b>: dưới góc nhìn của một thanh thiếu niên giai đoạn đầu (early adolescence).</li>
-  <li><b>is to be seen by peers as 'different'</b>: là bị bạn bè đồng trang lứa nhìn nhận như một kẻ "khác biệt".</li>
+<li><b>The worst possibility</b>: Khả năng tồi tệ nhất / viễn cảnh khủng khiếp nhất (đại diện cho "danger" - nguy cơ/hiểm họa lớn nhất đối với họ).</li>
+<li><b>from the view of the early adolescent</b>: dưới góc nhìn của một thanh thiếu niên giai đoạn đầu (early adolescence).</li>
+<li><b>is to be seen by peers as 'different'</b>: là bị bạn bè đồng trang lứa nhìn nhận như một kẻ "khác biệt".</li>
 </ul>
 👉 <i>Ý nghĩa cả câu:</i> Đối với những bạn trẻ ở giai đoạn đầu dậy thì, viễn cảnh tồi tệ nhất chính là bị bạn bè xung quanh coi là kẻ khác biệt.
 <br><br>
 <b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
 <table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
-  <thead>
-    <tr style="background-color: #f2f2f2; font-weight: bold;">
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">exposure to danger</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">the worst possibility ... to be seen as 'different'</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">"Mối nguy hại/hiểm họa" lớn nhất ở lứa tuổi này không phải là tai nạn thể chất, mà là "khả năng tồi tệ nhất" về mặt tinh thần: bị cô lập và coi là lập dị trước tập thể.</td>
-    </tr>
-  </tbody>
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">exposure to danger</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">the worst possibility ... to be seen as 'different'</td>
+<td style="padding: 8px; border: 1px solid #ddd;">"Mối nguy hại/hiểm họa" lớn nhất ở lứa tuổi này không phải là tai nạn thể chất, mà là "khả năng tồi tệ nhất" về mặt tinh thần: bị cô lập và coi là lập dị trước tập thể.</td>
+</tr>
+</tbody>
 </table>
 <br>
 <b>💡 Logic lập luận:</b>
@@ -399,12 +405,6 @@ Khi làm dạng bài Matching Features, hãy khoanh vùng các thực thể so s
 <b>🚫 Phân tích các lựa chọn khác (Distractors):</b>
 <br>
 - <b>B (middle adolescence):</b> Đoạn C có nhắc đến "Delinquency behavior" (hành vi phạm pháp). Nhiều học sinh bị bẫy vì nghĩ "delinquency" mới là nguy hiểm thực sự. Tuy nhiên, bài đọc mô tả hành vi phạm pháp ở đây phát sinh do trẻ không còn coi quan điểm của cha mẹ là tuyệt đối đúng, chứ không nói việc phơi nhiễm nguy hiểm là đặc trưng tâm lý định hình lứa tuổi này.
-<br>
-- <b>C (later adolescence):</b> Giai đoạn này trẻ đã tự chủ, "peer approval is diminished" (nhu cầu được bạn bè chấp thuận giảm đi) nên họ ít bị tổn thương hoặc phơi nhiễm trước các rủi ro từ áp lực nhóm.
-<br><br>
-<b>⚠️ Bẫy cần tránh (Trap):</b>
-<br>
-Bẫy lớn nhất là tìm kiếm từ "danger" hay "risk" một cách cơ học. Bài đọc sử dụng biện pháp ẩn dụ hóa: "the worst possibility" (khả năng tồi tệ nhất) để ám chỉ nguy cơ bị đào thải khỏi nhóm bạn bè. Hãy tập thói quen tư duy khái niệm (concept-matching) thay vì tìm từ khóa trùng khớp trực tiếp.
 <br><br>
 <b>🚫 Phân tích lỗi sai (Error Analysis):</b>
 <br>
@@ -432,29 +432,29 @@ Hiểm họa (danger/threat) trong các bài đọc về tâm lý học phát tr
 <br><br>
 <b>📝 Phân tích chi tiết câu dẫn chứng:</b>
 <ul>
-  <li><b>intense conformity to peers</b>: sự tuân thủ/bắt chước mạnh mẽ theo bạn bè đồng trang lứa.</li>
-  <li><b>'Getting along'</b>: hòa nhập, chơi chung, hòa đồng.</li>
-  <li><b>not being different, and being accepted</b>: không khác biệt và được chấp nhận.</li>
-  <li><b>seem somehow pressing</b>: dường như vô cùng cấp bách/áp lực.</li>
+<li><b>intense conformity to peers</b>: sự tuân thủ/bắt chước mạnh mẽ theo bạn bè đồng trang lứa.</li>
+<li><b>'Getting along'</b>: hòa nhập, chơi chung, hòa đồng.</li>
+<li><b>not being different, and being accepted</b>: không khác biệt và được chấp nhận.</li>
+<li><b>seem somehow pressing</b>: dường như vô cùng cấp bách/áp lực.</li>
 </ul>
 👉 <i>Ý nghĩa cả câu:</i> Giai đoạn đầu của tuổi vị thành niên cũng là thời kỳ của sự rập khuôn, tuân thủ mạnh mẽ theo bạn bè. Việc hòa nhập, không trở nên khác biệt và được chấp nhận dường như là những áp lực rất lớn đối với họ.
 <br><br>
 <b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
 <table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
-  <thead>
-    <tr style="background-color: #f2f2f2; font-weight: bold;">
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">the same as others</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">intense conformity / not being different</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Giống như người khác = Tuân thủ rập khuôn nhóm / Không muốn khác biệt.</td>
-    </tr>
-  </tbody>
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">the same as others</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">intense conformity / not being different</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Giống như người khác = Tuân thủ rập khuôn nhóm / Không muốn khác biệt.</td>
+</tr>
+</tbody>
 </table>
 <br>
 <b>💡 Logic lập luận:</b>
@@ -467,7 +467,7 @@ Hiểm họa (danger/threat) trong các bài đọc về tâm lý học phát tr
 <br>
 - <b>B (middle adolescence):</b> Giai đoạn giữa trẻ bắt đầu phát triển các mối quan hệ riêng tư với bạn khác giới và bắt đầu nổi loạn, xa rời sự rập khuôn mù quáng.
 <br>
-- <b>C (later adolescence):</b> Giai đoạn muộn trẻ đã khẳng định được bản sắc cá nhân ("personal identity"), không còn cần rập khuôn theo nhóm nữa ("peer approval is diminished").
+- <b>C (late adolescence):</b> Giai đoạn muộn trẻ đã khẳng định được bản sắc cá nhân ("personal identity"), không còn cần rập khuôn theo nhóm nữa ("peer approval is diminished").
 <br><br>
 <b>⚠️ Bẫy cần tránh (Trap):</b>
 <br>
@@ -475,7 +475,7 @@ Tránh tìm từ "same" trong văn bản một cách máy móc. Hãy liên hệ 
 <br><br>
 <b>🚫 Phân tích lỗi sai (Error Analysis):</b>
 <br>
-Học viên dễ chọn nhầm C vì nghĩ "later adolescence" là lúc mọi người ổn định và giống nhau như người trưởng thành. Thực chất, giai đoạn đầu mới là thời kỳ cực đoan nhất của sự bắt chước hành vi nhóm.
+Học viên dễ chọn nhầm C vì nghĩ "late adolescence" là lúc mọi người ổn định và giống nhau như người trưởng thành. Thực chất, giai đoạn đầu mới là thời kỳ cực đoan nhất của sự bắt chước hành vi nhóm.
 <br><br>
 <b>📘 Ngữ pháp bổ sung:</b>
 <br>
@@ -499,39 +499,39 @@ Hòa nhập (conformity) và không khác biệt (not being different) là nhữ
 <br><br>
 <b>📝 Phân tích chi tiết câu dẫn chứng:</b>
 <ul>
-  <li><b>make the first attempts</b>: thực hiện những nỗ lực đầu tiên (beginning).</li>
-  <li><b>leave the dependent, secure role of a child</b>: rời bỏ vai trò phụ thuộc và an toàn của một đứa trẻ.</li>
-  <li><b>establish themselves as unique individuals</b>: tự thiết lập bản thân như một cá nhân độc lập độc nhất (form individual thinking).</li>
-  <li><b>independent of their parents</b>: độc lập, không phụ thuộc vào cha mẹ (without family context).</li>
+<li><b>make the first attempts</b>: thực hiện những nỗ lực đầu tiên (beginning).</li>
+<li><b>leave the dependent, secure role of a child</b>: rời bỏ vai trò phụ thuộc và an toàn của một đứa trẻ.</li>
+<li><b>establish themselves as unique individuals</b>: tự thiết lập bản thân như một cá nhân độc lập độc nhất (form individual thinking).</li>
+<li><b>independent of their parents</b>: độc lập, không phụ thuộc vào cha mẹ (without family context).</li>
 </ul>
 👉 <i>Ý nghĩa cả câu:</i> Trong những năm đầu đời của tuổi dậy thì, những người trẻ bắt đầu thực hiện những nỗ lực đầu tiên để thoát khỏi vai trò phụ thuộc, an toàn của một đứa trẻ và thiết lập bản thân thành một cá nhân độc nhất, độc lập với cha mẹ.
 <br><br>
 <b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
 <table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
-  <thead>
-    <tr style="background-color: #f2f2f2; font-weight: bold;">
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">beginning</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">make the first attempts</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Bắt đầu = Thực hiện những nỗ lực đầu tiên.</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">individual thinking</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">establish themselves as unique individuals</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Tư duy cá nhân = Định hình bản thân là cá nhân độc nhất.</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">without family context</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">independent of their parents</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Không có bối cảnh gia đình = Độc lập khỏi cha mẹ.</td>
-    </tr>
-  </tbody>
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">beginning</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">make the first attempts</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Bắt đầu = Thực hiện những nỗ lực đầu tiên.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">individual thinking</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">establish themselves as unique individuals</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Tư duy cá nhân = Định hình bản thân là cá nhân độc nhất.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">without family context</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">independent of their parents</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Không có bối cảnh gia đình = Độc lập khỏi cha mẹ.</td>
+</tr>
+</tbody>
 </table>
 <br>
 <b>💡 Logic lập luận:</b>
@@ -543,8 +543,8 @@ Hòa nhập (conformity) và không khác biệt (not being different) là nhữ
 <b>🚫 Phân tích các lựa chọn khác (Distractors):</b>
 <br>
 - <b>B (middle adolescence):</b> Đoạn C có câu: <i>"the move to establish psychological independence from one’s parents accelerates."</i> (sự độc lập tâm lý tăng tốc). Từ khóa phân biệt ở đây là <b>accelerates</b> (tăng tốc). Giai đoạn đầu mới là nơi <b>bắt đầu</b> (first attempts), còn giai đoạn giữa là nơi sự phát triển này <b>tăng tốc</b>.
-  <br>
-- <b>C (later adolescence):</b> Giai đoạn muộn là lúc sự độc lập đã gần như hoàn tất ("largely psychologically independent... nearly complete"), không còn là "bắt đầu" nữa.
+<br>
+- <b>C (late adolescence):</b> Giai đoạn muộn là lúc sự độc lập đã gần như hoàn tất ("largely psychologically independent... nearly complete"), không còn là "bắt đầu" nữa.
 <br><br>
 <b>⚠️ Bẫy cực kỳ tinh vi (First Attempt vs. Accelerate):</b>
 <br>
@@ -569,7 +569,7 @@ Hãy luôn theo dõi sát các trạng từ và động từ chỉ tiến trình
       translation: `<b>Câu hỏi:</b> Ít cần sự chấp thuận hay thừa nhận từ bạn bè hơn.<br><br><b>Nói đơn giản:</b> Ở giai đoạn nào nhu cầu được bạn bè đồng trang lứa công nhận, phê duyệt và ủng hộ không còn quá cấp bách và bắt đầu giảm dần?`,
       exp: `<b>Dạng câu hỏi:</b> Matching Features — Ghép đặc điểm với giai đoạn tương ứng.
 <br><br>
-<b>📍 V vị trí dẫn chứng:</b> Paragraph D
+<b>📍 Vị trí dẫn chứng:</b> Paragraph D
 <br><br>
 <b>🔍 Dẫn chứng thực tế (Evidence):</b>
 <br>
@@ -577,39 +577,39 @@ Hãy luôn theo dõi sát các trạng từ và động từ chỉ tiến trình
 <br><br>
 <b>📝 Phân tích chi tiết câu dẫn chứng:</b>
 <ul>
-  <li><b>Their needs for peer approval</b>: Nhu cầu về sự chấp thuận từ bạn bè đồng trang lứa của họ.</li>
-  <li><b>are diminished</b>: bị giảm bớt / suy giảm rõ rệt (less need).</li>
+<li><b>Their needs for peer approval</b>: Nhu cầu về sự chấp thuận từ bạn bè đồng trang lứa của họ.</li>
+<li><b>are diminished</b>: bị giảm bớt / suy giảm rõ rệt (less need).</li>
 </ul>
 👉 <i>Ý nghĩa cả câu:</i> Nhu cầu được bạn bè đồng trang lứa chấp thuận của họ đã giảm bớt và họ phần lớn độc lập về mặt tâm lý với cha mẹ.
 <br><br>
 <b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
 <table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
-  <thead>
-    <tr style="background-color: #f2f2f2; font-weight: bold;">
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">less need</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">needs ... are diminished</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Nhu cầu ít đi = Nhu cầu bị giảm bớt (diminish).</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">approval of friends</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">peer approval</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Sự chấp thuận của bạn bè = Sự thừa nhận/phê duyệt từ bạn đồng lứa.</td>
-    </tr>
-  </tbody>
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">less need</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">needs ... are diminished</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Nhu cầu ít đi = Nhu cầu bị giảm bớt (diminish).</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">approval of friends</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">peer approval</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Sự chấp thuận của bạn bè = Peer approval.</td>
+</tr>
+</tbody>
 </table>
 <br>
 <b>💡 Logic lập luận:</b>
 <br>
-- Đoạn D thảo luận về "Late adolescence" (thanh thiếu niên muộn). Tại giai đoạn này, nhu cầu được bạn bè phê duyệt đã giảm sút rõ rệt (diminished). Trẻ đã định hình vững vàng cá tính và bản sắc cá nhân riêng nên không còn quá phụ thuộc vào đánh giá từ nhóm.
+- Đoạn D khẳng định giai đoạn muộn (late adolescence) ghi nhận sự sụt giảm nhu cầu được bạn bè thừa nhận ("needs for peer approval are diminished"). Cá nhân lúc này đã tự tin với bản sắc riêng ("personal identity") và tự chủ tâm lý.
 <br>
-- Do đó, câu hỏi này ghép với đáp án <b>C</b> (later adolescence).
+- Do đó, câu hỏi này ghép với đáp án <b>C</b> (late adolescence).
 <br><br>
 <b>🚫 Phân tích các lựa chọn khác (Distractors):</b>
 <br>
@@ -621,17 +621,9 @@ Hãy luôn theo dõi sát các trạng từ và động từ chỉ tiến trình
 <br>
 Cần nắm vững từ trái nghĩa: "pressing" (cấp bách/cực kỳ cần) ở đoạn B trái nghĩa với "diminished" (giảm bớt/ít cần) ở đoạn D. Phải hiểu rõ sắc thái từ vựng để không bị nhầm lẫn giữa các giai đoạn.
 <br><br>
-<b>🚫 Phân tích lỗi sai (Error Analysis):</b>
-<br>
-Học viên thường không biết nghĩa của từ "diminished" (bị thu nhỏ, giảm bớt) nên không thiết lập được mối liên hệ đồng nghĩa với "less need".
-<br><br>
-<b>📘 Ngữ pháp bổ sung:</b>
-<br>
-- Thể bị động ở thì hiện tại đơn: <b>are diminished</b> (bị giảm đi/suy yếu). Trạng thái này mô tả một kết quả của quá trình trưởng thành tâm lý tự nhiên.
-<br><br>
 <b>🎓 Bài học rút ra (Lesson):</b>
 <br>
-Từ vựng chỉ sự gia tăng hay suy giảm là cốt lõi của các bài đọc IELTS. Hãy luôn ghi nhớ: <i>diminish = decrease = decline = drop = reduce = less</i>.`,
+<i>Diminish</i> (suy giảm/thu nhỏ) là từ đồng nghĩa học thuật quan trọng bậc nhất đại diện cho khái niệm <i>decrease / reduce / less need</i> trong IELTS Reading.`,
       vocab: `<b>diminish (v)</b>: giảm bớt, thu nhỏ<br><b>approval (n)</b>: sự chấp thuận, phê duyệt, thừa nhận<br><b>peer (n)</b>: bạn đồng lứa`,
       colorClass: "ev-5"
     },
@@ -647,28 +639,28 @@ Từ vựng chỉ sự gia tăng hay suy giảm là cốt lõi của các bài �
 <br><br>
 <b>📝 Phân tích chi tiết câu dẫn chứng:</b>
 <ul>
-  <li><b>marked by the emergence of new thinking skills</b>: được đánh dấu bằng sự xuất hiện của các kỹ năng tư duy mới.</li>
-  <li><b>The intellectual world of the young person</b>: Thế giới trí tuệ của người trẻ.</li>
-  <li><b>is suddenly greatly expanded</b>: đột nhiên được mở rộng một cách mạnh mẽ (booming - bùng nổ).</li>
+<li><b>marked by the emergence of new thinking skills</b>: được đánh dấu bằng sự xuất hiện của các kỹ năng tư duy mới.</li>
+<li><b>The intellectual world of the young person</b>: Thế giới trí tuệ của người trẻ.</li>
+<li><b>is suddenly greatly expanded</b>: đột nhiên được mở rộng một cách mạnh mẽ (booming - bùng nổ).</li>
 </ul>
 👉 <i>Ý nghĩa cả câu:</i> Giai đoạn giữa của tuổi vị thành niên được đánh dấu bằng sự xuất hiện của các kỹ năng tư duy mới. Thế giới trí tuệ của người trẻ đột ngột được mở rộng vô cùng mạnh mẽ.
 <br><br>
 <b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
 <table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
-  <thead>
-    <tr style="background-color: #f2f2f2; font-weight: bold;">
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">intellectual booming</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">intellectual world ... suddenly greatly expanded</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Sự bùng nổ trí tuệ = Thế giới trí tuệ đột ngột mở rộng cực kỳ mạnh mẽ.</td>
-    </tr>
-  </tbody>
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">intellectual booming</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">intellectual world ... suddenly greatly expanded</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Sự bùng nổ trí tuệ = Thế giới trí tuệ đột ngột mở rộng cực kỳ mạnh mẽ.</td>
+</tr>
+</tbody>
 </table>
 <br>
 <b>💡 Logic lập luận:</b>
@@ -681,7 +673,7 @@ Từ vựng chỉ sự gia tăng hay suy giảm là cốt lõi của các bài �
 <br>
 - <b>A (early adolescence):</b> Giai đoạn đầu chỉ tập trung vào sự phát triển nhanh về thể chất ("rapid physical growth and maturation") chứ chưa có sự bùng nổ mạnh mẽ về tư duy trừu tượng.
 <br>
-- <b>C (later adolescence):</b> Giai đoạn muộn chỉ là sự "tinh thể hóa" hay định hình cụ thể các mục tiêu nghề nghiệp thực tế ("crystallize their vocational goals") dựa trên nền tảng trí tuệ đã phát triển trước đó.
+- <b>C (late adolescence):</b> Giai đoạn muộn chỉ là sự "tinh thể hóa" hay định hình cụ thể các mục tiêu nghề nghiệp thực tế ("crystallize their vocational goals") dựa trên nền tảng trí tuệ đã phát triển trước đó.
 <br><br>
 <b>⚠️ Bẫy cần tránh (Trap):</b>
 <br>
@@ -713,45 +705,45 @@ Sự bùng nổ (booming/explosion) thường được bài viết IELTS mô t�
 <br><br>
 <b>📝 Phân tích chi tiết câu dẫn chứng:</b>
 <ul>
-  <li><b>One developmental task ... associated with the adolescent transition</b>: Một nhiệm vụ phát triển gắn với quá trình chuyển đổi của trẻ vị thành niên (trong nghiên cứu gồm 11 nhiệm vụ của Giáo sư Havighurst).</li>
-  <li><b>adjust to a new physical sense of self</b>: điều chỉnh để thích ứng với một cảm quan thể chất mới về bản thân.</li>
-  <li><b>young adolescent often becomes focused on his or her body</b>: thiếu niên giai đoạn đầu thường trở nên tập trung cao độ vào cơ thể của chính mình.</li>
+<li><b>One developmental task ... associated with the adolescent transition</b>: Một nhiệm vụ phát triển gắn với quá trình chuyển đổi của trẻ vị thành niên (trong nghiên cứu gồm 11 nhiệm vụ của Giáo sư Havighurst).</li>
+<li><b>adjust to a new physical sense of self</b>: điều chỉnh để thích ứng với một cảm quan thể chất mới về bản thân.</li>
+<li><b>young adolescent often becomes focused on his or her body</b>: thiếu niên giai đoạn đầu thường trở nên tập trung cao độ vào cơ thể của chính mình.</li>
 </ul>
 👉 <i>Ý nghĩa cả câu:</i> Một nhiệm vụ phát triển mà một thanh thiếu niên cần đạt được là thích nghi với cảm quan thể chất mới về bản thân... Ảnh hưởng của sự thay đổi nhanh chóng này là thanh thiếu niên thường tập trung nhiều vào cơ thể của mình.
 <br><br>
 <b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
 <table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
-  <thead>
-    <tr style="background-color: #f2f2f2; font-weight: bold;">
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">One of Havighurst’s research</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">Robert Havighurst ... proposed ... identified eleven developmental tasks</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Nghiên cứu của Havighurst = Giáo sư Robert Havighurst đề xuất và xác định các nhiệm vụ phát triển.</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">focuses on creating a self-image</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">adjust to a new physical sense of self / focused on body</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Tập trung kiến tạo hình ảnh bản thân = Thích nghi với cảm nhận thể chất mới / tập trung cao độ vào cơ thể mình.</td>
-    </tr>
-  </tbody>
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">One of Havighurst's research</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">Professor Havighurst ... eleven developmental tasks</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Nghiên cứu của Havighurst về các nhiệm vụ phát triển tuổi dậy thì.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">focuses on creating a self-image</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">adjust to a new physical sense of self / focused on body</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Tập trung kiến tạo hình ảnh bản thân = Thích nghi với cảm nhận thể chất mới / tập trung cao độ vào cơ thể mình.</td>
+</tr>
+</tbody>
 </table>
 <br>
 <b>💡 Logic lập luận:</b>
 <br>
-- Giáo sư Havighurst đề xuất 11 nhiệm vụ phát triển. Đoạn E mô tả chi tiết nhiệm vụ đầu tiên là trẻ phải điều chỉnh để làm quen với cơ thể đang thay đổi nhanh chóng của mình (physical sense of self), khiến họ cực kỳ bận tâm về ngoại hình và hình ảnh cá nhân (self-image). 
+- Giáo sư Havighurst đề xuất 11 nhiệm vụ phát triển. Đoạn E mô tả chi tiết nhiệm vụ đầu tiên là trẻ phải điều chỉnh để làm quen với cơ thể đang thay đổi nhanh chóng của mình (physical sense of self), khiến họ cực kỳ bận tâm về ngoại hình và hình ảnh cá nhân (self-image).
 <br>
 - Do đó, vế này hoàn thành câu hoàn hảo với đáp án <b>E</b> (focuses on creating a self-image).
 <br><br>
 <b>🚫 Phân tích các lựa chọn khác (Distractors):</b>
 <br>
 - <b>A (form personal identity with a set of morals and values):</b> Đây là một nhiệm vụ khác được nhắc tới ở đoạn G (đạo đức), không phải là trọng tâm của đoạn E khi bàn về Havighurst's task liên quan tới cơ thể thể chất.
-  <br>
+<br>
 - <b>F (become an extension of their parents):</b> Sai hoàn toàn về mặt bản chất tâm lý học phát triển, vì mục tiêu của tuổi dậy thì là độc lập khỏi cha mẹ.
 <br><br>
 <b>⚠️ Bẫy cần tránh (Trap):</b>
@@ -780,48 +772,48 @@ Học viên dễ chọn nhầm đáp án A hoặc B vì đọc lướt thấy "h
 <br><br>
 <b>🔍 Dẫn chứng thực tế (Evidence):</b>
 <br>
-<i>"School curricula are frequently dominated by the inclusion of more abstract, demanding material, regardless of whether the adolescents have achieved formal thought. ... demands for abstract thinking prior to achievement of that ability may be frustrating."</i>
+<i>"School curricula are frequently dominated by the inclusion of more abstract, demanding material, regardless of whether the adolescents have achieved formal thought. Since not all adolescents make the intellectual transition at the same rate, demands for abstract thinking prior to achievement of that ability may be frustrating."</i>
 <br><br>
 <b>📝 Phân tích chi tiết câu dẫn chứng:</b>
 <ul>
-  <li><b>School curricula</b>: Chương trình học ở trường học (High School Courses).</li>
-  <li><b>dominated by the inclusion of more abstract, demanding material</b>: bị áp đảo bởi việc đưa vào các tài liệu trừu tượng và đòi hỏi cao hơn nhiều (more challenging).</li>
-  <li><b>regardless of whether the adolescents have achieved formal thought</b>: bất kể việc học sinh đã đạt được tư duy chính thức hay chưa.</li>
-  <li><b>demands for abstract thinking prior to achievement of that ability may be frustrating</b>: những yêu cầu tư duy trừu tượng trước khi trẻ đạt được năng lực đó có thể gây ra sự ức chế, nản lòng (more challenging than some can accept).</li>
+<li><b>School curricula</b>: Chương trình giảng dạy của nhà trường (High School Courses).</li>
+<li><b>dominated by the inclusion of more abstract, demanding material</b>: bị áp đảo bởi việc đưa vào các tài liệu trừu tượng và đòi hỏi cao hơn nhiều (more challenging).</li>
+<li><b>regardless of whether the adolescents have achieved formal thought</b>: bất kể việc học sinh đã đạt được tư duy chính thức hay chưa.</li>
+<li><b>demands for abstract thinking prior to achievement of that ability may be frustrating</b>: những yêu cầu tư duy trừu tượng trước khi trẻ đạt được năng lực đó có thể gây ra sự ức chế, nản lòng (more challenging than some can accept).</li>
 </ul>
 👉 <i>Ý nghĩa cả câu:</i> Chương trình học ở trường học thường xuyên bị áp đảo bởi việc đưa vào các tài liệu trừu tượng, đòi hỏi cao hơn, bất kể thiếu niên đó đã đạt được tư duy chính thức hay chưa. Việc đòi hỏi tư duy trừu tượng trước khi thiếu niên có được khả năng đó có thể gây ức chế.
 <br><br>
 <b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
 <table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
-  <thead>
-    <tr style="background-color: #f2f2f2; font-weight: bold;">
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">High School Courses</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">School curricula / high school</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Chương trình học/các môn học cấp Ba = Chương trình học cấp Ba/trường trung học.</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">are designed to be more challenging</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">dominated by ... more abstract, demanding material</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Được thiết kế đầy thách thức = Bị áp đảo bởi các tài liệu trừu tượng, đòi hỏi cực cao (demanding).</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">than some can accept</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">prior to achievement ... may be frustrating / not all ... make transition at the same rate</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Hơn mức một số người có thể tiếp nhận = Xuất hiện trước khi đạt năng lực khiến học sinh ức chế (frustrating) / không phải ai cũng chuyển đổi cùng tốc độ.</td>
-    </tr>
-  </tbody>
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">High School Courses</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">School curricula / high school</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Chương trình học/các môn học cấp Ba = Chương trình học cấp Ba/trường trung học.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">are designed to be more challenging</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">dominated by ... more abstract, demanding material</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Được thiết kế đầy thách thức = Bị áp đảo bởi các tài liệu trừu tượng, đòi hỏi cực cao (demanding).</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">than some can accept</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">prior to achievement ... may be frustrating / not all ... make transition at the same rate</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Hơn mức một số người có thể tiếp nhận = Xuất hiện trước khi đạt năng lực khiến học sinh ức chế (frustrating) / không phải ai cũng chuyển đổi cùng tốc độ.</td>
+</tr>
+</tbody>
 </table>
 <br>
 <b>💡 Logic lập luận:</b>
 <br>
-- Đoạn F chỉ ra chương trình học cấp ba (school curricula) nhồi nhét nhiều kiến thức trừu tượng, đòi hỏi cao (demanding material) bất chấp việc học sinh đã sẵn sàng hay chưa. Với những học sinh chưa đạt tới trình độ tư duy trừu tượng, những yêu cầu này vượt quá khả năng tiếp nhận của họ và gây ức chế (frustrating). 
+- Đoạn F chỉ ra chương trình học cấp ba (school curricula) nhồi nhét nhiều kiến thức trừu tượng, đòi hỏi cao (demanding material) bất chấp việc học sinh đã sẵn sàng hay chưa. Với những học sinh chưa đạt tới trình độ tư duy trừu tượng, những yêu cầu này vượt quá khả năng tiếp nhận của họ và gây ức chế (frustrating).
 <br>
 - Do đó, vế này hoàn thành câu hoàn hảo với đáp án <b>C</b>.
 <br><br>
@@ -859,38 +851,38 @@ Từ <i>demanding</i> (đòi hỏi cao, khắt khe) và <i>frustrating</i> (gây
 <br><br>
 <b>📝 Phân tích chi tiết câu dẫn chứng:</b>
 <ul>
-  <li><b>develop increasingly complex knowledge systems and a sense of self</b>: phát triển hệ thống kiến thức ngày càng phức tạp và cảm nhận về cái tôi (personal identity).</li>
-  <li><b>adopt an integrated set of values and morals</b>: tiếp nhận một bộ các giá trị và chuẩn mực đạo đức được tích hợp thống nhất.</li>
-  <li><b>reconcile differences ... restructures those beliefs into a personal ideology</b>: hòa giải các khác biệt... và tái cấu trúc những niềm tin đó thành một hệ tư tưởng cá nhân riêng biệt.</li>
+<li><b>develop increasingly complex knowledge systems and a sense of self</b>: phát triển hệ thống kiến thức ngày càng phức tạp và cảm nhận về cái tôi (personal identity).</li>
+<li><b>adopt an integrated set of values and morals</b>: tiếp nhận một bộ các giá trị và chuẩn mực đạo đức được tích hợp thống nhất.</li>
+<li><b>restructures those beliefs into a personal ideology</b>: tái cấu trúc những niềm tin đó thành một hệ tư tưởng cá nhân riêng.</li>
 </ul>
-👉 <i>Ý nghĩa cả câu:</i> Trong thời kỳ thanh thiếu niên, khi thanh thiếu niên phát triển hệ thống kiến thức ngày càng phức tạp và cảm nhận về cái tôi, họ cũng tiếp nhận một bộ giá trị và đạo đức tích hợp. Để hòa giải các khác biệt, thanh thiếu niên tái cấu trúc những niềm tin đó thành một hệ tư tưởng cá nhân riêng.
+👉 <i>Ý nghĩa cả câu:</i> Trong tuổi vị thành niên, khi thiếu niên phát triển hệ thống kiến thức ngày càng phức tạp và cảm nhận về bản thân, họ cũng tiếp nhận một bộ giá trị và đạo đức tích hợp. Để hòa giải sự khác biệt, thiếu niên tái cấu trúc những niềm tin đó thành một hệ tư tưởng cá nhân.
 <br><br>
 <b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
 <table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
-  <thead>
-    <tr style="background-color: #f2f2f2; font-weight: bold;">
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">form personal identity</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">develop ... a sense of self / personal ideology</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Hình thành bản sắc cá nhân = Phát triển cảm nhận về cái tôi / xây dựng hệ tư tưởng cá nhân riêng.</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">with a set of morals and values</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">adopt an integrated set of values and morals</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Với một bộ đạo đức và giá trị = Tiếp nhận một bộ giá trị và đạo đức tích hợp.</td>
-    </tr>
-  </tbody>
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">form personal identity</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">develop ... a sense of self / personal ideology</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Hình thành bản sắc cá nhân = Phát triển cảm nhận về cái tôi / xây dựng hệ tư tưởng cá nhân riêng.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">with a set of morals and values</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">adopt an integrated set of values and morals</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Với một bộ đạo đức và giá trị = Tiếp nhận một bộ giá trị và đạo đức tích hợp.</td>
+</tr>
+</tbody>
 </table>
 <br>
 <b>💡 Logic lập luận:</b>
 <br>
-- Đoạn G mô tả sự phát triển đạo đức của thiếu niên: họ không còn tuân thủ mù quáng quy tắc của cha mẹ, mà tự mình hòa giải các xung đột giá trị giữa cha mẹ và bạn bè để tự kiến tạo một hệ tư tưởng cá nhân riêng (personal ideology / personal identity) dựa trên một bộ giá trị đạo đức tự chọn lọc. 
+- Đoạn G mô tả sự phát triển đạo đức của thiếu niên: họ không còn tuân thủ mù quáng quy tắc của cha mẹ, mà tự mình hòa giải các xung đột giá trị giữa cha mẹ và bạn bè để tự kiến tạo một hệ tư tưởng cá nhân riêng (personal ideology / personal identity) dựa trên một bộ giá trị đạo đức tự chọn lọc.
 <br>
 - Điều này khớp hoàn hảo với phương án <b>A</b>.
 <br><br>
@@ -917,7 +909,7 @@ Chọn nhầm các đáp án liên quan tới bạn bè vì thấy nhắc nhiề
       colorClass: "ev-9"
     },
     10: {
-      translation: `<b>Câu hỏi:</b> Tốc độ phát triển của các mô thức tư duy... [thay đổi tùy thuộc vào từng người].<br><br><b>Nói đơn giản:</b> Quá trình chuyển đổi nhận thức và phát triển năng lực tư duy trừu tượng của mỗi đứa trẻ diễn ra với tốc độ rất khác nhau, không ai giống ai.`,
+      translation: `<b>Câu hỏi:</b> Tốc độ phát triển của các mô hình/kiểu tư duy... [thay đổi tùy thuộc vào từng người].<br><br><b>Nói đơn giản:</b> Khả năng và tốc độ chuyển đổi nhận thức từ tư duy cụ thể sang tư duy trừu tượng không hề giống nhau ở mọi đứa trẻ, mà biến thiên và khác nhau ở từng cá nhân.`,
       exp: `<b>Dạng câu hỏi:</b> Sentence Completion — Hoàn thành câu với phần kết đúng.
 <br><br>
 <b>📍 Vị trí dẫn chứng:</b> Paragraph F
@@ -928,47 +920,43 @@ Chọn nhầm các đáp án liên quan tới bạn bè vì thấy nhắc nhiề
 <br><br>
 <b>📝 Phân tích chi tiết câu dẫn chứng:</b>
 <ul>
-  <li><b>not all adolescents make the intellectual transition at the same rate</b>: không phải tất cả thanh thiếu niên đều thực hiện sự chuyển đổi trí tuệ/nhận thức với cùng một tốc độ (varies from people to people).</li>
+<li><b>not all adolescents make the intellectual transition at the same rate</b>: không phải tất cả thanh thiếu niên đều thực hiện sự chuyển đổi trí tuệ/nhận thức với cùng một tốc độ (varies from people to people).</li>
 </ul>
 👉 <i>Ý nghĩa cả câu:</i> Vì không phải tất cả thanh thiếu niên đều thực hiện chuyển đổi trí tuệ ở cùng một tốc độ, các yêu cầu về tư duy trừu tượng trước khi đạt được khả năng đó có thể gây ức chế.
 <br><br>
 <b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
 <table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
-  <thead>
-    <tr style="background-color: #f2f2f2; font-weight: bold;">
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">developmental speed</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">rate of transition</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Tốc độ phát triển = Tốc độ chuyển đổi nhận thức.</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">thinking patterns</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">intellectual transition / abstract thinking</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Mô thức tư duy = Chuyển đổi trí tuệ / tư duy trừu tượng.</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">varies from people to people</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">not all ... at the same rate</td>
-      <td style="padding: 8px; border: 1px solid #ddd;">Khác nhau ở mỗi người = Không phải tất cả đều diễn ra ở cùng một tốc độ.</td>
-    </tr>
-  </tbody>
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Từ khóa trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Cụm từ trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối liên hệ / Giải thích</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">developmental speed</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">rate of transition</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Tốc độ phát triển = Tốc độ chuyển đổi nhận thức.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">thinking patterns</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">intellectual transition / abstract thinking</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Kiểu tư duy = Sự chuyển dịch trí tuệ / tư duy trừu tượng.</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">varies from people to people</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">not all ... make transition at the same rate</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Thay đổi tùy người = Không phải ai cũng chuyển đổi ở cùng một tốc độ.</td>
+</tr>
+</tbody>
 </table>
 <br>
 <b>💡 Logic lập luận:</b>
 <br>
-- Đoạn F khẳng định trực tiếp rằng không phải mọi thiếu niên đều trưởng thành về mặt trí tuệ với cùng một tốc độ (not all make transition at the same rate). Điều này có nghĩa là tốc độ phát triển tư duy của họ biến thiên và khác nhau tùy thuộc vào từng cá nhân (varies from people to people). 
+- Đoạn F ghi rõ: "not all adolescents make the intellectual transition at the same rate" (không phải đứa trẻ nào cũng đạt tới bước ngoặt trí tuệ ở cùng một tốc độ).
 <br>
-- Sự tương thích này khẳng định đáp án là <b>D</b>.
-<br><br>
-<b>🚫 Phân tích các lựa chọn khác (Distractors):</b>
-<br>
-- <b>C (are designed to be more challenging...):</b> Phương án này bổ nghĩa cho "High School Courses" ở câu 8 chứ không bổ nghĩa cho tốc độ phát triển nhận thức của con người.
+- Mệnh đề này khẳng định sự biến thiên về tốc độ phát triển tư duy ở từng con người, hoàn toàn trùng khớp với đáp án <b>D</b> (varies from people to people).
 <br><br>
 <b>⚠️ Bẫy cần tránh (Trap):</b>
 <br>
@@ -1000,38 +988,38 @@ Khi một bài đọc IELTS đề cập đến việc "không phải ai cũng đ
 <br><br>
 <b>📝 Phân tích chi tiết câu dẫn chứng:</b>
 <ul>
-  <li><b>During adolescence</b>: Trong thời kỳ thanh thiếu niên (tuổi dậy thì).</li>
-  <li><b>young people begin to</b>: những người trẻ bắt đầu (đang trong quá trình phát triển).</li>
-  <li><b>recognize and understand abstractions</b>: nhận diện và thấu hiểu các khái niệm trừu tượng (think abstractly).</li>
+<li><b>During adolescence</b>: Trong thời kỳ thanh thiếu niên (tuổi dậy thì).</li>
+<li><b>young people begin to</b>: những người trẻ bắt đầu (đang trong quá trình phát triển).</li>
+<li><b>recognize and understand abstractions</b>: nhận diện và thấu hiểu các khái niệm trừu tượng (think abstractly).</li>
 </ul>
-👉 <i>Ý nghĩa cả câu:</i> Trong thời kỳ thanh thiếu niên, những người trẻ tuổi bắt đầu nhận biết và thấu hiểu các khái niệm trừu tượng.
+👉 <i>Ý nghĩa cả câu:</i> Trong tuổi vị thành niên, những người trẻ bắt đầu nhận thức và hiểu được các khái niệm trừu tượng.
 <br><br>
 <b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
 <table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
-  <thead>
-    <tr style="background-color: #f2f2f2; font-weight: bold;">
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Câu hỏi</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Bài đọc (Passage)</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối quan hệ đối chiếu</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">lacks the ability</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">begin to recognize and understand</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: #d32f2f;">Mâu thuẫn trực tiếp (Khẳng định không có khả năng vs Khẳng định bắt đầu nhận thức và hiểu).</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">think abstractly</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">understand abstractions</td>
-      <td style="padding: 8px; border: 1px solid #ddd; color: #2e7d32; font-weight: bold;">Khớp nghĩa hoàn toàn (Tư duy trừu tượng = Thấu hiểu các khái niệm trừu tượng).</td>
-    </tr>
-  </tbody>
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối quan hệ đối chiếu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">lacks the ability</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">begin to recognize and understand</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold; color: #d32f2f;">Mâu thuẫn trực tiếp (Khẳng định không có khả năng vs Khẳng định bắt đầu nhận thức và hiểu).</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">think abstractly</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">understand abstractions</td>
+<td style="padding: 8px; border: 1px solid #ddd;">Suy nghĩ trừu tượng = Thấu hiểu các khái niệm trừu tượng.</td>
+</tr>
+</tbody>
 </table>
 <br>
 <b>💡 Logic lập luận:</b>
 <br>
-- <b>Câu hỏi khẳng định:</b> Trẻ dậy thì thiếu (lacks - không có) khả năng tư duy trừu tượng.
+- <b>Câu hỏi khẳng định:</b> Thanh thiếu niên hoàn toàn thiếu (lacks) khả năng tư duy trừu tượng.
 <br>
 - <b>Bài đọc khẳng định:</b> Trẻ dậy thì bắt đầu nhận thức và hiểu (begin to understand) các khái niệm trừu tượng.
 <br>
@@ -1044,7 +1032,7 @@ Khi một bài đọc IELTS đề cập đến việc "không phải ai cũng đ
 <b>⚠️ Bẫy cần tránh (Trap):</b>
 <br>
 - Đoạn F có câu: <i>"demands for abstract thinking prior to achievement of that ability may be frustrating"</i> (yêu cầu tư duy trừu tượng trước khi đạt được khả năng đó có thể gây ức chế). Học viên dễ bám vào câu này để lập luận: "À, vì họ chưa đạt được khả năng (prior to achievement) nên họ bị thiếu khả năng (lacks), vậy câu này là TRUE".
-  <br>
+<br>
 - Đây là bẫy đánh tráo thời điểm cực kỳ tinh vi! Câu này chỉ mô tả trạng thái tạm thời của một số trẻ khi bị ép học quá sớm ở trường. Về mặt sinh học phát triển toàn diện của cả quá trình dậy thì (Adolescence nói chung), trẻ hoàn toàn bắt đầu nhận thức và hiểu được abstractions. Đề bài dùng từ "The adolescent" (nói chung) để quy kết cả lứa tuổi, trong khi cả lứa tuổi này đang phát triển năng lực đó. Do đó khẳng định "thiếu hoàn toàn" là sai.
 <br><br>
 <b>🚫 Phân tích lỗi sai (Error Analysis):</b>
@@ -1059,65 +1047,61 @@ Lỗi phổ biến nhất là nhầm lẫn giữa "lacks the ability" (hoàn to�
 <b>🎓 Bài học rút ra (Lesson):</b>
 <br>
 Hãy cẩn giác với các từ chỉ trạng thái cực đoan như <i>lack, absence, unable</i> ở câu hỏi. Nếu bài đọc chỉ ra một quá trình đang bắt đầu phát triển (<i>begin to develop, start to learn</i>), tuyên bố "thiếu hoàn toàn" sẽ bị phán quyết là <b>FALSE</b>.`,
-      vocab: `<b>lack (v)</b>: thiếu, không có<br><b>abstractly (adv)</b>: một cách trừu tượng<br><b>abstraction (n)</b>: khái niệm trừu tượng, sự trừu tượng<br><b>prior to (prep)</b>: trước khi`,
+      vocab: `<b>lack (v/n)</b>: thiếu, sự thiếu hụt<br><b>abstractly (adv)</b>: một cách trừu tượng<br><b>abstraction (n)</b>: sự trừu tượng, khái niệm trừu tượng<br><b>recognize (v)</b>: nhận ra, nhận biết`,
       colorClass: "ev-11"
     },
     12: {
-      translation: `<b>Câu hỏi:</b> Thanh thiếu niên có thể gặp phải sự thiếu hụt/hạn chế tạm thời trong khả năng ngôn ngữ của họ.<br><br><b>Nói đơn giản:</b> Có phải ở lứa tuổi dậy thì, sự phát triển năng lực biểu đạt ngôn ngữ của trẻ có lúc không theo kịp tư duy phức tạp đang lớn dần, khiến trẻ gặp khó khăn trong việc diễn đạt bản thân một cách rõ ràng?`,
+      translation: `<b>Câu hỏi:</b> Thanh thiếu niên có thể có sự hạn chế/thiếu hụt về khả năng ngôn ngữ của họ.<br><br><b>Nói đơn giản:</b> Có đúng là bài đọc xác nhận thanh thiếu niên gặp khó khăn, thiếu hụt trong việc sử dụng ngôn ngữ để diễn đạt trọn vẹn ý nghĩ phức tạp của mình?`,
       exp: `<b>Dạng câu hỏi:</b> TRUE / FALSE / NOT GIVEN
 <br><br>
 <b>📍 Vị trí dẫn chứng:</b> Paragraph H
 <br><br>
 <b>🔍 Dẫn chứng thực tế (Evidence):</b>
 <br>
-<i>"Adolescents may appear less competent because of their inability to express themselves meaningfully."</i>
+<i>"Their limited language of childhood is no longer adequate. Adolescents may appear less competent because of their inability to express themselves meaningfully."</i>
 <br><br>
 <b>📝 Phân tích chi tiết câu dẫn chứng:</b>
 <ul>
-  <li><b>Adolescents may appear less competent</b>: Thanh thiếu niên có thể trông có vẻ kém cỏi hơn (về mặt năng lực ngôn ngữ).</li>
-  <li><b>because of their inability to express themselves meaningfully</b>: do họ không có khả năng diễn đạt bản thân một cách có ý nghĩa (sự suy giảm/thiếu hụt khả năng ngôn ngữ).</li>
-  <li>Thêm dẫn chứng bổ trợ ở đầu đoạn H: <i>"Their limited language of childhood is no longer adequate."</i> (Ngôn ngữ giới hạn thời thơ ấu của họ không còn đủ đáp ứng nữa).</li>
+<li><b>limited language of childhood is no longer adequate</b>: ngôn ngữ hạn chế của thời thơ ấu không còn đủ đáp ứng (there is a language limitation/deficit).</li>
+<li><b>appear less competent</b>: trông có vẻ kém năng lực/kém cỏi hơn.</li>
+<li><b>because of their inability to express themselves meaningfully</b>: do họ không có khả năng/gặp khó khăn trong việc diễn đạt bản thân một cách có ý nghĩa (a deficit in language ability).</li>
 </ul>
-👉 <i>Ý nghĩa cả câu:</i> Thanh thiếu niên có thể trông có vẻ kém năng lực hơn vì họ không có khả năng diễn đạt bản thân một cách có ý nghĩa.
+👉 <i>Ý nghĩa cả câu:</i> Ngôn ngữ hạn chế thời thơ ấu của họ không còn đủ đáp ứng. Thanh thiếu niên có thể trông kém cỏi hơn do họ không có khả năng diễn đạt bản thân một cách có ý nghĩa.
 <br><br>
 <b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
 <table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
-  <thead>
-    <tr style="background-color: #f2f2f2; font-weight: bold;">
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Câu hỏi</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Bài đọc (Passage)</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối quan hệ đối chiếu</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">may have a deficit</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">may appear less competent / inability / no longer adequate</td>
-      <td style="padding: 8px; border: 1px solid #ddd; color: #2e7d32; font-weight: bold;">Khớp hoàn toàn (Có sự thiếu hụt/hạn chế tạm thời tương đương với việc trông kém cỏi/không có khả năng diễn đạt/không còn đủ dùng).</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">language ability</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">express themselves meaningfully / verbal skills</td>
-      <td style="padding: 8px; border: 1px solid #ddd; color: #2e7d32; font-weight: bold;">Khớp hoàn toàn (Năng lực ngôn ngữ = Diễn đạt bản thân có ý nghĩa / kỹ năng nói).</td>
-    </tr>
-  </tbody>
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối quan hệ đối chiếu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">may have a deficit</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">may appear less competent / inability / no longer adequate</td>
+<td style="padding: 8px; border: 1px solid #ddd; color: #2e7d32; font-weight: bold;">Khớp hoàn toàn (Có sự thiếu hụt/hạn chế tạm thời tương đương với việc trông kém cỏi/không có khả năng diễn đạt/không còn đủ dùng).</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">language ability</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">express themselves meaningfully / verbal skills</td>
+<td style="padding: 8px; border: 1px solid #ddd; color: #2e7d32; font-weight: bold;">Khớp hoàn toàn (Năng lực ngôn ngữ = Diễn đạt bản thân có ý nghĩa / kỹ năng nói).</td>
+</tr>
+</tbody>
 </table>
 <br>
 <b>💡 Logic lập luận:</b>
 <br>
-- <b>Câu hỏi nói:</b> Trẻ dậy thì có thể bị hạn chế/thiếu hụt (may have a deficit) về ngôn ngữ.
+- Bài đọc ghi nhận vốn ngôn ngữ thời thơ ấu của trẻ không đủ ("no longer adequate") để tải các khái niệm phức tạp mới, dẫn tới việc trẻ bất lực trong việc diễn đạt ý nghĩa ("inability to express themselves meaningfully").
 <br>
-- <b>Bài đọc nói:</b> Trẻ có thể trông kém năng lực hơn (appear less competent) do không thể diễn đạt bản thân một cách rõ ràng (inability to express themselves), và vốn từ thuở nhỏ không còn đủ dùng (no longer adequate).
+- Trạng thái này chính là một "deficit in language ability" (sự thâm hụt/hạn chế về năng lực ngôn ngữ).
 <br>
-- Hai thông tin này hoàn toàn tương thích và khớp nối ý nghĩa 100%. Trạng thái "inability to express themselves meaningfully" chính là biểu hiện rõ ràng nhất của "deficit in language ability" (sự thâm hụt/hạn chế tạm thời về ngôn ngữ). Do đó đáp án là <b>TRUE</b>.
-<br><br>
-<b>🔍 Phân biệt rạch ròi TRUE và NOT GIVEN:</b>
-<br>
-- Một số học viên chọn <i>NOT GIVEN</i> vì tìm từ "deficit" không thấy trong bài. Hãy nhớ rằng "deficit" (sự thiếu hụt, thâm hụt) là một paraphrase học thuật của cụm "inability to express themselves" (không có khả năng tự diễn đạt) và "limited language is no longer adequate" (ngôn ngữ giới hạn không còn đủ dùng). Do đó thông tin hoàn toàn tồn tại và được xác nhận là đúng.
+- Nhận định này hoàn toàn chính xác theo bài đọc → Đáp án là <b>TRUE</b>.
 <br><br>
 <b>⚠️ Bẫy cần tránh (Trap):</b>
 <br>
-- Đừng hiểu lầm từ "deficit" mang tính bệnh lý nặng nề (như khiếm khuyết câm điếc). Trong ngôn ngữ học phát triển, "language deficit" ở đây chỉ đơn thuần là khoảng trống tạm thời giữa tốc độ phát triển tư duy quá nhanh và tốc độ tích lũy vốn từ chưa kịp đáp ứng ở tuổi dậy thì.
+- Đừng bị đánh lừa bởi từ "deficit" (thâm hụt/thiếu hụt). Bạn có thể nghĩ "deficit" là bệnh lý, nhưng trong ngữ cảnh tâm lý phát triển, "deficit" ám chỉ việc vốn từ chưa theo kịp tốc độ phát triển tư duy ("limited language... no longer adequate").
 <br><br>
 <b>🚫 Phân tích lỗi sai (Error Analysis):</b>
 <br>
@@ -1146,47 +1130,47 @@ Học cách nhận diện các danh từ học thuật trừu tượng: <i>defic
 <br><br>
 <b>📝 Phân tích chi tiết câu dẫn chứng:</b>
 <ul>
-  <li><b>The adolescent must establish ... independence from ... parents</b>: Thanh thiếu niên phải thiết lập sự độc lập về cảm xúc và tâm lý khỏi cha mẹ.</li>
-  <li><b>Childhood is marked by a strong dependence on ... parents</b>: Thời thơ ấu được đánh dấu bởi sự phụ thuộc mạnh mẽ vào cha mẹ (reliance).</li>
-  <li><b>vacillate between ... desire for dependence and ... need to be independent</b>: dao động giữa mong muốn phụ thuộc và nhu cầu được độc lập (transition).</li>
+<li><b>The adolescent must establish ... independence from ... parents</b>: Thanh thiếu niên phải thiết lập sự độc lập về cảm xúc và tâm lý khỏi cha mẹ.</li>
+<li><b>Childhood is marked by a strong dependence on ... parents</b>: Thời thơ ấu được đánh dấu bởi sự phụ thuộc mạnh mẽ vào cha mẹ (reliance).</li>
+<li><b>vacillate between ... desire for dependence and ... need to be independent</b>: dao động giữa mong muốn phụ thuộc và nhu cầu được độc lập (transition).</li>
 </ul>
 👉 <i>Ý nghĩa cả câu:</i> Thanh thiếu niên phải thiết lập sự độc lập về mặt tâm lý và tình cảm khỏi cha mẹ của mình. Thời thơ ấu được đánh dấu bằng sự phụ thuộc mạnh mẽ vào cha mẹ... Thanh thiếu niên có thể dao động giữa mong muốn phụ thuộc và nhu cầu độc lập.
 <br><br>
 <b>📊 Bảng phân tích từ khóa (Paraphrase):</b>
 <table border="1" style="border-collapse: collapse; width: 100%; border: 1px solid #ddd; font-size: 14px;">
-  <thead>
-    <tr style="background-color: #f2f2f2; font-weight: bold;">
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Câu hỏi</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Bài đọc (Passage)</th>
-      <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối quan hệ đối chiếu</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">experiences a transition</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">vacillate between ... desire for dependence and need to be independent</td>
-      <td style="padding: 8px; border: 1px solid #ddd; color: #2e7d32; font-weight: bold;">Khớp nghĩa (Trải qua sự chuyển đổi = Dao động qua lại giữa mong muốn phụ thuộc và nhu cầu độc lập để thích nghi dần).</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">reliance on his parents</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">dependence on one's parents</td>
-      <td style="padding: 8px; border: 1px solid #ddd; color: #2e7d32; font-weight: bold;">Khớp hoàn toàn (Sự dựa dẫm vào cha mẹ = Sự phụ thuộc vào cha mẹ).</td>
-    </tr>
-    <tr>
-      <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">independence</td>
-      <td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">independence / autonomy</td>
-      <td style="padding: 8px; border: 1px solid #ddd; color: #2e7d32; font-weight: bold;">Khớp hoàn toàn (Sự độc lập = Sự tự chủ, độc lập).</td>
-    </tr>
-  </tbody>
+<thead>
+<tr style="background-color: #f2f2f2; font-weight: bold;">
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Câu hỏi</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Thông tin trong Bài đọc (Passage)</th>
+<th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Mối quan hệ đối chiếu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">experiences a transition</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">vacillate between ... desire for dependence and need to be independent</td>
+<td style="padding: 8px; border: 1px solid #ddd; color: #2e7d32; font-weight: bold;">Khớp nghĩa (Trải qua sự chuyển đổi = Dao động qua lại giữa mong muốn phụ thuộc và nhu cầu độc lập để thích nghi dần).</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">reliance on his parents</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">dependence on one's parents</td>
+<td style="padding: 8px; border: 1px solid #ddd; color: #2e7d32; font-weight: bold;">Khớp hoàn toàn (Dựa dẫm/tin cậy vào cha mẹ = Sự phụ thuộc vào cha mẹ).</td>
+</tr>
+<tr>
+<td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">to independence</td>
+<td style="padding: 8px; border: 1px solid #ddd; font-style: italic;">independence / autonomy</td>
+<td style="padding: 8px; border: 1px solid #ddd; color: #2e7d32; font-weight: bold;">Khớp hoàn toàn (Tiến tới sự độc lập/tự chủ).</td>
+</tr>
+</tbody>
 </table>
 <br>
 <b>💡 Logic lập luận:</b>
 <br>
-- <b>Câu hỏi khẳng định:</b> Trẻ trải qua sự chuyển dịch (transition) từ phụ thuộc cha mẹ sang độc lập.
+- Bài đọc mô tả tuổi vị thành niên là hành trình chuyển từ sự phụ thuộc của thời thơ ấu ("dependence in childhood") sang sự độc lập tự chủ của người trưởng thành ("independence in adulthood"). Trong quá trình này trẻ liên tục dao động ("vacillate") giữa 2 trạng thái để dần hình thành tâm lý tự lập.
 <br>
-- <b>Bài đọc mô tả:</b> Tuổi thơ là phụ thuộc (dependence), tuổi trưởng thành đòi hỏi sự độc lập (autonomy), và ở giai đoạn dậy thì, trẻ phải tự thiết lập sự độc lập (establish independence) bằng cách dao động chuyển dịch qua lại giữa hai trạng thái này (vacillate between dependence and independent).
+- Mệnh đề câu hỏi phản ánh chính xác 100% bản chất hành trình này.
 <br>
-- Cả hai vế này khớp hoàn hảo về bản chất khoa học được mô tả trong bài đọc. Đáp án là <b>TRUE</b>.
+- Do đó đáp án chính xác là <b>TRUE</b>.
 <br><br>
 <b>🚫 Phân tích các lựa chọn khác / Phân biệt TRUE và NOT GIVEN:</b>
 <br>
