@@ -1,15 +1,503 @@
+/* =========================================================
+   SNAPENGLISH QUIZ2 LISTENING - UPGRADED DATA FILE
+   Part 2: Questions 11-20 (Winridge Forest Railway Park)
+   ========================================================= */
 
 window.quizData = {
   testId: "quiz2",
-  testName: "Test 1",
-  partName: "Part 2",
+  testName: "IELTS Listening Test 1",
+  partName: "Part 2: Winridge Forest Railway Park",
   audioUrl: "https://raw.githubusercontent.com/snaplanguages/SnapEnglish-audioieltslistening01/1f5e120d9f5c3c2598b4ffea2baf89c6a33ba1ae/IELTS%20Listening%20Test%201.mp3",
   startTime: 527,
   endTime: 862,
   hasTranscript: true,
-  questionsList: [11, 12, 13, 14, 15, 16, 17, 18, 19, 20],
-  answerKey: {"11": ["C"], "12": ["A"], "13": ["C"], "14": ["E"], "15": ["H"], "16": ["F"], "17": ["C"], "18": ["G"], "19": ["120"], "20": ["5-12"]},
-  transcriptHtml: '\n<h2 style="font-family: \'Lora\', serif; color: var(--text-title); border-bottom: 2px solid var(--brand-primary); padding-bottom: 8px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">📜 Full Audio Transcript</h2>\n<div style="font-size: 13.5px; line-height: 1.6; color: var(--text-body);">\n  <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Speaker 5 (Presenter):</b> <span class="time-tag">08:47</span>For the second in our series about locally run businesses, we meet Simon Winridge, co-founder of the hugely successful Winridge Forest Railway Park. Welcome, Simon. Now, perhaps you can begin by telling us a little bit about how it all started.</p>\n  \n  <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Speaker 4 (Simon):</b> <span class="time-tag">09:54</span>Well, during the nineteen seventies, my wife Liz and I had just acquired eighty acres of sheep farming land, and we decided to settle down and have children. Pretty soon, we had a daughter, Sarah, and a son, Duncan. The place was wonderful for the kids. They particularly loved trains and gradually built up an enormous network of miniature railway track. I began to develop larger scale models of locomotives, but we didn\'t think anything more of it <mark class="hl">[Q11] until I went on a trip to a theme park near Birmingham and decided we could do a much better job.</mark></p>\n  \n  <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Speaker 4 (Simon):</b> <span class="time-tag">10:28</span>So we set up a small one ourselves based on the miniature railway, and <mark class="hl">[Q12] we opened to the public for just a month that year, nineteen eighty-four, in July, our driest month, because our children said they didn\'t want our guests to have a miserable, wet visit.</mark> [laughs] I dealt with park business, and Liz carried on with the farm work. It soon became clear that we were onto a winner.</p>\n  \n  <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Speaker 4 (Simon):</b> <span class="time-tag">10:59</span>We began to extend the railway track and lay it among more interesting landscape by planting trees, which in turn attracted more wildlife, and by making cuttings through the rock. Uh, nowadays, we\'re open all year round, and we\'re pleased to say that Winridge is one of the most popular visitor attractions in the area with fifty thousand visitors a year. <mark class="hl">[Q13] A million and a half people have been through our doors since we opened.</mark></p>\n  \n  <p style="margin-bottom: 12px; border-bottom: 1px dashed var(--card-border); padding-bottom: 8px; font-style: italic; color: var(--text-muted);">[Đoạn dừng hướng dẫn đọc câu hỏi 14-20]</p>\n  \n  <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Speaker 1 (Presenter):</b> <span class="time-tag">12:07</span>Now listen and answer questions fourteen to twenty.</p>\n  \n  <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Speaker 4 (Simon):</b> <span class="time-tag">12:15</span>All these visitors mean we have had to expand our operation, and it\'s now a truly family concern. I\'m near to retirement age, so <mark class="hl">[Q14] I only concern myself with looking after the mechanical side of things, keeping the trains going.</mark></p>\n  \n  <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Speaker 4 (Simon):</b> <span class="time-tag">12:31</span><mark class="hl">[Q15] Liz now devotes all her energies to recruiting and supporting the large squadron of workers,</mark> which keep the place running smoothly. We\'re really pleased that after some years away teaching, <mark class="hl">[Q16] Sarah has now returned to the park and makes sure the visitors are kept fed and watered,</mark> which keeps her pretty busy, as you can imagine.</p>\n  \n  <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Speaker 1 (Presenter):</b> <span class="time-tag">12:51</span>[laughs]</p>\n  \n  <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Speaker 4 (Simon):</b> <span class="time-tag">12:52</span>Our son, <mark class="hl">[Q17] Duncan, has been a stalwart of the park for the last ten years, taking over from me in the area of construction,</mark> and I\'ll say a little bit more about that in a moment. And his new wife, <mark class="hl">[Q18] Judith, has also joined the team in charge of retail.</mark> That\'s becoming a tremendous growth area for us. A lot of people want to buy souvenirs.</p>\n  \n  <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Speaker 1 (Presenter):</b> <span class="time-tag">13:13</span>Mm-hmm. So have you finished your development of the site for the moment?</p>\n  \n  <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Speaker 4 (Simon):</b> <span class="time-tag">13:17</span>Not at all. We\'re constantly looking for ways to offer more to our visitors. The railway remains the central feature, and there\'s now one point two kilometers of the line laid, but we\'d like to lay more. Uh, because of the geology of the area, our greatest problem is digging tunnels, but we\'re gradually overcoming that. We\'re also very pleased with a new installation of the go-kart arena, <mark class="hl">[Q19] which is a hundred and twenty square meters in area.</mark></p>\n  \n  <p style="margin-bottom: 8px;"><b style="color: var(--brand-primary);">Speaker 1 (Presenter):</b> <span class="time-tag">13:46</span>Oh.</p>\n  \n  <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Speaker 4 (Simon):</b> <span class="time-tag">13:46</span>Again, the problem is the geology. We had to level the mounds on the track for safety reasons. <mark class="hl">[Q20] We wanted to enable five to twelve-year-olds to use the go-karts.</mark> And the main attraction here is the Formula One cart. We\'ve known fights [laughs] to break out over who gets it.</p>\n  \n  <p style="margin-bottom: 8px;"><b style="color: #2e86de;">Speaker 4 (Simon):</b> <span class="time-tag">14:04</span>And then finally, to our most recent development, which is the landscaped swimming pool...</p>\n</div>\n',
-  questionsHtml: '\n<h2 style="font-family: \'Lora\', serif; color: var(--text-title); margin-bottom: 12px;">Part 2: Questions 11-20</h2>\n\n<!-- SECTION 1: QUESTIONS 11-13 -->\n<div class="instruction">🎧 Questions 11-13: Choose the correct letter, <strong>A, B or C</strong>.</div>\n<h3 style="margin-bottom: 8px;">🚂 WINRIDGE FOREST RAILWAY PARK</h3>\n\n<div class="q-card" id="card-11" style="box-shadow: var(--shadow-sm); margin-bottom: 16px;">\n  <div class="q-header">\n    <div class="q-num">11</div>\n    <div class="q-text">Simon\'s idea for a theme park came from</div>\n  </div>\n  <div class="options-grid">\n    <label class="opt-label" id="lbl-11-A">\n      <input type="radio" name="q11" value="A" onclick="selectAnswer(11, \'A\')">\n      A. his childhood hobby\n    </label>\n    <label class="opt-label" id="lbl-11-B">\n      <input type="radio" name="q11" value="B" onclick="selectAnswer(11, \'B\')">\n      B. his interest in landscape design\n    </label>\n    <label class="opt-label" id="lbl-11-C">\n      <input type="radio" name="q11" value="C" onclick="selectAnswer(11, \'C\')">\n      C. his visit to another park\n    </label>\n  </div>\n</div>\n\n<div class="q-card" id="card-12" style="box-shadow: var(--shadow-sm); margin-bottom: 16px;">\n  <div class="q-header">\n    <div class="q-num">12</div>\n    <div class="q-text">When they started, the family decided to open the park only when</div>\n  </div>\n  <div class="options-grid">\n    <label class="opt-label" id="lbl-12-A">\n      <input type="radio" name="q12" value="A" onclick="selectAnswer(12, \'A\')">\n      A. the weather was expected to be good\n    </label>\n    <label class="opt-label" id="lbl-12-B">\n      <input type="radio" name="q12" value="B" onclick="selectAnswer(12, \'B\')">\n      B. the children weren\'t at school\n    </label>\n    <label class="opt-label" id="lbl-12-C">\n      <input type="radio" name="q12" value="C" onclick="selectAnswer(12, \'C\')">\n      C. there were fewer farming commitments\n    </label>\n  </div>\n</div>\n\n<div class="q-card" id="card-13" style="box-shadow: var(--shadow-sm); margin-bottom: 24px;">\n  <div class="q-header">\n    <div class="q-num">13</div>\n    <div class="q-text">Since opening, the park has had</div>\n  </div>\n  <div class="options-grid">\n    <label class="opt-label" id="lbl-13-A">\n      <input type="radio" name="q13" value="A" onclick="selectAnswer(13, \'A\')">\n      A. 50,000 visitors\n    </label>\n    <label class="opt-label" id="lbl-13-B">\n      <input type="radio" name="q13" value="B" onclick="selectAnswer(13, \'B\')">\n      B. 1,000,000 visitors\n    </label>\n    <label class="opt-label" id="lbl-13-C">\n      <input type="radio" name="q13" value="C" onclick="selectAnswer(13, \'C\')">\n      C. 1,500,000 visitors\n    </label>\n  </div>\n</div>\n\n<!-- SECTION 2: QUESTIONS 14-18 -->\n<div class="instruction">🎧 Questions 14-18: What is currently the main area of work of each of the following people? Choose <strong>FIVE</strong> answers from the box and write the correct letter, <strong>A-H</strong>, next to the questions.</div>\n\n<div style="background: var(--brand-peach-soft); padding: 14px; border-radius: var(--radius-xl); border: 1.5px dashed var(--brand-peach); margin-bottom: 16px; box-shadow: var(--shadow-sm);">\n  <strong style="color: var(--brand-primary); display: block; margin-bottom: 8px; font-size: 14px; font-weight: 800;">🛠️ Areas of Work</strong>\n  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 13px; font-weight: 600; color: var(--text-title);">\n    <div><b>A.</b> advertising</div>\n    <div><b>B.</b> animal care</div>\n    <div><b>C.</b> building</div>\n    <div><b>D.</b> educational links</div>\n    <div><b>E.</b> engine maintenance</div>\n    <div><b>F.</b> food and drink</div>\n    <div><b>G.</b> sales</div>\n    <div><b>H.</b> staffing</div>\n  </div>\n</div>\n\n<table class="custom-table" style="box-shadow: var(--shadow-sm); margin-bottom: 24px;">\n  <thead>\n    <tr>\n      <th style="width: 50%;">People</th>\n      <th style="width: 50%;">Main Area of Work (Write A-H)</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td style="font-weight: 700; color: var(--text-title); padding: 12px 16px;">👤 14. Simon</td>\n      <td style="padding: 12px 16px;"><input type="text" id="q14" oninput="markAnswered(14)" placeholder="A-H..." style="width: 80px;"></td>\n    </tr>\n    <tr>\n      <td style="font-weight: 700; color: var(--text-title); padding: 12px 16px;">👤 15. Liz</td>\n      <td style="padding: 12px 16px;"><input type="text" id="q15" oninput="markAnswered(15)" placeholder="A-H..." style="width: 80px;"></td>\n    </tr>\n    <tr>\n      <td style="font-weight: 700; color: var(--text-title); padding: 12px 16px;">👤 16. Sarah</td>\n      <td style="padding: 12px 16px;"><input type="text" id="q16" oninput="markAnswered(16)" placeholder="A-H..." style="width: 80px;"></td>\n    </tr>\n    <tr>\n      <td style="font-weight: 700; color: var(--text-title); padding: 12px 16px;">👤 17. Duncan</td>\n      <td style="padding: 12px 16px;"><input type="text" id="q17" oninput="markAnswered(17)" placeholder="A-H..." style="width: 80px;"></td>\n    </tr>\n    <tr>\n      <td style="font-weight: 700; color: var(--text-title); padding: 12px 16px;">👤 18. Judith</td>\n      <td style="padding: 12px 16px;"><input type="text" id="q18" oninput="markAnswered(18)" placeholder="A-H..." style="width: 80px;"></td>\n    </tr>\n  </tbody>\n</table>\n\n<!-- SECTION 3: QUESTIONS 19-20 -->\n<div class="instruction">🎧 Questions 19 and 20: Complete the table below. Write <strong>ONE WORD OR A NUMBER</strong> for each answer.</div>\n<h3 style="margin-bottom: 8px;">🏎️ NEW DEVELOPMENTS</h3>\n\n<table class="custom-table" style="box-shadow: var(--shadow-sm); margin-bottom: 12px;">\n  <thead>\n    <tr>\n      <th style="width: 25%;">Feature</th>\n      <th style="width: 25%;">Size</th>\n      <th style="width: 25%;">Biggest Challenge</th>\n      <th style="width: 25%;">Target Age Group</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td style="font-weight: 700; color: var(--text-title); padding: 12px;">Railway</td>\n      <td style="padding: 12px;">1.2 km</td>\n      <td style="padding: 12px;">Making tunnels</td>\n      <td style="padding: 12px; color: var(--text-muted); font-style: italic;">(No extra info)</td>\n    </tr>\n    <tr>\n      <td style="font-weight: 700; color: var(--text-title); padding: 12px;">Go-kart arena</td>\n      <td style="padding: 12px;">\n        <strong>(19)</strong> <input type="text" id="q19" oninput="markAnswered(19)" placeholder="19..." style="width: 70px;"> sq mt\n      </td>\n      <td style="padding: 12px;">Removing mounds on track</td>\n      <td style="padding: 12px;">\n        <strong>(20)</strong> <input type="text" id="q20" oninput="markAnswered(20)" placeholder="20..." style="width: 90px;"> year olds\n      </td>\n    </tr>\n  </tbody>\n</table>\n',
-  explanationsHtml: '\n<!-- EXPLANATION Q11 -->\n<div class="exp-card" style="border-left: 5px solid #2ed573; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #2ed573;">\n  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">\n    <span style="font-weight: 800; font-size: 14.5px; color: #2ed573;">🎯 Câu 11: C</span>\n    <span style="background: rgba(46, 213, 115, 0.1); color: #2e86de; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">📊 Multiple Choice (Trắc nghiệm)</span>\n  </div>\n  <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">\n    <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #2ed573;">C - his visit to another park</strong></p>\n    <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>\n    <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">\n      "...but we didn\'t think anything more of it <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">until I went on a trip to a theme park near Birmingham</mark> and decided we could do a much better job."\n    </blockquote>\n    <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Simon giải thích rằng ban đầu gia đình chỉ làm đường ray mô hình cho con chơi trong vườn và không nghĩ ngợi gì thêm. Ý tưởng kinh doanh công viên chủ đề chỉ nảy ra sau khi Simon có chuyến đi tới một công viên giải trí khác gần Birmingham và tự tin rằng mình có thể làm tốt hơn thế.</p>\n    <p style="margin-bottom: 6px;"><span style="color: #9c27b0; font-weight: 700;">🔄 Diễn đạt tương đương (Paraphrase):</span>\n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">went on a trip to a theme park</code> ➔ \n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">visit to another park</code>\n    </p>\n    <p style="margin-bottom: 6px;"><span style="color: var(--danger); font-weight: 700;">⚠️ Phân tích bẫy (Distractor):</span> \n      <b>Đáp án A (his childhood hobby):</b> Tránh nhầm lẫn với việc các con của ông (Sarah và Duncan) thích xe lửa và xây dựng mô hình tàu điện mini lúc nhỏ. Sở thích chơi xe lửa mini là của con ông lúc nhỏ chứ không phải sở thích thuở bé của chính Simon.\n    </p>\n    <p style="margin-bottom: 0;"><span style="color: #10ac84; font-weight: 700;">📚 Từ vựng hữu ích:</span>\n      <span style="background: var(--brand-peach-soft); padding: 1px 6px; border-radius: 4px; font-weight: 600;">co-founder</span> /ˌkəʊˈfaʊndər/ (n): người đồng sáng lập;\n      <span style="background: var(--brand-peach-soft); padding: 1px 6px; border-radius: 4px; font-weight: 600;">miniature railway</span> /ˈmɪnətʃər ˈreɪlweɪ/ (n): đường sắt thu nhỏ.\n    </p>\n  </div>\n</div>\n\n<!-- EXPLANATION Q12 -->\n<div class="exp-card" style="border-left: 5px solid #ff9f43; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #ff9f43;">\n  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">\n    <span style="font-weight: 800; font-size: 14.5px; color: #ff9f43;">🎯 Câu 12: A</span>\n    <span style="background: rgba(255, 159, 67, 0.1); color: #ff9f43; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">📊 Multiple Choice (Trắc nghiệm)</span>\n  </div>\n  <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">\n    <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #ff9f43;">A - the weather was expected to be good</strong></p>\n    <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>\n    <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">\n      "...and we opened to the public for just a month that year, nineteen eighty-four, <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">in July, our driest month, because our children said they didn\'t want our guests to have a miserable, wet visit</mark>."\n    </blockquote>\n    <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Vào năm đầu tiên (1984), gia đình chỉ mở cửa công viên đúng 1 tháng duy nhất là tháng 7. Nguyên nhân là vì con cái của họ khuyên rằng không nên để khách phải trải nghiệm một chuyến tham quan ướt át, tồi tệ (miserable, wet visit). Do đó, họ chọn tháng khô ráo nhất trong năm để thời tiết luôn đẹp.</p>\n    <p style="margin-bottom: 6px;"><span style="color: #9c27b0; font-weight: 700;">🔄 Diễn đạt tương đương (Paraphrase):</span>\n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">July, our driest month... didn\'t want wet visit</code> ➔ \n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">weather expected to be good</code>\n    </p>\n    <p style="margin-bottom: 6px;"><span style="color: var(--danger); font-weight: 700;">⚠️ Phân tích bẫy (Distractor):</span> \n      <b>Đáp án B (children weren\'t at school):</b> Mặc dù trẻ em đưa ra ý kiến quyết định tháng mở cửa, nhưng không hề nhắc đến việc chọn tháng 7 vì lý do các con được nghỉ học.\n      <b>Đáp án C (fewer farming commitments):</b> Ông nhắc tới việc Liz tiếp tục công việc đồng áng còn ông lo liệu công viên, chứ không phải vì ít bận rộn nông nghiệp hơn.\n    </p>\n    <p style="margin-bottom: 0;"><span style="color: #10ac84; font-weight: 700;">🗣️ Phát âm cần chú ý:</span>\n      Lưu ý cách phát âm từ <i style="color: var(--text-title);">miserable</i> /ˈmɪzrəbl/ - Trọng âm rơi vào âm tiết thứ nhất, âm "e" thứ hai bị nuốt hoàn toàn, tránh đọc nhầm thành 4 âm tiết.\n    </p>\n  </div>\n</div>\n\n<!-- EXPLANATION Q13 -->\n<div class="exp-card" style="border-left: 5px solid #2e86de; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #2e86de;">\n  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">\n    <span style="font-weight: 800; font-size: 14.5px; color: #2e86de;">🎯 Câu 13: C</span>\n    <span style="background: rgba(46, 134, 222, 0.1); color: #2e86de; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">📊 Multiple Choice (Trắc nghiệm)</span>\n  </div>\n  <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">\n    <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #2e86de;">C - 1,500,000 visitors</strong></p>\n    <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>\n    <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">\n      "...Uh nowadays, we\'re open all year round... Winridge is one of the most popular visitor attractions in the area with fifty thousand visitors a year. <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">A million and a half people have been through our doors since we opened.</mark>"\n    </blockquote>\n    <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Người nói công bố tổng số lượng hành khách ghé thăm lũy kế từ ngày khai trương (since we opened) là "a million and a half", tương đương với 1.5 triệu người, tức là con số 1,500,000 khách hàng.</p>\n    <p style="margin-bottom: 6px;"><span style="color: #9c27b0; font-weight: 700;">🔄 Diễn đạt tương đương (Paraphrase):</span>\n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">A million and a half people</code> ➔ \n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">1,500,000 visitors</code>\n    </p>\n    <p style="margin-bottom: 6px;"><span style="color: var(--danger); font-weight: 700;">⚠️ Phân tích bẫy (Distractor):</span> \n      <b>Đáp án A (50,000 visitors):</b> Đây là số lượng khách hàng ghé thăm *trung bình mỗi năm* ("fifty thousand visitors a year"), chứ không phải tổng số khách từ khi mở cửa.\n      <b>Đáp án B (1,000,000 visitors):</b> Một triệu, con số thiếu mất một nửa triệu phía sau ("and a half").\n    </p>\n  </div>\n</div>\n\n<!-- EXPLANATION Q14 -->\n<div class="exp-card" style="border-left: 5px solid #8854d0; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #8854d0;">\n  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">\n    <span style="font-weight: 800; font-size: 14.5px; color: #8854d0;">🎯 Câu 14 (Simon): E</span>\n    <span style="background: rgba(136, 84, 208, 0.1); color: #8854d0; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">🔗 Matching (Ghép nối)</span>\n  </div>\n  <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">\n    <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #8854d0;">E - engine maintenance</strong></p>\n    <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>\n    <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">\n      Simon: "...I\'m near to retirement age, so <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">I only concern myself with looking after the mechanical side of things, keeping the trains going</mark>."\n    </blockquote>\n    <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Simon đã gần tuổi nghỉ hưu, nên hiện nay ông chỉ tập trung lo liệu phần kỹ thuật cơ khí (mechanical side) và duy trì sự vận hành ổn định của đầu máy xe lửa (keeping the trains going). Cụm này đồng nghĩa hoàn toàn với việc bảo trì động cơ tàu xe (engine maintenance).</p>\n    <p style="margin-bottom: 6px;"><span style="color: #9c27b0; font-weight: 700;">🔄 Diễn đạt tương đương (Paraphrase):</span>\n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">mechanical side / keeping trains going</code> ➔ \n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">engine maintenance</code>\n    </p>\n    <p style="margin-bottom: 0;"><span style="color: #ff9f43; font-weight: 700;">🗣️ Từ vựng cần chú ý:</span>\n      <span style="background: var(--brand-peach-soft); padding: 1px 6px; border-radius: 4px; font-weight: 600;">maintenance</span> /ˈmeɪntənəns/ (n): sự bảo trì, bảo dưỡng (Chú ý trọng âm rơi vào âm đầu, âm thứ 2 đọc là /tə/).\n    </p>\n  </div>\n</div>\n\n<!-- EXPLANATION Q15 -->\n<div class="exp-card" style="border-left: 5px solid #ee5253; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #ee5253;">\n  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">\n    <span style="font-weight: 800; font-size: 14.5px; color: #ee5253;">🎯 Câu 15 (Liz): H</span>\n    <span style="background: rgba(238, 82, 83, 0.1); color: #ee5253; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">🔗 Matching (Ghép nối)</span>\n  </div>\n  <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">\n    <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #ee5253;">H - staffing</strong></p>\n    <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>\n    <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">\n      Simon: "...<mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">Liz now devotes all her energies to recruiting and supporting the large squadron of workers</mark>, which keep the place running smoothly."\n    </blockquote>\n    <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Bà Liz, vợ Simon, hiện dồn toàn bộ tâm sức để tuyển dụng (recruiting) và quản lý, hỗ trợ đội ngũ công nhân viên làm việc tại công viên (squadron of workers). Công việc này thuộc mảng nhân sự / bố trí nhân sự (staffing).</p>\n    <p style="margin-bottom: 6px;"><span style="color: #9c27b0; font-weight: 700;">🔄 Diễn đạt tương đương (Paraphrase):</span>\n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">recruiting and supporting workers</code> ➔ \n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">staffing</code>\n    </p>\n  </div>\n</div>\n\n<!-- EXPLANATION Q16 -->\n<div class="exp-card" style="border-left: 5px solid #10ac84; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #10ac84;">\n  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">\n    <span style="font-weight: 800; font-size: 14.5px; color: #10ac84;">🎯 Câu 16 (Sarah): F</span>\n    <span style="background: rgba(16, 172, 132, 0.1); color: #10ac84; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">🔗 Matching (Ghép nối)</span>\n  </div>\n  <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">\n    <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #10ac84;">F - food and drink</strong></p>\n    <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>\n    <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">\n      Simon: "...We\'re really pleased that after some years away teaching, <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">Sarah has now returned to the park and makes sure the visitors are kept fed and watered</mark>..."\n    </blockquote>\n    <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Con gái họ, Sarah, sau thời gian đi dạy học đã quay về công viên để hỗ trợ gia đình. Nhiệm vụ chính của cô là đảm bảo khách hàng luôn được ăn uống đầy đủ (kept fed and watered). Cụm từ ẩn dụ "fed and watered" tương ứng trực tiếp với dịch vụ ăn uống (food and drink).</p>\n    <p style="margin-bottom: 6px;"><span style="color: #9c27b0; font-weight: 700;">🔄 Diễn đạt tương đương (Paraphrase):</span>\n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">kept fed and watered</code> ➔ \n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">food and drink</code>\n    </p>\n  </div>\n</div>\n\n<!-- EXPLANATION Q17 -->\n<div class="exp-card" style="border-left: 5px solid #00b894; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #00b894;">\n  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">\n    <span style="font-weight: 800; font-size: 14.5px; color: #00b894;">🎯 Câu 17 (Duncan): C</span>\n    <span style="background: rgba(0, 184, 148, 0.1); color: #00b894; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">🔗 Matching (Ghép nối)</span>\n  </div>\n  <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">\n    <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #00b894;">C - building</strong></p>\n    <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>\n    <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">\n      Simon: "...Our son, <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">Duncan, has been a stalwart of the park for the last ten years, taking over from me in the area of construction</mark>..."\n    </blockquote>\n    <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Con trai Duncan đã gắn bó như trụ cột của công viên suốt 10 năm qua. Cậu tiếp quản vai trò của bố mình trong mảng thi công, xây lắp (area of construction), tương ứng với đáp án xây dựng (building).</p>\n    <p style="margin-bottom: 6px;"><span style="color: #9c27b0; font-weight: 700;">🔄 Diễn đạt tương đương (Paraphrase):</span>\n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">area of construction</code> ➔ \n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">building</code>\n    </p>\n    <p style="margin-bottom: 0;"><span style="color: #10ac84; font-weight: 700;">📚 Từ vựng hữu ích:</span>\n      <span style="background: var(--brand-peach-soft); padding: 1px 6px; border-radius: 4px; font-weight: 600;">stalwart</span> /ˈstɔːlwərt/ (n): người trung thành, trụ cột đáng tin cậy.\n    </p>\n  </div>\n</div>\n\n<!-- EXPLANATION Q18 -->\n<div class="exp-card" style="border-left: 5px solid #ff9f43; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #ff9f43;">\n  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">\n    <span style="font-weight: 800; font-size: 14.5px; color: #ff9f43;">🎯 Câu 18 (Judith): G</span>\n    <span style="background: rgba(255, 159, 67, 0.1); color: #ff9f43; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">🔗 Matching (Ghép nối)</span>\n  </div>\n  <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">\n    <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #ff9f43;">G - sales</strong></p>\n    <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>\n    <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">\n      Simon: "...And his new wife, <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">Judith, has also joined the team in charge of retail.</mark> That\'s becoming a tremendous growth area for us. A lot of people want to buy souvenirs."\n    </blockquote>\n    <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Judith - con dâu mới của gia đình - đảm nhận trách nhiệm điều hành mảng bán lẻ quà tặng (retail). Simon nhấn mạnh đây là mảng phát triển rất nhanh vì lượng khách có nhu cầu mua sắm đồ lưu niệm (buy souvenirs) cực lớn. Hoạt động bán lẻ này đồng nghĩa với đáp án bán hàng (sales).</p>\n    <p style="margin-bottom: 6px;"><span style="color: #9c27b0; font-weight: 700;">🔄 Diễn đạt tương đương (Paraphrase):</span>\n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">retail / buy souvenirs</code> ➔ \n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">sales</code>\n    </p>\n  </div>\n</div>\n\n<!-- EXPLANATION Q19 -->\n<div class="exp-card" style="border-left: 5px solid #2ed573; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #2ed573;">\n  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">\n    <span style="font-weight: 800; font-size: 14.5px; color: #2ed573;">🎯 Câu 19: 120</span>\n    <span style="background: rgba(46, 213, 115, 0.1); color: #2e86de; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">📊 Number (Diện tích mét vuông)</span>\n  </div>\n  <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">\n    <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #2ed573;">120</strong></p>\n    <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>\n    <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">\n      Simon: "...We\'re also very pleased with a new installation of the go-kart arena, <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">which is a hundred and twenty square meters in area</mark>."\n    </blockquote>\n    <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Trước đơn vị đo lường diện tích "sq mt" (square meters), chúng ta cần ghi nhận một số đo kích thước chính xác cho trường đua xe go-kart. Simon đọc rất rõ con số diện tích là "a hundred and twenty" (120).</p>\n    <p style="margin-bottom: 6px;"><span style="color: #9c27b0; font-weight: 700;">🔄 Diễn đạt tương đương (Paraphrase):</span>\n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">a hundred and twenty square meters</code> ➔ \n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">120 sq mt</code>\n    </p>\n    <p style="margin-bottom: 0;"><span style="color: #10ac84; font-weight: 700;">📚 Từ vựng hữu ích:</span>\n      <span style="background: var(--brand-peach-soft); padding: 1px 6px; border-radius: 4px; font-weight: 600;">go-kart arena</span> /ɡəʊ kɑːrt əˈriːnə/ (n): sân đấu/đường đua xe go-kart cỡ nhỏ.\n    </p>\n  </div>\n</div>\n\n<!-- EXPLANATION Q20 -->\n<div class="exp-card" style="border-left: 5px solid #ee5253; padding: 14px; margin-bottom: 12px; background: white; border-radius: 8px; box-shadow: var(--shadow-sm); border: 1.5px solid var(--card-border); border-left-width: 5px; border-left-color: #ee5253;">\n  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px dashed var(--card-border); padding-bottom: 6px;">\n    <span style="font-weight: 800; font-size: 14.5px; color: #ee5253;">🎯 Câu 20: 5-12</span>\n    <span style="background: rgba(238, 82, 83, 0.1); color: #ee5253; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 12px;">📊 Number Range (Nhóm tuổi mục tiêu)</span>\n  </div>\n  <div style="font-size: 13px; line-height: 1.6; color: var(--text-body);">\n    <p style="margin-bottom: 6px;"><span style="color: #2ed573; font-weight: 800;">✅ Đáp án đúng:</span> <strong style="font-size: 14px; color: #ee5253;">5-12</strong></p>\n    <p style="margin-bottom: 6px;"><span style="color: #2d1f1d; font-weight: 700;">📜 Dẫn chứng bài nghe:</span></p>\n    <blockquote style="background: var(--bg-canvas); border-left: 3px solid var(--brand-peach); padding: 6px 10px; margin: 4px 0; font-style: italic; color: var(--text-title);">\n      Simon: "...We wanted to <mark style="background: #ffeaa7; font-weight: bold; padding: 0 4px; border-radius: 3px;">enable five to twelve-year-olds to use the go-karts</mark>."\n    </blockquote>\n    <p style="margin-bottom: 6px;"><span style="color: #2e86de; font-weight: 700;">💡 Giải thích chi tiết:</span> Tại cột "Target Age Group" (Nhóm tuổi hướng đến), trước từ hạn định "year olds", ô trống yêu cầu điền một khoảng tuổi cụ thể cho trò chơi này. Simon đọc rõ là "five to twelve-year-olds" nên khoảng tuổi đúng là 5-12.</p>\n    <p style="margin-bottom: 6px;"><span style="color: #9c27b0; font-weight: 700;">🔄 Diễn đạt tương đương (Paraphrase):</span>\n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">five to twelve-year-olds</code> ➔ \n      <code style="background: #f1f2f6; padding: 2px 6px; border-radius: 4px; font-size: 12px;">5-12 year olds</code>\n    </p>\n    <p style="margin-bottom: 0;"><span style="color: #ff9f43; font-weight: 700;">🗣️ Phát âm cần chú ý:</span>\n      Lắng nghe cách nối âm lướt nhanh của cụm từ <i style="color: var(--text-title);">five to twelve-year-olds</i> /ˈfaɪv tə ˈtwelv jɪər əʊldz/ để không bỏ lỡ giới hạn đầu cuối.\n    </p>\n  </div>\n</div>\n'
+  startQ: 11,
+  endQ: 20,
+  totalQuestions: 10,
+  dbPrefix: "quiz2_p2",
+  
+  correctAnswers: {
+    "11": "C",
+    "12": "A",
+    "13": "C",
+    "14": "E",
+    "15": "H",
+    "16": "F",
+    "17": "C",
+    "18": "G",
+    "19": ["120"],
+    "20": ["5-12", "5 TO 12"]
+  },
+
+  passageTitle: "📜 Full Audio Transcript",
+  passageContent: `
+<div style="font-size: 14.5px; line-height: 1.8; color: var(--text-main);">
+  <p style="margin-bottom: 12px;">
+    <b style="color: var(--primary);">Speaker 5 (Presenter):</b> 
+    <span class="time-tag">08:47</span> 
+    For the second in our series about locally run businesses, we meet Simon Winridge, co-founder of the hugely successful Winridge Forest Railway Park. Welcome, Simon. Now, perhaps you can begin by telling us a little bit about how it all started.
+  </p>
+  
+  <p style="margin-bottom: 12px;">
+    <b style="color: #2e86de;">Speaker 4 (Simon):</b> 
+    <span class="time-tag">09:54</span> 
+    Well, during the nineteen seventies, my wife Liz and I had just acquired eighty acres of sheep farming land, and we decided to settle down and have children. Pretty soon, we had a daughter, Sarah, and a son, Duncan. The place was wonderful for the kids. They particularly loved trains and gradually built up an enormous network of miniature railway track. I began to develop larger scale models of locomotives, but we didn't think anything more of it 
+    <span id="ev-11" class="ev-box">
+      <mark class="hl">[Q11] until I went on a trip to a theme park near Birmingham and decided we could do a much better job.</mark>
+    </span>
+  </p>
+  
+  <p style="margin-bottom: 12px;">
+    <b style="color: #2e86de;">Speaker 4 (Simon):</b> 
+    <span class="time-tag">10:28</span> 
+    So we set up a small one ourselves based on the miniature railway, and 
+    <span id="ev-12" class="ev-box">
+      <mark class="hl">[Q12] we opened to the public for just a month that year, nineteen eighty-four, in July, our driest month, because our children said they didn't want our guests to have a miserable, wet visit.</mark>
+    </span> 
+    [laughs] I dealt with park business, and Liz carried on with the farm work. It soon became clear that we were onto a winner.
+  </p>
+  
+  <p style="margin-bottom: 12px;">
+    <b style="color: #2e86de;">Speaker 4 (Simon):</b> 
+    <span class="time-tag">10:59</span> 
+    We began to extend the railway track and lay it among more interesting landscape by planting trees, which in turn attracted more wildlife, and by making cuttings through the rock. Uh, nowadays, we're open all year round, and we're pleased to say that Winridge is one of the most popular visitor attractions in the area with fifty thousand visitors a year. 
+    <span id="ev-13" class="ev-box">
+      <mark class="hl">[Q13] A million and a half people have been through our doors since we opened.</mark>
+    </span>
+  </p>
+  
+  <p style="margin-bottom: 14px; border-bottom: 1px dashed var(--border-color); padding-bottom: 10px; font-style: italic; color: var(--text-light);">
+    [Đoạn dừng hướng dẫn đọc câu hỏi 14-20]
+  </p>
+  
+  <p style="margin-bottom: 12px;">
+    <b style="color: var(--primary);">Speaker 1 (Presenter):</b> 
+    <span class="time-tag">12:07</span> 
+    Now listen and answer questions fourteen to twenty.
+  </p>
+  
+  <p style="margin-bottom: 12px;">
+    <b style="color: #2e86de;">Speaker 4 (Simon):</b> 
+    <span class="time-tag">12:15</span> 
+    All these visitors mean we have had to expand our operation, and it's now a truly family concern. I'm near to retirement age, so 
+    <span id="ev-14" class="ev-box">
+      <mark class="hl">[Q14] I only concern myself with looking after the mechanical side of things, keeping the trains going.</mark>
+    </span>
+  </p>  
+  
+  <p style="margin-bottom: 12px;">
+    <b style="color: #2e86de;">Speaker 4 (Simon):</b> 
+    <span class="time-tag">12:31</span> 
+    <span id="ev-15" class="ev-box">
+      <mark class="hl">[Q15] Liz now devotes all her energies to recruiting and supporting the large squadron of workers,</mark>
+    </span> 
+    which keep the place running smoothly. We're really pleased that after some years away teaching, 
+    <span id="ev-16" class="ev-box">
+      <mark class="hl">[Q16] Sarah has now returned to the park and makes sure the visitors are kept fed and watered,</mark>
+    </span> 
+    which keeps her pretty busy, as you can imagine.
+  </p>
+  
+  <p style="margin-bottom: 12px;">
+    <b style="color: var(--primary);">Speaker 1 (Presenter):</b> 
+    <span class="time-tag">12:51</span> [laughs]
+  </p>
+  
+  <p style="margin-bottom: 12px;">
+    <b style="color: #2e86de;">Speaker 4 (Simon):</b> 
+    <span class="time-tag">12:52</span> 
+    Our son, 
+    <span id="ev-17" class="ev-box">
+      <mark class="hl">[Q17] Duncan, has been a stalwart of the park for the last ten years, taking over from me in the area of construction,</mark>
+    </span> 
+    and I'll say a little bit more about that in a moment. And his new wife, 
+    <span id="ev-18" class="ev-box">
+      <mark class="hl">[Q18] Judith, has also joined the team in charge of retail.</mark>
+    </span> 
+    That's becoming a tremendous growth area for us. A lot of people want to buy souvenirs.
+  </p>
+  
+  <p style="margin-bottom: 12px;">
+    <b style="color: var(--primary);">Speaker 1 (Presenter):</b> 
+    <span class="time-tag">13:13</span> 
+    Mm-hmm. So have you finished your development of the site for the moment?
+  </p>  
+  
+  <p style="margin-bottom: 12px;">
+    <b style="color: #2e86de;">Speaker 4 (Simon):</b> 
+    <span class="time-tag">13:17</span> 
+    Not at all. We're constantly looking for ways to offer more to our visitors. The railway remains the central feature, and there's now one point two kilometers of the line laid, but we'd like to lay more. Uh, because of the geology of the area, our greatest problem is digging tunnels, but we're gradually overcoming that. We're also very pleased with a new installation of the go-kart arena, 
+    <span id="ev-19" class="ev-box">
+      <mark class="hl">[Q19] which is a hundred and twenty square meters in area.</mark>
+    </span>
+  </p>
+  
+  <p style="margin-bottom: 12px;">
+    <b style="color: var(--primary);">Speaker 1 (Presenter):</b> 
+    <span class="time-tag">13:46</span> Oh.
+  </p>
+  
+  <p style="margin-bottom: 12px;">
+    <b style="color: #2e86de;">Speaker 4 (Simon):</b> 
+    <span class="time-tag">13:46</span> 
+    Again, the problem is the geology. We had to level the mounds on the track for safety reasons. 
+    <span id="ev-20" class="ev-box">
+      <mark class="hl">[Q20] We wanted to enable five to twelve-year-olds to use the go-karts.</mark>
+    </span> 
+    And the main attraction here is the Formula One cart. We've known fights [laughs] to break out over who gets it.
+  </p>
+  
+  <p style="margin-bottom: 12px;">
+    <b style="color: #2e86de;">Speaker 4 (Simon):</b> 
+    <span class="time-tag">14:04</span> 
+    And then finally, to our most recent development, which is the landscaped swimming pool...
+  </p>
+</div>
+`,
+
+  questionsHTML: `
+<h2 style="color: var(--primary-dark); margin-bottom: 16px; font-weight: 700; font-size: 20px;">Part 2: Questions 11-20</h2>
+
+<!-- SECTION 1: QUESTIONS 11-13 (MULTIPLE CHOICE) -->
+<div class="question-section">
+  <div class="instruction">
+    🎧 <strong>Questions 11-13</strong>: Choose the correct letter, <strong>A, B or C</strong>.
+  </div>
+  <h3 style="margin-bottom: 14px; color: var(--primary-dark); font-size: 16px;">🚂 WINRIDGE FOREST RAILWAY PARK</h3>
+
+  <!-- Q11 -->
+  <div class="q-card" id="q-row-11" style="margin-bottom: 18px;">
+    <div class="mcq-question">
+      <span class="q-num">11.</span>
+      <span>Simon's idea for a theme park came from</span>
+      <span id="fb-11"></span>
+    </div>
+    <div class="options-grid">
+      <label class="ielts-mcq-card" onclick="setMcq(11, 'A')">
+        <input type="radio" name="mcq-11" value="A" hidden>
+        <div class="ielts-radio-indicator"></div>
+        <span>A. his childhood hobby</span>
+      </label>
+      <label class="ielts-mcq-card" onclick="setMcq(11, 'B')">
+        <input type="radio" name="mcq-11" value="B" hidden>
+        <div class="ielts-radio-indicator"></div>
+        <span>B. his interest in landscape design</span>
+      </label>
+      <label class="ielts-mcq-card" onclick="setMcq(11, 'C')">
+        <input type="radio" name="mcq-11" value="C" hidden>
+        <div class="ielts-radio-indicator"></div>
+        <span>C. his visit to another park</span>
+      </label>
+    </div>
+    <div id="exp-11"></div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="q-card" id="q-row-12" style="margin-bottom: 18px;">
+    <div class="mcq-question">
+      <span class="q-num">12.</span>
+      <span>When they started, the family decided to open the park only when</span>
+      <span id="fb-12"></span>
+    </div>
+    <div class="options-grid">
+      <label class="ielts-mcq-card" onclick="setMcq(12, 'A')">
+        <input type="radio" name="mcq-12" value="A" hidden>
+        <div class="ielts-radio-indicator"></div>
+        <span>A. the weather was expected to be good</span>
+      </label>
+      <label class="ielts-mcq-card" onclick="setMcq(12, 'B')">
+        <input type="radio" name="mcq-12" value="B" hidden>
+        <div class="ielts-radio-indicator"></div>
+        <span>B. the children weren't at school</span>
+      </label>
+      <label class="ielts-mcq-card" onclick="setMcq(12, 'C')">
+        <input type="radio" name="mcq-12" value="C" hidden>
+        <div class="ielts-radio-indicator"></div>
+        <span>C. there were fewer farming commitments</span>
+      </label>
+    </div>
+    <div id="exp-12"></div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="q-card" id="q-row-13" style="margin-bottom: 10px;">
+    <div class="mcq-question">
+      <span class="q-num">13.</span>
+      <span>Since opening, the park has had</span>
+      <span id="fb-13"></span>
+    </div>
+    <div class="options-grid">
+      <label class="ielts-mcq-card" onclick="setMcq(13, 'A')">
+        <input type="radio" name="mcq-13" value="A" hidden>
+        <div class="ielts-radio-indicator"></div>
+        <span>A. 50,000 visitors</span>
+      </label>
+      <label class="ielts-mcq-card" onclick="setMcq(13, 'B')">
+        <input type="radio" name="mcq-13" value="B" hidden>
+        <div class="ielts-radio-indicator"></div>
+        <span>B. 1,000,000 visitors</span>
+      </label>
+      <label class="ielts-mcq-card" onclick="setMcq(13, 'C')">
+        <input type="radio" name="mcq-13" value="C" hidden>
+        <div class="ielts-radio-indicator"></div>
+        <span>C. 1,500,000 visitors</span>
+      </label>
+    </div>
+    <div id="exp-13"></div>
+  </div>
+</div>
+
+<!-- SECTION 2: QUESTIONS 14-18 (MATCHING) -->
+<div class="question-section">
+  <div class="instruction">
+    🎧 <strong>Questions 14-18</strong>: What is currently the main area of work of each of the following people? Choose <strong>FIVE</strong> answers from the box and write the correct letter, <strong>A-H</strong>, next to Questions 14-18.
+  </div>
+
+  <div class="word-box" style="margin-bottom: 20px;">
+    <strong style="color: var(--primary-dark); display: block; margin-bottom: 10px; font-size: 15px;">🛠️ Areas of Work</strong>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 14px;">
+      <div><strong>A.</strong> advertising</div>
+      <div><strong>B.</strong> animal care</div>
+      <div><strong>C.</strong> building</div>
+      <div><strong>D.</strong> educational links</div>
+      <div><strong>E.</strong> engine maintenance</div>
+      <div><strong>F.</strong> food and drink</div>
+      <div><strong>G.</strong> sales</div>
+      <div><strong>H.</strong> staffing</div>
+    </div>
+  </div>
+
+  <table class="ielts-table">
+    <thead>
+      <tr>
+        <th style="width: 50%;">People</th>
+        <th style="width: 50%;">Main Area of Work (Select A-H)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr id="q-row-14">
+        <td><strong>👤 14. Simon</strong> <span id="fb-14"></span></td>
+        <td>
+          <div class="ielts-dropdown-wrapper">
+            <select class="ielts-dropdown-select" id="ans-14" onchange="updateNav(14)">
+              <option value="">- Chọn (A-H) -</option>
+              <option value="A">A - advertising</option>
+              <option value="B">B - animal care</option>
+              <option value="C">C - building</option>
+              <option value="D">D - educational links</option>
+              <option value="E">E - engine maintenance</option>
+              <option value="F">F - food and drink</option>
+              <option value="G">G - sales</option>
+              <option value="H">H - staffing</option>
+            </select>
+          </div>
+          <div id="exp-14"></div>
+        </td>
+      </tr>
+      <tr id="q-row-15">
+        <td><strong>👤 15. Liz</strong> <span id="fb-15"></span></td>
+        <td>
+          <div class="ielts-dropdown-wrapper">
+            <select class="ielts-dropdown-select" id="ans-15" onchange="updateNav(15)">
+              <option value="">- Chọn (A-H) -</option>
+              <option value="A">A - advertising</option>
+              <option value="B">B - animal care</option>
+              <option value="C">C - building</option>
+              <option value="D">D - educational links</option>
+              <option value="E">E - engine maintenance</option>
+              <option value="F">F - food and drink</option>
+              <option value="G">G - sales</option>
+              <option value="H">H - staffing</option>
+            </select>
+          </div>
+          <div id="exp-15"></div>
+        </td>
+      </tr>
+      <tr id="q-row-16">
+        <td><strong>👤 16. Sarah</strong> <span id="fb-16"></span></td>
+        <td>
+          <div class="ielts-dropdown-wrapper">
+            <select class="ielts-dropdown-select" id="ans-16" onchange="updateNav(16)">
+              <option value="">- Chọn (A-H) -</option>
+              <option value="A">A - advertising</option>
+              <option value="B">B - animal care</option>
+              <option value="C">C - building</option>
+              <option value="D">D - educational links</option>
+              <option value="E">E - engine maintenance</option>
+              <option value="F">F - food and drink</option>
+              <option value="G">G - sales</option>
+              <option value="H">H - staffing</option>
+            </select>
+          </div>
+          <div id="exp-16"></div>
+        </td>
+      </tr>
+      <tr id="q-row-17">
+        <td><strong>👤 17. Duncan</strong> <span id="fb-17"></span></td>
+        <td>
+          <div class="ielts-dropdown-wrapper">
+            <select class="ielts-dropdown-select" id="ans-17" onchange="updateNav(17)">
+              <option value="">- Chọn (A-H) -</option>
+              <option value="A">A - advertising</option>
+              <option value="B">B - animal care</option>
+              <option value="C">C - building</option>
+              <option value="D">D - educational links</option>
+              <option value="E">E - engine maintenance</option>
+              <option value="F">F - food and drink</option>
+              <option value="G">G - sales</option>
+              <option value="H">H - staffing</option>
+            </select>
+          </div>
+          <div id="exp-17"></div>
+        </td>
+      </tr>
+      <tr id="q-row-18">
+        <td><strong>👤 18. Judith</strong> <span id="fb-18"></span></td>
+        <td>
+          <div class="ielts-dropdown-wrapper">
+            <select class="ielts-dropdown-select" id="ans-18" onchange="updateNav(18)">
+              <option value="">- Chọn (A-H) -</option>
+              <option value="A">A - advertising</option>
+              <option value="B">B - animal care</option>
+              <option value="C">C - building</option>
+              <option value="D">D - educational links</option>
+              <option value="E">E - engine maintenance</option>
+              <option value="F">F - food and drink</option>
+              <option value="G">G - sales</option>
+              <option value="H">H - staffing</option>
+            </select>
+          </div>
+          <div id="exp-18"></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SECTION 3: QUESTIONS 19-20 (TABLE COMPLETION) -->
+<div class="question-section">
+  <div class="instruction">
+    🎧 <strong>Questions 19 and 20</strong>: Complete the table below. Write <strong>ONE WORD OR A NUMBER</strong> for each answer.
+  </div>
+  <h3 style="margin-bottom: 12px; color: var(--primary-dark); font-size: 16px;">🏎️ NEW DEVELOPMENTS</h3>
+
+  <table class="ielts-table">
+    <thead>
+      <tr>
+        <th style="width: 25%;">Feature</th>
+        <th style="width: 25%;">Size</th>
+        <th style="width: 25%;">Biggest Challenge</th>
+        <th style="width: 25%;">Target Age Group</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Railway</strong></td>
+        <td>1.2 km</td>
+        <td>Making tunnels</td>
+        <td><i style="color: var(--text-light);">(No extra info)</i></td>
+      </tr>
+      <tr>
+        <td><strong>Go-kart arena</strong></td>
+        <td id="q-row-19">
+          <span class="q-num">19.</span>
+          <input type="text" class="ielts-inline-input" id="ans-19" placeholder="nhập số..." oninput="updateNav(19)"> sq mt
+          <span id="fb-19"></span>
+          <div id="exp-19"></div>
+        </td>
+        <td>Removing mounds on track</td>
+        <td id="q-row-20">
+          <span class="q-num">20.</span>
+          <input type="text" class="ielts-inline-input" id="ans-20" placeholder="nhập độ tuổi..." oninput="updateNav(20)"> year olds
+          <span id="fb-20"></span>
+          <div id="exp-20"></div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+`,
+
+  explanations: {
+    11: {
+      translation: "Ý tưởng tạo công viên chủ đề của Simon bắt nguồn từ:",
+      keywords: "went on a trip to a theme park ➔ visit to another park",
+      detail: "Simon giải thích rằng ban đầu gia đình chỉ tạo mô hình xe lửa nhỏ cho các con chơi trong trang trại. Ý tưởng lập công viên kinh doanh chỉ nảy ra sau khi ông có một chuyến đi tới một công viên giải trí gần Birmingham và tự tin mình có thể làm tốt hơn.<br><br><strong>⚠️ Phân tích bẫy:</strong><br>• <strong>Đáp án A (childhood hobby):</strong> Bẫy sở thích tuổi thơ. Việc chơi và lắp đường ray xe lửa mini là sở thích của các con ông (Sarah & Duncan), không phải sở thích thuở bé của chính Simon.<br>• <strong>Đáp án B (interest in landscape design):</strong> Ông chỉ bắt đầu trồng cây & thiết kế cảnh quan sau khi công viên đã đi vào hoạt động.",
+      pronunciation: "Chú ý nối âm lướt: <i>went_on_a trip to_a theme park</i> (/went ɒn ə trɪp tu ə θiːm pɑːk/).",
+      vocabulary: "<b>co-founder</b> /ˌkəʊˈfaʊndər/ (n): người đồng sáng lập;<br><b>miniature railway</b> /ˈmɪnətʃər ˈreɪlweɪ/ (n): đường sắt thu nhỏ.",
+      colorClass: "ev-11"
+    },
+    12: {
+      translation: "Khi mới bắt đầu, gia đình quyết định chỉ mở cửa công viên khi:",
+      keywords: "July, our driest month... didn't want wet visit ➔ weather expected to be good",
+      detail: "Năm 1984, gia đình chỉ mở cửa duy nhất trong tháng 7 (tháng khô ráo nhất trong năm) vì các con khuyên không nên để khách trải nghiệm một chuyến đi ẩm ướt, tồi tệ ('miserable, wet visit'). Điều này tương ứng với việc chọn thời điểm thời tiết tốt.<br><br><strong>⚠️ Phân tích bẫy:</strong><br>• <strong>Đáp án B (children wasn't at school):</strong> Các con góp ý chọn tháng khô ráo chứ không phải vì lý do được nghỉ học.<br>• <strong>Đáp án C (fewer farming commitments):</strong> Bài nghe có nhắc Liz vẫn làm việc đồng áng nhưng đây không phải tiêu chí chọn tháng mở cửa.",
+      pronunciation: "Từ <i>miserable</i> /ˈmɪzrəbl/ bị nuốt âm 'e' thứ hai, đọc thành 3 âm tiết thay vì 4.",
+      vocabulary: "<b>driest month</b> /draɪɪst mʌnθ/ (n): tháng khô ráo nhất;<br><b>miserable</b> /ˈmɪzrəbl/ (adj): tồi tệ, khốn khổ.",
+      colorClass: "ev-12"
+    },
+    13: {
+      translation: "Kể từ khi mở cửa, công viên đã đón tổng cộng:",
+      keywords: "A million and a half people ➔ 1,500,000 visitors",
+      detail: "Người nói công bố tổng số lượng du khách lũy kế ghé thăm từ khi khai trương ('since we opened') là 'a million and a half', tức là 1.5 triệu người (1,500,000 khách).<br><br><strong>⚠️ Phân tích bẫy:</strong><br>• <strong>Đáp án A (50,000 visitors):</strong> Đây là lượng khách trung bình <i>mỗi năm</i> ('fifty thousand visitors a year').<br>• <strong>Đáp án B (1,000,000 visitors):</strong> Bẫy thiếu mất nửa triệu người phía sau ('and a half').",
+      pronunciation: "Chú ý cụm <i>a million and a half</i> (/ə ˈmɪljən ənd ə hɑːf/) đọc nối âm nhanh.",
+      vocabulary: "<b>visitor attraction</b> /ˈvɪzɪtər əˈtrækʃn/ (n): điểm thu hút du khách.",
+      colorClass: "ev-13"
+    },
+    14: {
+      translation: "Phân công công việc hiện tại của Simon:",
+      keywords: "mechanical side / keeping the trains going ➔ engine maintenance (E)",
+      detail: "Simon chia sẻ do đã gần tuổi nghỉ hưu nên hiện chỉ tập trung lo kỹ thuật cơ khí ('mechanical side of things') và duy trì cho các đoàn tàu hoạt động ổn định ('keeping the trains going'). Đây chính là công việc bảo trì động cơ (engine maintenance).",
+      pronunciation: "Trọng âm từ <i>maintenance</i> /ˈmeɪntənəns/ rơi vào âm tiết đầu tiên.",
+      vocabulary: "<b>mechanical</b> /məˈkænɪkl/ (adj): thuộc về cơ khí;<br><b>engine maintenance</b> /ˈendʒɪn ˈmeɪntənəns/ (n): bảo trì động cơ.",
+      colorClass: "ev-14"
+    },
+    15: {
+      translation: "Phân công công việc hiện tại của Liz:",
+      keywords: "recruiting and supporting the large squadron of workers ➔ staffing (H)",
+      detail: "Bà Liz dồn toàn bộ năng lượng cho việc tuyển dụng ('recruiting') và hỗ trợ đội ngũ nhân viên ('squadron of workers'). Công việc này thuộc lĩnh vực quản lý nhân sự / điều phối nhân viên (staffing).",
+      pronunciation: "Cụm <i>squadron of workers</i> (/ˈskwɒdrən əv ˈwɜːkəz/) được đọc nối âm lướt nhẹ.",
+      vocabulary: "<b>recruitment</b> /rɪˈkruːtmənt/ (n): sự tuyển dụng;<br><b>staffing</b> /ˈstɑːfɪŋ/ (n): bố trí nhân sự.",
+      colorClass: "ev-15"
+    },
+    16: {
+      translation: "Phân công công việc hiện tại của Sarah:",
+      keywords: "kept fed and watered ➔ food and drink (F)",
+      detail: "Sarah quay lại công viên sau vài năm đi dạy học. Nhiệm vụ chính của cô là đảm bảo du khách luôn được ăn uống đầy đủ ('kept fed and watered'), tương ứng hoàn toàn với mảng dịch vụ ăn uống (food and drink).",
+      pronunciation: "Thành ngữ <i>fed and watered</i> (/fed ənd ˈwɔːtəd/) có hiện tượng nối âm /d/ sang /ə/.",
+      vocabulary: "<b>fed and watered</b> (idiom): được cung cấp đồ ăn thức uống đầy đủ.",
+      colorClass: "ev-16"
+    },
+    17: {
+      translation: "Phân công công việc hiện tại của Duncan:",
+      keywords: "area of construction ➔ building (C)",
+      detail: "Con trai Duncan tiếp quản mảng thi công xây dựng ('area of construction') từ Simon trong suốt 10 năm qua. Điều này ứng với mảng xây dựng (building).",
+      pronunciation: "Từ <i>stalwart</i> /ˈstɔːlwət/ mang trọng âm rơi vào âm tiết thứ nhất.",
+      vocabulary: "<b>stalwart</b> /ˈstɔːlwət/ (n): trụ cột gánh vác công việc;<br><b>construction</b> /kənˈstrʌkʃn/ (n): sự thi công xây dựng.",
+      colorClass: "ev-17"
+    },
+    18: {
+      translation: "Phân công công việc hiện tại của Judith:",
+      keywords: "retail / buy souvenirs ➔ sales (G)",
+      detail: "Judith (con dâu mới) phụ trách mảng bán lẻ quà lưu niệm ('retail / buy souvenirs'). Đây là mảng kinh doanh hàng hóa phát triển rất nhanh, thuộc đáp án bán hàng (sales).",
+      pronunciation: "Chú ý từ <i>retail</i> /ˈriːteɪl/ và từ <i>souvenirs</i> /ˌsuːvəˈnɪəz/.",
+      vocabulary: "<b>retail</b> /ˈriːteɪl/ (n): ngành bán lẻ;<br><b>souvenir</b> /ˌsuːvəˈnɪər/ (n): quà lưu niệm.",
+      colorClass: "ev-18"
+    },
+    19: {
+      translation: "Diện tích của sân đua xe go-kart:",
+      keywords: "a hundred and twenty square meters ➔ 120",
+      detail: "Simon công bố chính xác diện tích của sân go-kart mới dựng là 'a hundred and twenty square meters' (120 mét vuông). Ô trống đứng trước 'sq mt' nên chỉ cần điền con số <strong>120</strong>.",
+      pronunciation: "Cụm <i>a hundred and twenty</i> (/ə ˈhʌndrəd ənd ˈtwenti/) được đọc liền mạch.",
+      vocabulary: "<b>go-kart arena</b> /ɡəʊ kɑːt əˈriːnə/ (n): sân đua xe go-kart.",
+      colorClass: "ev-19"
+    },
+    20: {
+      translation: "Độ tuổi mục tiêu sử dụng go-kart:",
+      keywords: "five to twelve-year-olds ➔ 5-12",
+      detail: "Sân đua go-kart được thiết kế hướng tới trẻ em trong độ tuổi từ 5 đến 12 tuổi ('five to twelve-year-olds'). Đáp án chuẩn xác là <strong>5-12</strong>.",
+      pronunciation: "Lắng nghe biến điệu nối âm lướt: <i>five_to_twelve-year-olds</i> (/faɪv tə twelv jɪər əʊldz/).",
+      vocabulary: "<b>target age group</b> /ˈtɑːɡɪt eɪdʒ ɡruːp/ (n): nhóm tuổi mục tiêu.",
+      colorClass: "ev-20"
+    }
+  }
 };
