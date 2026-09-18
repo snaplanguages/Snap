@@ -1,8 +1,8 @@
 window.quizData = {
   title: "Reading Practice 10 | The Rosetta Stone",
-  testName: "Test 3",
-  partName: "Passage 2",
-  dbPrefix: "ielts_R_T3_P2",
+  testName: "Test 4",
+  partName: "Passage 1",
+  dbPrefix: "ielts_R_T4_P1",
   passageTitle: "The Rosetta Stone",
   startQ: 1,
   endQ: 13,
