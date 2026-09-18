@@ -1,5 +1,5 @@
 window.quizData = {
-  title: "Reading Practice 3 | Biomimetic Design",
+  title: "Reading Practice 7 | Biomimetic Design",
   testName: "Test 3",
   partName: "Passage 1",
   dbPrefix: "ielts_R_T3_P1",
@@ -285,7 +285,8 @@ Khi câu hỏi đưa ra một khẳng định mang tính kết luận về kết
 <br>
 - Bài đọc bác bỏ trực tiếp bằng từ chuyên ngành: **hydrophobic** (kỵ nước, hoàn toàn không thấm nước). Nước chảy loang cực nhanh trên bề mặt là do các ống dẫn vật lý (*capillaries*) điều hướng chứ không phải do thấm hút vào da.
 <br>
-- Sự mâu thuẫn là trực diện và tuyệt đối $ightarrow$ Đáp án chắc chắn là <b>FALSE</b>.
+- Sự mâu thuẫn là trực diện và tuyệt đối $
+ightarrow$ Đáp án chắc chắn là <b>FALSE</b>.
 <br><br>
 <b>⚠️ Bẫy cần tránh (Trap):</b>
 <br>
@@ -350,7 +351,8 @@ Do đó, *hydrophobic* có nghĩa là không thấm nước, kỵ nước.`,
 <br>
 - Đoạn B đưa ra một danh sách dài các dẫn chứng thực tế trải rộng từ hàng không (wings), xây dựng (buildings) cho tới y tế (medical needles) để minh họa cho phong trào phỏng sinh học này.
 <br>
-→ Hai bên hoàn toàn trùng khớp về mặt ý nghĩa đại diện $ightarrow$ Chọn <b>TRUE</b>.
+→ Hai bên hoàn toàn trùng khớp về mặt ý nghĩa đại diện $
+ightarrow$ Chọn <b>TRUE</b>.
 <br><br>
 <b>🎓 Bài học rút ra (Lesson):</b>
 <br>
@@ -428,7 +430,8 @@ Bài đọc giải thích rất sâu về cấu tạo đệm chân, lực liên 
 <br>
 - Đây là một thông tin hoàn toàn do người ra đề tự vẽ ra để thử thách tính trung thực của thí sinh.
 <br>
-→ Thông tin hoàn toàn không có trong bài viết $ightarrow$ Chọn <b>NOT GIVEN</b>.
+→ Thông tin hoàn toàn không có trong bài viết $
+ightarrow$ Chọn <b>NOT GIVEN</b>.
 <br><br>
 <b>🚫 Phân tích lỗi sai (Error Analysis):</b>
 <br>
@@ -535,7 +538,8 @@ Các tính từ định lượng chỉ quy mô/số lượng (*a large number, m
 <br>
 - Bài đọc xác nhận Velcro là "household word" (tên gọi quen thuộc với mọi nhà) duy nhất thành công rực rỡ và cơ chế của nó là sao chép quả ké bám lông chó (copying cockleburs - bionics design).
 <br>
-- Ý nghĩa trùng khớp tuyệt đối $ightarrow$ Chọn <b>TRUE</b>.
+- Ý nghĩa trùng khớp tuyệt đối $
+ightarrow$ Chọn <b>TRUE</b>.
 <br><br>
 <b>🎓 Bài học rút ra (Lesson):</b>
 <br>
