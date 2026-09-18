@@ -1,8 +1,3 @@
-/* =========================================================
-   SNAPENGLISH QUIZ2 LISTENING - UPGRADED DATA FILE
-   Part 2: Questions 11-20 (Winridge Forest Railway Park)
-   ========================================================= */
-
 window.quizData = {
   testId: "quiz2",
   testName: "IELTS Listening Test 1",
