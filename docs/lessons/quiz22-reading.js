@@ -1,4 +1,4 @@
-window.quizData = {
+window.quizData = { 
   "title": "Reading Practice 22 | The Great Fire of London",
   "testName": "Test 8",
   "partName": "Passage 1",
