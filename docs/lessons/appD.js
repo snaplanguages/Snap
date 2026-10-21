@@ -88,19 +88,17 @@ async function syncData() {
     }
 }
 
-// --- ĐĂNG KÝ SERVICE WORKER TỰ ĐỘNG NHẬN PUSH NOTIFICATION KHI MỞ CHROME ---
 async function setupPushNotification() {
     if ('serviceWorker' in navigator && messaging) {
         try {
-            docs/lessons/
-const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+            // Dấu ./ tự động hiểu là file firebase-messaging-sw.js nằm cùng thư mục docs/lessons/
+            const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
             console.log('FCM Service Worker đã được đăng ký thành công:', registration);
             
             const permission = await Notification.requestPermission();
             if (permission === 'granted') {
                 const token = await getToken(messaging, { serviceWorkerRegistration: registration });
                 console.log("FCM Device Token của bạn:", token);
-                // Bạn có thể lưu token này lên Firestore nếu muốn gửi thông báo theo UID cá nhân
             }
         } catch (error) {
             console.error('Lỗi đăng ký Service Worker FCM:', error);
