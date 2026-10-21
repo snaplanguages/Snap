@@ -92,7 +92,8 @@ async function syncData() {
 async function setupPushNotification() {
     if ('serviceWorker' in navigator && messaging) {
         try {
-            const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
+            docs/lessons/
+const registration = await navigator.serviceWorker.register('./firebase-messaging-sw.js');
             console.log('FCM Service Worker đã được đăng ký thành công:', registration);
             
             const permission = await Notification.requestPermission();
